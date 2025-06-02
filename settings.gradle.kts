@@ -21,4 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "TrackFunds"
 include(":app")
- 
+include(":core:ui")
+include(":core:domain")
+include(":core:navigation")
+include(":core:data")
+include(":feature:categories")
+include(":feature:home")
