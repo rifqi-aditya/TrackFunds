@@ -40,6 +40,7 @@ android {
 
 dependencies {
     // Implementasi modul proyek lain
+    implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
 

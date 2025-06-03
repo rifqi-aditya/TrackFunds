@@ -26,7 +26,7 @@ object DatabaseModule {
         // Menggunakan metode getDatabase yang sudah kita buat di AppDatabase
         // Jika AppDatabase.getDatabase Anda menerima scope, Anda perlu menyediakannya
         // Untuk versi AppDatabase.kt yang saya berikan sebelumnya, ia membuat scope default.
-        return AppDatabase.getDatabase(appContext /*, scope */)
+        return AppDatabase.getDatabase(appContext)
     }
 
     @Provides

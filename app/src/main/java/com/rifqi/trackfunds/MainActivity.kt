@@ -4,15 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.rifqi.trackfunds.core.navigation.Screen
+import com.rifqi.trackfunds.core.navigation.ui.components.AppBottomNavigationBar
+import com.rifqi.trackfunds.core.navigation.ui.components.bottomNavItemsList
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
+import com.rifqi.trackfunds.navigation.graphs.RootNavGraph
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,26 +30,39 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TrackFundsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-                }
+                TrackFundsMainApp()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun TrackFundsMainApp() {
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TrackFundsTheme {
-        Greeting("Android")
+    val showBottomBar = bottomNavItemsList.any { navItem ->
+        currentDestination?.hierarchy?.any { it.route == navItem.graphRoute } == true
+    }
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                AppBottomNavigationBar(navController = navController)
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                navController.navigate(Screen.AddTransaction.route)
+            }) {
+                Icon(Icons.Filled.Add, contentDescription = "Add Transaction")
+            }
+        }
+    ) { innerPadding ->
+        RootNavGraph(
+            navController = navController,
+            modifier = Modifier.padding(innerPadding)
+        )
     }
 }

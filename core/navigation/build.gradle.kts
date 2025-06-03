@@ -25,15 +25,45 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
 dependencies {
+    implementation(project(":core:ui"))
+    implementation(project(":core:domain"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:categories"))
+
+    // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
+    implementation(platform(libs.androidx.compose.bom)) // Gunakan versi terbaru yang stabil
+
+    // Core AndroidX dan Compose
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+
+    // Compose UI
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+
+    // Compose Material3 (untuk Icon, NavigationBar, NavigationBarItem, Text)
+    implementation(libs.androidx.material3)
+
+    // Compose Foundation (untuk Box, fillMaxSize)
+    implementation(libs.androidx.foundation)
+
+    // Compose Navigation (untuk NavHost, composable, rememberNavController, dll.)
+    implementation(libs.androidx.navigation.compose) // Gunakan versi terbaru yang stabil
+
+    // Debugging (hanya untuk development)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

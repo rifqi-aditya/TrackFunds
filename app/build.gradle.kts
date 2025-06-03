@@ -43,7 +43,9 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
+    implementation(project(":core:navigation"))
     implementation(project(":feature:categories"))
+    implementation(project(":feature:home"))
 
     // Hilt (Dependency Injection)
     implementation(libs.hilt.android)

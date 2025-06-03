@@ -3,14 +3,12 @@ package com.rifqi.trackfunds.core.domain.usecase
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-
 
 /**
  * Use case untuk mendapatkan semua kategori.
  * Mengabstraksi logika pengambilan kategori dari ViewModel.
  */
-class GetCategoriesUseCase @Inject constructor(
+class GetCategoriesUseCase(
     private val categoryRepository: CategoryRepository
 ) {
     /**
