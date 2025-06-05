@@ -1,41 +1,39 @@
-package com.rifqi.trackfunds.core.ui.theme
-
 import androidx.compose.ui.graphics.Color
 
-// Primary (Biru)
-val PrimaryLight = Color(0xFF0061A4) // Biru yang sedikit lebih cerah dan modern
-val OnPrimaryLight = Color(0xFFFFFFFF)
-val PrimaryContainerLight = Color(0xFFD1E4FF)
-val OnPrimaryContainerLight = Color(0xFF001D36)
+// --- Primary (Biru Pastel Lembut) ---
+val PastelBlueLight = Color(0xFF7EADD1) // Biru yang lebih lembut
+val OnPastelBlueLight = Color(0xFFFFFFFF)
+val PastelBlueContainerLight = Color(0xFFD1E4FF) // Warna Anda sebelumnya, cocok
+val OnPastelBlueContainerLight = Color(0xFF001D36)
 
-val PrimaryDark = Color(0xFF9ECAFF) // Biru muda untuk Dark Mode
-val OnPrimaryDark = Color(0xFF003258)
-val PrimaryContainerDark = Color(0xFF00497D)
-val OnPrimaryContainerDark = Color(0xFFD1E4FF)
+val PastelBlueDark = Color(0xFFA8C8FF) // Biru pastel terang untuk Dark Mode
+val OnPastelBlueDark = Color(0xFF00315B)
+val PastelBlueContainerDark = Color(0xFF004780) // Sedikit lebih gelap untuk kontras
+val OnPastelBlueContainerDark = Color(0xFFD6E3FF)
 
-// Secondary (Netral/Abu-abu - untuk elemen pendukung)
-val SecondaryLight = Color(0xFF535F70)
-val OnSecondaryLight = Color(0xFFFFFFFF)
-val SecondaryContainerLight = Color(0xFFD7E3F8)
-val OnSecondaryContainerLight = Color(0xFF101C2B)
+// --- Secondary (Abu-abu Kehijauan Pastel atau Netral Lembut) ---
+val PastelMintSecondaryLight = Color(0xFFB2DFDB) // Mint pucat
+val OnPastelMintSecondaryLight = Color(0xFF003733)
+val PastelMintSecondaryContainerLight = Color(0xFFCDEEEA)
+val OnPastelMintSecondaryContainerLight = Color(0xFF00201E)
 
-val SecondaryDark = Color(0xFFBBC7DB)
-val OnSecondaryDark = Color(0xFF253141)
-val SecondaryContainerDark = Color(0xFF3C4758)
-val OnSecondaryContainerDark = Color(0xFFD7E3F8)
+val PastelMintSecondaryDark = Color(0xFF98C7C3) // Mint sedikit lebih gelap untuk Dark Mode
+val OnPastelMintSecondaryDark = Color(0xFF003733)
+val PastelMintSecondaryContainerDark = Color(0xFF3A4F4C)
+val OnPastelMintSecondaryContainerDark = Color(0xFFB4F4E0)
 
-// Tertiary (Hijau - untuk Pemasukan atau aksen positif)
-val TertiaryLight = Color(0xFF006D3B) // Hijau yang lebih standar Material
-val OnTertiaryLight = Color(0xFFFFFFFF)
-val TertiaryContainerLight = Color(0xFF9AF6B6)
-val OnTertiaryContainerLight = Color(0xFF00210E)
+// --- Tertiary (Peach atau Pink Pastel untuk Aksen Hangat) ---
+val PastelPeachLight = Color(0xFFFFB7A4)
+val OnPastelPeachLight = Color(0xFF5A1A0B)
+val PastelPeachContainerLight = Color(0xFFFFDBCF)
+val OnPastelPeachContainerLight = Color(0xFF3E0400)
 
-val TertiaryDark = Color(0xFF7FDD9B) // Hijau muda untuk Dark Mode
-val OnTertiaryDark = Color(0xFF00391C)
-val TertiaryContainerDark = Color(0xFF00522B)
-val OnTertiaryContainerDark = Color(0xFF9AF6B6)
+val PastelPeachDark = Color(0xFFFFB59C)
+val OnPastelPeachDark = Color(0xFF5A1A0B)
+val PastelPeachContainerDark = Color(0xFF7A2F19)
+val OnPastelPeachContainerDark = Color(0xFFFFDBCF)
 
-// Error (Merah)
+// --- Error (Tetap gunakan merah yang jelas untuk kontras) ---
 val ErrorLight = Color(0xFFBA1A1A)
 val OnErrorLight = Color(0xFFFFFFFF)
 val ErrorContainerLight = Color(0xFFFFDAD6)
@@ -46,35 +44,28 @@ val OnErrorDark = Color(0xFF690005)
 val ErrorContainerDark = Color(0xFF93000A)
 val OnErrorContainerDark = Color(0xFFFFDAD6)
 
-// Background and Surface
-val BackgroundLight = Color(0xFFF8F9FD) // Warna Anda, bagus untuk light mode
-val OnBackgroundLight = Color(0xFF1A1C1E)
-val SurfaceLight = Color(0xFFF8F9FD) // Bisa sama atau sedikit beda
+// --- Background, Surface, dkk. ---
+val BackgroundLight = Color(0xFFFDFBFF) // Off-white lembut
+val OnBackgroundLight = Color(0xFF1A1C1E) // Hitam lembut
+val SurfaceLight = Color(0xFFFDFBFF)
 val OnSurfaceLight = Color(0xFF1A1C1E)
 
-val BackgroundDark = Color(0xFF121212) // Warna Anda, standar untuk dark mode
-val OnBackgroundDark = Color(0xFFE2E2E6)
-val SurfaceDark = Color(0xFF1A1C1E) // Sedikit lebih terang dari background untuk elevasi
-val OnSurfaceDark = Color(0xFFE2E2E6)
+val BackgroundDark = Color(0xFF1A1B1F) // Abu-abu sangat tua, bukan hitam pekat
+val OnBackgroundDark = Color(0xFFE3E2E6) // Putih keabuan
+val SurfaceDark = Color(0xFF2C2E32)  // Sedikit lebih terang dari background untuk elevasi Card/Surface
+val OnSurfaceDark = Color(0xFFE3E2E6)
 
-// Surface Variants (untuk Card, Chip, dll.)
-val SurfaceVariantLight = Color(0xFFE0E4F1) // Dari Gray40 Anda, bagus untuk card light
-val OnSurfaceVariantLight = Color(0xFF43474E) // Teks di atas SurfaceVariantLight
+// Surface Variants (untuk Card, Chip, dll. agar ada sedikit perbedaan dari Surface utama)
+val SurfaceVariantLight = Color(0xFFF0F2F5) // Abu-abu sangat muda dan sejuk
+val OnSurfaceVariantLight = Color(0xFF43474E) // Teks gelap di atasnya
 
-val SurfaceVariantDark = Color(0xFF444A63) // Dari Gray80 Anda, bagus untuk card dark
-val OnSurfaceVariantDark = Color(0xFFC4C6CF) // Teks di atas SurfaceVariantDark
+val SurfaceVariantDark = Color(0xFF3A3C40) // Abu-abu tua untuk varian surface
+val OnSurfaceVariantDark = Color(0xFFC4C6CF) // Teks terang di atasnya
 
 // Outline
-val OutlineLight = Color(0xFF74777F)
-val OutlineDark = Color(0xFF8E9099)
+val OutlineLight = Color(0xFF79747E)
+val OutlineDark = Color(0xFF938F99)
 
-// Warna Kustom Anda (bisa didefinisikan di sini atau sebagai CompositionLocal)
-val SubtitleTextLight = Color(0xFF6D6D6D) // Dari SubtitleLight Anda
-val SubtitleTextDark = Color(0xFFB0B3C1)  // Dari SubtitleDark Anda
-
-// Untuk "Button Accent" Anda, bisa jadi ini adalah warna Primary atau Tertiary,
-// atau warna kustom jika memang sangat spesifik.
-// Mari kita coba gunakan Primary untuk ini agar konsisten,
-// atau Anda bisa definisikan warna kustom jika Primary/Tertiary tidak cocok.
-val AccentButtonColorLight = PrimaryLight // Menggunakan Primary
-val AccentButtonColorDark = PrimaryDark
+// Warna Teks Subtitle (opsional, bisa pakai OnSurfaceVariant)
+val SubtitleTextLight = OnSurfaceVariantLight.copy(alpha = 0.8f)
+val SubtitleTextDark = OnSurfaceVariantDark.copy(alpha = 0.8f)

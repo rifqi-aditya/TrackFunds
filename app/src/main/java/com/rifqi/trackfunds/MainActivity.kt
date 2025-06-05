@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,10 +21,10 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rifqi.trackfunds.core.navigation.Screen
+import com.rifqi.trackfunds.core.navigation.graphs.RootNavGraph
 import com.rifqi.trackfunds.core.navigation.ui.components.AppBottomNavigationBar
 import com.rifqi.trackfunds.core.navigation.ui.components.bottomNavItemsList
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.navigation.graphs.RootNavGraph
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,7 +62,8 @@ fun TrackFundsMainApp() {
             }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Transaction")
             }
-        }
+        },
+        contentWindowInsets = WindowInsets.navigationBars.add(WindowInsets.ime)
     ) { innerPadding ->
         RootNavGraph(
             navController = navController,

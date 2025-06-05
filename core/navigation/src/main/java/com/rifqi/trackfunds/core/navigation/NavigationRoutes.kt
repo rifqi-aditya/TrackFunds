@@ -24,6 +24,8 @@ sealed class Screen(val route: String) {
     object AllTransactions : Screen("all_transactions_screen/{$ARG_TRANSACTION_TYPE}") {
         fun createRoute(transactionType: String) = "all_transactions_screen/$transactionType"
     }
+    object BalanceDetails : Screen("balance_details_screen")
+    object Notifications : Screen("notifications_screen")
 
     // Layar di dalam Accounts Graph
     object Accounts : Screen("accounts_screen")
@@ -43,4 +45,6 @@ sealed class Screen(val route: String) {
     object SelectCategory : Screen("select_category_screen/{$ARG_TRANSACTION_TYPE}") {
         fun createRoute(transactionType: String) = "select_category_screen/$transactionType"
     }
+
+
 }

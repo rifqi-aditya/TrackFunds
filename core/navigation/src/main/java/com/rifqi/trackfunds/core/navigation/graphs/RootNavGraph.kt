@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.navigation.graphs
+package com.rifqi.trackfunds.core.navigation.graphs
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,6 +59,12 @@ fun NavGraphBuilder.mainAppFlowGraph(navController: NavHostController) {
                     },
                     onNavigateToAddTransaction = {
                         navController.navigate(Screen.AddTransaction.route)
+                    },
+                    onNavigateToBalanceDetails = {
+                        navController.navigate(Screen.BalanceDetails.route)
+                    },
+                    onNavigateToNotifications = {
+                        navController.navigate(Screen.Notifications.route)
                     }
                 )
             }
