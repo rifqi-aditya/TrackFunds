@@ -1,11 +1,12 @@
-package com.rifqi.trackfunds.feature.home.util
+package com.rifqi.trackfunds.core.ui.util
 
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-fun formatCurrency(amount: Double, locale: Locale = Locale("in", "ID")): String {
+fun formatCurrency(amount: BigDecimal, locale: Locale = Locale("in", "ID")): String {
     val currencyFormat = NumberFormat.getCurrencyInstance(locale)
     currencyFormat.maximumFractionDigits = 0
     currencyFormat.minimumFractionDigits = 0

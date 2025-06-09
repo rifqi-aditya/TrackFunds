@@ -27,24 +27,23 @@ sealed class Screen(val route: String) {
     object BalanceDetails : Screen("balance_details_screen")
     object Notifications : Screen("notifications_screen")
 
-    // Layar di dalam Accounts Graph
+    // Screen in Accounts Graph
     object Accounts : Screen("accounts_screen")
     object WalletDetail : Screen("wallet_detail_screen/{$ARG_WALLET_ID}") {
         fun createRoute(walletId: String) = "wallet_detail_screen/$walletId"
     }
 
-    // Layar di dalam Budgets Graph
+    // Screen in Budgets Graph
     object Budgets : Screen("budgets_screen")
 
-    // Layar di dalam Profile Graph
+    // Screen in Profile Graph
     object Profile : Screen("profile_screen")
     object Settings : Screen("settings_screen") // Bisa jadi full screen atau nested
 
-    // Layar Full-Screen (di luar Bottom Nav)
+    // Full-Screen (di luar Bottom Nav)
     object AddTransaction : Screen("add_transaction_screen")
     object SelectCategory : Screen("select_category_screen/{$ARG_TRANSACTION_TYPE}") {
         fun createRoute(transactionType: String) = "select_category_screen/$transactionType"
     }
-
-
+    object SelectAccount : Screen("select_account_screen")
 }

@@ -1,19 +1,21 @@
 package com.rifqi.trackfunds.feature.home.ui.model
 
+import java.math.BigDecimal
+
 // Model data untuk satu item transaksi di daftar ringkasan Home
 data class HomeTransactionItem(
     val id: String,
     val categoryName: String,
     val iconIdentifier: String?, // Identifier untuk dipetakan ke ikon visual
-    val amount: Double,
+    val amount: BigDecimal,
     val type: String // "Expense" atau "Income", bisa juga enum dari domain jika lebih ketat
 )
 
 // Model data untuk ringkasan keseluruhan yang ditampilkan di Home
 data class HomeSummary(
-    val monthlyBalance: Double,
-    val totalExpenses: Double,
-    val totalIncome: Double,
+    val monthlyBalance: BigDecimal,
+    val totalExpenses: BigDecimal,
+    val totalIncome: BigDecimal,
     val recentExpenses: List<HomeTransactionItem>,
     val recentIncome: List<HomeTransactionItem>
 )

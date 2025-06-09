@@ -46,21 +46,23 @@ fun TrackFundsMainApp() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val showBottomBar = bottomNavItemsList.any { navItem ->
+    val showBottomBarAndFab = bottomNavItemsList.any { navItem ->
         currentDestination?.hierarchy?.any { it.route == navItem.graphRoute } == true
     }
 
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
+            if (showBottomBarAndFab) {
                 AppBottomNavigationBar(navController = navController)
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate(Screen.AddTransaction.route)
-            }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Transaction")
+            if (showBottomBarAndFab) {
+                FloatingActionButton(onClick = {
+                    navController.navigate(Screen.AddTransaction.route)
+                }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Transaction")
+                }
             }
         },
         contentWindowInsets = WindowInsets.navigationBars.add(WindowInsets.ime)

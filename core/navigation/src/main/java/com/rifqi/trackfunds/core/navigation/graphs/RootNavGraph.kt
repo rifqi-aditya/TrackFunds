@@ -13,6 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.rifqi.account.ui.screen.AccountsScreen
+import com.rifqi.account.ui.screen.SelectAccountScreen
+import com.rifqi.add_transaction.ui.screen.AddTransactionScreen
 import com.rifqi.trackfunds.core.navigation.ARG_TRANSACTION_TYPE
 import com.rifqi.trackfunds.core.navigation.NavGraphs
 import com.rifqi.trackfunds.core.navigation.Screen
@@ -57,9 +60,6 @@ fun NavGraphBuilder.mainAppFlowGraph(navController: NavHostController) {
                     onNavigateToAllTransactions = { transactionType ->
                         navController.navigate(Screen.AllTransactions.createRoute(transactionType))
                     },
-                    onNavigateToAddTransaction = {
-                        navController.navigate(Screen.AddTransaction.route)
-                    },
                     onNavigateToBalanceDetails = {
                         navController.navigate(Screen.BalanceDetails.route)
                     },
@@ -75,8 +75,12 @@ fun NavGraphBuilder.mainAppFlowGraph(navController: NavHostController) {
             startDestination = Screen.Accounts.route,
             route = NavGraphs.ACCOUNTS_TAB_GRAPH
         ) {
-            composable(Screen.Accounts.route) { PlaceholderScreen(name = "Accounts Screen") }
-            // composable(Screen.WalletDetail.createRoute("someId")) { ... }
+            composable(Screen.Accounts.route) {
+                AccountsScreen(
+                    onNavigateToTransfer = {},
+                    onNavigateToWalletDetail = {},
+                )
+            }
         }
 
         // Nested Graph untuk Tab Budgets
@@ -98,18 +102,51 @@ fun NavGraphBuilder.mainAppFlowGraph(navController: NavHostController) {
 
         // Layar Full-Screen (di luar Bottom Nav tabs, tapi bagian dari main_app_flow)
         composable(Screen.AddTransaction.route) {
-            PlaceholderScreen(name = "Add Transaction Screen")
-            // AddTransactionScreen(navController = navController, ...)
+            AddTransactionScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToSelectCategory = { transactionType ->
+                    navController.navigate(Screen.SelectCategory.createRoute(transactionType))
+                },
+                onNavigateToSelectAccount = {
+                    navController.navigate(Screen.SelectAccount.route)
+                },
+            )
         }
         composable(
             route = Screen.SelectCategory.route, // contoh: "select_category_screen/{transactionType}"
             arguments = listOf(navArgument(ARG_TRANSACTION_TYPE) { type = NavType.StringType })
         ) {
             SelectCategoryScreen(
+                // Atau SimpleSelectCategoryScreen Anda
                 onNavigateBack = { navController.popBackStack() },
-                onCategorySelected = { navController.popBackStack() },
-                onAddCategoryClicked = { },
-                onSearchActionClicked = { }
+                onCategorySelected = { selectedCategory ->
+                    // Set hasil untuk AddTransactionScreen
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "selected_category_key",
+                        selectedCategory
+                    )
+                    navController.popBackStack() // Kembali ke AddTransactionScreen
+                },
+                onNavigateToAddCategory = { TODO() },
+                onSearchClicked = { TODO() },
+            )
+        }
+        composable(
+            route = Screen.SelectAccount.route
+        ) {
+            SelectAccountScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onAccountSelected = { selectedAccountId ->
+                    // Set hasil untuk AddTransactionScreen
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "selected_account_key",
+                        selectedAccountId
+                    )
+                    navController.popBackStack() // Kembali ke AddTransactionScreen
+                },
+                onNavigateToAddAccount = { TODO() }
             )
         }
     }

@@ -1,8 +1,10 @@
 package com.rifqi.trackfunds.core.navigation.ui.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.rounded.AccountBalanceWallet
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.PieChart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,10 +19,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.rifqi.trackfunds.core.navigation.NavGraphs
 
 sealed class BottomNavItem(val graphRoute: String, val title: String, val icon: ImageVector) {
-    object Home : BottomNavItem(NavGraphs.HOME_TAB_GRAPH, "Home", Icons.Filled.Home)
-    object Accounts : BottomNavItem(NavGraphs.ACCOUNTS_TAB_GRAPH, "Accounts", Icons.Filled.Person) // Ganti ikon jika perlu
-    object Budgets : BottomNavItem(NavGraphs.BUDGETS_TAB_GRAPH, "Budgets", Icons.Filled.Home) // Ganti ikon jika perlu
-    object Profile : BottomNavItem(NavGraphs.PROFILE_TAB_GRAPH, "Profile", Icons.Filled.Person)
+    object Home : BottomNavItem(NavGraphs.HOME_TAB_GRAPH, "Home", Icons.Rounded.Home)
+    object Accounts : BottomNavItem(NavGraphs.ACCOUNTS_TAB_GRAPH, "Accounts", Icons.Rounded.AccountBalanceWallet)
+    object Budgets : BottomNavItem(NavGraphs.BUDGETS_TAB_GRAPH, "Budgets", Icons.Rounded.PieChart)
+    object Profile : BottomNavItem(NavGraphs.PROFILE_TAB_GRAPH, "Profile", Icons.Rounded.Person)
 }
 
 val bottomNavItemsList = listOf(

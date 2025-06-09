@@ -1,17 +1,27 @@
 plugins {
-    id("java-library")
-    alias(libs.plugins.jetbrains.kotlin.jvm)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    id("kotlin-parcelize")
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-kotlin {
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+
+android {
+    namespace = "com.rifqi.trackfunds.core.domain" // Sesuaikan dengan nama paket Anda
+    compileSdk = 35 // Gunakan versi compileSdk yang sama dengan modul :app Anda
+
+    defaultConfig {
+        minSdk = 26 // Samakan dengan minSdk proyek Anda
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
 dependencies{
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.javax.inject)
 }

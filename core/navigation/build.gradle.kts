@@ -38,6 +38,8 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":feature:home"))
     implementation(project(":feature:categories"))
+    implementation(project(":feature:account"))
+    implementation(project(":feature:add_transaction"))
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
     implementation(platform(libs.androidx.compose.bom)) // Gunakan versi terbaru yang stabil
@@ -54,6 +56,7 @@ dependencies {
 
     // Compose Material3 (untuk Icon, NavigationBar, NavigationBarItem, Text)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
 
     // Compose Foundation (untuk Box, fillMaxSize)
     implementation(libs.androidx.foundation)

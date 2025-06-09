@@ -32,8 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.core.ui.util.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
-import com.rifqi.trackfunds.feature.home.util.formatCurrency
+import java.math.BigDecimal
 
 // Definisikan warna kustom untuk Card gelap dan teks putih
 val DarkCardBackgroundColor = Color(0xFF004780) // Contoh: Abu-abu biru tua yang gelap
@@ -128,7 +129,7 @@ fun BalanceCard(
 @Composable
 fun BalanceDetailItem(
     label: String,
-    amount: Double,
+    amount: BigDecimal,
     @DrawableRes iconRes: Int, // <-- Tipe parameter diubah ke @DrawableRes Int
     textColor: Color,
     modifier: Modifier = Modifier
@@ -162,9 +163,9 @@ fun BalanceDetailItem(
 
 // --- DATA DUMMY UNTUK PREVIEW (bisa diletakkan di sini atau impor) ---
 val previewDummySummaryData = HomeSummary(
-    monthlyBalance = 12550750.0,
-    totalExpenses = 5325500.0,
-    totalIncome = 17875250.0,
+    monthlyBalance = BigDecimal("1250000.0"),
+    totalExpenses = BigDecimal("1250000.0"),
+    totalIncome = BigDecimal("1250000.0"),
     recentExpenses = emptyList(),
     recentIncome = emptyList()
 )
@@ -211,7 +212,7 @@ fun BalanceDetailItemExpenseOnDarkPreview() {
         Surface(color = DarkCardBackgroundColor) { // Latar belakang sesuai Card
             BalanceDetailItem(
                 label = "Pengeluaran",
-                amount = 250000.0,
+                amount = BigDecimal("1250000.0"),
                 iconRes = R.drawable.ic_expense,
                 textColor = TextOnDarkCardColor,
                 modifier = Modifier.padding(16.dp)
@@ -227,7 +228,7 @@ fun BalanceDetailItemIncomeOnDarkPreview() {
         Surface(color = DarkCardBackgroundColor) {
             BalanceDetailItem(
                 label = "Pemasukan",
-                amount = 1500000.0,
+                amount = BigDecimal("1250000.0"),
                 iconRes = R.drawable.ic_income,
                 textColor = TextOnDarkCardColor,
                 modifier = Modifier.padding(16.dp)

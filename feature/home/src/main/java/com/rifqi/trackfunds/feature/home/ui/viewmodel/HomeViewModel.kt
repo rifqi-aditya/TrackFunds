@@ -2,11 +2,11 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rifqi.trackfunds.core.ui.util.getCurrentDateRange
+import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
 import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
 import com.rifqi.trackfunds.feature.home.ui.model.HomeTransactionItem
 import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
-import com.rifqi.trackfunds.feature.home.util.getCurrentDateRange
-import com.rifqi.trackfunds.feature.home.util.getCurrentMonthAndYear
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,19 +14,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 val DUMMY_HOME_SUMMARY_DATA = HomeSummary(
-    monthlyBalance = 12550000.75,
-    totalExpenses = 5325000.50,
-    totalIncome = 17875000.25,
+    monthlyBalance = BigDecimal("1250000.0"),
+    totalExpenses = BigDecimal("1250000.0"),
+    totalIncome = BigDecimal("1250000.0"),
     recentExpenses = listOf(
-        HomeTransactionItem("e1", "Groceries", "shopping_cart", 750000.00, "Expense"),
-        HomeTransactionItem("e2", "Dining Out", "restaurant", 350000.00, "Expense")
+        HomeTransactionItem("e1", "Groceries", "shopping_cart", BigDecimal("1250000.0"), "Expense"),
+        HomeTransactionItem("e2", "Dining Out", "restaurant", BigDecimal("1250000.0"), "Expense")
     ),
     recentIncome = listOf(
-        HomeTransactionItem("i1", "Salary", "cash", 15000000.00, "Income"),
-        HomeTransactionItem("i2", "Freelance Project", "workspace", 2875000.25, "Income")
+        HomeTransactionItem("i1", "Salary", "cash", BigDecimal("1250000.0"), "Income"),
+        HomeTransactionItem("i2", "Freelance Project", "workspace", BigDecimal("1250000.0"), "Income")
     )
 )
 

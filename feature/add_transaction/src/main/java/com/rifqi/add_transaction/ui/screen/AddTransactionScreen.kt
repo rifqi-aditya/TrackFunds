@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -103,7 +104,7 @@ fun AddTransactionContent(
     onCategoryClick: () -> Unit,
     onNotesChange: (String) -> Unit,
 
-) {
+    ) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -114,7 +115,11 @@ fun AddTransactionContent(
                     }
                 },
                 // actions = { ... ikon aksi TopAppBar ... },
-                windowInsets = TopAppBarDefaults.windowInsets
+                windowInsets = TopAppBarDefaults.windowInsets,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
+                )
             )
         },
         bottomBar = {
@@ -226,7 +231,7 @@ fun AddTransactionContentLightPreview() {
                 id = "cat",
                 name = "Makanan",
                 iconIdentifier = "ic_restaurant",
-                type = TransactionType.EXPENSE.toString()
+                type = TransactionType.EXPENSE
             ),
             isLoading = false
         )

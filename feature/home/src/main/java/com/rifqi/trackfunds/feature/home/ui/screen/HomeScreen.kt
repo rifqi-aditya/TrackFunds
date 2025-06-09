@@ -7,26 +7,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.core.ui.util.getCurrentDateRange
+import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
 import com.rifqi.trackfunds.feature.home.ui.components.HomeTopAppBar
@@ -34,45 +30,60 @@ import com.rifqi.trackfunds.feature.home.ui.components.TransactionSection
 import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.DUMMY_HOME_SUMMARY_DATA
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
-import com.rifqi.trackfunds.feature.home.util.getCurrentDateRange
-import com.rifqi.trackfunds.feature.home.util.getCurrentMonthAndYear
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Stateful Composable (Container)
+ * - Bertanggung jawab untuk mendapatkan ViewModel dan state.
+ * - Menghubungkan logika ViewModel dengan UI.
+ * - Ini yang akan dipanggil dari NavGraph.
+ */
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToAllTransactions: (transactionType: String) -> Unit,
-    onNavigateToAddTransaction: () -> Unit,
     onNavigateToBalanceDetails: () -> Unit,
-    onNavigateToNotifications: () -> Unit,
-    uiStateOverride: HomeUiState? = null
+    onNavigateToNotifications: () -> Unit
 ) {
-    val actualUiState by if (uiStateOverride != null) {
-        remember { mutableStateOf(uiStateOverride) }
-    } else {
-        viewModel.uiState.collectAsState()
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
+    HomeScreenContent(
+        uiState = uiState,
+        onNavigateToAllTransactions = onNavigateToAllTransactions,
+        onNavigateToBalanceDetails = onNavigateToBalanceDetails,
+        onNavigateToNotifications = onNavigateToNotifications,
+        onCalendarClick = viewModel::onDateRangeClicked,
+        onBalanceCardClick = viewModel::onBalanceCardClicked
+    )
+}
+
+/**
+ * Stateless Composable (Presentational)
+ * - Hanya menerima state dan lambda.
+ * - Tidak tahu tentang ViewModel atau Hilt.
+ * - Sangat mudah untuk di-preview dan diuji.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenContent(
+    uiState: HomeUiState,
+    onNavigateToBalanceDetails: () -> Unit,
+    onNavigateToAllTransactions: (transactionType: String) -> Unit,
+    onNavigateToNotifications: () -> Unit,
+    onCalendarClick: () -> Unit,
+    onBalanceCardClick: () -> Unit
+) {
     Scaffold(
         topBar = {
             HomeTopAppBar(
-                currentMonth = actualUiState.currentMonthAndYear,
-                dateRange = actualUiState.dateRangePeriod,
-                onCalendarClick = { viewModel.onDateRangeClicked() },
-                onNotificationsClick = {
-                    viewModel.onNotificationsClicked()
-                    // onNavigateToNotifications() // Contoh jika navigasi dihandle di sini
-                },
+                currentMonth = uiState.currentMonthAndYear,
+                dateRange = uiState.dateRangePeriod,
+                onCalendarClick = onCalendarClick,
+                onNotificationsClick = onNavigateToNotifications,
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToAddTransaction) {
-                Icon(Icons.Filled.Add, "Add Transaction")
-            }
-        }
     ) { innerPadding ->
-        if (actualUiState.isLoading) {
+        if (uiState.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -81,7 +92,7 @@ fun HomeScreen(
             ) {
                 CircularProgressIndicator()
             }
-        } else if (actualUiState.error != null) {
+        } else if (uiState.error != null) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -89,7 +100,7 @@ fun HomeScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Error: ${actualUiState.error}",
+                    "Error: ${uiState.error}",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -100,83 +111,79 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                actualUiState.challengeMessage?.let { message ->
+                uiState.challengeMessage?.let { message ->
                     item { ChallengeNotificationCard(message = message) }
                 }
                 item {
                     BalanceCard(
-                        summary = actualUiState.summary,
+                        summary = uiState.summary,
                         onClick = {
-                            viewModel.onBalanceCardClicked()
-                            // onNavigateToBalanceDetails() // Panggil callback navigasi jika perlu
+                            onBalanceCardClick() // Panggil handler dari ViewModel
+                            // onNavigateToBalanceDetails() // Navigasi bisa dipicu dari ViewModel atau dari sini
                         }
                     )
                 }
-
-                // Bagian Pengeluaran (Expenses)
-                if (actualUiState.summary != null) {
+                if (uiState.summary != null) {
                     item {
                         TransactionSection(
                             title = "Expenses",
-                            items = actualUiState.summary?.recentExpenses,
+                            items = uiState.summary.recentExpenses,
                             onViewAllClick = { onNavigateToAllTransactions("EXPENSE") },
                             onItemClick = { transactionItem ->
-                                // TODO: Navigasi ke detail transaksi expense
                                 println("Expense item clicked: ${transactionItem.categoryName}")
                             }
                         )
                     }
-
-                    // Bagian Pemasukan (Income)
                     item {
                         TransactionSection(
                             title = "Income",
-                            items = actualUiState.summary?.recentIncome,
+                            items = uiState.summary?.recentIncome,
                             onViewAllClick = { onNavigateToAllTransactions("INCOME") },
                             onItemClick = { transactionItem ->
-                                // TODO: Navigasi ke detail transaksi income
                                 println("Income item clicked: ${transactionItem.categoryName}")
                             }
                         )
                     }
                 }
-                // Spacer agar FAB tidak menutupi konten terakhir
                 item { Spacer(modifier = Modifier.height(80.dp)) }
             }
         }
     }
 }
 
-@Preview(showBackground = true, name = "Home Screen - Light")
+
+// --- Preview SEKARANG memanggil HomeScreenContent ---
+@Preview(showBackground = true, name = "Home Screen Content - Light")
 @Composable
-fun HomeScreenLightPreview() {
+fun HomeScreenContentPreview() {
     TrackFundsTheme(darkTheme = false) {
-        // Buat state dummy untuk preview
         val previewState = HomeUiState(
-            isLoading = false, // <-- PENTING: Set isLoading ke false
-            currentMonthAndYear = getCurrentMonthAndYear(), // Gunakan utilitas format
-            dateRangePeriod = getCurrentDateRange(),   // Gunakan utilitas format
-            summary = DUMMY_HOME_SUMMARY_DATA,        // Data summary dummy Anda
+            isLoading = false,
+            currentMonthAndYear = getCurrentMonthAndYear(),
+            dateRangePeriod = getCurrentDateRange(),
+            summary = DUMMY_HOME_SUMMARY_DATA, // Data dummy
             challengeMessage = "Your first challenge is complete!",
             error = null
         )
-        HomeScreen(
-            uiStateOverride = previewState, // <-- TERUSKAN STATE KE SINI
+        HomeScreenContent(
+            uiState = previewState,
+            // Berikan lambda kosong untuk semua aksi karena ini hanya preview UI
             onNavigateToAllTransactions = {},
-            onNavigateToAddTransaction = {},
             onNavigateToBalanceDetails = {},
-            onNavigateToNotifications = {}
+            onNavigateToNotifications = {},
+            onCalendarClick = {},
+            onBalanceCardClick = {}
         )
     }
 }
 
 @Preview(
     showBackground = true,
-    name = "Home Screen - Dark",
+    name = "Home Screen Content - Dark",
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-fun HomeScreenDarkPreview() {
+fun HomeScreenContentDarkPreview() {
     TrackFundsTheme(darkTheme = true) {
         val previewState = HomeUiState(
             isLoading = false,
@@ -186,12 +193,13 @@ fun HomeScreenDarkPreview() {
             challengeMessage = null, // Contoh tanpa challenge
             error = null
         )
-        HomeScreen(
-            uiStateOverride = previewState,
+        HomeScreenContent(
+            uiState = previewState,
             onNavigateToAllTransactions = {},
-            onNavigateToAddTransaction = {},
             onNavigateToBalanceDetails = {},
-            onNavigateToNotifications = {}
+            onNavigateToNotifications = {},
+            onCalendarClick = {},
+            onBalanceCardClick = {}
         )
     }
 }

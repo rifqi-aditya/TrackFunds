@@ -9,7 +9,7 @@ fun CategoryEntity.toDomain(): CategoryItem {
         id = this.id,
         name = this.name,
         iconIdentifier = this.iconIdentifier,
-        type = this.type.toString()
+        type = this.type
     )
 }
 
@@ -20,6 +20,6 @@ fun CategoryItem.toEntity(): CategoryEntity {
         id = this.id,
         name = this.name,
         iconIdentifier = this.iconIdentifier,
-        type = this.type.toString()
+        type = this.type
     )
 }

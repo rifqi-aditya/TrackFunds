@@ -18,7 +18,7 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
     return when (identifier?.trim()?.lowercase()) {
         "music" -> R.drawable.ic_music
         "light_on" -> R.drawable.ic_light_on
-        "parcking_ticket" -> R.drawable.ic_parcking_ticket // Pastikan ejaan ini benar sesuai nama file Anda
+        "parcking_ticket" -> R.drawable.ic_parcking_ticket
         "christmas_gift" -> R.drawable.ic_christmas_gift
         "parking_meter" -> R.drawable.ic_parking_meter
         "community_grants" -> R.drawable.ic_community_grants
@@ -61,7 +61,7 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
         "fiat_500" -> R.drawable.ic_fiat_500
         "books" -> R.drawable.ic_books
         "home" -> R.drawable.ic_home
-        "account_balance_wallet" -> R.drawable.ic_account_balance_wallet
+        "wallet_account" -> R.drawable.ic_wallet
         "person" -> R.drawable.ic_person
         "earbud_case" -> R.drawable.ic_earbud_case
         "diversity" -> R.drawable.ic_diversity
