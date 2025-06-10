@@ -37,7 +37,7 @@ import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
 import java.math.BigDecimal
 
 // Definisikan warna kustom untuk Card gelap dan teks putih
-val DarkCardBackgroundColor = Color(0xFF004780) // Contoh: Abu-abu biru tua yang gelap
+val DarkCardBackgroundColor = Color(0xFF004780)
 val TextOnDarkCardColor = Color.White
 
 @Composable

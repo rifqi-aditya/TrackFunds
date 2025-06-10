@@ -21,6 +21,8 @@
             <option value="$PROJECT_DIR$/feature/add_transaction" />
             <option value="$PROJECT_DIR$/feature/categories" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/profile" />
+            <option value="$PROJECT_DIR$/feature/transaction" />
           </set>
         </option>
       </GradleProjectSettings>
