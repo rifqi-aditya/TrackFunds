@@ -20,7 +20,9 @@ import com.rifqi.trackfunds.core.navigation.NavGraphs
 
 sealed class BottomNavItem(val graphRoute: String, val title: String, val icon: ImageVector) {
     object Home : BottomNavItem(NavGraphs.HOME_TAB_GRAPH, "Home", Icons.Rounded.Home)
-    object Accounts : BottomNavItem(NavGraphs.ACCOUNTS_TAB_GRAPH, "Accounts", Icons.Rounded.AccountBalanceWallet)
+    object Accounts :
+        BottomNavItem(NavGraphs.ACCOUNTS_TAB_GRAPH, "Accounts", Icons.Rounded.AccountBalanceWallet)
+
     object Budgets : BottomNavItem(NavGraphs.BUDGETS_TAB_GRAPH, "Budgets", Icons.Rounded.PieChart)
     object Profile : BottomNavItem(NavGraphs.PROFILE_TAB_GRAPH, "Profile", Icons.Rounded.Person)
 }

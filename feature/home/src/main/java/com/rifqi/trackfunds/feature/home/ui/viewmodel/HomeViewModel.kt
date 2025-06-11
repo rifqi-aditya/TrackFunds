@@ -102,7 +102,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onBalanceCardClicked() {
-        // TODO: Navigasi ke layar detail saldo bulanan
-        println("HomeViewModel: Balance card clicked.")
+
     }
 }

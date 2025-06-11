@@ -36,9 +36,9 @@ import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionListItem
-import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionListUiState
-import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionListViewModel
-import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.dummyTransactionList
+import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionHistoryUiState
+import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.DUMMY_ALL_TRANSACTIONS
+import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionHistoryViewModel
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -51,15 +51,15 @@ private fun formatTransactionDate(dateTime: LocalDateTime): String {
 
 // --- Layar Stateful (Container) ---
 @Composable
-fun TransactionsScreen(
-    viewModel: TransactionListViewModel = hiltViewModel(),
+fun TransactionHistoryScreen(
+    viewModel: TransactionHistoryViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToTransactionDetail: (transactionId: String) -> Unit,
     onNavigateToAddTransaction: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    TransactionsContent(
+    TransactionHistoryContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onTransactionClick = onNavigateToTransactionDetail,
@@ -73,8 +73,8 @@ fun TransactionsScreen(
 // --- Layar Utama (Stateless) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionsContent(
-    uiState: TransactionListUiState,
+fun TransactionHistoryContent(
+    uiState: TransactionHistoryUiState,
     onNavigateBack: () -> Unit,
     onTransactionClick: (String) -> Unit,
     onAddTransactionClick: () -> Unit,
@@ -170,14 +170,13 @@ fun TransactionsContent(
 @Composable
 private fun TransactionsContentPreview() {
     TrackFundsTheme {
-        val dummyState = TransactionListUiState(
+        val dummyState = TransactionHistoryUiState(
             isLoading = false,
             dateRange = "01 Jun 25 - 30 Jun 25",
-            elapsedAmount = BigDecimal("50000.0"),
-            upcomingAmount = BigDecimal.ZERO,
-            transactions = dummyTransactionList
+            summaryAmount = BigDecimal("50000.0"),
+            transactions = DUMMY_ALL_TRANSACTIONS
         )
-        TransactionsContent(
+        TransactionHistoryContent(
             uiState = dummyState,
             onNavigateBack = {},
             onTransactionClick = {},
@@ -196,14 +195,13 @@ private fun TransactionsContentPreview() {
 @Composable
 private fun TransactionsContentDarkPreview() {
     TrackFundsTheme(darkTheme = true) {
-        val dummyState = TransactionListUiState(
+        val dummyState = TransactionHistoryUiState(
             isLoading = false,
             dateRange = "01 Jun 25 - 30 Jun 25",
-            elapsedAmount = BigDecimal("50000.0"),
-            upcomingAmount = BigDecimal.ZERO,
-            transactions = dummyTransactionList
+            summaryAmount = BigDecimal("50000.0"),
+            transactions = DUMMY_ALL_TRANSACTIONS
         )
-        TransactionsContent(
+        TransactionHistoryContent(
             uiState = dummyState,
             onNavigateBack = {},
             onTransactionClick = {},

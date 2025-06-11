@@ -36,7 +36,6 @@ import com.rifqi.trackfunds.core.ui.util.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
 import java.math.BigDecimal
 
-// Definisikan warna kustom untuk Card gelap dan teks putih
 val DarkCardBackgroundColor = Color(0xFF004780)
 val TextOnDarkCardColor = Color.White
 
@@ -50,10 +49,10 @@ fun BalanceCard(
         Box(
             modifier = modifier
                 .fillMaxWidth()
-                .height(190.dp) // Sesuaikan tinggi dengan Card asli
+                .height(190.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .background(
-                    DarkCardBackgroundColor.copy(alpha = 0.3f), // Gunakan warna card dengan alpha
+                    DarkCardBackgroundColor.copy(alpha = 0.3f),
                     shape = MaterialTheme.shapes.large
                 ),
             contentAlignment = Alignment.Center
@@ -183,7 +182,11 @@ fun BalanceCardDarkSolidLightPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "BalanceCard Dark Solid - Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "BalanceCard Dark Solid - Dark Theme",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun BalanceCardDarkSolidDarkPreview() {
     TrackFundsTheme(darkTheme = true) { // Preview di dark theme

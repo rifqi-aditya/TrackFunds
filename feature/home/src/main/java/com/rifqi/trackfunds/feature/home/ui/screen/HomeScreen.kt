@@ -151,7 +151,7 @@ fun HomeScreenContent(
                     BalanceCard(
                         summary = uiState.summary,
                         onClick = {
-                            onBalanceCardClick() // Panggil handler dari ViewModel
+                            onNavigateToBalanceDetails // Panggil handler dari ViewModel
                             // onNavigateToBalanceDetails() // Navigasi bisa dipicu dari ViewModel atau dari sini
                         }
                     )
