@@ -70,14 +70,25 @@ fun TransactionListItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            // --- PERBAIKAN DAN IMPLEMENTASI ---
+            // === PERUBAHAN DI SINI ===
             val isExpense = transaction.type == TransactionType.EXPENSE
-            val amountColor = if (isExpense) MaterialTheme.colorScheme.error else Color.Green
-            val containerColor = if (isExpense) Color.Transparent else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
+
+            // Tentukan warna teks dan background berdasarkan tipe transaksi
+            val amountColor = if (isExpense) {
+                MaterialTheme.colorScheme.onSurface // Warna teks utama untuk expense
+            } else {
+                MaterialTheme.colorScheme.tertiary // Warna hijau pekat untuk income
+            }
+
+            val containerColor = if (isExpense) {
+                Color.Transparent // Tidak ada background untuk expense
+            } else {
+                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f) // Background hijau pastel untuk income
+            }
 
             Box(
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.small) // Gunakan shape dari tema untuk sudut rounded
+                    .clip(MaterialTheme.shapes.small) // Bentuk rounded untuk chip
                     .background(containerColor) // Terapkan warna background kondisional
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {

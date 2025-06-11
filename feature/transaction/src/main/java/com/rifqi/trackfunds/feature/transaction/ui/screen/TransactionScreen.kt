@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.SummaryHeaderCard
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionListItem
 import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionListUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionListViewModel
@@ -145,13 +142,13 @@ fun TransactionsContent(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp) // Jarak kecil antar Card/Divider
             ) {
-                item {
-                    SummaryHeaderCard(
-                        elapsedAmount = uiState.elapsedAmount,
-                        upcomingAmount = uiState.upcomingAmount
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+//                item {
+//                    SummaryHeaderCard(
+//                        elapsedAmount = uiState.elapsedAmount,
+//                        upcomingAmount = uiState.upcomingAmount
+//                    )
+//                    Spacer(modifier = Modifier.height(16.dp))
+//                }
 
                 items(
                     items = uiState.transactions,
