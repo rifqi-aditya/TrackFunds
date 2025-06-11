@@ -1,14 +1,18 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,15 +21,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.ui.R
+import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.util.getCurrentDateRange
 import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
-import com.rifqi.trackfunds.feature.home.ui.components.HomeTopAppBar
 import com.rifqi.trackfunds.feature.home.ui.components.TransactionSection
 import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.DUMMY_HOME_SUMMARY_DATA
@@ -75,11 +81,38 @@ fun HomeScreenContent(
 ) {
     Scaffold(
         topBar = {
-            HomeTopAppBar(
-                currentMonth = uiState.currentMonthAndYear,
-                dateRange = uiState.dateRangePeriod,
-                onCalendarClick = onCalendarClick,
-                onNotificationsClick = onNavigateToNotifications,
+            AppTopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onCalendarClick) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_calendar),
+                            contentDescription = "Pilih Periode",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                title = {
+                    Column {
+                        Text(
+                            uiState.currentMonthAndYear,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            uiState.dateRangePeriod,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToNotifications) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_notification),
+                            contentDescription = "Notifikasi",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             )
         },
     ) { innerPadding ->
@@ -137,7 +170,7 @@ fun HomeScreenContent(
                     item {
                         TransactionSection(
                             title = "Income",
-                            items = uiState.summary?.recentIncome,
+                            items = uiState.summary.recentIncome,
                             onViewAllClick = { onNavigateToAllTransactions("INCOME") },
                             onItemClick = { transactionItem ->
                                 println("Income item clicked: ${transactionItem.categoryName}")

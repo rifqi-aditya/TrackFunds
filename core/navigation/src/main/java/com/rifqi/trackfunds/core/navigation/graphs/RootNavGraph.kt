@@ -21,6 +21,7 @@ import com.rifqi.trackfunds.core.navigation.NavGraphs
 import com.rifqi.trackfunds.core.navigation.Screen
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
+import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
 
 @Composable
 fun PlaceholderScreen(name: String) {
@@ -88,7 +89,7 @@ fun NavGraphBuilder.mainAppFlowGraph(navController: NavHostController) {
             startDestination = Screen.Budgets.route,
             route = NavGraphs.BUDGETS_TAB_GRAPH
         ) {
-            composable(Screen.Budgets.route) { PlaceholderScreen(name = "Budgets Screen") }
+            composable(Screen.Budgets.route) { PlaceholderScreen(name = "On Development...") }
         }
 
         // Nested Graph untuk Tab Profile
@@ -96,8 +97,16 @@ fun NavGraphBuilder.mainAppFlowGraph(navController: NavHostController) {
             startDestination = Screen.Profile.route,
             route = NavGraphs.PROFILE_TAB_GRAPH
         ) {
-            composable(Screen.Profile.route) { PlaceholderScreen(name = "Profile Screen") }
-            // composable(Screen.Settings.route) { SettingsScreen(...) } // Jika settings bagian dari profile tab
+            composable(Screen.Profile.route) {
+                ProfileScreen(
+                    onNavigateToSettings = {
+                        navController.navigate(Screen.Settings.route)
+                    },
+                    onNavigateToManageAccounts = { },
+                    onNavigateToManageCategories = { },
+                    onLogout = { },
+                )
+            }
         }
 
         // Layar Full-Screen (di luar Bottom Nav tabs, tapi bagian dari main_app_flow)
