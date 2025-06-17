@@ -1,79 +1,101 @@
 # File: gradle/libs.versions.toml
 
 [versions]
+# --- Fondasi Utama (Stabil dan Teruji) ---
 agp = "8.10.1"
-hiltAndroid = "2.56.2"
-hiltNavigationCompose = "1.2.0"
 kotlin = "2.1.21"
+ksp = "2.1.21-2.0.1"
+hilt = "2.56.2"
+
+# --- Jetpack Compose ---
+composeBom = "2025.05.00"       # Bill of Materials stabil terbaru dari Google
+activityCompose = "1.10.1"
+
+# --- Jetpack Lainnya (Kunci Perbaikan) ---
 coreKtx = "1.16.0"
+lifecycle = "2.8.1"             # Versi Lifecycle yang selaras dengan Navigation
+navigationCompose = "2.9.0"     # VERSI STABIL TERBARU YANG MENDUKUNG TYPE-SAFE
+hiltNavigationCompose = "1.2.0"   # Versi stabil untuk integrasi Hilt + Navigasi
+roomVersion = "2.7.1"
+
+# --- Library Lainnya ---
+kotlinxCoroutinesAndroid = "1.8.1" # Menggunakan satu alias untuk konsistensi
+kotlinxCoroutinesCore = "1.8.1"
+kotlinxSerialization = "1.7.3"
+javaxInject = "1"
+uiTextGoogleFonts = "1.8.2"
+
+# --- Testing ---
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-kotlinxCoroutinesAndroid = "1.8.0"
-kotlinxCoroutinesCore = "1.8.0"
-lifecycleRuntimeKtx = "2.9.0"
-activityCompose = "1.10.1"
-composeBom = "2025.05.01"
-appcompat = "1.7.0"
-lifecycleViewmodelCompose = "2.9.0"
-lifecycleViewmodelKtx = "2.9.0"
+
+hiltAndroid = "2.56.2"
+lifecycleRuntimeKtx = "2.9.1"
+appcompat = "1.7.1"
+lifecycleViewmodelCompose = "2.9.1"
+lifecycleViewmodelKtx = "2.9.1"
 material = "1.12.0"
 jetbrainsKotlinJvm = "2.1.0"
-navigationCompose = "2.9.0"
-roomVersion = "2.7.1"
-ksp = "2.1.21-2.0.1"
-hilt = "2.56.2"
-uiTextGoogleFonts = "1.8.2"
-javaxInject = "1"
 
 [libraries]
+# AndroidX Core & Lifecycle
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-foundation = { module = "androidx.compose.foundation:foundation" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
-androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
-androidx-runtime = { module = "androidx.compose.runtime:runtime" }
-androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+# Jetpack Compose (BOM) - Alias duplikat telah dihapus
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-runtime = { module = "androidx.compose.runtime:runtime" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+
+# Navigation
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+# Hilt
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+
+# Coroutines & Serialization
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# Room
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
+
+# View System (Material)
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-material3 = { module = "androidx.compose.material3:material3" }
-runtime = { module = "androidx.compose.runtime:runtime" }
-ui = { module = "androidx.compose.ui:ui" }
-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

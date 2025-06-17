@@ -53,6 +53,7 @@ private fun formatTransactionDate(dateTime: LocalDateTime): String {
 @Composable
 fun TransactionHistoryScreen(
     viewModel: TransactionHistoryViewModel = hiltViewModel(),
+    transactionType: String,
     onNavigateBack: () -> Unit,
     onNavigateToTransactionDetail: (transactionId: String) -> Unit,
     onNavigateToAddTransaction: () -> Unit

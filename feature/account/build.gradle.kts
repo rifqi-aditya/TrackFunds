@@ -38,6 +38,7 @@ android {
 dependencies {
     // Implementasi modul proyek lain
     implementation(project(":core:data"))
+    implementation(project(":core:common"))
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
 
@@ -50,15 +51,15 @@ dependencies {
 
     // Jetpack Compose (BOM mengatur versi untuk artefak Compose lainnya)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.ui)
-    implementation(libs.ui.graphics)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.foundation)
-    implementation(libs.material3)
+    implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.core)
-    implementation(libs.androidx.material.icons.extended) // Opsional
-    implementation(libs.runtime)
-    implementation(libs.ui.tooling.preview)
-    debugImplementation(libs.ui.tooling)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
 
     // Hilt (Dependency Injection)
     implementation(libs.hilt.android)
@@ -80,6 +81,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.test.manifest)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,19 +25,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.util.getCurrentDateRange
-import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
+import com.rifqi.trackfunds.core.ui.util.formatDateRangeToString
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
+import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
-import com.rifqi.trackfunds.feature.home.ui.components.TransactionSection
+import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
-import com.rifqi.trackfunds.feature.home.ui.viewmodel.DUMMY_HOME_SUMMARY_DATA
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 
 
@@ -49,17 +49,20 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToAllTransactions: (transactionType: String) -> Unit,
     onNavigateToBalanceDetails: () -> Unit,
-    onNavigateToNotifications: () -> Unit
+    onNavigateToNotifications: () -> Unit,
+    onNavigateToAddTransaction: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     HomeScreenContent(
         uiState = uiState,
-        onNavigateToAllTransactions = onNavigateToAllTransactions,
         onNavigateToBalanceDetails = onNavigateToBalanceDetails,
+        onNavigateToAllTransactions = onNavigateToAllTransactions,
         onNavigateToNotifications = onNavigateToNotifications,
-        onCalendarClick = viewModel::onDateRangeClicked,
-        onBalanceCardClick = viewModel::onBalanceCardClicked
+        onNavigateToAddTransaction = onNavigateToAddTransaction,
+        onCalendarClick = { },
+//        onCalendarClick = viewModel::onDateRangeClicked,
+//        onBalanceCardClick = viewModel::onBalanceCardClicked,
     )
 }
 
@@ -76,9 +79,11 @@ fun HomeScreenContent(
     onNavigateToBalanceDetails: () -> Unit,
     onNavigateToAllTransactions: (transactionType: String) -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToAddTransaction: () -> Unit,
     onCalendarClick: () -> Unit,
-    onBalanceCardClick: () -> Unit
 ) {
+    val dateRangeString = formatDateRangeToString(uiState.dateRangePeriod)
+
     Scaffold(
         topBar = {
             AppTopAppBar(
@@ -98,7 +103,7 @@ fun HomeScreenContent(
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            uiState.dateRangePeriod,
+                            dateRangeString,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -115,6 +120,11 @@ fun HomeScreenContent(
                 }
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { onNavigateToAddTransaction() }) {
+                Icon(Icons.Rounded.Add, contentDescription = "Tambah Transaksi")
+            }
+        }
     ) { innerPadding ->
         if (uiState.isLoading) {
             Box(
@@ -158,22 +168,29 @@ fun HomeScreenContent(
                 }
                 if (uiState.summary != null) {
                     item {
-                        TransactionSection(
-                            title = "Expenses",
-                            items = uiState.summary.recentExpenses,
+                        SummarySection(
+                            title = "Expenses by Category",
+                            items = uiState.summary.expenseSummaries,
                             onViewAllClick = { onNavigateToAllTransactions("EXPENSE") },
-                            onItemClick = { transactionItem ->
-                                println("Expense item clicked: ${transactionItem.categoryName}")
+                            onItemClick = { summaryItem -> /* ... */ },
+                            itemContent = { summaryItem ->
+                                // Anda "memasukkan" komponen spesialis SummaryRow ke dalam slot
+                                CategorySummaryRow(
+                                    categoryItem = summaryItem,
+                                )
                             }
                         )
                     }
                     item {
-                        TransactionSection(
-                            title = "Income",
-                            items = uiState.summary.recentIncome,
+                        SummarySection(
+                            title = "Income by Category",
+                            items = uiState.summary.incomeSummaries,
                             onViewAllClick = { onNavigateToAllTransactions("INCOME") },
-                            onItemClick = { transactionItem ->
-                                println("Income item clicked: ${transactionItem.categoryName}")
+                            onItemClick = { summaryItem -> /* ... */ },
+                            itemContent = { summaryItem ->
+                                CategorySummaryRow(
+                                    categoryItem = summaryItem,
+                                )
                             }
                         )
                     }
@@ -181,58 +198,5 @@ fun HomeScreenContent(
                 item { Spacer(modifier = Modifier.height(80.dp)) }
             }
         }
-    }
-}
-
-
-// --- Preview SEKARANG memanggil HomeScreenContent ---
-@Preview(showBackground = true, name = "Home Screen Content - Light")
-@Composable
-fun HomeScreenContentPreview() {
-    TrackFundsTheme(darkTheme = false) {
-        val previewState = HomeUiState(
-            isLoading = false,
-            currentMonthAndYear = getCurrentMonthAndYear(),
-            dateRangePeriod = getCurrentDateRange(),
-            summary = DUMMY_HOME_SUMMARY_DATA, // Data dummy
-            challengeMessage = "Your first challenge is complete!",
-            error = null
-        )
-        HomeScreenContent(
-            uiState = previewState,
-            // Berikan lambda kosong untuk semua aksi karena ini hanya preview UI
-            onNavigateToAllTransactions = {},
-            onNavigateToBalanceDetails = {},
-            onNavigateToNotifications = {},
-            onCalendarClick = {},
-            onBalanceCardClick = {}
-        )
-    }
-}
-
-@Preview(
-    showBackground = true,
-    name = "Home Screen Content - Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-fun HomeScreenContentDarkPreview() {
-    TrackFundsTheme(darkTheme = true) {
-        val previewState = HomeUiState(
-            isLoading = false,
-            currentMonthAndYear = getCurrentMonthAndYear(),
-            dateRangePeriod = getCurrentDateRange(),
-            summary = DUMMY_HOME_SUMMARY_DATA,
-            challengeMessage = null, // Contoh tanpa challenge
-            error = null
-        )
-        HomeScreenContent(
-            uiState = previewState,
-            onNavigateToAllTransactions = {},
-            onNavigateToBalanceDetails = {},
-            onNavigateToNotifications = {},
-            onCalendarClick = {},
-            onBalanceCardClick = {}
-        )
     }
 }

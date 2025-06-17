@@ -16,15 +16,40 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.rifqi.trackfunds.core.navigation.NavGraphs
+import com.rifqi.trackfunds.core.navigation.AccountsGraph
+import com.rifqi.trackfunds.core.navigation.AppScreen
+import com.rifqi.trackfunds.core.navigation.BudgetsGraph
+import com.rifqi.trackfunds.core.navigation.HomeGraph
+import com.rifqi.trackfunds.core.navigation.ProfileGraph
 
-sealed class BottomNavItem(val graphRoute: String, val title: String, val icon: ImageVector) {
-    object Home : BottomNavItem(NavGraphs.HOME_TAB_GRAPH, "Home", Icons.Rounded.Home)
-    object Accounts :
-        BottomNavItem(NavGraphs.ACCOUNTS_TAB_GRAPH, "Accounts", Icons.Rounded.AccountBalanceWallet)
+sealed class BottomNavItem(
+    val graphRoute: AppScreen, // Tipe diubah dari String ke AppScreen
+    val title: String,
+    val icon: ImageVector
+) {
+    data object Home : BottomNavItem(
+        graphRoute = HomeGraph, // Menggunakan objek rute
+        title = "Home",
+        icon = Icons.Rounded.Home
+    )
 
-    object Budgets : BottomNavItem(NavGraphs.BUDGETS_TAB_GRAPH, "Budgets", Icons.Rounded.PieChart)
-    object Profile : BottomNavItem(NavGraphs.PROFILE_TAB_GRAPH, "Profile", Icons.Rounded.Person)
+    data object Accounts : BottomNavItem(
+        graphRoute = AccountsGraph, // Menggunakan objek rute
+        title = "Accounts",
+        icon = Icons.Rounded.AccountBalanceWallet
+    )
+
+    data object Budgets : BottomNavItem(
+        graphRoute = BudgetsGraph, // Menggunakan objek rute
+        title = "Budgets",
+        icon = Icons.Rounded.PieChart
+    )
+
+    data object Profile : BottomNavItem(
+        graphRoute = ProfileGraph, // Menggunakan objek rute
+        title = "Profile",
+        icon = Icons.Rounded.Person
+    )
 }
 
 val bottomNavItemsList = listOf(
@@ -43,7 +68,9 @@ fun AppBottomNavigationBar(navController: NavHostController) {
             NavigationBarItem(
                 icon = { Icon(screen.icon, contentDescription = screen.title) },
                 label = { Text(screen.title) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.graphRoute } == true,
+                selected = currentDestination?.hierarchy?.any {
+                    it.route == screen.graphRoute::class.qualifiedName
+                } == true,
                 onClick = {
                     navController.navigate(screen.graphRoute) {
                         // Pop up ke start destination dari graph untuk menghindari tumpukan back stack besar

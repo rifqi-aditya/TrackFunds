@@ -17,18 +17,18 @@ import com.rifqi.trackfunds.core.ui.R
 fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
     return when (identifier?.trim()?.lowercase()) {
         "music" -> R.drawable.ic_music
-        "light_on" -> R.drawable.ic_light_on
-        "parcking_ticket" -> R.drawable.ic_parcking_ticket
-        "christmas_gift" -> R.drawable.ic_christmas_gift
+        "electricity" -> R.drawable.ic_light_on
+        "parking" -> R.drawable.ic_parcking_ticket
+        "gift" -> R.drawable.ic_christmas_gift
         "parking_meter" -> R.drawable.ic_parking_meter
         "community_grants" -> R.drawable.ic_community_grants
         "water" -> R.drawable.ic_water
-        "gas_station" -> R.drawable.ic_gas_station
-        "shopping_cart" -> R.drawable.ic_shopping_cart
-        "protect" -> R.drawable.ic_protect
+        "gas" -> R.drawable.ic_gas_station
+        "shopping" -> R.drawable.ic_shopping_cart
+        "insurance" -> R.drawable.ic_protect
         "event_accepted" -> R.drawable.ic_event_accepted
-        "wi_fi" -> R.drawable.ic_wi_fi
-        "medical_doctor" -> R.drawable.ic_medical_doctor
+        "internet" -> R.drawable.ic_wi_fi
+        "doctor" -> R.drawable.ic_medical_doctor
         "restaurant" -> R.drawable.ic_restaurant
         "road" -> R.drawable.ic_road
         "documentary" -> R.drawable.ic_documentary
@@ -72,8 +72,7 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
         "close" -> R.drawable.ic_close
         "date_range" -> R.drawable.ic_date_range
         "payments" -> R.drawable.ic_payments
-        // Tambahkan identifier lain jika ada
-        else -> R.drawable.ic_diversity // Ikon default jika identifier tidak dikenal atau null
+        else -> R.drawable.ic_diversity
     }
 }
 
@@ -85,7 +84,6 @@ fun DisplayIconFromResource(
     identifier: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    @DrawableRes defaultIconRes: Int = R.drawable.ic_diversity
 ) {
     val resourceId = mapIconIdentifierToDrawableRes(identifier)
 

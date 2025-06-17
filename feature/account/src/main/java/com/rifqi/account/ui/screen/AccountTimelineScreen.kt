@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.account.ui.model.AccountTimelineUiState
 import com.rifqi.account.ui.viewmodel.AccountTimelineViewModel
+import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
@@ -137,7 +138,7 @@ fun TransactionTimelineItem(
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = transaction.description.ifEmpty { transaction.categoryName },
+                text = transaction.note.ifEmpty { transaction.categoryName },
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
@@ -253,6 +254,7 @@ fun AccountTimelineContent(
 @Composable
 fun AccountTimelineScreen(
     viewModel: AccountTimelineViewModel = hiltViewModel(),
+    account: String,
     onNavigateBack: () -> Unit,
     onNavigateToTransactionDetail: (String) -> Unit,
     onNavigateToAddTransaction: () -> Unit
@@ -271,36 +273,39 @@ fun AccountTimelineScreen(
 private val DUMMY_TIMELINE_TRANSACTIONS = listOf(
     TransactionItem(
         id = "t1",
-        description = "Mbanking initial balance",
+        note = "Mbanking initial balance",
         amount = BigDecimal("210000.0"),
         type = TransactionType.INCOME,
         date = LocalDateTime.now().minusDays(1).withHour(9),
         categoryId = "init",
         categoryName = "Initial",
         iconIdentifier = "cash",
-        accountId = "acc2"
+        accountId = "acc2",
+        accountName = "acc2"
     ),
     TransactionItem(
         id = "t2",
-        description = "Uang Jajan",
+        note = "Uang Jajan",
         amount = BigDecimal("210000.0"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(11).withMinute(56),
         categoryId = "food",
         categoryName = "Makanan",
         iconIdentifier = "restaurant",
-        accountId = "acc2"
+        accountId = "acc2",
+        accountName = "acc2"
     ),
     TransactionItem(
         id = "t3",
-        description = "Liquid vape",
+        note = "Liquid vape",
         amount = BigDecimal("210000.0"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(11).withMinute(55),
         categoryId = "shop",
         categoryName = "Belanja",
         iconIdentifier = "shopping_cart",
-        accountId = "acc2"
+        accountId = "acc2",
+        accountName = "acc2"
     )
 )
 

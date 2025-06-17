@@ -1,53 +1,69 @@
 package com.rifqi.trackfunds.core.navigation
 
-// --- KUNCI ARGUMEN & HASIL NAVIGASI ---
-const val ARG_TRANSACTION_TYPE = "transactionType"
-const val ARG_WALLET_ID = "walletId"
-const val ARG_TRANSACTION_ID = "transactionId"
+import kotlinx.serialization.Serializable
 
-const val KEY_SELECTED_CATEGORY = "selected_category_key"
-const val KEY_SELECTED_ACCOUNT = "selected_account_key"
+@Serializable
+sealed interface AppScreen
 
-// --- RUTE UNTUK GRAF NAVIGASI ---
-object NavGraphs {
-    const val ROOT = "root_graph" // Rute untuk NavHost utama
-    // Rute untuk setiap tab di Bottom Navigation (ini adalah nested graph)
-    const val HOME_TAB_GRAPH = "home_tab_graph"
-    const val ACCOUNTS_TAB_GRAPH = "accounts_tab_graph"
-    const val BUDGETS_TAB_GRAPH = "budgets_tab_graph"
-    const val PROFILE_TAB_GRAPH = "profile_tab_graph"
-}
+// --- Nested Graph Routes ---
+@Serializable
+data object HomeGraph : AppScreen
 
-// --- RUTE UNTUK LAYAR INDIVIDUAL ---
-sealed class Screen(val route: String) {
-    // Layar di dalam Home Graph
-    object Home : Screen("home_screen")
-    object Notifications : Screen("notifications_screen")
-    object BalanceDetails : Screen("balance_details_screen")
+@Serializable
+data object AccountsGraph : AppScreen
 
-    // Layar di dalam Accounts Graph
-    object Accounts : Screen("accounts_screen")
-    object AccountTimeline : Screen("account_timeline_screen/{$ARG_WALLET_ID}") {
-        fun createRoute(walletId: String) = "account_timeline_screen/$walletId"
-    }
+@Serializable
+data object BudgetsGraph : AppScreen
 
-    // Layar di dalam Budgets Graph
-    object Budgets : Screen("budgets_screen")
+@Serializable
+data object ProfileGraph : AppScreen
 
-    // Layar di dalam Profile Graph
-    object Profile : Screen("profile_screen")
-    object Settings : Screen("settings_screen")
+// --- Rute untuk Layar Individual ---
 
-    // Layar di luar Bottom Nav (bisa full screen atau bagian dari alur lain)
-    object AllTransactions : Screen("all_transactions_screen/{$ARG_TRANSACTION_TYPE}") {
-        fun createRoute(transactionType: String) = "all_transactions_screen/$transactionType"
-    }
-    object TransactionDetail : Screen("transaction_detail_screen/{$ARG_TRANSACTION_ID}") {
-        fun createRoute(transactionId: String) = "transaction_detail_screen/$transactionId"
-    }
-    object AddTransaction : Screen("add_transaction_screen")
-    object SelectCategory : Screen("select_category_screen/{$ARG_TRANSACTION_TYPE}") {
-        fun createRoute(transactionType: String) = "select_category_screen/$transactionType"
-    }
-    object SelectAccount : Screen("select_account_screen")
-}
+// Layar di dalam Home Graph
+@Serializable
+data object Home : AppScreen
+
+@Serializable
+data object Notifications : AppScreen
+
+@Serializable
+data object BalanceDetails : AppScreen
+
+// Layar di dalam Accounts Graph
+@Serializable
+data object Accounts : AppScreen
+
+// Menggunakan custom NavType untuk melewatkan seluruh objek
+@Serializable
+data class AccountTimeline(val account: String) : AppScreen
+
+// Layar di dalam Budgets Graph
+@Serializable
+data object Budgets : AppScreen
+
+// Layar di dalam Profile Graph
+@Serializable
+data object Profile : AppScreen
+
+@Serializable
+data object Settings : AppScreen
+
+@Serializable
+data object AddTransactionGraph : AppScreen
+
+// Layar Full-Screen
+@Serializable
+data class AllTransactions(val transactionType: String) : AppScreen
+
+@Serializable
+data class TransactionDetail(val transactionId: String) : AppScreen
+
+@Serializable
+data object AddTransaction : AppScreen
+
+@Serializable
+data class SelectCategory(val transactionType: String) : AppScreen
+
+@Serializable
+data object SelectAccount : AppScreen

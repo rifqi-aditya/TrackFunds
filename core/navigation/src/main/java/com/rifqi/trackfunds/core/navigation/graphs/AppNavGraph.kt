@@ -4,21 +4,38 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
+import com.rifqi.account.ui.screen.AccountTimelineScreen
 import com.rifqi.account.ui.screen.AccountsScreen
+import com.rifqi.account.ui.screen.SelectAccountScreen
 import com.rifqi.add_transaction.ui.screen.AddTransactionScreen
-import com.rifqi.trackfunds.core.navigation.ARG_TRANSACTION_ID
-import com.rifqi.trackfunds.core.navigation.ARG_TRANSACTION_TYPE
-import com.rifqi.trackfunds.core.navigation.KEY_SELECTED_CATEGORY
-import com.rifqi.trackfunds.core.navigation.NavGraphs
-import com.rifqi.trackfunds.core.navigation.Screen
+import com.rifqi.add_transaction.ui.viewmodel.AddTransactionViewModel
+import com.rifqi.trackfunds.core.navigation.AccountTimeline
+import com.rifqi.trackfunds.core.navigation.Accounts
+import com.rifqi.trackfunds.core.navigation.AccountsGraph
+import com.rifqi.trackfunds.core.navigation.AddTransaction
+import com.rifqi.trackfunds.core.navigation.AddTransactionGraph
+import com.rifqi.trackfunds.core.navigation.AllTransactions
+import com.rifqi.trackfunds.core.navigation.BalanceDetails
+import com.rifqi.trackfunds.core.navigation.Budgets
+import com.rifqi.trackfunds.core.navigation.BudgetsGraph
+import com.rifqi.trackfunds.core.navigation.Home
+import com.rifqi.trackfunds.core.navigation.HomeGraph
+import com.rifqi.trackfunds.core.navigation.Notifications
+import com.rifqi.trackfunds.core.navigation.Profile
+import com.rifqi.trackfunds.core.navigation.ProfileGraph
+import com.rifqi.trackfunds.core.navigation.SelectAccount
+import com.rifqi.trackfunds.core.navigation.SelectCategory
+import com.rifqi.trackfunds.core.navigation.Settings
+import com.rifqi.trackfunds.core.navigation.TransactionDetail
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
 import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
@@ -35,137 +52,149 @@ fun AppNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+
     NavHost(
         navController = navController,
-        startDestination = NavGraphs.HOME_TAB_GRAPH, // Mulai dari graph tab Home
+        startDestination = HomeGraph,
         modifier = modifier,
-        route = NavGraphs.ROOT
     ) {
         // --- Nested Graph untuk Tab Home ---
-        navigation(
-            startDestination = Screen.Home.route,
-            route = NavGraphs.HOME_TAB_GRAPH
+        navigation<HomeGraph>(
+            startDestination = Home,
         ) {
-            composable(Screen.Home.route) {
+            composable<Home> {
                 HomeScreen(
                     onNavigateToAllTransactions = { transactionType ->
-                        navController.navigate(Screen.AllTransactions.createRoute(transactionType))
+                        navController.navigate(AllTransactions(transactionType))
                     },
-//                    onNavigateToAddTransaction = {
-//                        navController.navigate(Screen.AddTransaction.route)
-//                    },
                     onNavigateToBalanceDetails = {
-                        navController.navigate(
-                            Screen.TransactionDetail.createRoute(
-                                "ALL"
-                            )
-                        )
+                        // FIX: Navigasi ke BalanceDetails, bukan TransactionDetail("ALL")
+                        // kecuali jika itu memang tujuannya.
+                        navController.navigate(BalanceDetails)
                     },
-                    onNavigateToNotifications = { /* TODO: Navigasi ke layar notifikasi */ }
+                    onNavigateToNotifications = {
+                        // FIX: Navigasi ke rute objek Notifications
+                        navController.navigate(Notifications)
+                    },
+                    onNavigateToAddTransaction = {
+                        navController.navigate(AddTransaction)
+                    }
                 )
             }
         }
 
         // --- Nested Graph untuk Tab Accounts ---
-        navigation(
-            startDestination = Screen.Accounts.route,
-            route = NavGraphs.ACCOUNTS_TAB_GRAPH
+        navigation<AccountsGraph>(
+            startDestination = Accounts,
         ) {
-            composable(Screen.Accounts.route) {
+            composable<Accounts> {
                 AccountsScreen(
-                    onNavigateToWalletDetail = { accountId ->
-                        navController.navigate(Screen.AccountTimeline.createRoute(accountId))
+                    // FIX: Mengisi logika navigasi yang sebelumnya kosong
+                    onNavigateToWalletDetail = { account ->
+                        navController.navigate(AccountTimeline(account = account))
                     },
-                    onNavigateToTransfer = { /* TODO: Navigasi ke layar transfer */ }
+                    onNavigateToTransfer = { /* TODO */ }
                 )
             }
-//            composable(
-//                route = Screen.AccountTimeline.route,
-//                arguments = listOf(navArgument(ARG_WALLET_ID) { type = NavType.StringType })
-//            ) {
-//                AccountTimelineScreen(
-//                    onNavigateBack = { navController.popBackStack() },
-//                    onAddTransactionClick = { navController.navigate(Screen.AddTransaction.route) },
-//                    onNavigateToTransactionDetail = { transactionId ->
-//                        navController.navigate(Screen.TransactionDetail.createRoute(transactionId))
-//                    }
-//                )
-//            }
+            composable<AccountTimeline>
+            { backStackEntry ->
+                val route = backStackEntry.toRoute<AccountTimeline>()
+
+                // FIX: Menambahkan parameter yang dibutuhkan oleh AccountTimelineScreen
+                AccountTimelineScreen(
+                    account = route.account,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToTransactionDetail = { transactionId ->
+                        navController.navigate(TransactionDetail(transactionId))
+                    },
+                    onNavigateToAddTransaction = {
+                        navController.navigate(AddTransaction)
+                    }
+                )
+            }
         }
 
-        // --- Nested Graph untuk Tab Budgets & Profile (dengan placeholder) ---
-        navigation(route = NavGraphs.BUDGETS_TAB_GRAPH, startDestination = Screen.Budgets.route) {
-            composable(Screen.Budgets.route) { PlaceholderScreen("Budgets Screen") }
+        // --- Graph lainnya tetap sama dan sudah benar ---
+        navigation<BudgetsGraph>(startDestination = Budgets) {
+            composable<Budgets> { PlaceholderScreen("Budgets Screen") }
         }
-        navigation(route = NavGraphs.PROFILE_TAB_GRAPH, startDestination = Screen.Profile.route) {
-            composable(Screen.Profile.route) {
+        navigation<ProfileGraph>(startDestination = Profile) {
+            composable<Profile> {
                 ProfileScreen(
-                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
-                    onNavigateToManageAccounts = { navController.navigate(Screen.Accounts.route) }, // Contoh navigasi
+                    onNavigateToSettings = { navController.navigate(Settings) },
+                    onNavigateToManageAccounts = { navController.navigate(Accounts) },
                     onNavigateToManageCategories = { /* TODO */ },
                     onLogout = { /* TODO */ }
                 )
             }
         }
 
-        // --- Layar Full-Screen (di luar Bottom Nav tabs) ---
-        composable(Screen.AddTransaction.route) {
-            AddTransactionScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToSelectCategory = { transactionType ->
-                    navController.navigate(Screen.SelectCategory.createRoute(transactionType))
-                },
-                onNavigateToSelectAccount = {
-                    navController.navigate(Screen.SelectAccount.route)
-                },
-            )
-        }
-        composable(
-            route = Screen.SelectCategory.route,
-            arguments = listOf(navArgument(ARG_TRANSACTION_TYPE) { type = NavType.StringType })
+        navigation<AddTransactionGraph>(
+            startDestination = AddTransaction,
         ) {
-            SelectCategoryScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onCategorySelected = { selectedCategory ->
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        KEY_SELECTED_CATEGORY, // Gunakan konstanta
-                        selectedCategory
-                    )
-                    navController.popBackStack()
-                },
-                onNavigateToAddCategory = { /* TODO */ },
-                onSearchClicked = { /* TODO */ }
-            )
+            composable<AddTransaction> { navBackStackEntry ->
+                val addTransactionGraphEntry = remember(navBackStackEntry) {
+                    navController.getBackStackEntry<AddTransactionGraph>()
+                }
+                val viewModel: AddTransactionViewModel = hiltViewModel(addTransactionGraphEntry)
+
+                AddTransactionScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToSelectCategory = { transactionType ->
+                        navController.navigate(SelectCategory(transactionType))
+                    },
+                    onNavigateToSelectAccount = {
+                        navController.navigate(SelectAccount)
+                    },
+                )
+            }
+
+            composable<SelectAccount> {
+                SelectAccountScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToAddAccount = { /* TODO */ }
+                )
+            }
+
+            composable<SelectCategory> {
+                SelectCategoryScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToAddCategory = { },
+                    onSearchClicked = { },
+                )
+            }
         }
-        composable(route = Screen.SelectAccount.route) {
-            // Panggil SelectAccountScreen Anda di sini
-            PlaceholderScreen("Select Account Screen")
-        }
-        composable(
-            route = Screen.AllTransactions.route,
-            arguments = listOf(navArgument(ARG_TRANSACTION_TYPE) { type = NavType.StringType })
-        ) {
+
+        // --- Layar Full-Screen ---
+
+        // FIX: Mengubah composable AllTransactions menjadi type-safe
+        composable<AllTransactions> { backStackEntry ->
+            val args = backStackEntry.toRoute<AllTransactions>()
             TransactionHistoryScreen(
+                transactionType = args.transactionType,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToTransactionDetail = { transactionId ->
-                    navController.navigate(Screen.TransactionDetail.createRoute(transactionId))
+                    navController.navigate(TransactionDetail(transactionId))
                 },
-                onNavigateToAddTransaction = { navController.navigate(Screen.AddTransaction.route) }
+                onNavigateToAddTransaction = { navController.navigate(AddTransaction) }
             )
         }
-        composable(
-            route = Screen.TransactionDetail.route,
-            arguments = listOf(navArgument(ARG_TRANSACTION_ID) { type = NavType.StringType })
-        ) {
-            PlaceholderScreen(name = "Transaction Detail Screen")
+
+        // FIX: Mengubah composable TransactionDetail menjadi type-safe
+        composable<TransactionDetail> { backStackEntry ->
+            val args = backStackEntry.toRoute<TransactionDetail>()
+            PlaceholderScreen(name = "Transaction Detail Screen for ID: ${args.transactionId}")
         }
-        composable(Screen.Settings.route) {
+
+        // FIX: Mengubah composable lainnya menjadi type-safe
+        composable<Settings> {
             PlaceholderScreen(name = "Settings Screen")
         }
-        composable(Screen.Notifications.route) {
+        composable<Notifications> {
             PlaceholderScreen(name = "Notifications Screen")
         }
-        composable(Screen.BalanceDetails.route) {
+        composable<BalanceDetails> {
             PlaceholderScreen(name = "Balance Details Screen")
         }
     }

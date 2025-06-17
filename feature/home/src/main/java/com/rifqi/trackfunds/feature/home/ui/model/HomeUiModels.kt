@@ -1,31 +1,35 @@
 package com.rifqi.trackfunds.feature.home.ui.model
 
+import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
 import java.math.BigDecimal
+import java.time.LocalDate
 
-// Model data untuk satu item transaksi di daftar ringkasan Home
-data class HomeTransactionItem(
-    val id: String,
-    val categoryName: String,
-    val iconIdentifier: String?, // Identifier untuk dipetakan ke ikon visual
-    val amount: BigDecimal,
-    val type: String // "Expense" atau "Income", bisa juga enum dari domain jika lebih ketat
+data class HomeUiState(
+    val isLoading: Boolean = true,
+    val currentMonthAndYear: String = "",
+    val dateRangePeriod: Pair<LocalDate, LocalDate> = getCurrentDateRangePair(),
+    val summary: HomeSummary? = null,
+    val challengeMessage: String? = null,
+    val error: String? = null
 )
 
-// Model data untuk ringkasan keseluruhan yang ditampilkan di Home
 data class HomeSummary(
     val monthlyBalance: BigDecimal,
     val totalExpenses: BigDecimal,
     val totalIncome: BigDecimal,
-    val recentExpenses: List<HomeTransactionItem>,
-    val recentIncome: List<HomeTransactionItem>
+    val expenseSummaries: List<HomeCategorySummaryItem>,
+    val incomeSummaries: List<HomeCategorySummaryItem>
 )
 
-// Data class untuk keseluruhan state UI HomeScreen
-data class HomeUiState(
-    val isLoading: Boolean = true,
-    val currentMonthAndYear: String = "", // Contoh: "June 2025"
-    val dateRangePeriod: String = "",   // Contoh: "01 - 30 June 2025"
-    val summary: HomeSummary? = null,
-    val challengeMessage: String? = null, // Pesan tantangan/notifikasi
-    val error: String? = null
+data class HomeCategorySummaryItem(
+    val categoryId: String,
+    val categoryName: String,
+    val categoryIconIdentifier: String?,
+    val transactionType: TransactionType,
+    val totalAmount: BigDecimal,
 )
+
+
+
+

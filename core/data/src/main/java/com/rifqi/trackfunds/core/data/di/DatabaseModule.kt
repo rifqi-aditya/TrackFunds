@@ -4,6 +4,7 @@ import android.content.Context
 import com.rifqi.trackfunds.core.data.local.AppDatabase
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
+import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,6 +42,13 @@ object DatabaseModule {
     fun provideAccountDao(appDatabase: AppDatabase): AccountDao {
         return appDatabase.accountDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideTransactionDao(appDatabase: AppDatabase): TransactionDao {
+        return appDatabase.transactionDao()
+    }
+
 
     // (Opsional) Menyediakan CoroutineScope level aplikasi jika dibutuhkan di tempat lain
     // Jika AppDatabase.getDatabase() Anda tidak lagi menerima scope, ini tidak wajib untuk database

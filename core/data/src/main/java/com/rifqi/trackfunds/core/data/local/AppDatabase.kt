@@ -9,17 +9,24 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.rifqi.trackfunds.core.data.local.converter.Converters
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
+import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
+import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Database(
-    entities = [CategoryEntity::class, AccountEntity::class],
+    entities = [
+        CategoryEntity::class,
+        AccountEntity::class,
+        TransactionEntity::class
+    ],
     version = 1,
     exportSchema = false
 )
@@ -28,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun categoryDao(): CategoryDao
     abstract fun accountDao(): AccountDao
+    abstract fun transactionDao(): TransactionDao
 
     companion object {
         @Volatile
@@ -59,58 +67,66 @@ abstract class AppDatabase : RoomDatabase() {
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
-                    populateDatabase(database.categoryDao(), database.accountDao())
+                    populateDatabase(
+                        database.categoryDao(),
+                        database.accountDao(),
+                        database.transactionDao()
+                    )
                 }
             }
         }
 
-        suspend fun populateDatabase(categoryDao: CategoryDao, accountDao: AccountDao) {
+        suspend fun populateDatabase(
+            categoryDao: CategoryDao,
+            accountDao: AccountDao,
+            transactionDao: TransactionDao
+        ) {
             val initialCategories = listOf(
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Makanan & Minuman",
+                    name = "Food & Drink",
                     iconIdentifier = "restaurant",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Transportasi",
+                    name = "Transportation",
                     iconIdentifier = "car",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Tagihan",
+                    name = "Bills",
                     iconIdentifier = "apartment",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Belanja",
+                    name = "Shopping",
                     iconIdentifier = "shopping_cart",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Hiburan",
+                    name = "Entertainment",
                     iconIdentifier = "movie",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Kesehatan",
+                    name = "Health",
                     iconIdentifier = "medical_doctor",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Pendidikan",
+                    name = "Education",
                     iconIdentifier = "school",
                     type = TransactionType.EXPENSE
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Gaji",
+                    name = "Salary",
                     iconIdentifier = "cash",
                     type = TransactionType.INCOME
                 ),
@@ -122,7 +138,7 @@ abstract class AppDatabase : RoomDatabase() {
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Investasi",
+                    name = "Investment",
                     iconIdentifier = "stack_of_money",
                     type = TransactionType.INCOME
                 ),
@@ -131,25 +147,64 @@ abstract class AppDatabase : RoomDatabase() {
 
             val initialAccounts = listOf(
                 AccountEntity(
-                    id = "acc1",
+                    id = UUID.randomUUID().toString(),
                     name = "Cash Wallet",
                     iconIdentifier = "wallet_account",
                     balance = BigDecimal("1250000.0")
                 ),
                 AccountEntity(
-                    id = "acc2",
-                    name = "Mbanking BCA",
+                    id = UUID.randomUUID().toString(),
+                    name = "BCA Mobile",
                     iconIdentifier = "wallet_account",
                     balance = BigDecimal("1250000.0")
                 ),
                 AccountEntity(
-                    id = "acc3",
+                    id = UUID.randomUUID().toString(),
                     name = "GoPay",
                     iconIdentifier = "wallet_account",
                     balance = BigDecimal("1250000.0")
                 )
             )
             accountDao.insertAll(initialAccounts)
+
+            val salaryCategory = initialCategories.find { it.name == "Salary" }!!
+            val shoppingCategory = initialCategories.find { it.name == "Shopping" }!!
+            val foodCategory = initialCategories.find { it.name == "Food & Drink" }!!
+
+            val cashWalletAccount = initialAccounts.find { it.name == "Cash Wallet" }!!
+            val bcaAccount = initialAccounts.find { it.name == "BCA Mobile" }!!
+
+            val initialTransactions = listOf(
+                TransactionEntity(
+                    id = UUID.randomUUID().toString(),
+                    note = "Monthly Salary",
+                    amount = BigDecimal("15000000"),
+                    type = TransactionType.INCOME,
+                    date = LocalDateTime.now().minusDays(5),
+                    categoryId = salaryCategory.id,
+                    accountId = bcaAccount.id
+                ),
+                TransactionEntity(
+                    id = UUID.randomUUID().toString(),
+                    note = "Monthly Shopping",
+                    amount = BigDecimal("750000"),
+                    type = TransactionType.EXPENSE,
+                    date = LocalDateTime.now().minusDays(4),
+                    categoryId = shoppingCategory.id,
+                    accountId = bcaAccount.id
+                ),
+                TransactionEntity(
+                    id = UUID.randomUUID().toString(),
+                    note = "Lunch",
+                    amount = BigDecimal("50000"),
+                    type = TransactionType.EXPENSE,
+                    date = LocalDateTime.now().minusDays(2),
+                    categoryId = foodCategory.id,
+                    accountId = cashWalletAccount.id
+                )
+            )
+
+            transactionDao.insertAllTransaction(initialTransactions)
         }
     }
 }

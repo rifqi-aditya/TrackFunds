@@ -30,10 +30,7 @@ fun CustomDatePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: (LocalDate) -> Unit
 ) {
-    // Hanya tampilkan dialog jika showDialog bernilai true
     if (showDialog) {
-        // Buat dan ingat state untuk DatePicker.
-        // Diinisialisasi dengan tanggal yang saat ini dipilih.
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = initialDate
                 .atStartOfDay(ZoneId.systemDefault()) // Konversi LocalDate ke Epoch Milliseconds UTC
@@ -52,17 +49,16 @@ fun CustomDatePickerDialog(
                             val newDate = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            // Panggil callback onConfirm dengan tanggal baru
                             onConfirm(newDate)
                         } ?: onDismiss() // Tutup jika tidak ada tanggal terpilih
                     }
                 ) {
-                    Text("Pilih")
+                    Text("Confirm")
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text("Batal")
+                    Text("Cancel")
                 }
             },
         ) {

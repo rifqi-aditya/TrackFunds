@@ -17,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.util.formatCurrency
-import com.rifqi.trackfunds.feature.home.ui.model.HomeTransactionItem
+import com.rifqi.trackfunds.feature.home.ui.model.HomeCategorySummaryItem
 
 @Composable
-fun TransactionRow(
-    transaction: HomeTransactionItem,
+fun RecentTransactionRow(
+    categoryItem: HomeCategorySummaryItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -35,25 +36,26 @@ fun TransactionRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         DisplayIconFromResource(
-            identifier = transaction.iconIdentifier,
-            contentDescription = transaction.categoryName,
+            identifier = categoryItem.categoryIconIdentifier,
+            contentDescription = categoryItem.categoryName,
             modifier = Modifier
-                .size(40.dp) // Ukuran ikon bisa disesuaikan
+                .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)) // Latar belakang ikon lebih lembut
-                .padding(8.dp) // Padding di dalam background ikon
+                .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f))
+                .padding(8.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = transaction.categoryName,
+            text = categoryItem.categoryName,
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f) // Agar teks mengambil sisa ruang
+            modifier = Modifier.weight(1f)
         )
         Text(
-            text = formatCurrency(transaction.amount),
+            text = formatCurrency(categoryItem.totalAmount),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
-            color = if (transaction.type.equals("Expense", ignoreCase = true)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
+            color = if (categoryItem.transactionType == TransactionType.EXPENSE
+            ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
         )
     }
 }

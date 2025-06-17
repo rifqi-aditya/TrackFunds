@@ -3,6 +3,7 @@ package com.rifqi.add_transaction.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,12 +32,17 @@ fun DateTimeDisplayRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val dateFormatter = remember { DateTimeFormatter.ofPattern("EEE, dd MMM yyyy", Locale("en", "EN")) }
+    val dateFormatter =
+        remember { DateTimeFormatter.ofPattern("EEE, dd MMM yyyy", Locale("en", "EN")) }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -69,7 +75,11 @@ fun DateTimeDisplayRowLightPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "DateTimeDisplayRow - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "DateTimeDisplayRow - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun DateTimeDisplayRowDarkPreview() {
     TrackFundsTheme(darkTheme = true) {

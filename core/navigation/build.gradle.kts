@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -36,12 +39,14 @@ android {
 dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:domain"))
+    implementation(project(":core:common"))
     implementation(project(":feature:home"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:account"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:transaction"))
     implementation(project(":feature:add_transaction"))
+
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
     implementation(platform(libs.androidx.compose.bom)) // Gunakan versi terbaru yang stabil
@@ -65,6 +70,12 @@ dependencies {
 
     // Compose Navigation (untuk NavHost, composable, rememberNavController, dll.)
     implementation(libs.androidx.navigation.compose) // Gunakan versi terbaru yang stabil
+
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Debugging (hanya untuk development)
     debugImplementation(libs.androidx.ui.tooling)

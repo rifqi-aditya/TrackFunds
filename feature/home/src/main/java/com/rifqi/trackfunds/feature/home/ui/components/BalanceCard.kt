@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.home.ui.components
 
-import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,10 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.R
-import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.util.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
 import java.math.BigDecimal
@@ -67,10 +63,10 @@ fun BalanceCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.large, // Bentuk rounded dari tema
+        shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkCardBackgroundColor // Gunakan warna gelap solid untuk Card
+            containerColor = DarkCardBackgroundColor
         )
     ) {
         Column(
@@ -109,16 +105,15 @@ fun BalanceCard(
                 BalanceDetailItem(
                     label = "Expenses",
                     amount = summary.totalExpenses,
-                    // Ganti dengan ID drawable Anda dari R :core:ui
-                    iconRes = R.drawable.ic_expense, // Contoh nama drawable
-                    textColor = TextOnDarkCardColor // Teks putih
+                    iconRes = R.drawable.ic_expense,
+                    textColor = TextOnDarkCardColor
                 )
                 Spacer(modifier = Modifier.width(32.dp))
                 BalanceDetailItem(
                     label = "Income",
                     amount = summary.totalIncome,
-                    iconRes = R.drawable.ic_income, // Contoh nama drawable
-                    textColor = TextOnDarkCardColor // Teks putih
+                    iconRes = R.drawable.ic_income,
+                    textColor = TextOnDarkCardColor
                 )
             }
         }
@@ -129,7 +124,7 @@ fun BalanceCard(
 fun BalanceDetailItem(
     label: String,
     amount: BigDecimal,
-    @DrawableRes iconRes: Int, // <-- Tipe parameter diubah ke @DrawableRes Int
+    @DrawableRes iconRes: Int,
     textColor: Color,
     modifier: Modifier = Modifier
 ) {
@@ -160,82 +155,73 @@ fun BalanceDetailItem(
 }
 
 
-// --- DATA DUMMY UNTUK PREVIEW (bisa diletakkan di sini atau impor) ---
-val previewDummySummaryData = HomeSummary(
-    monthlyBalance = BigDecimal("1250000.0"),
-    totalExpenses = BigDecimal("1250000.0"),
-    totalIncome = BigDecimal("1250000.0"),
-    recentExpenses = emptyList(),
-    recentIncome = emptyList()
-)
-
-// --- PREVIEWS ---
-
-@Preview(showBackground = true, name = "BalanceCard Dark Solid - Light Theme")
-@Composable
-fun BalanceCardDarkSolidLightPreview() {
-    TrackFundsTheme(darkTheme = false) { // Preview di light theme
-        BalanceCard(
-            summary = previewDummySummaryData,
-            onClick = {}
-        )
-    }
-}
-
-@Preview(
-    showBackground = true,
-    name = "BalanceCard Dark Solid - Dark Theme",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-fun BalanceCardDarkSolidDarkPreview() {
-    TrackFundsTheme(darkTheme = true) { // Preview di dark theme
-        BalanceCard(
-            summary = previewDummySummaryData,
-            onClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "BalanceCard Dark Solid - Loading")
-@Composable
-fun BalanceCardDarkSolidLoadingPreview() {
-    TrackFundsTheme(darkTheme = false) {
-        BalanceCard(
-            summary = null,
-            onClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "BalanceDetailItem Expense - On Dark Card")
-@Composable
-fun BalanceDetailItemExpenseOnDarkPreview() {
-    TrackFundsTheme(darkTheme = true) { // Gunakan dark theme untuk simulasi card gelap
-        Surface(color = DarkCardBackgroundColor) { // Latar belakang sesuai Card
-            BalanceDetailItem(
-                label = "Pengeluaran",
-                amount = BigDecimal("1250000.0"),
-                iconRes = R.drawable.ic_expense,
-                textColor = TextOnDarkCardColor,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "BalanceDetailItem Income - On Dark Card")
-@Composable
-fun BalanceDetailItemIncomeOnDarkPreview() {
-    TrackFundsTheme(darkTheme = true) {
-        Surface(color = DarkCardBackgroundColor) {
-            BalanceDetailItem(
-                label = "Pemasukan",
-                amount = BigDecimal("1250000.0"),
-                iconRes = R.drawable.ic_income,
-                textColor = TextOnDarkCardColor,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-    }
-}
+//// --- PREVIEWS ---
+//
+//@Preview(showBackground = true, name = "BalanceCard Dark Solid - Light Theme")
+//@Composable
+//fun BalanceCardDarkSolidLightPreview() {
+//    TrackFundsTheme(darkTheme = false) { // Preview di light theme
+//        BalanceCard(
+//            summary = previewDummySummaryData,
+//            onClick = {}
+//        )
+//    }
+//}
+//
+//@Preview(
+//    showBackground = true,
+//    name = "BalanceCard Dark Solid - Dark Theme",
+//    uiMode = Configuration.UI_MODE_NIGHT_YES
+//)
+//@Composable
+//fun BalanceCardDarkSolidDarkPreview() {
+//    TrackFundsTheme(darkTheme = true) { // Preview di dark theme
+//        BalanceCard(
+//            summary = previewDummySummaryData,
+//            onClick = {}
+//        )
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "BalanceCard Dark Solid - Loading")
+//@Composable
+//fun BalanceCardDarkSolidLoadingPreview() {
+//    TrackFundsTheme(darkTheme = false) {
+//        BalanceCard(
+//            summary = null,
+//            onClick = {}
+//        )
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "BalanceDetailItem Expense - On Dark Card")
+//@Composable
+//fun BalanceDetailItemExpenseOnDarkPreview() {
+//    TrackFundsTheme(darkTheme = true) { // Gunakan dark theme untuk simulasi card gelap
+//        Surface(color = DarkCardBackgroundColor) { // Latar belakang sesuai Card
+//            BalanceDetailItem(
+//                label = "Pengeluaran",
+//                amount = BigDecimal("1250000.0"),
+//                iconRes = R.drawable.ic_expense,
+//                textColor = TextOnDarkCardColor,
+//                modifier = Modifier.padding(16.dp)
+//            )
+//        }
+//    }
+//}
+//
+//@Preview(showBackground = true, name = "BalanceDetailItem Income - On Dark Card")
+//@Composable
+//fun BalanceDetailItemIncomeOnDarkPreview() {
+//    TrackFundsTheme(darkTheme = true) {
+//        Surface(color = DarkCardBackgroundColor) {
+//            BalanceDetailItem(
+//                label = "Pemasukan",
+//                amount = BigDecimal("1250000.0"),
+//                iconRes = R.drawable.ic_income,
+//                textColor = TextOnDarkCardColor,
+//                modifier = Modifier.padding(16.dp)
+//            )
+//        }
+//    }
+//}

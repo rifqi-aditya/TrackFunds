@@ -21,58 +21,63 @@ import javax.inject.Inject
 val DUMMY_ALL_TRANSACTIONS = listOf(
     TransactionItem(
         id = "t1",
-        description = "Mbanking initial balance",
+        note = "Mbanking initial balance",
         amount = BigDecimal("200000.00"),
         type = TransactionType.INCOME,
         date = LocalDateTime.now().minusDays(1).withHour(9),
         categoryId = "init",
         categoryName = "Initial Balance",
         iconIdentifier = "stack_of_money",
-        accountId = "acc2"
+        accountId = "acc2",
+        accountName = "acc2"
     ),
     TransactionItem(
         id = "t2",
-        description = "Wallet initial balance",
+        note = "Wallet initial balance",
         amount = BigDecimal("100000.00"),
         type = TransactionType.INCOME,
         date = LocalDateTime.now().minusDays(1).withHour(9),
         categoryId = "init",
         categoryName = "Initial Balance",
         iconIdentifier = "wallet",
-        accountId = "acc1"
+        accountId = "acc1",
+        accountName = "acc2"
     ),
     TransactionItem(
         id = "t3",
-        description = "Uang Jajan",
+        note = "Uang Jajan",
         amount = BigDecimal("30000.00"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(11).withMinute(56),
         categoryId = "food",
         categoryName = "Makanan",
         iconIdentifier = "restaurant",
-        accountId = "acc1"
+        accountId = "acc1",
+        accountName = "acc2"
     ),
     TransactionItem(
         id = "t4",
-        description = "Liquid vape",
+        note = "Liquid vape",
         amount = BigDecimal("20000.00"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(11).withMinute(55),
         categoryId = "shop",
         categoryName = "Belanja",
         iconIdentifier = "shopping_cart",
-        accountId = "acc1"
+        accountId = "acc1",
+        accountName = "acc2"
     ),
     TransactionItem(
         id = "t5",
-        description = "Healthcare",
+        note = "Healthcare",
         amount = BigDecimal("25555.00"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(15).withMinute(58),
         categoryId = "health",
         categoryName = "Kesehatan",
         iconIdentifier = "medical_doctor",
-        accountId = "acc2"
+        accountId = "acc2",
+        accountName = "acc2"
     )
 )
 

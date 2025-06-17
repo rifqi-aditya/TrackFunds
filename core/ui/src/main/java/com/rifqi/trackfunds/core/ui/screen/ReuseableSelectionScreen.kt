@@ -45,7 +45,7 @@ fun ReusableSelectionScreen(
     items: List<SelectionItem>,
     isLoading: Boolean,
     onNavigateBack: () -> Unit,
-    onItemSelected: (String) -> Unit, // Mengembalikan ID dari item yang dipilih
+    onItemSelected: (String) -> Unit,
     onAddItemClicked: () -> Unit,
     modifier: Modifier = Modifier,
     topBarActions: @Composable RowScope.() -> Unit = {} // Slot kosong sebagai default

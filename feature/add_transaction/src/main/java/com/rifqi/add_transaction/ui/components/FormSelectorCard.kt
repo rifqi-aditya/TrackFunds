@@ -1,7 +1,5 @@
 package com.rifqi.add_transaction.ui.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,8 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +30,7 @@ fun FormSelectorCard(
     value: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    @DrawableRes leadingIconRes: Int? = null,
+    leadingIconRes: String?,
     leadingIconContentDescription: String? = label
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -60,11 +58,10 @@ fun FormSelectorCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     leadingIconRes?.let {
-                        Image(
-                            painter = painterResource(id = it),
+                        DisplayIconFromResource(
                             contentDescription = leadingIconContentDescription,
-                            modifier = Modifier.size(24.dp)
-                            // colorFilter bisa ditambahkan jika ikonnya single color dan ingin di-tint
+                            modifier = Modifier.size(24.dp),
+                            identifier = it,
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                     }

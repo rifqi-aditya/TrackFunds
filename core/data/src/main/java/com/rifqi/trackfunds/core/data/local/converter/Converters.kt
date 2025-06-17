@@ -2,6 +2,9 @@ package com.rifqi.trackfunds.core.data.local.converter
 
 import androidx.room.TypeConverter
 import java.math.BigDecimal
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 /**
  * Type Converters untuk memberitahu Room cara menangani tipe data kustom.
@@ -27,6 +30,16 @@ class Converters {
         return value?.let { BigDecimal(it) }
     }
 
-    // Anda bisa menambahkan converter lain di sini jika perlu,
-    // misalnya untuk LocalDate, dll.
+    // --- Converter BARU untuk LocalDateTime ---
+    @TypeConverter
+    fun fromTimestamp(value: Long?): LocalDateTime? {
+        // Mengubah Long (timestamp) dari database menjadi LocalDateTime
+        return value?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneOffset.UTC) }
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: LocalDateTime?): Long? {
+        // Mengubah LocalDateTime menjadi Long (timestamp) untuk disimpan di database
+        return date?.toInstant(ZoneOffset.UTC)?.toEpochMilli()
+    }
 }

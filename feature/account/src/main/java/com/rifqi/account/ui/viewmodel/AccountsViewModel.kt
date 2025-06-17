@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.account.ui.model.AccountSummaryItem
 import com.rifqi.account.ui.model.AccountsUiState
-import com.rifqi.trackfunds.core.domain.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -58,7 +58,7 @@ class AccountsViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             totalBalance = totalBalance,
-                            accounts = accountsForUi // Tipe data sekarang sudah cocok
+                            accounts = accountsForUi
                         )
                     }
                 }

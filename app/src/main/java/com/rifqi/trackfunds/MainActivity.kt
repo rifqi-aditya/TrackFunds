@@ -42,7 +42,9 @@ fun TrackFundsMainApp() {
     val currentDestination = navBackStackEntry?.destination
 
     val showBottomBar = bottomNavItemsList.any { navItem ->
-        currentDestination?.hierarchy?.any { it.route == navItem.graphRoute } == true
+        currentDestination?.hierarchy?.any { dest ->
+            dest.route == navItem.graphRoute::class.qualifiedName
+        } == true
     }
 
     Scaffold(

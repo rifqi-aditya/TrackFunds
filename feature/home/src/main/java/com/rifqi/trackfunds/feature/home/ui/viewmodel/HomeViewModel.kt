@@ -2,47 +2,33 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.ui.util.getCurrentDateRange
+import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCase
+import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
 import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
+import com.rifqi.trackfunds.feature.home.ui.mapper.toHomeCategorySummary
 import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
-import com.rifqi.trackfunds.feature.home.ui.model.HomeTransactionItem
 import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import javax.inject.Inject
-
-val DUMMY_HOME_SUMMARY_DATA = HomeSummary(
-    monthlyBalance = BigDecimal("1250000.0"),
-    totalExpenses = BigDecimal("1250000.0"),
-    totalIncome = BigDecimal("1250000.0"),
-    recentExpenses = listOf(
-        HomeTransactionItem("e1", "Groceries", "shopping_cart", BigDecimal("1250000.0"), "Expense"),
-        HomeTransactionItem("e2", "Dining Out", "restaurant", BigDecimal("1250000.0"), "Expense")
-    ),
-    recentIncome = listOf(
-        HomeTransactionItem("i1", "Salary", "cash", BigDecimal("1250000.0"), "Income"),
-        HomeTransactionItem("i2", "Freelance Project", "workspace", BigDecimal("1250000.0"), "Income")
-    )
-)
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    // Nantinya inject Use Cases dari :core:domain di sini:
-    // private val getHomeSummaryUseCase: GetHomeSummaryUseCase,
-    // private val getChallengeMessageUseCase: GetChallengeMessageUseCase
+    private val getCategorySummariesUseCase: GetCategorySummariesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         HomeUiState(
             isLoading = true,
             currentMonthAndYear = getCurrentMonthAndYear(),
-            dateRangePeriod = getCurrentDateRange()
+            dateRangePeriod = getCurrentDateRangePair()
         )
     )
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -54,27 +40,49 @@ class HomeViewModel @Inject constructor(
     fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-            // Simulasi pengambilan data
-            delay(1500) // Hapus ini saat menggunakan data real
 
-            // Di sini Anda akan memanggil Use Cases:
-            // val summaryResult = getHomeSummaryUseCase()
-            // val challengeResult = getChallengeMessageUseCase()
-            // Berdasarkan hasil, update _uiState (termasuk penanganan error)
+            // FIX 2: Hitung startDate dan endDate dari uiState
+            val dateRange = _uiState.value.dateRangePeriod
+            val startDate = dateRange.first.atStartOfDay()
+            val endDate = dateRange.second.atTime(23, 59, 59)
 
-            // Untuk sekarang, gunakan data dummy:
-            val dummyChallenge = if (Math.random() < 0.5) "Your first challenge is complete!" else null
+            // FIX 3: Panggil UseCase yang BENAR dengan parameter tanggal
+            val incomeSummariesFlow =
+                getCategorySummariesUseCase(TransactionType.INCOME, startDate, endDate)
+            val expenseSummariesFlow =
+                getCategorySummariesUseCase(TransactionType.EXPENSE, startDate, endDate)
 
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    summary = DUMMY_HOME_SUMMARY_DATA,
-                    challengeMessage = dummyChallenge,
-                    // Update tanggal berdasarkan logika sebenarnya jika diperlukan
-                    currentMonthAndYear = getCurrentMonthAndYear(),
-                    dateRangePeriod = getCurrentDateRange()
+            // Gabungkan kedua flow untuk mendapatkan data ringkasan
+            combine(incomeSummariesFlow, expenseSummariesFlow) { incomeList, expenseList ->
+                val totalIncome = incomeList.sumOf { it.totalAmount }
+                val totalExpenses = expenseList.sumOf { it.totalAmount }
+                val monthlyBalance = totalIncome.subtract(totalExpenses)
+
+                HomeSummary(
+                    monthlyBalance = monthlyBalance,
+                    totalExpenses = totalExpenses,
+                    totalIncome = totalIncome,
+                    expenseSummaries = expenseList.map { it.toHomeCategorySummary() },
+                    incomeSummaries = incomeList.map { it.toHomeCategorySummary() }
                 )
             }
+                .catch { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = e.message ?: "An unknown error occurred"
+                        )
+                    }
+                }
+                .collect { summary ->
+                    // Update state dengan data ringkasan yang berhasil diambil
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            summary = summary
+                        )
+                    }
+                }
         }
     }
 
@@ -102,6 +110,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onBalanceCardClicked() {
+
+    }
+
+    fun onFabClicked() {
 
     }
 }

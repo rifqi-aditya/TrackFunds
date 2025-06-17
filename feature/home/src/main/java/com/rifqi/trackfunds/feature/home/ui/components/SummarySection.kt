@@ -1,6 +1,8 @@
 package com.rifqi.trackfunds.feature.home.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,17 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.feature.home.ui.model.HomeTransactionItem
 
 @Composable
-fun TransactionSection(
+fun <T> SummarySection(
     title: String,
-    items: List<HomeTransactionItem>?,
+    items: List<T>?,
     onViewAllClick: () -> Unit,
-    onItemClick: (HomeTransactionItem) -> Unit,
+    onItemClick: (T) -> Unit,
+    itemContent: @Composable (item: T) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(vertical = 8.dp)) { // Padding atas dan bawah untuk section
+    Column(modifier = modifier.padding(vertical = 8.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -42,14 +44,12 @@ fun TransactionSection(
             }
         }
         if (!items.isNullOrEmpty()) {
-            // Menggunakan Column karena ini akan berada di dalam LazyColumn di HomeScreen
-            // Jika item banyak dan butuh scroll independen (jarang untuk ringkasan), baru LazyColumn lagi
             Column(modifier = Modifier.padding(top = 4.dp)) {
                 items.forEachIndexed { index, item ->
-                    TransactionRow(
-                        transaction = item,
-                        onClick = { onItemClick(item) }
-                    )
+                    Box(modifier = Modifier.clickable { onItemClick(item) }) {
+                        itemContent(item)
+                    }
+
                     if (index < items.lastIndex) {
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 16.dp),

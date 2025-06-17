@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.ui.model.SelectionItem
 import com.rifqi.trackfunds.core.ui.screen.ReusableSelectionScreen
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -25,14 +24,11 @@ import com.rifqi.trackfunds.feature.categories.ui.viewmodel.SelectCategoryViewMo
 fun SelectCategoryScreen(
     viewModel: SelectCategoryViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onCategorySelected: (CategoryItem) -> Unit, // Callback mengembalikan domain model
     onNavigateToAddCategory: () -> Unit,
     onSearchClicked: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // Lakukan mapping dari List<CategoryItem> (domain) ke List<SelectionItem> (UI)
-    // 'remember' digunakan untuk efisiensi agar mapping tidak selalu dijalankan ulang
     val selectionItems = remember(uiState.categories) {
         uiState.categories.map { category ->
             SelectionItem(
@@ -50,24 +46,19 @@ fun SelectCategoryScreen(
         onNavigateBack = onNavigateBack,
         onAddItemClicked = onNavigateToAddCategory,
         onItemSelected = { selectedId ->
-            // Cari item kategori asli berdasarkan ID yang dipilih
             val selectedCategory = uiState.categories.find { it.id == selectedId }
             if (selectedCategory != null) {
-                // Panggil callback dengan objek domain model yang lengkap
-                onCategorySelected(selectedCategory)
+                viewModel.onCategorySelected(selectedCategory)
+                onNavigateBack()
             }
         },
-        topBarActions = { // Mengisi slot aksi di TopAppBar
+        topBarActions = {
             IconButton(onClick = onSearchClicked) {
                 Icon(Icons.Default.Search, contentDescription = "Search Category")
             }
         }
     )
 }
-
-// --- PREVIEW ---
-// Preview sekarang bisa memanggil ReusableSelectionScreen secara langsung dengan data dummy,
-// membuatnya independen dari ViewModel dan Hilt.
 
 @Preview(showBackground = true, name = "Reusable Selection Screen - Categories Light")
 @Composable
@@ -89,7 +80,11 @@ fun SelectCategoryScreenLightPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Reusable Selection Screen - Categories Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "Reusable Selection Screen - Categories Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun SelectCategoryScreenDarkPreview() {
     TrackFundsTheme(darkTheme = true) {

@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.core.domain.usecase
+package com.rifqi.trackfunds.core.domain.usecase.account
 
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository

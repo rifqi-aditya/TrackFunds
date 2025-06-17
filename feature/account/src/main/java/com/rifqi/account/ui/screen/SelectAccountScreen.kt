@@ -19,7 +19,6 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 fun SelectAccountScreen(
     viewModel: SelectAccountViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onAccountSelected: (accountId: String) -> Unit, // Hanya kembalikan ID
     onNavigateToAddAccount: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -31,8 +30,11 @@ fun SelectAccountScreen(
         onNavigateBack = onNavigateBack,
         onAddItemClicked = onNavigateToAddAccount,
         onItemSelected = { selectedAccountId ->
-            // Saat item dipilih, panggil callback dengan ID yang dipilih
-            onAccountSelected(selectedAccountId)
+            val selectedAccount = uiState.accounts.find { it.id == selectedAccountId }
+            if (selectedAccount != null) {
+                viewModel.onAccountSelected(selectedAccount)
+                onNavigateBack()
+            }
         },
         topBarActions = {
             IconButton(onClick = { /* TODO: Search accounts */ }) {
@@ -50,13 +52,11 @@ fun SelectAccountScreenPreview() {
             SelectionItem(
                 id = "1",
                 name = "Cash Wallet",
-                description = "Rp 1.500.000",
                 iconIdentifier = "wallet"
             ),
             SelectionItem(
                 id = "2",
                 name = "Mbanking BCA",
-                description = "Rp 12.750.000",
                 iconIdentifier = "ic_bank_bca"
             )
         )
