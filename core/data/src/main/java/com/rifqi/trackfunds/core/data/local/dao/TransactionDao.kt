@@ -63,15 +63,20 @@ interface TransactionDao {
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
-        WHERE t.type = :type
-        ORDER BY date DESC
+        WHERE t.type = :type AND t.date BETWEEN :startDate AND :endDate
+        ORDER BY t.date DESC
     """
     )
-    fun getTransactionsWithDetailsByType(type: TransactionType): Flow<List<TransactionDetailDto>>
+    fun getTransactionsWithDetailsByType(
+        type: TransactionType,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionDetailDto>>
 
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT 
             c.id as categoryId, 
             c.name as categoryName, 
@@ -83,7 +88,8 @@ interface TransactionDao {
         WHERE t.type = :type AND t.date BETWEEN :startDate AND :endDate 
         GROUP BY c.id
         ORDER BY totalAmount DESC
-    """)
+    """
+    )
     fun getCategoryTransactionSummaries(
         type: TransactionType,
         startDate: LocalDateTime,
@@ -91,7 +97,8 @@ interface TransactionDao {
     ): Flow<List<CategoryTransactionSummaryDto>>
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT
             t.*,
             c.name AS category_name, 
@@ -102,14 +109,16 @@ interface TransactionDao {
         INNER JOIN accounts AS a ON t.account_id = a.id
         WHERE t.date BETWEEN :startDate AND :endDate
         ORDER BY t.date DESC
-    """)
+    """
+    )
     fun getTransactionsWithDetailsByDateRange(
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<TransactionDetailDto>>
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT 
             t.*,
             c.name AS category_name, 
@@ -120,7 +129,8 @@ interface TransactionDao {
         INNER JOIN accounts AS a ON t.account_id = a.id
         WHERE t.category_id = :categoryId AND t.date BETWEEN :startDate AND :endDate
         ORDER BY t.date DESC
-    """)
+    """
+    )
     fun getTransactionsWithDetailsByCategoryId(
         categoryId: String,
         startDate: LocalDateTime,

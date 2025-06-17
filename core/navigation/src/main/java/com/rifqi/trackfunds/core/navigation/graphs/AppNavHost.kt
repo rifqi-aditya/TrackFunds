@@ -18,6 +18,7 @@ import com.rifqi.account.ui.screen.AccountsScreen
 import com.rifqi.account.ui.screen.SelectAccountScreen
 import com.rifqi.add_transaction.ui.screen.AddTransactionScreen
 import com.rifqi.add_transaction.ui.viewmodel.AddTransactionViewModel
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AccountTimeline
 import com.rifqi.trackfunds.core.navigation.api.Accounts
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
@@ -37,11 +38,13 @@ import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.core.navigation.api.Settings
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
+import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
 import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
+import com.rifqi.trackfunds.feature.transaction.ui.screen.TypedTransactionsScreen
 
 // Placeholder untuk layar yang belum dibuat
 @Composable
@@ -68,8 +71,16 @@ fun AppNavHost(
                     onNavigateToAllTransactions = {
                         navController.navigate(AllTransactions)
                     },
-                    onNavigateToCategoryDetails = { categoryId, categoryName ->
+                    onNavigateToCategoryTransactions = { categoryId, categoryName ->
                         navController.navigate(CategoryTransactions(categoryId, categoryName))
+                    },
+                    onNavigateToTypeTransactions = { transactionType ->
+                        navController.navigate(
+                            when (transactionType) {
+                                TransactionType.INCOME -> TypedTransactions(transactionType)
+                                TransactionType.EXPENSE -> TypedTransactions(transactionType)
+                            }
+                        )
                     },
                     onNavigateToNotifications = {
                         navController.navigate(Notifications)
@@ -180,6 +191,18 @@ fun AppNavHost(
 
         composable<CategoryTransactions> {
             CategoryTransactionsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToTransactionDetail = { transactionId ->
+                    navController.navigate(TransactionDetail(transactionId))
+                },
+                onNavigateToAddTransaction = {
+                    navController.navigate(AddTransactionGraph)
+                }
+            )
+        }
+
+        composable<TypedTransactions> { backStackEntry ->
+            TypedTransactionsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToTransactionDetail = { transactionId ->
                     navController.navigate(TransactionDetail(transactionId))

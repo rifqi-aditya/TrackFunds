@@ -4,7 +4,6 @@ import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
@@ -22,14 +21,18 @@ interface TransactionRepository {
      * Mengambil transaksi dalam rentang tanggal tertentu.
      */
     fun getTransactionsByDateRange(
-        startDate: LocalDate,
-        endDate: LocalDate
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
     ): Flow<List<TransactionItem>>
 
     /**
      * Mengambil transaksi berdasarkan tipe (EXPENSE atau INCOME).
      */
-    fun getTransactionsByType(type: TransactionType): Flow<List<TransactionItem>>
+    fun getTransactionsByType(
+        type: TransactionType,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionItem>>
 
     /**
      * Mengambil transaksi untuk akun spesifik.
@@ -68,16 +71,9 @@ interface TransactionRepository {
         endDate: LocalDateTime
     ): Flow<List<CategorySummaryItem>>
 
-    fun getTransactionsByDateRange(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionItem>>
-
     fun getTransactionsByCategoryId(
         categoryId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<TransactionItem>>
-
-
 }

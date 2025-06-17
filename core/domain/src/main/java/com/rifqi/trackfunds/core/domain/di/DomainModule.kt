@@ -62,11 +62,6 @@ abstract class DomainModule {
         useCaseImpl: GetTransactionsUseCaseImpl
     ): GetTransactionsUseCase
 
-    @Binds
-    @Singleton
-    abstract fun bindGetTransactionsByTypeUseCase(
-        useCaseImpl: GetTransactionsByTypeUseCaseImpl
-    ): GetTransactionsByTypeUseCase
 
     @Binds
     @Singleton
@@ -79,6 +74,12 @@ abstract class DomainModule {
     abstract fun bindGetTransactionsByDateRangeUseCase(
         useCaseImpl: GetTransactionsByDateRangeUseCaseImpl
     ): GetTransactionsByDateRangeUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetTransactionsByTypeUseCase(
+        useCaseImpl: GetTransactionsByTypeUseCaseImpl
+    ): GetTransactionsByTypeUseCase
 
     @Binds
     @Singleton

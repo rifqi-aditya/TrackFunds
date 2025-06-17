@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.util.formatDateRangeToString
@@ -50,7 +51,8 @@ fun HomeScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
     onNavigateToAllTransactions: () -> Unit,
-    onNavigateToCategoryDetails: (categoryId: String, categoryName: String) -> Unit,
+    onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
+    onNavigateToTypeTransactions: (TransactionType) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -59,7 +61,8 @@ fun HomeScreen(
         onNavigateToNotifications = onNavigateToNotifications,
         onNavigateToAddTransaction = onNavigateToAddTransaction,
         onNavigateToAllTransactions = onNavigateToAllTransactions,
-        onNavigateToCategoryDetails = onNavigateToCategoryDetails,
+        onNavigateToCategoryTransactions = onNavigateToCategoryTransactions,
+        onNavigateToTypeTransactions = onNavigateToTypeTransactions,
         onCalendarClick = { },
     )
 }
@@ -75,7 +78,8 @@ fun HomeScreen(
 fun HomeScreenContent(
     uiState: HomeUiState,
     onNavigateToAllTransactions: () -> Unit,
-    onNavigateToCategoryDetails: (categoryId: String, categoryName: String) -> Unit,
+    onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
+    onNavigateToTypeTransactions: (TransactionType) -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
     onCalendarClick: () -> Unit,
@@ -166,9 +170,9 @@ fun HomeScreenContent(
                         SummarySection(
                             title = "Expenses",
                             items = uiState.summary.expenseSummaries,
-                            onViewAllClick = { },
+                            onViewAllClick = { onNavigateToTypeTransactions(TransactionType.EXPENSE) },
                             onItemClick = { summaryItem ->
-                                onNavigateToCategoryDetails(
+                                onNavigateToCategoryTransactions(
                                     summaryItem.categoryId,
                                     summaryItem.categoryName
                                 )
@@ -184,7 +188,7 @@ fun HomeScreenContent(
                         SummarySection(
                             title = "Income",
                             items = uiState.summary.incomeSummaries,
-                            onViewAllClick = { },
+                            onViewAllClick = { onNavigateToTypeTransactions(TransactionType.INCOME) },
                             onItemClick = { summaryItem -> /* ... */ },
                             itemContent = { summaryItem ->
                                 CategorySummaryRow(

@@ -10,7 +10,6 @@ import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,23 +32,6 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getTransactionsByType(type: TransactionType): Flow<List<TransactionItem>> {
-        return transactionDao.getTransactionsWithDetailsByType(type).map { dtoList ->
-            dtoList.map { it.toDomain() }
-        }
-    }
-
-    override fun getTransactionsByDateRange(
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): Flow<List<TransactionItem>> {
-        return getTransactions().map { transactions ->
-            transactions.filter {
-                val transactionDate = it.date.toLocalDate()
-                !transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)
-            }
-        }
-    }
 
     override fun getTransactionsForAccount(accountId: String): Flow<List<TransactionItem>> {
         return getTransactions().map { transactions ->
@@ -148,6 +130,17 @@ class TransactionRepositoryImpl @Inject constructor(
         endDate: LocalDateTime
     ): Flow<List<TransactionItem>> {
         return transactionDao.getTransactionsWithDetailsByCategoryId(categoryId, startDate, endDate)
+            .map { dtoList ->
+                dtoList.map { it.toDomain() }
+            }
+    }
+
+    override fun getTransactionsByType(
+        type: TransactionType,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionItem>> {
+        return transactionDao.getTransactionsWithDetailsByType(type, startDate, endDate)
             .map { dtoList ->
                 dtoList.map { it.toDomain() }
             }
