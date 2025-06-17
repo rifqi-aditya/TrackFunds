@@ -131,4 +131,25 @@ class TransactionRepositoryImpl @Inject constructor(
             dtoList.map { it.toDomain() }
         }
     }
+
+    override fun getTransactionsByDateRange(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionItem>> {
+        return transactionDao.getTransactionsWithDetailsByDateRange(startDate, endDate)
+            .map { dtoList ->
+                dtoList.map { it.toDomain() }
+            }
+    }
+
+    override fun getTransactionsByCategoryId(
+        categoryId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionItem>> {
+        return transactionDao.getTransactionsWithDetailsByCategoryId(categoryId, startDate, endDate)
+            .map { dtoList ->
+                dtoList.map { it.toDomain() }
+            }
+    }
 }

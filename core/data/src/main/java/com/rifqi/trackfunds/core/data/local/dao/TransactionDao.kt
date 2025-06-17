@@ -90,6 +90,43 @@ interface TransactionDao {
         endDate: LocalDateTime
     ): Flow<List<CategoryTransactionSummaryDto>>
 
+    @Transaction
+    @Query("""
+        SELECT
+            t.*,
+            c.name AS category_name, 
+            c.icon_identifier AS category_icon_identifier,
+            a.name AS account_name
+        FROM transactions AS t
+        INNER JOIN categories AS c ON t.category_id = c.id
+        INNER JOIN accounts AS a ON t.account_id = a.id
+        WHERE t.date BETWEEN :startDate AND :endDate
+        ORDER BY t.date DESC
+    """)
+    fun getTransactionsWithDetailsByDateRange(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionDetailDto>>
+
+    @Transaction
+    @Query("""
+        SELECT 
+            t.*,
+            c.name AS category_name, 
+            c.icon_identifier AS category_icon_identifier,
+            a.name AS account_name
+        FROM transactions AS t
+        INNER JOIN categories AS c ON t.category_id = c.id
+        INNER JOIN accounts AS a ON t.account_id = a.id
+        WHERE t.category_id = :categoryId AND t.date BETWEEN :startDate AND :endDate
+        ORDER BY t.date DESC
+    """)
+    fun getTransactionsWithDetailsByCategoryId(
+        categoryId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionDetailDto>>
+
 
     @Query("SELECT * FROM transactions WHERE id = :transactionId")
     suspend fun getTransactionById(transactionId: String): TransactionEntity?

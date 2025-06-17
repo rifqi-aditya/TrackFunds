@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.rifqi.trackfunds.core.navigation.graphs.AppNavGraph
+import com.rifqi.trackfunds.core.navigation.graphs.AppNavHost
 import com.rifqi.trackfunds.core.navigation.ui.components.AppBottomNavigationBar
 import com.rifqi.trackfunds.core.navigation.ui.components.bottomNavItemsList
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -55,7 +55,7 @@ fun TrackFundsMainApp() {
         },
         contentWindowInsets = WindowInsets.navigationBars.add(WindowInsets.ime)
     ) { innerPadding ->
-        AppNavGraph(
+        AppNavHost(
             navController = navController,
             modifier = Modifier.padding(innerPadding)
         )

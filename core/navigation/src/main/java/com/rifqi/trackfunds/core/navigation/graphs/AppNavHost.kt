@@ -18,28 +18,30 @@ import com.rifqi.account.ui.screen.AccountsScreen
 import com.rifqi.account.ui.screen.SelectAccountScreen
 import com.rifqi.add_transaction.ui.screen.AddTransactionScreen
 import com.rifqi.add_transaction.ui.viewmodel.AddTransactionViewModel
-import com.rifqi.trackfunds.core.navigation.AccountTimeline
-import com.rifqi.trackfunds.core.navigation.Accounts
-import com.rifqi.trackfunds.core.navigation.AccountsGraph
-import com.rifqi.trackfunds.core.navigation.AddTransaction
-import com.rifqi.trackfunds.core.navigation.AddTransactionGraph
-import com.rifqi.trackfunds.core.navigation.AllTransactions
-import com.rifqi.trackfunds.core.navigation.BalanceDetails
-import com.rifqi.trackfunds.core.navigation.Budgets
-import com.rifqi.trackfunds.core.navigation.BudgetsGraph
-import com.rifqi.trackfunds.core.navigation.Home
-import com.rifqi.trackfunds.core.navigation.HomeGraph
-import com.rifqi.trackfunds.core.navigation.Notifications
-import com.rifqi.trackfunds.core.navigation.Profile
-import com.rifqi.trackfunds.core.navigation.ProfileGraph
-import com.rifqi.trackfunds.core.navigation.SelectAccount
-import com.rifqi.trackfunds.core.navigation.SelectCategory
-import com.rifqi.trackfunds.core.navigation.Settings
-import com.rifqi.trackfunds.core.navigation.TransactionDetail
+import com.rifqi.trackfunds.core.navigation.api.AccountTimeline
+import com.rifqi.trackfunds.core.navigation.api.Accounts
+import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
+import com.rifqi.trackfunds.core.navigation.api.AddTransaction
+import com.rifqi.trackfunds.core.navigation.api.AddTransactionGraph
+import com.rifqi.trackfunds.core.navigation.api.AllTransactions
+import com.rifqi.trackfunds.core.navigation.api.BalanceDetails
+import com.rifqi.trackfunds.core.navigation.api.Budgets
+import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
+import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
+import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.navigation.api.HomeGraph
+import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.Profile
+import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
+import com.rifqi.trackfunds.core.navigation.api.SelectAccount
+import com.rifqi.trackfunds.core.navigation.api.SelectCategory
+import com.rifqi.trackfunds.core.navigation.api.Settings
+import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
 import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
-import com.rifqi.trackfunds.feature.transaction.ui.screen.TransactionHistoryScreen
+import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
+import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
 
 // Placeholder untuk layar yang belum dibuat
 @Composable
@@ -48,11 +50,10 @@ fun PlaceholderScreen(name: String) {
 }
 
 @Composable
-fun AppNavGraph(
+fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-
     NavHost(
         navController = navController,
         startDestination = HomeGraph,
@@ -64,16 +65,13 @@ fun AppNavGraph(
         ) {
             composable<Home> {
                 HomeScreen(
-                    onNavigateToAllTransactions = { transactionType ->
-                        navController.navigate(AllTransactions(transactionType))
+                    onNavigateToAllTransactions = {
+                        navController.navigate(AllTransactions)
                     },
-                    onNavigateToBalanceDetails = {
-                        // FIX: Navigasi ke BalanceDetails, bukan TransactionDetail("ALL")
-                        // kecuali jika itu memang tujuannya.
-                        navController.navigate(BalanceDetails)
+                    onNavigateToCategoryDetails = { categoryId, categoryName ->
+                        navController.navigate(CategoryTransactions(categoryId, categoryName))
                     },
                     onNavigateToNotifications = {
-                        // FIX: Navigasi ke rute objek Notifications
                         navController.navigate(Notifications)
                     },
                     onNavigateToAddTransaction = {
@@ -168,16 +166,27 @@ fun AppNavGraph(
 
         // --- Layar Full-Screen ---
 
-        // FIX: Mengubah composable AllTransactions menjadi type-safe
-        composable<AllTransactions> { backStackEntry ->
-            val args = backStackEntry.toRoute<AllTransactions>()
-            TransactionHistoryScreen(
-                transactionType = args.transactionType,
+        composable<AllTransactions> {
+            AllTransactionsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToTransactionDetail = { transactionId ->
                     navController.navigate(TransactionDetail(transactionId))
                 },
-                onNavigateToAddTransaction = { navController.navigate(AddTransaction) }
+                onNavigateToAddTransaction = {
+                    navController.navigate(AddTransactionGraph)
+                }
+            )
+        }
+
+        composable<CategoryTransactions> {
+            CategoryTransactionsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToTransactionDetail = { transactionId ->
+                    navController.navigate(TransactionDetail(transactionId))
+                },
+                onNavigateToAddTransaction = {
+                    navController.navigate(AddTransactionGraph)
+                }
             )
         }
 

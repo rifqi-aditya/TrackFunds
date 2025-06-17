@@ -67,4 +67,17 @@ interface TransactionRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<CategorySummaryItem>>
+
+    fun getTransactionsByDateRange(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionItem>>
+
+    fun getTransactionsByCategoryId(
+        categoryId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<TransactionItem>>
+
+
 }

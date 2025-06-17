@@ -1,5 +1,6 @@
-package com.rifqi.trackfunds.core.navigation
+package com.rifqi.trackfunds.core.navigation.api
 
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -54,7 +55,18 @@ data object AddTransactionGraph : AppScreen
 
 // Layar Full-Screen
 @Serializable
-data class AllTransactions(val transactionType: String) : AppScreen
+data object AllTransactions : AppScreen
+
+@Serializable
+data class CategoryTransactions(
+    val categoryId: String,
+    val categoryName: String
+) : AppScreen
+
+@Serializable
+data class TypedTransactions(
+    val transactionType: TransactionType
+) : AppScreen
 
 @Serializable
 data class TransactionDetail(val transactionId: String) : AppScreen

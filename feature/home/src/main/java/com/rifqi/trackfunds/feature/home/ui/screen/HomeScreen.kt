@@ -47,22 +47,20 @@ import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToAllTransactions: (transactionType: String) -> Unit,
-    onNavigateToBalanceDetails: () -> Unit,
     onNavigateToNotifications: () -> Unit,
-    onNavigateToAddTransaction: () -> Unit
+    onNavigateToAddTransaction: () -> Unit,
+    onNavigateToAllTransactions: () -> Unit,
+    onNavigateToCategoryDetails: (categoryId: String, categoryName: String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     HomeScreenContent(
         uiState = uiState,
-        onNavigateToBalanceDetails = onNavigateToBalanceDetails,
-        onNavigateToAllTransactions = onNavigateToAllTransactions,
         onNavigateToNotifications = onNavigateToNotifications,
         onNavigateToAddTransaction = onNavigateToAddTransaction,
+        onNavigateToAllTransactions = onNavigateToAllTransactions,
+        onNavigateToCategoryDetails = onNavigateToCategoryDetails,
         onCalendarClick = { },
-//        onCalendarClick = viewModel::onDateRangeClicked,
-//        onBalanceCardClick = viewModel::onBalanceCardClicked,
     )
 }
 
@@ -76,8 +74,8 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     uiState: HomeUiState,
-    onNavigateToBalanceDetails: () -> Unit,
-    onNavigateToAllTransactions: (transactionType: String) -> Unit,
+    onNavigateToAllTransactions: () -> Unit,
+    onNavigateToCategoryDetails: (categoryId: String, categoryName: String) -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
     onCalendarClick: () -> Unit,
@@ -160,21 +158,22 @@ fun HomeScreenContent(
                 item {
                     BalanceCard(
                         summary = uiState.summary,
-                        onClick = {
-                            onNavigateToBalanceDetails // Panggil handler dari ViewModel
-                            // onNavigateToBalanceDetails() // Navigasi bisa dipicu dari ViewModel atau dari sini
-                        }
+                        onClick = onNavigateToAllTransactions
                     )
                 }
                 if (uiState.summary != null) {
                     item {
                         SummarySection(
-                            title = "Expenses by Category",
+                            title = "Expenses",
                             items = uiState.summary.expenseSummaries,
-                            onViewAllClick = { onNavigateToAllTransactions("EXPENSE") },
-                            onItemClick = { summaryItem -> /* ... */ },
+                            onViewAllClick = { },
+                            onItemClick = { summaryItem ->
+                                onNavigateToCategoryDetails(
+                                    summaryItem.categoryId,
+                                    summaryItem.categoryName
+                                )
+                            },
                             itemContent = { summaryItem ->
-                                // Anda "memasukkan" komponen spesialis SummaryRow ke dalam slot
                                 CategorySummaryRow(
                                     categoryItem = summaryItem,
                                 )
@@ -183,9 +182,9 @@ fun HomeScreenContent(
                     }
                     item {
                         SummarySection(
-                            title = "Income by Category",
+                            title = "Income",
                             items = uiState.summary.incomeSummaries,
-                            onViewAllClick = { onNavigateToAllTransactions("INCOME") },
+                            onViewAllClick = { },
                             onItemClick = { summaryItem -> /* ... */ },
                             itemContent = { summaryItem ->
                                 CategorySummaryRow(

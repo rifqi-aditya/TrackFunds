@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.screen
+package com.rifqi.trackfunds.core.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -24,58 +24,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.components.TransactionListItem
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionListItem
-import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionHistoryUiState
-import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.DUMMY_ALL_TRANSACTIONS
-import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionHistoryViewModel
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-private fun formatTransactionDate(dateTime: LocalDateTime): String {
-    val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yy hh:mm a", Locale.ENGLISH)
-    return dateTime.format(formatter)
-}
-
-// --- Layar Stateful (Container) ---
-@Composable
-fun TransactionHistoryScreen(
-    viewModel: TransactionHistoryViewModel = hiltViewModel(),
-    transactionType: String,
-    onNavigateBack: () -> Unit,
-    onNavigateToTransactionDetail: (transactionId: String) -> Unit,
-    onNavigateToAddTransaction: () -> Unit
-) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    TransactionHistoryContent(
-        uiState = uiState,
-        onNavigateBack = onNavigateBack,
-        onTransactionClick = onNavigateToTransactionDetail,
-        onAddTransactionClick = onNavigateToAddTransaction,
-        onSearchClick = { /* TODO: Panggil fungsi ViewModel untuk search */ },
-        onCalendarClick = { /* TODO: Panggil fungsi ViewModel untuk ganti tanggal */ }
-    )
-}
-
-
-// --- Layar Utama (Stateless) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionHistoryContent(
-    uiState: TransactionHistoryUiState,
+    title: String,
+    isLoading: Boolean,
+    transactions: List<TransactionItem>,
+    dateRange: String,
+    error: String?,
     onNavigateBack: () -> Unit,
     onTransactionClick: (String) -> Unit,
     onAddTransactionClick: () -> Unit,
@@ -88,11 +59,11 @@ fun TransactionHistoryContent(
                 title = {
                     Column {
                         Text(
-                            "Transactions",
+                            title,
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            uiState.dateRange,
+                            dateRange, // FIX 2: Gunakan parameter 'dateRange'
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -127,58 +98,91 @@ fun TransactionHistoryContent(
             }
         }
     ) { innerPadding ->
-        if (uiState.isLoading) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding), contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp) // Jarak kecil antar Card/Divider
-            ) {
-//                item {
-//                    SummaryHeaderCard(
-//                        elapsedAmount = uiState.elapsedAmount,
-//                        upcomingAmount = uiState.upcomingAmount
-//                    )
-//                    Spacer(modifier = Modifier.height(16.dp))
-//                }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            // FIX 3: Gunakan parameter 'isLoading' dan 'error' untuk mengatur tampilan
+            when {
+                isLoading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
 
-                items(
-                    items = uiState.transactions,
-                    key = { it.id }
-                ) { transaction ->
-                    TransactionListItem(
-                        transaction = transaction,
-                        onClick = { onTransactionClick(transaction.id) }
+                error != null -> {
+                    Text(
+                        text = "Error: $error",
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp)
                     )
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(
+                            items = transactions, // FIX 4: Gunakan parameter 'transactions'
+                            key = { it.id }
+                        ) { transaction ->
+                            TransactionListItem(
+                                transaction = transaction,
+                                onClick = { onTransactionClick(transaction.id) }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-
 // --- Preview ---
+
+// Definisikan data dummy di sini untuk keperluan preview
+private val DUMMY_ALL_TRANSACTIONS = listOf(
+    TransactionItem(
+        id = "1",
+        note = "Monthly Salary",
+        amount = BigDecimal("15000000"),
+        type = TransactionType.INCOME,
+        date = LocalDateTime.now(),
+        categoryId = "c1",
+        categoryName = "Salary",
+        iconIdentifier = "cash",
+        accountId = "a1",
+        accountName = "BCA Mobile"
+    ),
+    TransactionItem(
+        id = "2",
+        note = "Lunch with friends",
+        amount = BigDecimal("150000"),
+        type = TransactionType.EXPENSE,
+        date = LocalDateTime.now().minusDays(1),
+        categoryId = "c2",
+        categoryName = "Food & Drink",
+        iconIdentifier = "restaurant",
+        accountId = "a2",
+        accountName = "Cash Wallet"
+    )
+)
+
 @Preview(showBackground = true, name = "Transactions Screen Light")
 @Composable
 private fun TransactionsContentPreview() {
     TrackFundsTheme {
-        val dummyState = TransactionHistoryUiState(
-            isLoading = false,
-            dateRange = "01 Jun 25 - 30 Jun 25",
-            summaryAmount = BigDecimal("50000.0"),
-            transactions = DUMMY_ALL_TRANSACTIONS
-        )
+        // FIX 5: Panggil dengan parameter individual, bukan UiState
         TransactionHistoryContent(
-            uiState = dummyState,
+            title = "All Transactions",
+            isLoading = false,
+            transactions = DUMMY_ALL_TRANSACTIONS,
+            dateRange = "01 - 30 June 2025",
+            error = null,
             onNavigateBack = {},
             onTransactionClick = {},
             onAddTransactionClick = {},
@@ -196,14 +200,12 @@ private fun TransactionsContentPreview() {
 @Composable
 private fun TransactionsContentDarkPreview() {
     TrackFundsTheme(darkTheme = true) {
-        val dummyState = TransactionHistoryUiState(
-            isLoading = false,
-            dateRange = "01 Jun 25 - 30 Jun 25",
-            summaryAmount = BigDecimal("50000.0"),
-            transactions = DUMMY_ALL_TRANSACTIONS
-        )
         TransactionHistoryContent(
-            uiState = dummyState,
+            title = "Expenses",
+            isLoading = false,
+            transactions = DUMMY_ALL_TRANSACTIONS,
+            dateRange = "01 - 30 June 2025",
+            error = null,
             onNavigateBack = {},
             onTransactionClick = {},
             onAddTransactionClick = {},

@@ -36,12 +36,9 @@ android {
 }
 
 dependencies {
-
-    implementation(project(":core:domain"))
     implementation(project(":core:ui"))
-
     implementation(project(":core:domain"))
-    implementation(project(":core:ui"))
+    implementation(project(":core:navigation:api"))
 
     // AndroidX Core & Lifecycle
     implementation(libs.androidx.core.ktx)
@@ -67,9 +64,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Navigation Compose (jika modul ini memiliki navigasi internal)
-    // val navigationVersion = "2.7.7"
-    // implementation("androidx.navigation:navigation-compose:$navigationVersion")
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

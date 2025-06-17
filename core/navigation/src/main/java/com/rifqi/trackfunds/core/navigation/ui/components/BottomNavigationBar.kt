@@ -16,11 +16,11 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.rifqi.trackfunds.core.navigation.AccountsGraph
-import com.rifqi.trackfunds.core.navigation.AppScreen
-import com.rifqi.trackfunds.core.navigation.BudgetsGraph
-import com.rifqi.trackfunds.core.navigation.HomeGraph
-import com.rifqi.trackfunds.core.navigation.ProfileGraph
+import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
+import com.rifqi.trackfunds.core.navigation.api.HomeGraph
+import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 
 sealed class BottomNavItem(
     val graphRoute: AppScreen, // Tipe diubah dari String ke AppScreen

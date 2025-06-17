@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
+    implementation(project(":core:navigation:api"))
     implementation(project(":feature:home"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:account"))
