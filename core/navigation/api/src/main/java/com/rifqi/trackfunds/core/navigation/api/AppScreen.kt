@@ -51,7 +51,7 @@ data object Profile : AppScreen
 data object Settings : AppScreen
 
 @Serializable
-data object AddTransactionGraph : AppScreen
+data object AddEditTransactionGraph : AppScreen
 
 // Layar Full-Screen
 @Serializable
@@ -72,7 +72,9 @@ data class TypedTransactions(
 data class TransactionDetail(val transactionId: String) : AppScreen
 
 @Serializable
-data object AddTransaction : AppScreen
+data class AddEditTransaction(
+    val transactionId: String? = null
+) : AppScreen
 
 @Serializable
 data class SelectCategory(val transactionType: String) : AppScreen

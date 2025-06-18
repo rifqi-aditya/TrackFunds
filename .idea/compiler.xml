@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="TrackFunds.core.domain.test" target="17" />
+      <module name="TrackFunds.feature.add_transaction" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

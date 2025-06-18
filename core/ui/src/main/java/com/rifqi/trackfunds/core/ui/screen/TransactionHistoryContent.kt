@@ -74,7 +74,7 @@ fun TransactionHistoryContent(
                         Icon(
                             Icons.AutoMirrored.Rounded.ArrowBackIos,
                             contentDescription = "Back",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 },

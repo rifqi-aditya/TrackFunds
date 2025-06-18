@@ -46,7 +46,6 @@ dependencies {
     implementation(project(":feature:account"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:transaction"))
-    implementation(project(":feature:add_transaction"))
 
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten

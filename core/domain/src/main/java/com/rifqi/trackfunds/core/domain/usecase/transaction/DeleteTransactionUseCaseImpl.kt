@@ -8,8 +8,6 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
 ) : DeleteTransactionUseCase {
 
     override suspend operator fun invoke(transactionId: String) {
-        // Implementasi di repository akan menangani penghapusan transaksi
-        // dan pengembalian saldo akun yang sesuai.
         transactionRepository.deleteTransaction(transactionId)
     }
 }

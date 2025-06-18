@@ -1,4 +1,4 @@
-package com.rifqi.add_transaction.ui.components
+package com.rifqi.trackfunds.feature.transaction.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement

@@ -37,7 +37,7 @@ interface CategoryRepository {
      * @param id ID dari kategori yang dicari.
      * @return Flow yang berisi CategoryItem atau null jika tidak ditemukan.
      */
-//     suspend fun getCategoryById(id: String): Flow<CategoryItem?>
+    suspend fun getCategoryById(categoryId: String): CategoryItem?
 
     // Anda bisa menambahkan fungsi-fungsi lain di sini sesuai kebutuhan aplikasi,
     // seperti updateCategory(category: CategoryItem), deleteCategory(id: String), dll.

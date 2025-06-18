@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.core.data.repository
 
+import androidx.room.Transaction
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
@@ -27,11 +28,10 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     override fun getTransactionById(transactionId: String): Flow<TransactionItem?> {
-        return getTransactions().map { transactions ->
-            transactions.find { it.id == transactionId }
+        return transactionDao.getTransactionWithDetailsById(transactionId).map { dto ->
+            dto?.toDomain()
         }
     }
-
 
     override fun getTransactionsForAccount(accountId: String): Flow<List<TransactionItem>> {
         return getTransactions().map { transactions ->
@@ -55,63 +55,100 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
+    @Transaction
     override suspend fun updateTransaction(transaction: TransactionItem) {
-        // Ambil transaksi lama untuk menghitung perbedaan saldo
+        // Ambil transaksi LAMA dari database untuk perbandingan
         val oldTransaction = transactionDao.getTransactionById(transaction.id) ?: return
 
-        // Kembalikan saldo dari transaksi lama
-        val oldAccount = accountDao.getAccountById(oldTransaction.accountId)
-        if (oldAccount != null) {
-            val revertedBalance = if (oldTransaction.type == TransactionType.INCOME) {
-                oldAccount.balance.subtract(oldTransaction.amount)
+        // Ambil objek domain dari transaksi BARU (yang dari UI)
+        val newTransaction = transaction
+
+        // FIX 2: Bedakan logika jika akunnya sama atau berbeda
+        if (oldTransaction.accountId == newTransaction.accountId) {
+            // --- KASUS 1: AKUN TETAP SAMA ---
+            // Ini adalah kasus paling umum (misal: hanya mengedit catatan/jumlah)
+
+            val account = accountDao.getAccountById(newTransaction.accountId) ?: return
+
+            // Hitung saldo dengan mengembalikan nilai lama, lalu menambah nilai baru
+            // Saldo Awal + Pengembalian Nilai Lama - Pengeluaran Nilai Baru
+            val balanceAfterRevert = if (oldTransaction.type == TransactionType.INCOME) {
+                account.balance.subtract(oldTransaction.amount)
             } else {
-                oldAccount.balance.add(oldTransaction.amount)
+                account.balance.add(oldTransaction.amount)
             }
-            accountDao.updateAccount(oldAccount.copy(balance = revertedBalance))
+
+            val finalBalance = if (newTransaction.type == TransactionType.INCOME) {
+                balanceAfterRevert.add(newTransaction.amount)
+            } else {
+                balanceAfterRevert.subtract(newTransaction.amount)
+            }
+
+            // Hanya 1x update ke database untuk akun ini
+            accountDao.updateAccount(account.copy(balance = finalBalance))
+
+        } else {
+            // --- KASUS 2: AKUN BERUBAH ---
+            // Logika Anda sebelumnya sudah cukup baik untuk kasus ini
+
+            // 1. Kembalikan saldo di AKUN LAMA
+            val oldAccount = accountDao.getAccountById(oldTransaction.accountId)
+            if (oldAccount != null) {
+                val revertedBalance = if (oldTransaction.type == TransactionType.INCOME) {
+                    oldAccount.balance.subtract(oldTransaction.amount)
+                } else {
+                    oldAccount.balance.add(oldTransaction.amount)
+                }
+                accountDao.updateAccount(oldAccount.copy(balance = revertedBalance))
+            }
+
+            // 2. Terapkan saldo di AKUN BARU
+            val newAccount = accountDao.getAccountById(newTransaction.accountId)
+            if (newAccount != null) {
+                val newBalance = if (newTransaction.type == TransactionType.INCOME) {
+                    newAccount.balance.add(newTransaction.amount)
+                } else {
+                    newAccount.balance.subtract(newTransaction.amount)
+                }
+                accountDao.updateAccount(newAccount.copy(balance = newBalance))
+            }
         }
 
-        // Terapkan saldo ke akun baru (bisa jadi akun yang sama)
-        val newAccount = accountDao.getAccountById(transaction.accountId)
-        if (newAccount != null) {
-            val newBalance = if (transaction.type == TransactionType.INCOME) {
-                newAccount.balance.add(transaction.amount)
-            } else {
-                newAccount.balance.subtract(transaction.amount)
-            }
-            accountDao.updateAccount(newAccount.copy(balance = newBalance))
-        }
-
-        // Update data transaksi itu sendiri
-        transactionDao.updateTransaction(transaction.toEntity())
+        // Terakhir, update data transaksi itu sendiri
+        transactionDao.updateTransaction(newTransaction.toEntity())
     }
 
+    @Transaction
     override suspend fun deleteTransaction(transactionId: String) {
+        // 1. Ambil data transaksi yang akan dihapus untuk tahu jumlah dan tipenya
         val transactionToDelete = transactionDao.getTransactionById(transactionId) ?: return
 
-        // Kembalikan saldo dari transaksi yang dihapus
+        // 2. Ambil akun terkait
         val account = accountDao.getAccountById(transactionToDelete.accountId)
         if (account != null) {
+            // 3. Hitung saldo yang sudah dikembalikan (reverted)
             val revertedBalance = if (transactionToDelete.type == TransactionType.INCOME) {
-                account.balance.subtract(transactionToDelete.amount)
+                account.balance.subtract(transactionToDelete.amount) // Pemasukan dikurangi
             } else {
-                account.balance.add(transactionToDelete.amount)
+                account.balance.add(transactionToDelete.amount) // Pengeluaran ditambahkan kembali
             }
+            // 4. Update saldo akun di database
             accountDao.updateAccount(account.copy(balance = revertedBalance))
         }
 
-        // Hapus transaksi
+        // 5. Setelah saldo dikembalikan, baru hapus transaksinya
         transactionDao.deleteTransactionById(transactionId)
     }
-
 
     override fun getCategorySummaries(
         type: TransactionType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<CategorySummaryItem>> {
-        return transactionDao.getCategoryTransactionSummaries(type, startDate, endDate).map { dtoList ->
-            dtoList.map { it.toDomain() }
-        }
+        return transactionDao.getCategoryTransactionSummaries(type, startDate, endDate)
+            .map { dtoList ->
+                dtoList.map { it.toDomain() }
+            }
     }
 
     override fun getTransactionsByDateRange(

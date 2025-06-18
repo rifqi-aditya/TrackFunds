@@ -21,6 +21,11 @@ class CategoryRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun getCategoryById(categoryId: String): CategoryItem? {
+        return categoryDao.getCategoryById(categoryId)?.toDomain()
+    }
+
+
     // Implementasi untuk getCategoriesByType jika Anda menambahkannya di interface
 //    override fun getCategoriesByType(type: TransactionType): Flow<List<CategoryItem>> {
 //         return categoryDao.getCategoriesByType(type).map { entityList ->

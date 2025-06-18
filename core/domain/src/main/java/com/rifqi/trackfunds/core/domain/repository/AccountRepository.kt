@@ -15,6 +15,8 @@ interface AccountRepository {
      */
     fun getAccounts(): Flow<List<AccountItem>>
 
+    suspend fun getAccountById(accountId: String): AccountItem?
+
     // Di masa depan, Anda bisa menambahkan fungsi lain di sini, seperti:
     // suspend fun getAccountById(id: String): AccountItem?
     // suspend fun addAccount(account: AccountItem)

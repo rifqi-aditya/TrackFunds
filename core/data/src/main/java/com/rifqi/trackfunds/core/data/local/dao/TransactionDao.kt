@@ -39,7 +39,7 @@ interface TransactionDao {
     @Transaction
     @Query(
         """
-        SELECT
+        SELECT 
             t.*,
             c.name AS category_name, 
             c.icon_identifier AS category_icon_identifier,
@@ -136,7 +136,6 @@ interface TransactionDao {
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<TransactionDetailDto>>
-
 
     @Query("SELECT * FROM transactions WHERE id = :transactionId")
     suspend fun getTransactionById(transactionId: String): TransactionEntity?

@@ -68,20 +68,18 @@ fun TransactionListItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            // === PERUBAHAN DI SINI ===
             val isExpense = transaction.type == TransactionType.EXPENSE
 
-            // Tentukan warna teks dan background berdasarkan tipe transaksi
             val amountColor = if (isExpense) {
-                MaterialTheme.colorScheme.onSurface // Warna teks utama untuk expense
+                MaterialTheme.colorScheme.onSurface
             } else {
-                MaterialTheme.colorScheme.tertiary // Warna hijau pekat untuk income
+                MaterialTheme.colorScheme.tertiary
             }
 
             val containerColor = if (isExpense) {
-                Color.Transparent // Tidak ada background untuk expense
+                Color.Transparent
             } else {
-                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f) // Background hijau pastel untuk income
+                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
             }
 
             Box(

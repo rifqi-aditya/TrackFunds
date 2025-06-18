@@ -12,7 +12,7 @@ import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TypedTransactionsVi
 fun TypedTransactionsScreen(
     viewModel: TypedTransactionsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToTransactionDetail: (String) -> Unit,
+    onNavigateToEditTransaction: (String) -> Unit,
     onNavigateToAddTransaction: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -24,7 +24,7 @@ fun TypedTransactionsScreen(
         dateRange = uiState.dateRange,
         error = uiState.error,
         onNavigateBack = onNavigateBack,
-        onTransactionClick = onNavigateToTransactionDetail,
+        onTransactionClick = onNavigateToEditTransaction,
         onAddTransactionClick = onNavigateToAddTransaction,
         onSearchClick = { /* TODO */ },
         onCalendarClick = { /* TODO */ },

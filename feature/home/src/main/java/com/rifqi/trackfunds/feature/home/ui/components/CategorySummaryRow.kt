@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.util.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.model.HomeCategorySummaryItem
@@ -51,8 +50,8 @@ fun CategorySummaryRow(
             text = formatCurrency(categoryItem.totalAmount),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
-            color = if (categoryItem.transactionType == TransactionType.EXPENSE
-            ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
+//            color = if (categoryItem.transactionType == TransactionType.EXPENSE
+//            ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
         )
     }
 }

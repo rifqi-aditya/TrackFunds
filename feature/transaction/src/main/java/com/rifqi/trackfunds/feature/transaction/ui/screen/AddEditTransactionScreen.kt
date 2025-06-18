@@ -1,6 +1,5 @@
-package com.rifqi.add_transaction.ui.screen
+package com.rifqi.trackfunds.feature.transaction.ui.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,36 +33,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.add_transaction.ui.components.AmountInputForm
-import com.rifqi.add_transaction.ui.components.DateTimeDisplayRow
-import com.rifqi.add_transaction.ui.components.FormSelectorCard
-import com.rifqi.add_transaction.ui.components.NotesInputField
-import com.rifqi.add_transaction.ui.components.TransactionTypeToggleButtons
-import com.rifqi.add_transaction.ui.model.AddTransactionUiState
-import com.rifqi.add_transaction.ui.viewmodel.AddTransactionViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.feature.transaction.ui.components.AmountInputForm
+import com.rifqi.trackfunds.feature.transaction.ui.components.DateTimeDisplayRow
+import com.rifqi.trackfunds.feature.transaction.ui.components.FormSelectorCard
+import com.rifqi.trackfunds.feature.transaction.ui.components.NotesInputField
+import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionTypeToggleButtons
+import com.rifqi.trackfunds.feature.transaction.ui.model.AddEditTransactionUiState
+import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
 import java.math.BigDecimal
-import java.time.LocalDate
 
 /**
  * Stateful Composable (Container)
- * - Bertanggung jawab untuk mendapatkan ViewModel dan state.
- * - Menghubungkan logika ViewModel dengan UI.
- * - Ini yang akan dipanggil dari NavGraph.
+ * - Menerima ViewModel dari NavGraph.
+ * - Menangani event UI dan meneruskannya ke ViewModel.
+ * - Menampilkan dialog.
  */
 @Composable
-fun AddTransactionScreen(
-    viewModel: AddTransactionViewModel,
+fun AddEditTransactionScreen(
+    viewModel: AddEditTransactionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToSelectCategory: (transactionType: String) -> Unit,
     onNavigateToSelectAccount: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isEditMode = viewModel.isEditMode
 
     CustomDatePickerDialog(
         showDialog = uiState.showDatePicker,
@@ -72,7 +76,6 @@ fun AddTransactionScreen(
         }
     )
 
-    // Efek untuk navigasi kembali setelah transaksi disimpan
     LaunchedEffect(uiState.isTransactionSaved) {
         if (uiState.isTransactionSaved) {
             onNavigateBack()
@@ -80,10 +83,29 @@ fun AddTransactionScreen(
         }
     }
 
-    AddTransactionContent(
+    if (uiState.showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onDismissDeleteDialog() },
+            title = { Text("Delete Transaction") },
+            text = { Text("Are you sure you want to delete this transaction? This action cannot be undone.") },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.onConfirmDelete() },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) { Text("Delete") }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDismissDeleteDialog() }) { Text("Cancel") }
+            }
+        )
+    }
+
+    AddEditTransactionContent(
         uiState = uiState,
+        isEditMode = isEditMode, // Teruskan mode edit
         onNavigateBack = onNavigateBack,
-        onSaveTransaction = { viewModel.onSaveTransaction() },
+        onSaveTransaction = { viewModel.onSaveClick() },
+        onDeleteClick = { viewModel.onDeleteClick() }, // Teruskan event delete
         onTransactionTypeSelected = { viewModel.onTransactionTypeSelected(it) },
         onAmountChange = { viewModel.onAmountChange(it) },
         onNotesChange = { viewModel.onNotesChange(it) },
@@ -101,10 +123,12 @@ fun AddTransactionScreen(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionContent(
-    uiState: AddTransactionUiState,
+fun AddEditTransactionContent(
+    uiState: AddEditTransactionUiState,
+    isEditMode: Boolean,
     onNavigateBack: () -> Unit,
     onSaveTransaction: () -> Unit,
+    onDeleteClick: () -> Unit,
     onTransactionTypeSelected: (TransactionType) -> Unit,
     onAmountChange: (String) -> Unit,
     onNotesChange: (String) -> Unit,
@@ -115,10 +139,29 @@ fun AddTransactionContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = { Text("Add transaction") },
+                title = {
+                    Text(
+                        if (isEditMode) "Edit Transaction" else "Add Transaction",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Rounded.ArrowBackIos,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                },
+                actions = {
+                    if (isEditMode) {
+                        IconButton(onClick = onDeleteClick) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete Transaction"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -143,7 +186,7 @@ fun AddTransactionContent(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Save")
+                    Text(if (isEditMode) "Save Changes" else "Save Transaction")
                 }
             }
         }
@@ -234,23 +277,19 @@ private val previewDummyCategory = CategoryItem(
     type = TransactionType.EXPENSE
 )
 
-@Preview(showBackground = true, name = "Add Transaction Content - Light")
+@Preview(showBackground = true, name = "Add Mode")
 @Composable
 fun AddTransactionContentLightPreview() {
-    TrackFundsTheme(darkTheme = false) {
-        val dummyState = AddTransactionUiState(
-            amount = "50,000",
-            selectedTransactionType = TransactionType.EXPENSE,
-            selectedAccount = previewDummyAccount,
-            selectedDate = LocalDate.now(),
-            notes = "Makan siang di kantor.",
-            selectedCategory = previewDummyCategory,
-            isLoading = false
-        )
-        AddTransactionContent(
-            uiState = dummyState,
+    TrackFundsTheme {
+        AddEditTransactionContent(
+            uiState = AddEditTransactionUiState(
+                selectedCategory = previewDummyCategory,
+                selectedAccount = previewDummyAccount
+            ),
+            isEditMode = false, // Preview untuk mode Add
             onNavigateBack = {},
             onSaveTransaction = {},
+            onDeleteClick = {},
             onTransactionTypeSelected = {},
             onAmountChange = {},
             onDateClick = {},
@@ -261,28 +300,20 @@ fun AddTransactionContentLightPreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    name = "Add Transaction Content - Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
+@Preview(showBackground = true, name = "Edit Mode")
 @Composable
-fun AddTransactionContentDarkPreview() {
-    TrackFundsTheme(darkTheme = true) {
-        val dummyState = AddTransactionUiState(
-            amount = "1,500,000",
-            selectedTransactionType = TransactionType.INCOME,
-            selectedAccount = AccountItem(
-                id = "acc", name = "Cash Wallet", iconIdentifier = "ic_cash",
-                balance = BigDecimal("2000000")
+fun EditTransactionContentLightPreview() {
+    TrackFundsTheme {
+        AddEditTransactionContent(
+            uiState = AddEditTransactionUiState(
+                amount = "150000",
+                selectedCategory = previewDummyCategory,
+                selectedAccount = previewDummyAccount
             ),
-            isLoading = false,
-            error = "Jumlah tidak boleh melebihi saldo."
-        )
-        AddTransactionContent(
-            uiState = dummyState,
+            isEditMode = true, // Preview untuk mode Edit
             onNavigateBack = {},
             onSaveTransaction = {},
+            onDeleteClick = {},
             onTransactionTypeSelected = {},
             onAmountChange = {},
             onDateClick = {},

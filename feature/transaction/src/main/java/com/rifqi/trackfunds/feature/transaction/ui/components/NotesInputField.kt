@@ -1,4 +1,4 @@
-package com.rifqi.add_transaction.ui.components
+package com.rifqi.trackfunds.feature.transaction.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize

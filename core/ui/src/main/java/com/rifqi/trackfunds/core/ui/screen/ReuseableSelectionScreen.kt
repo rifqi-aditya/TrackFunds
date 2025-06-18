@@ -1,10 +1,11 @@
 package com.rifqi.trackfunds.core.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -15,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -22,9 +24,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.components.GenericListItem
 import com.rifqi.trackfunds.core.ui.model.SelectionItem
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 /**
  * Sebuah layar generik yang bisa digunakan kembali untuk menampilkan daftar
@@ -53,10 +57,19 @@ fun ReusableSelectionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title) },
+                title = {
+                    Text(
+                        title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBackIos, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Rounded.ArrowBackIos,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 },
                 actions = topBarActions, // Gunakan slot untuk aksi
@@ -82,8 +95,7 @@ fun ReusableSelectionScreen(
             LazyColumn(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                contentPadding = PaddingValues(top = 8.dp)
+                    .padding(innerPadding)
             ) {
                 items(
                     items = items,
@@ -96,5 +108,27 @@ fun ReusableSelectionScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "Transactions Screen Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun ReusableSelectionScreenPreview() {
+    TrackFundsTheme(darkTheme = true) {
+        ReusableSelectionScreen(
+            title = "Select Item",
+            items = listOf(
+                SelectionItem(id = "1", name = "Item 1", iconIdentifier = "icon_1"),
+                SelectionItem(id = "2", name = "Item 2", iconIdentifier = "icon_2")
+            ),
+            isLoading = false,
+            onNavigateBack = {},
+            onItemSelected = {},
+            onAddItemClicked = {}
+        )
     }
 }

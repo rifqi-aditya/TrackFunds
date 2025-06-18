@@ -189,7 +189,12 @@ fun HomeScreenContent(
                             title = "Income",
                             items = uiState.summary.incomeSummaries,
                             onViewAllClick = { onNavigateToTypeTransactions(TransactionType.INCOME) },
-                            onItemClick = { summaryItem -> /* ... */ },
+                            onItemClick = { summaryItem ->
+                                onNavigateToCategoryTransactions(
+                                    summaryItem.categoryId,
+                                    summaryItem.categoryName
+                                )
+                            },
                             itemContent = { summaryItem ->
                                 CategorySummaryRow(
                                     categoryItem = summaryItem,
