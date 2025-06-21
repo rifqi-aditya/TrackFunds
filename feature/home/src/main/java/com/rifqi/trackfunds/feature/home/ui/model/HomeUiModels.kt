@@ -11,7 +11,8 @@ data class HomeUiState(
     val dateRangePeriod: Pair<LocalDate, LocalDate> = getCurrentDateRangePair(),
     val summary: HomeSummary? = null,
     val challengeMessage: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val showMonthPickerDialog: Boolean = false,
 )
 
 data class HomeSummary(

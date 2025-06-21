@@ -67,7 +67,4 @@ class AccountsViewModel @Inject constructor(
 
     fun onSearchClicked() { /* TODO: Implementasi logika pencarian */
     }
-
-    fun onTransferFabClicked() { /* TODO: Navigasi ke halaman transfer antar akun */
-    }
 }

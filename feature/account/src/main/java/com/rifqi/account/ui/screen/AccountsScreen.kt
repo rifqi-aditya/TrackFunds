@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,14 +43,11 @@ fun AccountsScreen(
     AccountsContent(
         uiState = uiState,
         onAccountClick = { accountId ->
-            // Navigasi ke detail wallet dengan ID-nya
             onNavigateToWalletDetail(accountId)
         },
         onSearchClick = { viewModel.onSearchClicked() },
         onTransferFabClick = {
-            viewModel.onTransferFabClicked()
-            // Navigasi ke halaman transfer
-            // onNavigateToTransfer()
+            onNavigateToTransfer()
         },
     )
 }
@@ -73,7 +69,7 @@ fun AccountsContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onTransferFabClick,
-                shape = RoundedCornerShape(16.dp) // Bentuk "squircle"
+                shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.SwapHoriz, contentDescription = "Transfer Antar Akun")
             }

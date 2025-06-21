@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,18 +43,18 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            // FIX 2: Hitung startDate dan endDate dari uiState
+            //Hitung startDate dan endDate dari uiState
             val dateRange = _uiState.value.dateRangePeriod
             val startDate = dateRange.first.atStartOfDay()
             val endDate = dateRange.second.atTime(23, 59, 59)
 
-            // FIX 3: Panggil UseCase yang BENAR dengan parameter tanggal
+            // Panggil UseCase yang BENAR dengan parameter tanggal
             val incomeSummariesFlow =
                 getCategorySummariesUseCase(TransactionType.INCOME, startDate, endDate)
             val expenseSummariesFlow =
                 getCategorySummariesUseCase(TransactionType.EXPENSE, startDate, endDate)
 
-            // Gabungkan kedua flow untuk mendapatkan data ringkasan
+            //Gabungkan kedua flow untuk mendapatkan data ringkasan
             combine(incomeSummariesFlow, expenseSummariesFlow) { incomeList, expenseList ->
                 val totalIncome = incomeList.sumOf { it.totalAmount }
                 val totalExpenses = expenseList.sumOf { it.totalAmount }
@@ -75,7 +77,6 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 .collect { summary ->
-                    // Update state dengan data ringkasan yang berhasil diambil
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -86,34 +87,40 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onDateRangeClicked() {
-        // TODO: Tampilkan dialog pemilih tanggal atau navigasi ke layar pilih periode
-        // Setelah periode baru dipilih, panggil loadData() lagi
-        println("HomeViewModel: Date range selection triggered.")
-        // Contoh: _uiState.update { it.copy(currentMonthAndYear = "July 2025", dateRangePeriod = "01 - 31 July 2025") }
-        // loadData() // Panggil ulang dengan parameter periode baru jika ada
+    fun onMonthSelected(selectedYearMonth: YearMonth) {
+        val newStartDate = selectedYearMonth.atDay(1)
+        val newEndDate = selectedYearMonth.atEndOfMonth()
+
+        _uiState.update {
+            it.copy(
+                dateRangePeriod = Pair(newStartDate, newEndDate),
+                currentMonthAndYear = selectedYearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+            )
+        }
+
+        loadData()
     }
 
-    fun onNotificationsClicked() {
-        // TODO: Navigasi ke layar notifikasi atau tampilkan dialog/bottom sheet
-        println("HomeViewModel: Notifications clicked.")
+    fun onDateRangeSelectorClicked() {
+        _uiState.update { it.copy(showMonthPickerDialog = true) }
     }
 
-    fun onSummaryActionClicked() {
-        // TODO: Navigasi ke layar laporan detail atau ringkasan keuangan
-        println("HomeViewModel: Summary action clicked.")
+    fun onMonthDialogDismissed() {
+        _uiState.update { it.copy(showMonthPickerDialog = false) }
     }
 
-    fun onMoreOptionsClicked() {
-        // TODO: Tampilkan menu dropdown dengan opsi lebih lanjut
-        println("HomeViewModel: More options clicked.")
+    fun onNotificationsClicked() { /* ... */
     }
 
-    fun onBalanceCardClicked() {
-
+    fun onSummaryActionClicked() { /* ... */
     }
 
-    fun onFabClicked() {
+    fun onMoreOptionsClicked() { /* ... */
+    }
 
+    fun onBalanceCardClicked() { /* ... */
+    }
+
+    fun onFabClicked() { /* ... */
     }
 }

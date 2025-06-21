@@ -169,27 +169,6 @@ fun AddEditTransactionContent(
                 )
             )
         },
-        bottomBar = {
-            Button(
-                onClick = onSaveTransaction,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp, top = 8.dp)
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large,
-                enabled = !uiState.isLoading
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text(if (isEditMode) "Save Changes" else "Save Transaction")
-                }
-            }
-        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -254,7 +233,28 @@ fun AddEditTransactionContent(
                         .padding(top = 8.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = onSaveTransaction,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.large,
+                enabled = !uiState.isLoading
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(
+                        if (isEditMode) "Save Changes" else "Save Transaction",
+                        color = Color.White
+                    )
+                }
+            }
         }
     }
 }

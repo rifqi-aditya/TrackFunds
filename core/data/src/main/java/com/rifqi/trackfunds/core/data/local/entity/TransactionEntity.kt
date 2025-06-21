@@ -36,5 +36,8 @@ data class TransactionEntity(
     val categoryId: String?,
 
     @ColumnInfo(name = "account_id", index = true)
-    val accountId: String
+    val accountId: String,
+
+    @ColumnInfo(name = "transfer_pair_id", index = true)
+    val transferPairId: String? = null
 )

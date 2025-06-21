@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,20 +53,21 @@ fun AccountCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = account.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = formatCurrency(account.balance),
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Normal),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = MaterialTheme.typography.headlineSmall,
                 )
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                modifier = Modifier
+                    .size(18.dp),
                 contentDescription = "Details",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

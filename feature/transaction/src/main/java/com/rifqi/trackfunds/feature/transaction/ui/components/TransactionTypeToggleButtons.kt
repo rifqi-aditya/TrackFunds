@@ -60,8 +60,8 @@ fun TransactionTypeToggleButtons(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
+                    selectedLabelColor = Color.White,
+                    selectedLeadingIconColor = Color.White
                 ),
                 leadingIcon = if (isSelected) {
                     {

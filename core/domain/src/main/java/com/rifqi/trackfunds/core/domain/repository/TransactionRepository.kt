@@ -76,4 +76,6 @@ interface TransactionRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<TransactionItem>>
+
+    suspend fun performTransfer(expense: TransactionItem, income: TransactionItem)
 }

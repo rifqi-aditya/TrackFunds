@@ -10,9 +10,10 @@ data class TransactionItem(
     val type: TransactionType,
     val date: LocalDateTime,
     val note: String,
-    val categoryId: String,
+    val categoryId: String? = null,
     val categoryName: String,
     val iconIdentifier: String?,
     val accountId: String,
     val accountName: String,
+    val transferPairId: String? = null,
 )

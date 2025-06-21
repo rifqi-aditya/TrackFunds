@@ -59,7 +59,6 @@ class SelectAccountViewModel @Inject constructor(
             )
 
     fun onAccountSelected(account: AccountItem) {
-        // Hanya set nilainya, tidak lagi "mengirim"
         resultManager.setResult(account)
     }
 }

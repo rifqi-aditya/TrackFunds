@@ -18,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.time.LocalDateTime
 import java.util.UUID
 
 @Database(
@@ -62,7 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     private class AppDatabaseCallback(
         private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
+    ) : Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             INSTANCE?.let { database ->
@@ -150,20 +149,14 @@ abstract class AppDatabase : RoomDatabase() {
                     id = UUID.randomUUID().toString(),
                     name = "Cash Wallet",
                     iconIdentifier = "wallet_account",
-                    balance = BigDecimal("1250000.0")
+                    balance = BigDecimal("0")
                 ),
                 AccountEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "BCA Mobile",
+                    name = "MBanking",
                     iconIdentifier = "wallet_account",
-                    balance = BigDecimal("1250000.0")
+                    balance = BigDecimal("10000000")
                 ),
-                AccountEntity(
-                    id = UUID.randomUUID().toString(),
-                    name = "GoPay",
-                    iconIdentifier = "wallet_account",
-                    balance = BigDecimal("1250000.0")
-                )
             )
             accountDao.insertAll(initialAccounts)
 
@@ -174,37 +167,37 @@ abstract class AppDatabase : RoomDatabase() {
             val cashWalletAccount = initialAccounts.find { it.name == "Cash Wallet" }!!
             val bcaAccount = initialAccounts.find { it.name == "BCA Mobile" }!!
 
-            val initialTransactions = listOf(
-                TransactionEntity(
-                    id = UUID.randomUUID().toString(),
-                    note = "Monthly Salary",
-                    amount = BigDecimal("15000000"),
-                    type = TransactionType.INCOME,
-                    date = LocalDateTime.now().minusDays(5),
-                    categoryId = salaryCategory.id,
-                    accountId = bcaAccount.id
-                ),
-                TransactionEntity(
-                    id = UUID.randomUUID().toString(),
-                    note = "Monthly Shopping",
-                    amount = BigDecimal("750000"),
-                    type = TransactionType.EXPENSE,
-                    date = LocalDateTime.now().minusDays(4),
-                    categoryId = shoppingCategory.id,
-                    accountId = bcaAccount.id
-                ),
-                TransactionEntity(
-                    id = UUID.randomUUID().toString(),
-                    note = "Lunch",
-                    amount = BigDecimal("50000"),
-                    type = TransactionType.EXPENSE,
-                    date = LocalDateTime.now().minusDays(2),
-                    categoryId = foodCategory.id,
-                    accountId = cashWalletAccount.id
-                )
-            )
-
-            transactionDao.insertAllTransaction(initialTransactions)
+//            val initialTransactions = listOf(
+//                TransactionEntity(
+//                    id = UUID.randomUUID().toString(),
+//                    note = "Monthly Salary",
+//                    amount = BigDecimal("15000000"),
+//                    type = TransactionType.INCOME,
+//                    date = LocalDateTime.now().minusDays(5),
+//                    categoryId = salaryCategory.id,
+//                    accountId = bcaAccount.id
+//                ),
+//                TransactionEntity(
+//                    id = UUID.randomUUID().toString(),
+//                    note = "Monthly Shopping",
+//                    amount = BigDecimal("750000"),
+//                    type = TransactionType.EXPENSE,
+//                    date = LocalDateTime.now().minusDays(4),
+//                    categoryId = shoppingCategory.id,
+//                    accountId = bcaAccount.id
+//                ),
+//                TransactionEntity(
+//                    id = UUID.randomUUID().toString(),
+//                    note = "Lunch",
+//                    amount = BigDecimal("50000"),
+//                    type = TransactionType.EXPENSE,
+//                    date = LocalDateTime.now().minusDays(2),
+//                    categoryId = foodCategory.id,
+//                    accountId = cashWalletAccount.id
+//                )
+//            )
+//
+//            transactionDao.insertAllTransaction(initialTransactions)
         }
     }
 }

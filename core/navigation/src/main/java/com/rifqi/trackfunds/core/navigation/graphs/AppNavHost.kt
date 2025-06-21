@@ -34,6 +34,7 @@ import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.core.navigation.api.Settings
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
+import com.rifqi.trackfunds.core.navigation.api.Transfer
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
@@ -41,6 +42,7 @@ import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AddEditTransactionScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
+import com.rifqi.trackfunds.feature.transaction.ui.screen.TransferScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.TypedTransactionsScreen
 
 // Placeholder untuk layar yang belum dibuat
@@ -99,7 +101,9 @@ fun AppNavHost(
                     onNavigateToWalletDetail = { account ->
                         navController.navigate(AccountTimeline(account = account))
                     },
-                    onNavigateToTransfer = { /* TODO */ }
+                    onNavigateToTransfer = {
+                        navController.navigate(Transfer)
+                    }
                 )
             }
             composable<AccountTimeline>
@@ -116,6 +120,12 @@ fun AppNavHost(
                     onNavigateToAddTransaction = {
                         navController.navigate(AddEditTransaction())
                     }
+                )
+            }
+            composable<Transfer> {
+                TransferScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToSelectAccount = { navController.navigate(SelectAccount) }
                 )
             }
         }

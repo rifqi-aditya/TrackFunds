@@ -1,6 +1,7 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.util.formatDateRangeToString
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
@@ -37,6 +39,7 @@ import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
+import java.time.YearMonth
 
 
 /**
@@ -63,7 +66,9 @@ fun HomeScreen(
         onNavigateToAllTransactions = onNavigateToAllTransactions,
         onNavigateToCategoryTransactions = onNavigateToCategoryTransactions,
         onNavigateToTypeTransactions = onNavigateToTypeTransactions,
-        onCalendarClick = { },
+        onDateRangeSelectorClicked = { viewModel.onDateRangeSelectorClicked() },
+        onDialogDismiss = { viewModel.onMonthDialogDismissed() },
+        onDialogConfirm = { selectedYearMonth -> viewModel.onMonthSelected(selectedYearMonth) },
     )
 }
 
@@ -82,15 +87,24 @@ fun HomeScreenContent(
     onNavigateToTypeTransactions: (TransactionType) -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
-    onCalendarClick: () -> Unit,
+    onDateRangeSelectorClicked: () -> Unit,
+    onDialogDismiss: () -> Unit,
+    onDialogConfirm: (YearMonth) -> Unit,
 ) {
     val dateRangeString = formatDateRangeToString(uiState.dateRangePeriod)
+
+    MonthYearPickerDialog(
+        showDialog = uiState.showMonthPickerDialog,
+        initialYearMonth = YearMonth.from(uiState.dateRangePeriod.first),
+        onDismiss = onDialogDismiss,
+        onConfirm = onDialogConfirm
+    )
 
     Scaffold(
         topBar = {
             AppTopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = onCalendarClick) {
+                    IconButton(onClick = onDateRangeSelectorClicked) {
                         Image(
                             painter = painterResource(R.drawable.ic_calendar),
                             contentDescription = "Pilih Periode",
@@ -99,7 +113,11 @@ fun HomeScreenContent(
                     }
                 },
                 title = {
-                    Column {
+                    Column(
+                        modifier = Modifier.clickable(
+                            onClick = onDateRangeSelectorClicked
+                        )
+                    ) {
                         Text(
                             uiState.currentMonthAndYear,
                             style = MaterialTheme.typography.titleMedium

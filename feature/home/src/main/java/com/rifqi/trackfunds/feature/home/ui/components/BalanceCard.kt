@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.home.ui.components
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,8 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.R
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.util.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
 import java.math.BigDecimal
@@ -100,7 +104,10 @@ fun BalanceCard(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp)
             ) {
                 BalanceDetailItem(
                     label = "Expenses",
@@ -108,7 +115,7 @@ fun BalanceCard(
                     iconRes = R.drawable.ic_expense,
                     textColor = TextOnDarkCardColor
                 )
-                Spacer(modifier = Modifier.width(32.dp))
+                Spacer(modifier = Modifier.padding(horizontal = 24.dp))
                 BalanceDetailItem(
                     label = "Income",
                     amount = summary.totalIncome,
@@ -154,74 +161,71 @@ fun BalanceDetailItem(
     }
 }
 
+private val previewDummySummaryData = HomeSummary(
+    monthlyBalance = BigDecimal("13750000"),
+    totalExpenses = BigDecimal("1250000"),
+    totalIncome = BigDecimal("15000000"),
+    // List ini bisa kosong karena tidak ditampilkan langsung oleh BalanceCard
+    expenseSummaries = emptyList(),
+    incomeSummaries = emptyList()
+)
 
-//// --- PREVIEWS ---
-//
-//@Preview(showBackground = true, name = "BalanceCard Dark Solid - Light Theme")
-//@Composable
-//fun BalanceCardDarkSolidLightPreview() {
-//    TrackFundsTheme(darkTheme = false) { // Preview di light theme
-//        BalanceCard(
-//            summary = previewDummySummaryData,
-//            onClick = {}
-//        )
-//    }
-//}
-//
-//@Preview(
-//    showBackground = true,
-//    name = "BalanceCard Dark Solid - Dark Theme",
-//    uiMode = Configuration.UI_MODE_NIGHT_YES
-//)
-//@Composable
-//fun BalanceCardDarkSolidDarkPreview() {
-//    TrackFundsTheme(darkTheme = true) { // Preview di dark theme
-//        BalanceCard(
-//            summary = previewDummySummaryData,
-//            onClick = {}
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "BalanceCard Dark Solid - Loading")
-//@Composable
-//fun BalanceCardDarkSolidLoadingPreview() {
-//    TrackFundsTheme(darkTheme = false) {
-//        BalanceCard(
-//            summary = null,
-//            onClick = {}
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "BalanceDetailItem Expense - On Dark Card")
-//@Composable
-//fun BalanceDetailItemExpenseOnDarkPreview() {
-//    TrackFundsTheme(darkTheme = true) { // Gunakan dark theme untuk simulasi card gelap
-//        Surface(color = DarkCardBackgroundColor) { // Latar belakang sesuai Card
-//            BalanceDetailItem(
-//                label = "Pengeluaran",
-//                amount = BigDecimal("1250000.0"),
-//                iconRes = R.drawable.ic_expense,
-//                textColor = TextOnDarkCardColor,
-//                modifier = Modifier.padding(16.dp)
-//            )
-//        }
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "BalanceDetailItem Income - On Dark Card")
-//@Composable
-//fun BalanceDetailItemIncomeOnDarkPreview() {
-//    TrackFundsTheme(darkTheme = true) {
-//        Surface(color = DarkCardBackgroundColor) {
-//            BalanceDetailItem(
-//                label = "Pemasukan",
-//                amount = BigDecimal("1250000.0"),
-//                iconRes = R.drawable.ic_income,
-//                textColor = TextOnDarkCardColor,
-//                modifier = Modifier.padding(16.dp)
-//            )
-//        }
-//    }
-//}
+
+// --- PREVIEWS ---
+
+@Preview(name = "BalanceCard - Loaded State")
+@Preview(name = "BalanceCard - Loaded State (Dark)", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun BalanceCardLoadedPreview() {
+    TrackFundsTheme {
+        BalanceCard(
+            summary = previewDummySummaryData,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(name = "BalanceCard - Loading State")
+@Composable
+private fun BalanceCardLoadingPreview() {
+    TrackFundsTheme {
+        // Berikan null pada summary untuk melihat tampilan loading
+        BalanceCard(
+            summary = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(name = "BalanceDetailItem - Expense")
+@Composable
+private fun BalanceDetailItemExpensePreview() {
+    TrackFundsTheme {
+        // Kita beri Surface dengan warna gelap untuk mensimulasikan latar belakang Card
+        Surface(color = DarkCardBackgroundColor) {
+            BalanceDetailItem(
+                label = "Expenses",
+                amount = BigDecimal("1250000.0"),
+                iconRes = R.drawable.ic_expense,
+                textColor = TextOnDarkCardColor,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}
+
+@Preview(name = "BalanceDetailItem - Income")
+@Composable
+private fun BalanceDetailItemIncomePreview() {
+    TrackFundsTheme {
+        Surface(color = DarkCardBackgroundColor) {
+            BalanceDetailItem(
+                label = "Income",
+                amount = BigDecimal("15000000.0"),
+                iconRes = R.drawable.ic_income,
+                textColor = TextOnDarkCardColor,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}

@@ -182,4 +182,21 @@ class TransactionRepositoryImpl @Inject constructor(
                 dtoList.map { it.toDomain() }
             }
     }
+
+    @Transaction
+    override suspend fun performTransfer(expense: TransactionItem, income: TransactionItem) {
+        // 1. Masukkan kedua entitas transaksi
+        transactionDao.insertTransaction(expense.toEntity())
+        transactionDao.insertTransaction(income.toEntity())
+
+        // 2. Update saldo akun asal
+        val fromAccount = accountDao.getAccountById(expense.accountId) ?: throw Exception("Source account not found")
+        val newFromBalance = fromAccount.balance.subtract(expense.amount)
+        accountDao.updateAccount(fromAccount.copy(balance = newFromBalance))
+
+        // 3. Update saldo akun tujuan
+        val toAccount = accountDao.getAccountById(income.accountId) ?: throw Exception("Destination account not found")
+        val newToBalance = toAccount.balance.add(income.amount)
+        accountDao.updateAccount(toAccount.copy(balance = newToBalance))
+    }
 }

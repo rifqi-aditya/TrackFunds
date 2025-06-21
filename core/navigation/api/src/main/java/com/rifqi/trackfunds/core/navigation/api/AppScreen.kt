@@ -35,9 +35,11 @@ data object BalanceDetails : AppScreen
 @Serializable
 data object Accounts : AppScreen
 
-// Menggunakan custom NavType untuk melewatkan seluruh objek
 @Serializable
 data class AccountTimeline(val account: String) : AppScreen
+
+@Serializable
+data object Transfer : AppScreen
 
 // Layar di dalam Budgets Graph
 @Serializable

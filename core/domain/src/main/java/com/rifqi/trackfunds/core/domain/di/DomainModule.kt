@@ -24,6 +24,8 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByTyp
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByTypeUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCaseImpl
 import dagger.Binds
@@ -122,4 +124,10 @@ abstract class DomainModule {
     abstract fun bindDeleteTransactionUseCase(
         useCaseImpl: DeleteTransactionUseCaseImpl
     ): DeleteTransactionUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindPerformTransferUseCase(
+        useCaseImpl: PerformTransferUseCaseImpl
+    ): PerformTransferUseCase
 }

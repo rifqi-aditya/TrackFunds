@@ -2,12 +2,12 @@ import androidx.compose.ui.graphics.Color
 
 // --- Primary (Biru Modern) ---
 // Warna utama untuk aksi penting, tombol aktif, FAB, dan underline fokus.
-val BrandBlue = Color(0xFF4A80F0)
+val BrandBlue = Color(0xFF004780)
 val OnBrandBlue = Color(0xFFFFFFFF)
 val BrandBlueContainer = Color(0xFFD8E2FF)
 val OnBrandBlueContainer = Color(0xFF001A42)
 // Dark Theme
-val BrandBlueDark = Color(0xFFADC6FF)
+val BrandBlueDark = Color(0xFF004780)
 val OnBrandBlueDark = Color(0xFF002E69)
 val BrandBlueContainerDark = Color(0xFF004494)
 val OnBrandBlueContainerDark = Color(0xFFD8E2FF)
