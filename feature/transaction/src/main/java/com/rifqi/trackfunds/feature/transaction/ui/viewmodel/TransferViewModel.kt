@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.feature.transaction.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
+import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
@@ -22,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TransferViewModel @Inject constructor(
     private val performTransferUseCase: PerformTransferUseCase,
-    private val resultManager: NavigationResultManager
+    private val resultManager: NavigationResultManager,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TransferUiState())
@@ -35,21 +37,16 @@ class TransferViewModel @Inject constructor(
     private fun observeNavigationResult() {
         resultManager.result.onEach { result ->
             if (result is AccountItem) {
-                println("MENERIMA DARI KURIR: ID $result")
-                // Cek mode yang tersimpan di state untuk menentukan target
                 when (_uiState.value.accountSelectionMode) {
                     AccountSelectionMode.FROM -> {
-                        println("MODE DIBACA: FROM. Memproses...")
                         onEvent(TransferEvent.FromAccountSelected(result))
                     }
 
                     AccountSelectionMode.TO -> {
-                        println("MODE DIBACA: TO. Memproses...")
                         onEvent(TransferEvent.ToAccountSelected(result))
                     }
 
                     AccountSelectionMode.NONE -> {
-                        println("MODE DIBACA: NONE. Hasil diabaikan.")
                     }
                 }
                 resultManager.setResult(null)
@@ -59,7 +56,6 @@ class TransferViewModel @Inject constructor(
 
     fun onEvent(event: TransferEvent) {
         when (event) {
-            // Logika untuk menangani hasil dan MERESET mode pemilihan
             is TransferEvent.FromAccountSelected -> _uiState.update {
                 it.copy(
                     fromAccount = event.account,
@@ -71,18 +67,14 @@ class TransferViewModel @Inject constructor(
                 it.copy(toAccount = event.account, accountSelectionMode = AccountSelectionMode.NONE)
             }
 
-            // Logika untuk MENGATUR mode pemilihan sebelum navigasi
             TransferEvent.SelectFromAccountClicked -> {
                 _uiState.update { it.copy(accountSelectionMode = AccountSelectionMode.FROM) }
-                println("MODE SET: FROM")
             }
 
             TransferEvent.SelectToAccountClicked -> {
                 _uiState.update { it.copy(accountSelectionMode = AccountSelectionMode.TO) }
-                println("MODE SET: TO")
             }
 
-            // Event handler untuk form
             is TransferEvent.AmountChanged -> if (event.amount.all { it.isDigit() }) {
                 _uiState.update { it.copy(amount = event.amount) }
             }
@@ -98,7 +90,6 @@ class TransferViewModel @Inject constructor(
             TransferEvent.DatePickerDismissed -> _uiState.update { it.copy(showDatePicker = false) }
             TransferEvent.DateSelectorClicked -> _uiState.update { it.copy(showDatePicker = true) } // Event handler baru
 
-            // Aksi utama
             TransferEvent.PerformTransferClicked -> performTransfer()
         }
     }
@@ -107,7 +98,6 @@ class TransferViewModel @Inject constructor(
         viewModelScope.launch {
             val state = _uiState.value
 
-            // Validasi yang lebih baik
             if (state.fromAccount == null || state.toAccount == null) {
                 _uiState.update { it.copy(error = "Please select source and destination accounts.") }
                 return@launch
@@ -130,8 +120,10 @@ class TransferViewModel @Inject constructor(
                     date = state.date.atStartOfDay(),
                     note = state.note
                 )
+                snackbarManager.showMessage("Transfer successful")
                 _uiState.update { it.copy(isLoading = false, isTransferSuccessful = true) }
             } catch (e: Exception) {
+                snackbarManager.showMessage("Transfer failed: ${e.message}")
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }

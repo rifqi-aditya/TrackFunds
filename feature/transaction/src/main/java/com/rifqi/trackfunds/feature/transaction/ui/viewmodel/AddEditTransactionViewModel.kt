@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
+import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
@@ -41,7 +42,8 @@ class AddEditTransactionViewModel @Inject constructor(
     private val getAccountUseCase: GetAccountUseCase,
     private val getCategoryUseCase: GetCategoryUseCase,
     savedStateHandle: SavedStateHandle,
-    private val resultManager: NavigationResultManager
+    private val resultManager: NavigationResultManager,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val args: AddEditTransaction = savedStateHandle.toRoute()
@@ -65,12 +67,12 @@ class AddEditTransactionViewModel @Inject constructor(
                 when (resultData) {
                     is AccountItem -> {
                         _uiState.update { it.copy(selectedAccount = resultData) }
-                        resultManager.setResult(null) // Bersihkan hasil
+                        resultManager.setResult(null)
                     }
 
                     is CategoryItem -> {
                         _uiState.update { it.copy(selectedCategory = resultData) }
-                        resultManager.setResult(null) // Bersihkan hasil
+                        resultManager.setResult(null)
                     }
                 }
             }
@@ -83,7 +85,6 @@ class AddEditTransactionViewModel @Inject constructor(
             val transactionItem = getTransactionByIdUseCase(id).first()
 
             if (transactionItem != null) {
-                // Ambil objek lengkap dari Akun dan Kategori menggunakan UseCase
                 val account = getAccountUseCase(transactionItem.accountId)
                 val category = transactionItem.categoryId?.let { getCategoryUseCase(it) }
 
@@ -93,8 +94,8 @@ class AddEditTransactionViewModel @Inject constructor(
                         amount = transactionItem.amount.toPlainString(),
                         selectedTransactionType = transactionItem.type,
                         selectedDate = transactionItem.date.toLocalDate(),
-                        selectedAccount = account, // Gunakan objek lengkap
-                        selectedCategory = category, // Gunakan objek lengkap
+                        selectedAccount = account,
+                        selectedCategory = category,
                         notes = transactionItem.note
                     )
                 }
@@ -130,11 +131,14 @@ class AddEditTransactionViewModel @Inject constructor(
             try {
                 if (isEditMode) {
                     updateTransactionUseCase(transactionToSave)
+                    snackbarManager.showMessage("Transaction updated successfully")
                 } else {
                     addTransactionUseCase(transactionToSave)
+                    snackbarManager.showMessage("Transaction saved successfully")
                 }
                 _uiState.update { it.copy(isLoading = false, isTransactionSaved = true) }
             } catch (e: Exception) {
+                snackbarManager.showMessage("Error: ${e.message}")
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }
