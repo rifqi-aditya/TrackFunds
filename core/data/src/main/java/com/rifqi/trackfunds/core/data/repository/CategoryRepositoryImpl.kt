@@ -6,6 +6,8 @@ import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,11 +27,10 @@ class CategoryRepositoryImpl @Inject constructor(
         return categoryDao.getCategoryById(categoryId)?.toDomain()
     }
 
-
-    // Implementasi untuk getCategoriesByType jika Anda menambahkannya di interface
-//    override fun getCategoriesByType(type: TransactionType): Flow<List<CategoryItem>> {
-//         return categoryDao.getCategoriesByType(type).map { entityList ->
-//             entityList.map { it.toDomain() }
-//         }
-//    }
+    override fun getUnbudgetedCategories(period: YearMonth): Flow<List<CategoryItem>> {
+        val periodString = period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        return categoryDao.getUnbudgetedCategories(periodString).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
 }

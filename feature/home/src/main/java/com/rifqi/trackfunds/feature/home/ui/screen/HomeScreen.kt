@@ -55,7 +55,7 @@ fun HomeScreen(
     onNavigateToAddTransaction: () -> Unit,
     onNavigateToAllTransactions: () -> Unit,
     onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
-    onNavigateToTypeTransactions: (TransactionType) -> Unit
+    onNavigateToTypedTransactions: (TransactionType) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -65,7 +65,7 @@ fun HomeScreen(
         onNavigateToAddTransaction = onNavigateToAddTransaction,
         onNavigateToAllTransactions = onNavigateToAllTransactions,
         onNavigateToCategoryTransactions = onNavigateToCategoryTransactions,
-        onNavigateToTypeTransactions = onNavigateToTypeTransactions,
+        onNavigateToTypedTransactions = onNavigateToTypedTransactions,
         onDateRangeSelectorClicked = { viewModel.onDateRangeSelectorClicked() },
         onDialogDismiss = { viewModel.onMonthDialogDismissed() },
         onDialogConfirm = { selectedYearMonth -> viewModel.onMonthSelected(selectedYearMonth) },
@@ -84,7 +84,7 @@ fun HomeScreenContent(
     uiState: HomeUiState,
     onNavigateToAllTransactions: () -> Unit,
     onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
-    onNavigateToTypeTransactions: (TransactionType) -> Unit,
+    onNavigateToTypedTransactions: (TransactionType) -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
     onDateRangeSelectorClicked: () -> Unit,
@@ -188,7 +188,7 @@ fun HomeScreenContent(
                         SummarySection(
                             title = "Expenses",
                             items = uiState.summary.expenseSummaries,
-                            onViewAllClick = { onNavigateToTypeTransactions(TransactionType.EXPENSE) },
+                            onViewAllClick = { onNavigateToTypedTransactions(TransactionType.EXPENSE) },
                             onItemClick = { summaryItem ->
                                 onNavigateToCategoryTransactions(
                                     summaryItem.categoryId,
@@ -206,7 +206,7 @@ fun HomeScreenContent(
                         SummarySection(
                             title = "Income",
                             items = uiState.summary.incomeSummaries,
-                            onViewAllClick = { onNavigateToTypeTransactions(TransactionType.INCOME) },
+                            onViewAllClick = { onNavigateToTypedTransactions(TransactionType.INCOME) },
                             onItemClick = { summaryItem ->
                                 onNavigateToCategoryTransactions(
                                     summaryItem.categoryId,

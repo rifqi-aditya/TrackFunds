@@ -64,7 +64,4 @@ class AccountsViewModel @Inject constructor(
                 }
         }
     }
-
-    fun onSearchClicked() { /* TODO: Implementasi logika pencarian */
-    }
 }

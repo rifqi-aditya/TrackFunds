@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.core.data.di
 import android.content.Context
 import com.rifqi.trackfunds.core.data.local.AppDatabase
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
+import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import dagger.Module
@@ -47,6 +48,12 @@ object DatabaseModule {
     @Singleton
     fun provideTransactionDao(appDatabase: AppDatabase): TransactionDao {
         return appDatabase.transactionDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBudgetDao(appDatabase: AppDatabase): BudgetDao {
+        return appDatabase.budgetDao()
     }
 
 

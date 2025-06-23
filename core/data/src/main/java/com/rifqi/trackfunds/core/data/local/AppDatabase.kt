@@ -8,9 +8,11 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.rifqi.trackfunds.core.data.local.converter.Converters
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
+import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
+import com.rifqi.trackfunds.core.data.local.entity.BudgetEntity
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.domain.model.TransactionType
@@ -24,7 +26,8 @@ import java.util.UUID
     entities = [
         CategoryEntity::class,
         AccountEntity::class,
-        TransactionEntity::class
+        TransactionEntity::class,
+        BudgetEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -35,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun accountDao(): AccountDao
     abstract fun transactionDao(): TransactionDao
+    abstract fun budgetDao(): BudgetDao
 
     companion object {
         @Volatile

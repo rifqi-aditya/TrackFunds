@@ -2,6 +2,7 @@ package com.rifqi.trackfunds.core.domain.repository
 
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import kotlinx.coroutines.flow.Flow
+import java.time.YearMonth
 
 /**
  * Interface yang mendefinisikan kontrak untuk operasi terkait data Kategori.
@@ -41,4 +42,6 @@ interface CategoryRepository {
 
     // Anda bisa menambahkan fungsi-fungsi lain di sini sesuai kebutuhan aplikasi,
     // seperti updateCategory(category: CategoryItem), deleteCategory(id: String), dll.
+
+    fun getUnbudgetedCategories(period: YearMonth): Flow<List<CategoryItem>>
 }

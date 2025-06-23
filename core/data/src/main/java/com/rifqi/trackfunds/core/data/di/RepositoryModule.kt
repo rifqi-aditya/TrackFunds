@@ -1,9 +1,11 @@
 package com.rifqi.trackfunds.core.data.di
 
 import com.rifqi.trackfunds.core.data.repository.AccountRepositoryImpl
+import com.rifqi.trackfunds.core.data.repository.BudgetRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.CategoryRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.TransactionRepositoryImpl
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
+import com.rifqi.trackfunds.core.domain.repository.BudgetRepository
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import dagger.Binds
@@ -33,4 +35,10 @@ abstract class RepositoryModule {
     abstract fun bindTransactionRepository(
         transactionRepositoryImpl: TransactionRepositoryImpl
     ): TransactionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBudgetRepository(
+        budgetRepositoryImpl: BudgetRepositoryImpl
+    ): BudgetRepository
 }

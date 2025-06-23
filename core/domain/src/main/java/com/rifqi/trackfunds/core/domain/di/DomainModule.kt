@@ -4,6 +4,16 @@ import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
@@ -130,4 +140,35 @@ abstract class DomainModule {
     abstract fun bindPerformTransferUseCase(
         useCaseImpl: PerformTransferUseCaseImpl
     ): PerformTransferUseCase
+
+    // --- Budget Use Case ---
+    @Binds
+    @Singleton
+    abstract fun bindGetBudgetsUseCase(
+        useCaseImpl: GetBudgetsUseCaseImpl
+    ): GetBudgetsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetBudgetByIdUseCase(
+        useCaseImpl: GetBudgetByIdUseCaseImpl
+    ): GetBudgetByIdUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindAddBudgetUseCase(
+        useCaseImpl: AddBudgetUseCaseImpl
+    ): AddBudgetUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindUpdateBudgetUseCase(
+        useCaseImpl: UpdateBudgetUseCaseImpl
+    ): UpdateBudgetUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindDeleteBudgetUseCase(
+        useCaseImpl: DeleteBudgetUseCaseImpl
+    ): DeleteBudgetUseCase
 }

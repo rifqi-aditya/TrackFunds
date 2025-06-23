@@ -30,8 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.AmountInputForm
-import com.rifqi.trackfunds.feature.transaction.ui.components.FormSelectorCard
+import com.rifqi.trackfunds.core.ui.components.AmountInputForm
+import com.rifqi.trackfunds.core.ui.components.FormSelectorCard
 import com.rifqi.trackfunds.feature.transaction.ui.components.NotesInputField
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.AccountSelectionMode

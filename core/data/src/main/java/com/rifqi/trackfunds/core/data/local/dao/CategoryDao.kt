@@ -26,6 +26,14 @@ interface CategoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: CategoryEntity)
 
+    @Query("""
+        SELECT * FROM categories
+        WHERE type = 'EXPENSE' AND id NOT IN (
+            SELECT category_id FROM budgets WHERE period = :period
+        )
+    """)
+    fun getUnbudgetedCategories(period: String): Flow<List<CategoryEntity>>
+
     // Fungsi lain seperti getById, update, delete bisa ditambahkan nanti
     // @Query("DELETE FROM categories")
     // suspend fun deleteAll()

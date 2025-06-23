@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.components
+package com.rifqi.trackfunds.core.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
