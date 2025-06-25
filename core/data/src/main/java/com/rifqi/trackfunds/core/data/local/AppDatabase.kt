@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Database(
@@ -84,124 +85,143 @@ abstract class AppDatabase : RoomDatabase() {
             accountDao: AccountDao,
             transactionDao: TransactionDao
         ) {
+            // --- 1. MEMBUAT KATEGORI DEFAULT DENGAN STANDARD KEY ---
             val initialCategories = listOf(
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Food & Drink",
                     iconIdentifier = "restaurant",
-                    type = TransactionType.EXPENSE
+                    type = TransactionType.EXPENSE,
+                    standardKey = "food_and_drink"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Transportation",
-                    iconIdentifier = "car",
-                    type = TransactionType.EXPENSE
+                    iconIdentifier = "commute",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "transportation"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Bills",
-                    iconIdentifier = "apartment",
-                    type = TransactionType.EXPENSE
+                    iconIdentifier = "receipt_long",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "utilities"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Shopping",
-                    iconIdentifier = "shopping_cart",
-                    type = TransactionType.EXPENSE
+                    iconIdentifier = "shopping_bag",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "shopping"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Entertainment",
-                    iconIdentifier = "movie",
-                    type = TransactionType.EXPENSE
+                    iconIdentifier = "theaters",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "entertainment"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Health",
-                    iconIdentifier = "medical_doctor",
-                    type = TransactionType.EXPENSE
+                    iconIdentifier = "health_and_safety",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "health"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Education",
                     iconIdentifier = "school",
-                    type = TransactionType.EXPENSE
+                    type = TransactionType.EXPENSE,
+                    standardKey = "education"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Salary",
-                    iconIdentifier = "cash",
-                    type = TransactionType.INCOME
+                    iconIdentifier = "payments",
+                    type = TransactionType.INCOME,
+                    standardKey = "salary"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Bonus",
-                    iconIdentifier = "growing_money",
-                    type = TransactionType.INCOME
+                    iconIdentifier = "emoji_events",
+                    type = TransactionType.INCOME,
+                    standardKey = "bonus"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Investment",
-                    iconIdentifier = "stack_of_money",
-                    type = TransactionType.INCOME
+                    iconIdentifier = "trending_up",
+                    type = TransactionType.INCOME,
+                    standardKey = "investment_income"
                 ),
             )
             categoryDao.insertAllCategories(initialCategories)
 
+            // --- 2. MEMBUAT AKUN DEFAULT DENGAN SALDO AKHIR YANG SUDAH DIHITUNG ---
             val initialAccounts = listOf(
+                // Saldo awal 500rb, dikurangi 50rb untuk makan siang = 450rb
                 AccountEntity(
-                    id = UUID.randomUUID().toString(),
+                    id = "acc_cash",
                     name = "Cash Wallet",
                     iconIdentifier = "wallet_account",
-                    balance = BigDecimal("0")
+                    balance = BigDecimal("450000")
                 ),
+                // Saldo awal 10jt, ditambah gaji 15jt, dikurangi belanja 750rb = 24.25jt
                 AccountEntity(
-                    id = UUID.randomUUID().toString(),
+                    id = "acc_mbanking",
                     name = "MBanking",
                     iconIdentifier = "wallet_account",
-                    balance = BigDecimal("10000000")
-                ),
+                    balance = BigDecimal("24250000")
+                )
             )
             accountDao.insertAll(initialAccounts)
 
+            // --- 3. MEMBUAT TRANSAKSI DUMMY DENGAN FOREIGN KEY YANG BENAR ---
+
+            // Mengambil ID dari list di atas untuk memastikan foreign key valid
             val salaryCategory = initialCategories.find { it.name == "Salary" }!!
             val shoppingCategory = initialCategories.find { it.name == "Shopping" }!!
             val foodCategory = initialCategories.find { it.name == "Food & Drink" }!!
 
             val cashWalletAccount = initialAccounts.find { it.name == "Cash Wallet" }!!
-            val bcaAccount = initialAccounts.find { it.name == "BCA Mobile" }!!
+            val mbankingAccount =
+                initialAccounts.find { it.name == "MBanking" }!!
 
-//            val initialTransactions = listOf(
-//                TransactionEntity(
-//                    id = UUID.randomUUID().toString(),
-//                    note = "Monthly Salary",
-//                    amount = BigDecimal("15000000"),
-//                    type = TransactionType.INCOME,
-//                    date = LocalDateTime.now().minusDays(5),
-//                    categoryId = salaryCategory.id,
-//                    accountId = bcaAccount.id
-//                ),
-//                TransactionEntity(
-//                    id = UUID.randomUUID().toString(),
-//                    note = "Monthly Shopping",
-//                    amount = BigDecimal("750000"),
-//                    type = TransactionType.EXPENSE,
-//                    date = LocalDateTime.now().minusDays(4),
-//                    categoryId = shoppingCategory.id,
-//                    accountId = bcaAccount.id
-//                ),
-//                TransactionEntity(
-//                    id = UUID.randomUUID().toString(),
-//                    note = "Lunch",
-//                    amount = BigDecimal("50000"),
-//                    type = TransactionType.EXPENSE,
-//                    date = LocalDateTime.now().minusDays(2),
-//                    categoryId = foodCategory.id,
-//                    accountId = cashWalletAccount.id
-//                )
-//            )
-//
-//            transactionDao.insertAllTransaction(initialTransactions)
+            // Daftar transaksi dummy sekarang diaktifkan
+            val initialTransactions = listOf(
+                TransactionEntity(
+                    id = UUID.randomUUID().toString(),
+                    note = "Monthly Salary",
+                    amount = BigDecimal("15000000"),
+                    type = TransactionType.INCOME,
+                    date = LocalDateTime.now().minusDays(5),
+                    categoryId = salaryCategory.id,
+                    accountId = mbankingAccount.id // Mengarah ke ID MBanking
+                ),
+                TransactionEntity(
+                    id = UUID.randomUUID().toString(),
+                    note = "Monthly Shopping",
+                    amount = BigDecimal("750000"),
+                    type = TransactionType.EXPENSE,
+                    date = LocalDateTime.now().minusDays(4),
+                    categoryId = shoppingCategory.id,
+                    accountId = mbankingAccount.id // Mengarah ke ID MBanking
+                ),
+                TransactionEntity(
+                    id = UUID.randomUUID().toString(),
+                    note = "Lunch",
+                    amount = BigDecimal("50000"),
+                    type = TransactionType.EXPENSE,
+                    date = LocalDateTime.now().minusDays(2),
+                    categoryId = foodCategory.id,
+                    accountId = cashWalletAccount.id // Mengarah ke ID Cash Wallet
+                )
+            )
+
+            transactionDao.insertAllTransaction(initialTransactions)
         }
     }
 }

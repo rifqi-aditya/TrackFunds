@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -21,24 +22,39 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
+import com.rifqi.trackfunds.core.navigation.api.AllTransactions
+import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
+import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.ScanReceipt
+import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.core.ui.R
+import com.rifqi.trackfunds.core.ui.components.ActionDialog
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.util.formatDateRangeToString
+import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
-import com.rifqi.trackfunds.feature.home.ui.model.HomeUiState
+import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
+import com.rifqi.trackfunds.feature.home.ui.state.HomeCategorySummaryItem
+import com.rifqi.trackfunds.feature.home.ui.state.HomeSummary
+import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
+import java.math.BigDecimal
 import java.time.YearMonth
 
 
@@ -51,24 +67,43 @@ import java.time.YearMonth
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToNotifications: () -> Unit,
-    onNavigateToAddTransaction: () -> Unit,
     onNavigateToAllTransactions: () -> Unit,
     onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
-    onNavigateToTypedTransactions: (TransactionType) -> Unit
+    onNavigateToTypedTransactions: (TransactionType) -> Unit,
+    onNavigateToNotifications: () -> Unit,
+    onNavigateToAddTransaction: () -> Unit,
+    onNavigateToScanReceipt: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    if (uiState.isAddActionDialogVisible) { // State ini sekarang mengontrol dialog
+        ActionDialog(
+            onDismissRequest = { viewModel.onEvent(HomeEvent.AddActionDialogDismissed) },
+            onScanClick = { viewModel.onEvent(HomeEvent.ScanReceiptClicked) },
+            onAddManuallyClick = { viewModel.onEvent(HomeEvent.AddTransactionManuallyClicked) }
+        )
+    }
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { screen ->
+            when (screen) {
+                is AllTransactions -> onNavigateToAllTransactions()
+                is CategoryTransactions -> onNavigateToCategoryTransactions(
+                    screen.categoryId,
+                    screen.categoryName
+                )
+
+                is TypedTransactions -> onNavigateToTypedTransactions(screen.transactionType)
+                is Notifications -> onNavigateToNotifications()
+                is AddEditTransaction -> onNavigateToAddTransaction()
+                is ScanReceipt -> onNavigateToScanReceipt()
+                else -> {}
+            }
+        }
+    }
+
     HomeScreenContent(
         uiState = uiState,
-        onNavigateToNotifications = onNavigateToNotifications,
-        onNavigateToAddTransaction = onNavigateToAddTransaction,
-        onNavigateToAllTransactions = onNavigateToAllTransactions,
-        onNavigateToCategoryTransactions = onNavigateToCategoryTransactions,
-        onNavigateToTypedTransactions = onNavigateToTypedTransactions,
-        onDateRangeSelectorClicked = { viewModel.onDateRangeSelectorClicked() },
-        onDialogDismiss = { viewModel.onMonthDialogDismissed() },
-        onDialogConfirm = { selectedYearMonth -> viewModel.onMonthSelected(selectedYearMonth) },
+        onEvent = viewModel::onEvent
     )
 }
 
@@ -82,29 +117,23 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     uiState: HomeUiState,
-    onNavigateToAllTransactions: () -> Unit,
-    onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
-    onNavigateToTypedTransactions: (TransactionType) -> Unit,
-    onNavigateToNotifications: () -> Unit,
-    onNavigateToAddTransaction: () -> Unit,
-    onDateRangeSelectorClicked: () -> Unit,
-    onDialogDismiss: () -> Unit,
-    onDialogConfirm: (YearMonth) -> Unit,
+    onEvent: (HomeEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val dateRangeString = formatDateRangeToString(uiState.dateRangePeriod)
 
     MonthYearPickerDialog(
         showDialog = uiState.showMonthPickerDialog,
         initialYearMonth = YearMonth.from(uiState.dateRangePeriod.first),
-        onDismiss = onDialogDismiss,
-        onConfirm = onDialogConfirm
+        onDismiss = { onEvent(HomeEvent.DialogDismissed) },
+        onConfirm = { onEvent(HomeEvent.PeriodChanged(it)) }
     )
 
     Scaffold(
         topBar = {
             AppTopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = onDateRangeSelectorClicked) {
+                    IconButton(onClick = { onEvent(HomeEvent.ChangePeriodClicked) }) {
                         Image(
                             painter = painterResource(R.drawable.ic_calendar),
                             contentDescription = "Pilih Periode",
@@ -115,7 +144,7 @@ fun HomeScreenContent(
                 title = {
                     Column(
                         modifier = Modifier.clickable(
-                            onClick = onDateRangeSelectorClicked
+                            onClick = { onEvent(HomeEvent.ChangePeriodClicked) }
                         )
                     ) {
                         Text(
@@ -130,7 +159,7 @@ fun HomeScreenContent(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToNotifications) {
+                    IconButton(onClick = { onEvent(HomeEvent.NotificationsClicked) }) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_notification),
                             contentDescription = "Notifikasi",
@@ -141,8 +170,8 @@ fun HomeScreenContent(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { onNavigateToAddTransaction() }) {
-                Icon(Icons.Rounded.Add, contentDescription = "Tambah Transaksi")
+            FloatingActionButton(onClick = { onEvent(HomeEvent.FabClicked) }) {
+                Icon(Icons.Default.Add, contentDescription = "Add Transaction")
             }
         }
     ) { innerPadding ->
@@ -180,7 +209,7 @@ fun HomeScreenContent(
                 item {
                     BalanceCard(
                         summary = uiState.summary,
-                        onClick = onNavigateToAllTransactions
+                        onClick = { onEvent(HomeEvent.AllTransactionsClicked) }
                     )
                 }
                 if (uiState.summary != null) {
@@ -188,11 +217,18 @@ fun HomeScreenContent(
                         SummarySection(
                             title = "Expenses",
                             items = uiState.summary.expenseSummaries,
-                            onViewAllClick = { onNavigateToTypedTransactions(TransactionType.EXPENSE) },
+                            onViewAllClick = {
+                                onEvent(
+                                    HomeEvent.TypedTransactionsClicked(
+                                        TransactionType.EXPENSE
+                                    )
+                                )
+                            },
                             onItemClick = { summaryItem ->
-                                onNavigateToCategoryTransactions(
-                                    summaryItem.categoryId,
-                                    summaryItem.categoryName
+                                onEvent(
+                                    HomeEvent.CategorySummaryClicked(
+                                        summaryItem
+                                    )
                                 )
                             },
                             itemContent = { summaryItem ->
@@ -206,11 +242,18 @@ fun HomeScreenContent(
                         SummarySection(
                             title = "Income",
                             items = uiState.summary.incomeSummaries,
-                            onViewAllClick = { onNavigateToTypedTransactions(TransactionType.INCOME) },
+                            onViewAllClick = {
+                                onEvent(
+                                    HomeEvent.TypedTransactionsClicked(
+                                        TransactionType.INCOME
+                                    )
+                                )
+                            },
                             onItemClick = { summaryItem ->
-                                onNavigateToCategoryTransactions(
-                                    summaryItem.categoryId,
-                                    summaryItem.categoryName
+                                onEvent(
+                                    HomeEvent.CategorySummaryClicked(
+                                        summaryItem
+                                    )
                                 )
                             },
                             itemContent = { summaryItem ->
@@ -224,5 +267,120 @@ fun HomeScreenContent(
                 item { Spacer(modifier = Modifier.height(80.dp)) }
             }
         }
+    }
+}
+
+private val previewExpenseSummaries = listOf(
+    HomeCategorySummaryItem(
+        "c1",
+        "Food & Drink",
+        "restaurant",
+        TransactionType.EXPENSE,
+        BigDecimal("750000")
+    ),
+    HomeCategorySummaryItem(
+        "c2",
+        "Transportation",
+        "commute",
+        TransactionType.EXPENSE,
+        BigDecimal("350000")
+    ),
+    HomeCategorySummaryItem(
+        "c3",
+        "Shopping",
+        "shopping_bag",
+        TransactionType.EXPENSE,
+        BigDecimal("1200000")
+    )
+)
+
+private val previewIncomeSummaries = listOf(
+    HomeCategorySummaryItem(
+        "c4",
+        "Salary",
+        "payments",
+        TransactionType.INCOME,
+        BigDecimal("7500000")
+    ),
+    HomeCategorySummaryItem(
+        "c5",
+        "Freelance",
+        "work",
+        TransactionType.INCOME,
+        BigDecimal("1500000")
+    )
+)
+
+private val previewSummaryData = HomeSummary(
+    monthlyBalance = BigDecimal("6700000"),
+    totalExpenses = BigDecimal("2300000"),
+    totalIncome = BigDecimal("9000000"),
+    expenseSummaries = previewExpenseSummaries,
+    incomeSummaries = previewIncomeSummaries
+)
+
+// --- FUNGSI-FUNGSI PREVIEW ---
+
+@Preview(name = "Home Screen - Loaded", showBackground = true)
+@Preview(
+    name = "Home Screen - Loaded (Dark)",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun HomeScreenContentLoadedPreview() {
+    TrackFundsTheme {
+        HomeScreenContent(
+            uiState = HomeUiState(
+                isLoading = false,
+                summary = previewSummaryData,
+                currentMonthAndYear = "June 2025",
+                dateRangePeriod = getCurrentDateRangePair() // Membutuhkan fungsi utilitas Anda
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(name = "Home Screen - Loading", showBackground = true)
+@Composable
+private fun HomeScreenContentLoadingPreview() {
+    TrackFundsTheme {
+        HomeScreenContent(
+            uiState = HomeUiState(isLoading = true),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(name = "Home Screen - Error", showBackground = true)
+@Composable
+private fun HomeScreenContentErrorPreview() {
+    TrackFundsTheme {
+        HomeScreenContent(
+            uiState = HomeUiState(
+                isLoading = false,
+                error = "Failed to connect to the server. Please try again."
+            ),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(name = "Home Screen - Empty State", showBackground = true)
+@Composable
+private fun HomeScreenContentEmptyPreview() {
+    TrackFundsTheme {
+        HomeScreenContent(
+            uiState = HomeUiState(
+                isLoading = false,
+                // Summary ada tapi list di dalamnya kosong
+                summary = previewSummaryData.copy(
+                    expenseSummaries = emptyList(),
+                    incomeSummaries = emptyList()
+                )
+            ),
+            onEvent = {}
+        )
     }
 }

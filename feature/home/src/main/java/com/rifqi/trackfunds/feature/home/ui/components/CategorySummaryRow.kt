@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.util.formatCurrency
-import com.rifqi.trackfunds.feature.home.ui.model.HomeCategorySummaryItem
+import com.rifqi.trackfunds.feature.home.ui.state.HomeCategorySummaryItem
 
 @Composable
 fun CategorySummaryRow(

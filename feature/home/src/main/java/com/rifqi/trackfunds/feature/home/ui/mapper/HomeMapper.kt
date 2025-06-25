@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.home.ui.mapper
 
 import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
-import com.rifqi.trackfunds.feature.home.ui.model.HomeCategorySummaryItem
+import com.rifqi.trackfunds.feature.home.ui.state.HomeCategorySummaryItem
 
 fun CategorySummaryItem.toHomeCategorySummary(): HomeCategorySummaryItem {
     return HomeCategorySummaryItem(

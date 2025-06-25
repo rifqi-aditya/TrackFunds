@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.util.formatCurrency
-import com.rifqi.trackfunds.feature.home.ui.model.HomeSummary
+import com.rifqi.trackfunds.feature.home.ui.state.HomeSummary
 import java.math.BigDecimal
 
 val DarkCardBackgroundColor = Color(0xFF004780)

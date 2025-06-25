@@ -9,7 +9,8 @@ fun CategoryEntity.toDomain(): CategoryItem {
         id = this.id,
         name = this.name,
         iconIdentifier = this.iconIdentifier,
-        type = this.type
+        type = this.type,
+        standardKey = this.standardKey
     )
 }
 

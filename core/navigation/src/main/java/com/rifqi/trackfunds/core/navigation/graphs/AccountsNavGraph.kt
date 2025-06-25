@@ -10,7 +10,7 @@ import com.rifqi.account.ui.screen.AccountsScreen
 import com.rifqi.trackfunds.core.navigation.api.AccountTimeline
 import com.rifqi.trackfunds.core.navigation.api.Accounts
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransactionGraph
+import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.Transfer
@@ -37,7 +37,7 @@ fun NavGraphBuilder.accountsNavGraph(navController: NavHostController) {
                     navController.navigate(TransactionDetail(transactionId))
                 },
                 onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransactionGraph)
+                    navController.navigate(AddEditTransaction())
                 }
             )
         }

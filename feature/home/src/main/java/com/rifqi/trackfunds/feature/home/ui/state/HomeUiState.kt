@@ -1,18 +1,20 @@
-package com.rifqi.trackfunds.feature.home.ui.model
+package com.rifqi.trackfunds.feature.home.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
+import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
 import java.math.BigDecimal
 import java.time.LocalDate
 
 data class HomeUiState(
     val isLoading: Boolean = true,
-    val currentMonthAndYear: String = "",
+    val currentMonthAndYear: String = getCurrentMonthAndYear(),
     val dateRangePeriod: Pair<LocalDate, LocalDate> = getCurrentDateRangePair(),
     val summary: HomeSummary? = null,
     val challengeMessage: String? = null,
     val error: String? = null,
     val showMonthPickerDialog: Boolean = false,
+    val isAddActionDialogVisible: Boolean = false,
 )
 
 data class HomeSummary(

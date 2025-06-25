@@ -4,12 +4,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransactionGraph
+import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Home
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.ScanReceipt
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
 
@@ -27,7 +28,8 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
                     navController.navigate(TypedTransactions(transactionType))
                 },
                 onNavigateToNotifications = { navController.navigate(Notifications) },
-                onNavigateToAddTransaction = { navController.navigate(AddEditTransactionGraph) }
+                onNavigateToAddTransaction = { navController.navigate(AddEditTransaction()) },
+                onNavigateToScanReceipt = { navController.navigate(ScanReceipt) }
             )
         }
         composable<Notifications> { PlaceholderScreen(name = "Notifications Screen") }

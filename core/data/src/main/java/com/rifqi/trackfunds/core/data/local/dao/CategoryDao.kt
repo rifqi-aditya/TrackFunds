@@ -16,25 +16,28 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE id = :categoryId")
     suspend fun getCategoryById(categoryId: String): CategoryEntity?
 
+    @Query("SELECT * FROM categories WHERE standard_key = :key LIMIT 1")
+    suspend fun findByCategoryKey(key: String): CategoryEntity?
+
     @Query("SELECT * FROM categories WHERE type = :transactionType")
     fun getCategoriesByType(transactionType: TransactionType): Flow<List<CategoryEntity>>
 
-    // Untuk pre-populate
+    @Query(
+        """
+        SELECT * FROM categories
+        WHERE type = 'EXPENSE' AND id NOT IN (
+            SELECT category_id FROM budgets WHERE period = :period
+        )
+    """
+    )
+    fun getUnbudgetedCategories(period: String): Flow<List<CategoryEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllCategories(categories: List<CategoryEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: CategoryEntity)
 
-    @Query("""
-        SELECT * FROM categories
-        WHERE type = 'EXPENSE' AND id NOT IN (
-            SELECT category_id FROM budgets WHERE period = :period
-        )
-    """)
-    fun getUnbudgetedCategories(period: String): Flow<List<CategoryEntity>>
-
-    // Fungsi lain seperti getById, update, delete bisa ditambahkan nanti
     // @Query("DELETE FROM categories")
     // suspend fun deleteAll()
 }

@@ -72,6 +72,8 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
         "close" -> R.drawable.ic_close
         "date_range" -> R.drawable.ic_date_range
         "payments" -> R.drawable.ic_payments
+        "manual_transaction" -> R.drawable.ic_manual_transaction
+        "scan_receipt" -> R.drawable.ic_scan_receipt
         else -> R.drawable.ic_diversity
     }
 }

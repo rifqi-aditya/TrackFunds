@@ -12,17 +12,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.rifqi.account.ui.screen.SelectAccountScreen
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransactionGraph
 import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.ScanReceipt
 import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.core.navigation.api.Settings
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
+import com.rifqi.trackfunds.feature.scan.ui.screen.ScanScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AddEditTransactionScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
@@ -88,7 +89,7 @@ fun AppNavHost(
                     navController.navigate(AddEditTransaction(transactionId))
                 },
                 onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransactionGraph)
+                    navController.navigate(AddEditTransaction())
                 }
             )
         }
@@ -100,7 +101,7 @@ fun AppNavHost(
                     navController.navigate(AddEditTransaction(transactionId))
                 },
                 onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransactionGraph)
+                    navController.navigate(AddEditTransaction())
                 }
             )
         }
@@ -112,7 +113,7 @@ fun AppNavHost(
                     navController.navigate(AddEditTransaction(transactionId))
                 },
                 onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransactionGraph)
+                    navController.navigate(AddEditTransaction())
                 }
             )
         }
@@ -127,6 +128,10 @@ fun AppNavHost(
         }
         composable<Notifications> {
             PlaceholderScreen(name = "Notifications Screen")
+        }
+
+        composable<ScanReceipt> {
+            ScanScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

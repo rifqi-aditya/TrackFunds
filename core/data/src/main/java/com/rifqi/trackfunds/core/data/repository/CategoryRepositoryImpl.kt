@@ -27,10 +27,15 @@ class CategoryRepositoryImpl @Inject constructor(
         return categoryDao.getCategoryById(categoryId)?.toDomain()
     }
 
+    override suspend fun findCategoryByStandardKey(key: String): CategoryItem? {
+        return categoryDao.findByCategoryKey(key)?.toDomain()
+    }
+
     override fun getUnbudgetedCategories(period: YearMonth): Flow<List<CategoryItem>> {
         val periodString = period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
         return categoryDao.getUnbudgetedCategories(periodString).map { entities ->
             entities.map { it.toDomain() }
         }
     }
+
 }

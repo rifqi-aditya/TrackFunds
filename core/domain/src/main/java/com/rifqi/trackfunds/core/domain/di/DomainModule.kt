@@ -16,8 +16,12 @@ import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
+import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
@@ -59,6 +63,12 @@ abstract class DomainModule {
     abstract fun bindGetCategoryUseCase(
         useCaseImpl: GetCategoryUseCaseImpl
     ): GetCategoryUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetCategoryByStandardKeyUseCase(
+        useCaseImpl: GetCategoryByStandardKeyUseCaseImpl
+    ): GetCategoryByStandardKeyUseCase
 
     // --- Account Use Cases ---
     @Binds
@@ -171,4 +181,11 @@ abstract class DomainModule {
     abstract fun bindDeleteBudgetUseCase(
         useCaseImpl: DeleteBudgetUseCaseImpl
     ): DeleteBudgetUseCase
+
+    // --- Scan Use Case ---
+    @Binds
+    @Singleton
+    abstract fun bindScanReceiptUseCase(
+        useCaseImpl: ScanReceiptUseCaseImpl
+    ): ScanReceiptUseCase
 }
