@@ -80,6 +80,8 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle) // <-- Ini yang berisi ProcessCameraProvider
     implementation(libs.androidx.camera.view)
 
+    implementation(libs.lottie.compose)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

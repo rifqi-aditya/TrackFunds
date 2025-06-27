@@ -1,7 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -36,6 +39,39 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(libs.kotlinx.serialization.json)
+
+    // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
+    implementation(platform(libs.androidx.compose.bom)) // Gunakan versi terbaru yang stabil
+
+    // Core AndroidX dan Compose
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+
+    // Compose UI
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+
+    // Compose Material3 (untuk Icon, NavigationBar, NavigationBarItem, Text)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
+
+    // Compose Foundation (untuk Box, fillMaxSize)
+    implementation(libs.androidx.foundation)
+
+    // Compose Navigation (untuk NavHost, composable, rememberNavController, dll.)
+    implementation(libs.androidx.navigation.compose) // Gunakan versi terbaru yang stabil
+
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    // Debugging (hanya untuk development)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

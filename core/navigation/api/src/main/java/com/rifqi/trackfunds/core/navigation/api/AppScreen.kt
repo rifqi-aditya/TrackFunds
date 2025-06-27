@@ -19,6 +19,9 @@ data object BudgetsGraph : AppScreen
 @Serializable
 data object ProfileGraph : AppScreen
 
+@Serializable
+data object ScanGraph : AppScreen
+
 // --- Screen Routes ---
 @Serializable
 data object Home : AppScreen
@@ -31,6 +34,9 @@ data object Budgets : AppScreen
 
 @Serializable
 data object Profile : AppScreen
+
+@Serializable
+data object ScanOption : AppScreen
 
 @Serializable
 data object Settings : AppScreen
@@ -71,4 +77,8 @@ data class TypedTransactions(val transactionType: TransactionType) : AppScreen
 data class TransactionDetail(val transactionId: String) : AppScreen
 
 @Serializable
-data object ScanReceipt : AppScreen
+data object CameraScan : AppScreen
+
+@Serializable
+data class ReceiptPreview(val imageUri: String) : AppScreen
+

@@ -5,15 +5,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ScanResponseDto(
-    @SerialName("merchantName")
-    val detectedMerchant: String?,
+    @SerialName("merchant_name")
+    val merchantName: String? = null,
 
-    @SerialName("totalAmount")
-    val totalAmount: Double?, // Menggunakan Double agar lebih mudah diproses
+    @SerialName("total_amount")
+    val totalAmount: Double? = null, // Menggunakan Double atau Long/Int
 
-    @SerialName("transactionDateTime")
-    val transactionDate: String?, // Format YYYY-MM-DD
+    @SerialName("transaction_date")
+    val transactionDate: String? = null, // Format YYYY-MM-DD
 
-    @SerialName("suggestedCategoryKey")
-    val suggestedCategoryKey: String?
+    @SerialName("transaction_time")
+    val transactionTime: String? = null, // Format HH:mm:ss
+
+    @SerialName("category")
+    val category: String? = null // Ini akan berisi "standardKey"
 )

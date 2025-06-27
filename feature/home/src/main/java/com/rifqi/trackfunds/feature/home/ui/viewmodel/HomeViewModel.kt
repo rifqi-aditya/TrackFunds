@@ -9,7 +9,7 @@ import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Notifications
-import com.rifqi.trackfunds.core.navigation.api.ScanReceipt
+import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.mapper.toHomeCategorySummary
@@ -47,7 +47,6 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeEvent) {
         viewModelScope.launch {
             when (event) {
-                // Menangani navigasi
                 HomeEvent.FabClicked -> {
                     _uiState.update { it.copy(isAddActionDialogVisible = true) }
                 }
@@ -63,7 +62,7 @@ class HomeViewModel @Inject constructor(
 
                 HomeEvent.ScanReceiptClicked -> {
                     _uiState.update { it.copy(isAddActionDialogVisible = false) }
-                    _navigationEvent.emit(ScanReceipt)
+                    _navigationEvent.emit(ScanGraph)
                 }
 
                 HomeEvent.AllTransactionsClicked -> _navigationEvent.emit(AllTransactions)

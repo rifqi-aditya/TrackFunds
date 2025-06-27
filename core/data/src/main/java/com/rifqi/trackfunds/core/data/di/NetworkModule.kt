@@ -35,7 +35,7 @@ object NetworkModule {
             .connectTimeout(30, TimeUnit.SECONDS) // Waktu tunggu untuk terhubung
             .readTimeout(30, TimeUnit.SECONDS)    // Waktu tunggu untuk membaca data
             .writeTimeout(30, TimeUnit.SECONDS)   // Waktu tunggu untuk mengirim data
-//            .addInterceptor(loggingInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
     }
 
@@ -43,7 +43,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(json: Json, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://asia-southeast2-trackfunds-462507.cloudfunctions.net/")
+            .baseUrl("https://rifqiaditya.app.n8n.cloud/webhook/")
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

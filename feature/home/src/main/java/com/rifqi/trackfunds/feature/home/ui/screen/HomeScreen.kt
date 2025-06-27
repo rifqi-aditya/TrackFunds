@@ -36,7 +36,7 @@ import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Notifications
-import com.rifqi.trackfunds.core.navigation.api.ScanReceipt
+import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.ActionDialog
@@ -95,7 +95,7 @@ fun HomeScreen(
                 is TypedTransactions -> onNavigateToTypedTransactions(screen.transactionType)
                 is Notifications -> onNavigateToNotifications()
                 is AddEditTransaction -> onNavigateToAddTransaction()
-                is ScanReceipt -> onNavigateToScanReceipt()
+                is ScanGraph -> onNavigateToScanReceipt()
                 else -> {}
             }
         }
@@ -118,7 +118,6 @@ fun HomeScreen(
 fun HomeScreenContent(
     uiState: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val dateRangeString = formatDateRangeToString(uiState.dateRangePeriod)
 

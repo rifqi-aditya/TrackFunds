@@ -34,9 +34,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.navigation.api.printBackStack
 import com.rifqi.trackfunds.core.ui.components.AmountInputForm
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
@@ -45,8 +49,10 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.DateTimeDisplayRow
 import com.rifqi.trackfunds.feature.transaction.ui.components.NotesInputField
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionTypeToggleButtons
+import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.AddEditTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
+import kotlinx.coroutines.flow.collectLatest
 import java.math.BigDecimal
 
 /**
@@ -59,11 +65,10 @@ import java.math.BigDecimal
 fun AddEditTransactionScreen(
     viewModel: AddEditTransactionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToSelectCategory: (transactionType: String) -> Unit,
-    onNavigateToSelectAccount: () -> Unit,
+    onNavigate: (AppScreen) -> Unit,
+    navController: NavHostController
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val isEditMode = viewModel.isEditMode
 
     CustomDatePickerDialog(
         showDialog = uiState.showDatePicker,
@@ -76,10 +81,17 @@ fun AddEditTransactionScreen(
         }
     )
 
-    LaunchedEffect(uiState.isTransactionSaved) {
-        if (uiState.isTransactionSaved) {
-            onNavigateBack()
-            viewModel.resetTransactionSavedFlag()
+    LaunchedEffect(Unit) {
+        navController.printBackStack("TIBA_DI_ADD_EDIT")
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { screen ->
+            if (screen is Home) {
+                onNavigateBack()
+            } else {
+                onNavigate(screen)
+            }
         }
     }
 
@@ -102,16 +114,9 @@ fun AddEditTransactionScreen(
 
     AddEditTransactionContent(
         uiState = uiState,
-        isEditMode = isEditMode, // Teruskan mode edit
-        onNavigateBack = onNavigateBack,
-        onSaveTransaction = { viewModel.onSaveClick() },
-        onDeleteClick = { viewModel.onDeleteClick() }, // Teruskan event delete
-        onTransactionTypeSelected = { viewModel.onTransactionTypeSelected(it) },
-        onAmountChange = { viewModel.onAmountChange(it) },
-        onNotesChange = { viewModel.onNotesChange(it) },
-        onDateClick = { viewModel.onDateSelectorClicked() },
-        onAccountClick = onNavigateToSelectAccount,
-        onCategoryClick = { onNavigateToSelectCategory(uiState.selectedTransactionType.name) }
+        isEditMode = viewModel.isEditMode,
+        onEvent = viewModel::onEvent,
+        onNavigateBack = onNavigateBack
     )
 }
 
@@ -126,15 +131,8 @@ fun AddEditTransactionScreen(
 fun AddEditTransactionContent(
     uiState: AddEditTransactionUiState,
     isEditMode: Boolean,
-    onNavigateBack: () -> Unit,
-    onSaveTransaction: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onTransactionTypeSelected: (TransactionType) -> Unit,
-    onAmountChange: (String) -> Unit,
-    onNotesChange: (String) -> Unit,
-    onDateClick: () -> Unit,
-    onAccountClick: () -> Unit,
-    onCategoryClick: () -> Unit
+    onEvent: (AddEditTransactionEvent) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -156,7 +154,7 @@ fun AddEditTransactionContent(
                 },
                 actions = {
                     if (isEditMode) {
-                        IconButton(onClick = onDeleteClick) {
+                        IconButton(onClick = { onEvent(AddEditTransactionEvent.DeleteClicked) }) {
                             Icon(
                                 Icons.Default.Delete,
                                 contentDescription = "Delete Transaction"
@@ -182,29 +180,29 @@ fun AddEditTransactionContent(
 
             DateTimeDisplayRow(
                 selectedDate = uiState.selectedDate,
-                onClick = onDateClick
+                onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) }
             )
 
             TransactionTypeToggleButtons(
                 selectedType = uiState.selectedTransactionType,
-                onTypeSelected = onTransactionTypeSelected
+                onTypeSelected = { onEvent(AddEditTransactionEvent.TransactionTypeChanged(it)) }
             )
 
             FormSelectorCard(
                 label = "Account",
                 value = uiState.selectedAccount?.name ?: "Choose account",
-                onClick = onAccountClick,
+                onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
                 leadingIconRes = uiState.selectedAccount?.iconIdentifier,
             )
 
             AmountInputForm(
                 value = uiState.amount,
-                onValueChange = onAmountChange,
+                onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
             )
 
             NotesInputField( // Menggunakan input field biasa, bukan selector
                 value = uiState.notes,
-                onValueChange = onNotesChange
+                onValueChange = { onEvent(AddEditTransactionEvent.NoteChanged(it)) }
             )
 
             uiState.selectedCategory?.let {
@@ -212,14 +210,14 @@ fun AddEditTransactionContent(
                 FormSelectorCard(
                     label = "Category",
                     value = it.name,
-                    onClick = onCategoryClick,
+                    onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
                     leadingIconRes = it.iconIdentifier
                 )
             } ?: // Jika belum ada kategori yang dipilih, tampilkan placeholder
             FormSelectorCard(
                 label = "Category",
                 value = "Choose a category",
-                onClick = onCategoryClick,
+                onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
                 leadingIconRes = ""
             )
 
@@ -234,7 +232,7 @@ fun AddEditTransactionContent(
                 )
             }
             Button(
-                onClick = onSaveTransaction,
+                onClick = { onEvent(AddEditTransactionEvent.SaveClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(innerPadding)
@@ -286,16 +284,9 @@ fun AddTransactionContentLightPreview() {
                 selectedCategory = previewDummyCategory,
                 selectedAccount = previewDummyAccount
             ),
-            isEditMode = false, // Preview untuk mode Add
-            onNavigateBack = {},
-            onSaveTransaction = {},
-            onDeleteClick = {},
-            onTransactionTypeSelected = {},
-            onAmountChange = {},
-            onDateClick = {},
-            onAccountClick = {},
-            onCategoryClick = {},
-            onNotesChange = {}
+            isEditMode = false,
+            onEvent = { },
+            onNavigateBack = { },
         )
     }
 }
@@ -310,16 +301,9 @@ fun EditTransactionContentLightPreview() {
                 selectedCategory = previewDummyCategory,
                 selectedAccount = previewDummyAccount
             ),
-            isEditMode = true, // Preview untuk mode Edit
-            onNavigateBack = {},
-            onSaveTransaction = {},
-            onDeleteClick = {},
-            onTransactionTypeSelected = {},
-            onAmountChange = {},
-            onDateClick = {},
-            onAccountClick = {},
-            onCategoryClick = {},
-            onNotesChange = {}
+            isEditMode = true,
+            onEvent = { },
+            onNavigateBack = { },
         )
     }
 }

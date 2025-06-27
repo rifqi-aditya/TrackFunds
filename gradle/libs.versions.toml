@@ -24,6 +24,7 @@ kotlinxCoroutinesCore = "1.8.1"
 kotlinxSerialization = "1.7.3"
 javaxInject = "1"
 uiTextGoogleFonts = "1.8.2"
+lottie = "6.4.1"
 
 # --- Networking ---
 retrofit = "2.11.0" # Versi stabil Retrofit terbaru
@@ -108,6 +109,8 @@ androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
+
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 
 [plugins]

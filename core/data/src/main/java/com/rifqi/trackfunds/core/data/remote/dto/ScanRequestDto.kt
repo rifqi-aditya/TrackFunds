@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ScanRequestDto(
-    @SerialName("image")
-    val image: String
+    @SerialName("data")
+    val data: String
 )
