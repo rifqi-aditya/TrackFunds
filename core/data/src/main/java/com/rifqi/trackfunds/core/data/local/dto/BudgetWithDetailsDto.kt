@@ -10,7 +10,7 @@ data class BudgetWithDetailsDto(
 
     // Data dari tabel kategori (hasil JOIN)
     val categoryId: String,
-    val categoryName: String,
+    val categoryName: String?,
     val categoryIconIdentifier: String?,
 
     // Data dari transaksi (hasil agregasi SUM)

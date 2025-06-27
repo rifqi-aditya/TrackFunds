@@ -29,7 +29,6 @@ import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.TypedTransactionsScreen
 
-// Placeholder untuk layar yang belum dibuat
 @Composable
 fun PlaceholderScreen(name: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(name) }
@@ -46,7 +45,6 @@ fun AppNavHost(
         modifier = modifier,
     ) {
 
-        // --- Panggil Semua Graph untuk Bottom Navigation ---
         homeNavGraph(navController)
         accountsNavGraph(navController)
         budgetNavGraph(navController)

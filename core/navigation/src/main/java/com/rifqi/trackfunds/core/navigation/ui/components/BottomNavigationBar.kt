@@ -28,25 +28,25 @@ sealed class BottomNavItem(
     val icon: ImageVector
 ) {
     data object Home : BottomNavItem(
-        graphRoute = HomeGraph, // Menggunakan objek rute
+        graphRoute = HomeGraph,
         title = "Home",
         icon = Icons.Rounded.Home
     )
 
     data object Accounts : BottomNavItem(
-        graphRoute = AccountsGraph, // Menggunakan objek rute
+        graphRoute = AccountsGraph,
         title = "Accounts",
         icon = Icons.Rounded.AccountBalanceWallet
     )
 
     data object Budgets : BottomNavItem(
-        graphRoute = BudgetsGraph, // Menggunakan objek rute
+        graphRoute = BudgetsGraph,
         title = "Budgets",
         icon = Icons.Rounded.PieChart
     )
 
     data object Profile : BottomNavItem(
-        graphRoute = ProfileGraph, // Menggunakan objek rute
+        graphRoute = ProfileGraph,
         title = "Profile",
         icon = Icons.Rounded.Person
     )

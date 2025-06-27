@@ -15,14 +15,12 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         startDestination = Profile,
     ) {
         composable<Profile> {
-            composable<Profile> {
-                ProfileScreen(
-                    onNavigateToSettings = { navController.navigate(Settings) },
-                    onNavigateToManageAccounts = { navController.navigate(Accounts) },
-                    onNavigateToManageCategories = { /* TODO */ },
-                    onLogout = { /* TODO */ }
-                )
-            }
+            ProfileScreen(
+                onNavigateToSettings = { navController.navigate(Settings) },
+                onNavigateToManageAccounts = { navController.navigate(Accounts) },
+                onNavigateToManageCategories = { /* TODO */ },
+                onLogout = { /* TODO */ }
+            )
         }
     }
 }

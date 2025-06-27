@@ -68,9 +68,8 @@ fun BalanceCard(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkCardBackgroundColor
+            containerColor = MaterialTheme.colorScheme.primary
         )
     ) {
         Column(
@@ -86,12 +85,12 @@ fun BalanceCard(
                 Text(
                     "Monthly Balance",
                     style = MaterialTheme.typography.labelLarge,
-                    color = TextOnDarkCardColor,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_arrow_forward_ios),
                     contentDescription = "Lihat Detail",
-                    tint = TextOnDarkCardColor,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -99,7 +98,7 @@ fun BalanceCard(
                 text = formatCurrency(summary.monthlyBalance),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = TextOnDarkCardColor,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(top = 4.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -113,14 +112,14 @@ fun BalanceCard(
                     label = "Expenses",
                     amount = summary.totalExpenses,
                     iconRes = R.drawable.ic_expense,
-                    textColor = TextOnDarkCardColor
+                    textColor = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 24.dp))
                 BalanceDetailItem(
                     label = "Income",
                     amount = summary.totalIncome,
                     iconRes = R.drawable.ic_income,
-                    textColor = TextOnDarkCardColor
+                    textColor = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

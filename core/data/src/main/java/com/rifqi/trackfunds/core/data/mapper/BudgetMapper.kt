@@ -9,7 +9,7 @@ fun BudgetWithDetailsDto.toDomain(): BudgetItem {
     return BudgetItem(
         budgetId = this.budgetId,
         categoryId = this.categoryId,
-        categoryName = this.categoryName,
+        categoryName = this.categoryName ?: "",
         categoryIconIdentifier = this.categoryIconIdentifier,
         budgetAmount = this.budgetAmount,
         spentAmount = this.spentAmount,

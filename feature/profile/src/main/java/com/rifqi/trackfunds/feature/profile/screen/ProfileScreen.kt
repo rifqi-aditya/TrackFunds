@@ -68,51 +68,59 @@ fun ProfileContent(
             ProfileTopAppBar(onSettingsClick = onSettingsClicked)
         }
     ) { innerPadding ->
+        // FIX 1: Column utama ini TIDAK LAGI memiliki verticalScroll.
+        // Tugasnya hanya sebagai kerangka untuk menata item secara vertikal.
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState()),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // -- Bagian yang TIDAK bisa di-scroll --
             Spacer(modifier = Modifier.height(16.dp))
-
             UserInfoSection(
                 userName = uiState.userName,
                 userStatus = uiState.userStatus,
-                onAvatarClick = { /* TODO: Aksi klik avatar */ },
-                onCreateAccountClick = { /* TODO: Navigasi ke buat akun */ }
+                onAvatarClick = { /* TODO */ },
+                onCreateAccountClick = { /* TODO */ }
             )
-
             Spacer(modifier = Modifier.height(24.dp))
 
+            // FIX 2: Area konten sekarang berada di dalam Column yang bisa scroll
+            // dan menggunakan .weight(1f) agar fleksibel.
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .weight(1f) // Ambil semua sisa ruang di tengah
+                    .verticalScroll(rememberScrollState())
             ) {
-                Text(text = "Accounts", style = MaterialTheme.typography.titleMedium)
-                MenuRowItem(
-                    title = "Manage Accounts",
-                    iconIdentifier = "wallet_account",
-                    onClick = onManageAccountsClicked
-                )
-                MenuRowItem(
-                    title = "Categories",
-                    iconIdentifier = "category",
-                    onClick = onManageCategoriesClicked
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Transaction", style = MaterialTheme.typography.titleMedium)
-                MenuRowItem(
-                    title = "Export CSV",
-                    iconIdentifier = "wallet_account",
-                    onClick = { /* TODO */ }
-                )
+                // Semua konten yang mungkin panjang diletakkan di sini
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(text = "Accounts", style = MaterialTheme.typography.titleMedium)
+                    MenuRowItem(
+                        title = "Manage Accounts",
+                        iconIdentifier = "wallet_account",
+                        onClick = onManageAccountsClicked
+                    )
+                    MenuRowItem(
+                        title = "Categories",
+                        iconIdentifier = "category",
+                        onClick = onManageCategoriesClicked
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = "Transaction", style = MaterialTheme.typography.titleMedium)
+                    MenuRowItem(
+                        title = "Export CSV",
+                        iconIdentifier = "wallet_account",
+                        onClick = { /* TODO */ }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
+            // -- Bagian bawah yang TIDAK bisa di-scroll (menempel di bawah) --
             OutlinedButton(
                 onClick = onLogoutClicked,
                 modifier = Modifier
