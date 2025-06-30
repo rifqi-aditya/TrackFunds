@@ -11,7 +11,6 @@ import com.rifqi.trackfunds.core.navigation.api.Home
 import com.rifqi.trackfunds.core.navigation.api.ReceiptPreview
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.ScanOption
-import com.rifqi.trackfunds.core.navigation.api.printBackStack
 import com.rifqi.trackfunds.feature.scan.ui.screen.CameraScanScreen
 import com.rifqi.trackfunds.feature.scan.ui.screen.ReceiptPreviewScreen
 import com.rifqi.trackfunds.feature.scan.ui.screen.ScanOptionScreen
@@ -48,7 +47,6 @@ fun NavGraphBuilder.scanNavGraph(navController: NavHostController) {
             ReceiptPreviewScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onScanSuccessAndNavigate = {
-                    navController.printBackStack("DARI_PREVIEW")
                     navController.popBackStack<Home>(inclusive = false)
                     navController.navigate(AddEditTransaction())
                 }

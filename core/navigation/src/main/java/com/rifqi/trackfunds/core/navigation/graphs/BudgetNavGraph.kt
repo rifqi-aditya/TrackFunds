@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.navigation.graphs
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
+import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.AddEditBudget
 import com.rifqi.trackfunds.core.navigation.api.Budgets
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph

@@ -11,7 +11,7 @@ import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AllTransactionsView
 fun AllTransactionsScreen(
     viewModel: AllTransactionsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToEditTransaction: (String) -> Unit,
+    onNavigateToDetailTransaction: (String) -> Unit,
     onNavigateToAddTransaction: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -23,7 +23,7 @@ fun AllTransactionsScreen(
         dateRange = uiState.dateRange,
         error = uiState.error,
         onNavigateBack = onNavigateBack,
-        onTransactionClick = onNavigateToEditTransaction,
+        onTransactionClick = onNavigateToDetailTransaction,
         onAddTransactionClick = onNavigateToAddTransaction,
         onSearchClick = { /* TODO */ },
         onCalendarClick = { /* TODO */ },

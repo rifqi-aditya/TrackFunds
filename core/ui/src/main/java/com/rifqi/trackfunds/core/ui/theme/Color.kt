@@ -1,4 +1,4 @@
-package com.example.compose
+package com.rifqi.trackfunds.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF006B5D)
@@ -216,3 +216,14 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF201F1F)
 val surfaceContainerDarkHighContrast = Color(0xFF313030)
 val surfaceContainerHighDarkHighContrast = Color(0xFF3C3B3B)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF474646)
+
+
+val IncomeGreen = Color(0xFF006D39)
+val OnIncome = Color.White
+val IncomeContainer = Color(0xFF99F7B4)
+val OnIncomeContainer = Color(0xFF00210D)
+
+val ExpenseRed = Color(0xFFBA1A1A)
+val OnExpense = Color.White
+val ExpenseContainer = Color(0xFFFFDAD6)
+val OnExpenseContainer = Color(0xFF410002)

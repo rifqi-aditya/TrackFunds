@@ -7,8 +7,8 @@ import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
-import com.rifqi.trackfunds.feature.transaction.ui.model.AccountSelectionMode
-import com.rifqi.trackfunds.feature.transaction.ui.model.TransferUiState
+import com.rifqi.trackfunds.feature.transaction.ui.state.AccountSelectionMode
+import com.rifqi.trackfunds.feature.transaction.ui.state.TransferUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

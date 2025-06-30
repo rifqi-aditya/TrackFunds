@@ -24,7 +24,7 @@ import com.rifqi.trackfunds.core.navigation.api.ScanOption
 import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
-import com.rifqi.trackfunds.feature.transaction.ui.model.AddEditTransactionUiState
+import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

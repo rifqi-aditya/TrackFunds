@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.rifqi.account.ui.screen.SelectAccountScreen
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AllTransactions
@@ -25,6 +24,7 @@ import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AddEditTransactionScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
+import com.rifqi.trackfunds.feature.transaction.ui.screen.TransactionDetailScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.TypedTransactionsScreen
 
 @Composable
@@ -53,7 +53,6 @@ fun AppNavHost(
             AddEditTransactionScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigate = { screen -> navController.navigate(screen) },
-                navController = navController,
             )
         }
 
@@ -77,8 +76,8 @@ fun AppNavHost(
         composable<AllTransactions> {
             AllTransactionsScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToEditTransaction = { transactionId ->
-                    navController.navigate(AddEditTransaction(transactionId))
+                onNavigateToDetailTransaction = { transactionId ->
+                    navController.navigate(TransactionDetail(transactionId))
                 },
                 onNavigateToAddTransaction = {
                     navController.navigate(AddEditTransaction())
@@ -89,8 +88,8 @@ fun AppNavHost(
         composable<CategoryTransactions> {
             CategoryTransactionsScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToEditTransaction = { transactionId ->
-                    navController.navigate(AddEditTransaction(transactionId))
+                onNavigateToDetailTransaction = { transactionId ->
+                    navController.navigate(TransactionDetail(transactionId))
                 },
                 onNavigateToAddTransaction = {
                     navController.navigate(AddEditTransaction())
@@ -101,8 +100,8 @@ fun AppNavHost(
         composable<TypedTransactions> { backStackEntry ->
             TypedTransactionsScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToEditTransaction = { transactionId ->
-                    navController.navigate(AddEditTransaction(transactionId))
+                onNavigateToDetailTransaction = { transactionId ->
+                    navController.navigate(TransactionDetail(transactionId))
                 },
                 onNavigateToAddTransaction = {
                     navController.navigate(AddEditTransaction())
@@ -110,9 +109,13 @@ fun AppNavHost(
             )
         }
 
-        composable<TransactionDetail> { backStackEntry ->
-            val args = backStackEntry.toRoute<TransactionDetail>()
-            PlaceholderScreen(name = "Transaction Detail Screen for ID: ${args.transactionId}")
+        composable<TransactionDetail> {
+            TransactionDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEdit = { transactionId ->
+                    navController.navigate(AddEditTransaction(transactionId = transactionId))
+                }
+            )
         }
 
         composable<Settings> {

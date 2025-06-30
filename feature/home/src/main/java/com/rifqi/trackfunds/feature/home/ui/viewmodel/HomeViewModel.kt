@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
                     )
                 )
 
-                // Menangani perubahan state
+                // State Management
                 HomeEvent.ChangePeriodClicked -> _uiState.update { it.copy(showMonthPickerDialog = true) }
                 HomeEvent.DialogDismissed -> _uiState.update { it.copy(showMonthPickerDialog = false) }
                 is HomeEvent.PeriodChanged -> {

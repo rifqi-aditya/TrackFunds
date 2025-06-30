@@ -128,7 +128,7 @@ fun ScanOptionContent(
             verticalArrangement = Arrangement.Center
         ) {
             val lottieComposition by rememberLottieComposition(
-                LottieCompositionSpec.RawRes(R.raw.scan)
+                LottieCompositionSpec.RawRes(R.raw.scan_option)
             )
 
             LottieAnimation(

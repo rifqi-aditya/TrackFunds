@@ -51,12 +51,10 @@ class ReceiptPreviewViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = true) }
                 try {
                     val scanResult = scanReceiptUseCase(uri)
-                    println("✅ HASIL SCAN DITERIMA: $scanResult")
                     resultManager.setResult(scanResult)
-                    _uiState.update { it.copy(isLoading = false, isScanSuccessful = true) }
+                    _uiState.update { it.copy(isScanSuccessful = true) }
                 } catch (e: Exception) {
                     resultManager.setResult(e)
-                    println("❌ ERROR SAAT SCAN: ${e.message}")
                     _uiState.update { it.copy(isLoading = false, isScanSuccessful = true) }
                 }
             }

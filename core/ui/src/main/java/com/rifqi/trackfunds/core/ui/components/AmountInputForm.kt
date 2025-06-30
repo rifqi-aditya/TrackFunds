@@ -17,13 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.util.CurrencyVisualTransformation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmountInputForm(
     value: String,
     onValueChange: (String) -> Unit,
-//    onCalculatorClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -33,46 +33,44 @@ fun AmountInputForm(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
         )
-        // Menggunakan TextField biasa untuk tampilan yang lebih clean, dengan underline saat fokus
         TextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { newValue ->
+                val digitsOnly = newValue.filter { it.isDigit() }
+                onValueChange(digitsOnly)
+            },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("0", style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)) },
+            placeholder = {
+                Text(
+                    "0",
+                    style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                )
+            },
             leadingIcon = {
                 Text(
                     "Rp",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Normal),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 12.dp) // Padding agar sejajar dengan teks input
+                    modifier = Modifier.padding(start = 12.dp)
                 )
             },
-//            trailingIcon = {
-//                IconButton(onClick = onCalculatorClick) {
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ic_account_balance_wallet), // Pastikan ikon ini ada di :core:ui
-//                        contentDescription = "Kalkulator",
-//                        modifier = Modifier.size(24.dp),
-//                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-//                    )
-//                }
-//            },
             textStyle = MaterialTheme.typography.headlineSmall.copy(
-                textAlign = TextAlign.Start, // Sejajarkan kiri agar Rp dan angka berdekatan
+                textAlign = TextAlign.Start,
                 color = MaterialTheme.colorScheme.onSurface
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword), // NumberPassword agar hanya angka tanpa simbol lain
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp), // Tetap rounded
-            colors = TextFieldDefaults.colors( // TextField biasa tanpa outline
+            shape = RoundedCornerShape(16.dp),
+            colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary, // Underline saat fokus
-                unfocusedIndicatorColor = Color.Transparent, // Tanpa underline saat tidak fokus
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 cursorColor = MaterialTheme.colorScheme.primary
-            )
+            ),
+            visualTransformation = CurrencyVisualTransformation()
         )
     }
 }

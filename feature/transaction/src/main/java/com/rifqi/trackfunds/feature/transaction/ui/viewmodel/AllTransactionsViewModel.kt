@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
 import com.rifqi.trackfunds.core.ui.util.formatDateRangeToString
 import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
-import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionHistoryUiState
+import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionHistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

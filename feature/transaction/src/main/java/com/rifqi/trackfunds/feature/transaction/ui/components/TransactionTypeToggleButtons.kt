@@ -52,6 +52,7 @@ fun TransactionTypeToggleButtons(
                         // Mengkapitalisasi huruf pertama dari nama enum
                         type.name.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+
                         }
                     )
                 },
@@ -60,8 +61,8 @@ fun TransactionTypeToggleButtons(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = Color.White,
-                    selectedLeadingIconColor = Color.White
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 leadingIcon = if (isSelected) {
                     {
@@ -101,7 +102,11 @@ fun TransactionTypeToggleButtonsExpensePreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Toggle Buttons - Income Selected", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "Toggle Buttons - Income Selected",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun TransactionTypeToggleButtonsIncomePreview() {
     TrackFundsTheme(darkTheme = true) {

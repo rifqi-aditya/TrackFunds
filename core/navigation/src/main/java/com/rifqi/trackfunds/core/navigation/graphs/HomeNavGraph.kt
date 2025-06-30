@@ -12,7 +12,6 @@ import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
-import com.rifqi.trackfunds.core.navigation.api.printBackStack
 import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
 
 fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
@@ -30,11 +29,9 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
                 },
                 onNavigateToNotifications = { navController.navigate(Notifications) },
                 onNavigateToAddTransaction = {
-                    navController.printBackStack("DARI_HOME_MANUAL")
                     navController.navigate(AddEditTransaction())
                 },
                 onNavigateToScanReceipt = {
-                    navController.printBackStack("DARI_HOME_SCAN")
                     navController.navigate(ScanGraph)
                 }
             )

@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.navigation.graphs
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
+import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.rifqi.account.ui.screen.AccountTimelineScreen
 import com.rifqi.account.ui.screen.AccountsScreen

@@ -35,7 +35,7 @@ fun NotesInputField(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 100.dp), // Beri tinggi minimal
-            placeholder = { Text("Tulis catatan...") },
+            placeholder = { Text("Write a note...") },
             singleLine = false, // Izinkan multi-baris
             shape = RoundedCornerShape(16.dp), // Sudut rounded
             colors = TextFieldDefaults.colors(
@@ -44,7 +44,7 @@ fun NotesInputField(
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 // Warna garis bawah (indicator)
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary, // Menyala saat fokus
+                focusedIndicatorColor = Color.Transparent, // Menyala saat fokus
                 unfocusedIndicatorColor = Color.Transparent, // Hilang saat tidak fokus
                 disabledIndicatorColor = Color.Transparent,
                 cursorColor = MaterialTheme.colorScheme.primary

@@ -34,13 +34,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.navigation.api.printBackStack
 import com.rifqi.trackfunds.core.ui.components.AmountInputForm
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
@@ -50,7 +48,7 @@ import com.rifqi.trackfunds.feature.transaction.ui.components.DateTimeDisplayRow
 import com.rifqi.trackfunds.feature.transaction.ui.components.NotesInputField
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionTypeToggleButtons
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
-import com.rifqi.trackfunds.feature.transaction.ui.model.AddEditTransactionUiState
+import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.math.BigDecimal
@@ -65,8 +63,7 @@ import java.math.BigDecimal
 fun AddEditTransactionScreen(
     viewModel: AddEditTransactionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigate: (AppScreen) -> Unit,
-    navController: NavHostController
+    onNavigate: (AppScreen) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -80,10 +77,6 @@ fun AddEditTransactionScreen(
             viewModel.onDateSelected(newDate)
         }
     )
-
-    LaunchedEffect(Unit) {
-        navController.printBackStack("TIBA_DI_ADD_EDIT")
-    }
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
@@ -249,7 +242,7 @@ fun AddEditTransactionContent(
                 } else {
                     Text(
                         if (isEditMode) "Save Changes" else "Save Transaction",
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }

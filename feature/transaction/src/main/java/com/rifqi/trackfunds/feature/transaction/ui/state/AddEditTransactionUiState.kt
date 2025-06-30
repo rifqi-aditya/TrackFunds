@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.model
+package com.rifqi.trackfunds.feature.transaction.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
