@@ -85,97 +85,196 @@ abstract class AppDatabase : RoomDatabase() {
             accountDao: AccountDao,
             transactionDao: TransactionDao
         ) {
-            // --- 1. MEMBUAT KATEGORI DEFAULT DENGAN STANDARD KEY ---
+            // --- MEMBUAT KATEGORI DEFAULT DENGAN STANDARD KEY & ICON IDENTIFIER YANG SAMA ---
             val initialCategories = listOf(
+                // --- KATEGORI PENGELUARAN (EXPENSE) ---
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Food & Drink",
-                    iconIdentifier = "restaurant",
+                    iconIdentifier = "food_and_drink",
                     type = TransactionType.EXPENSE,
                     standardKey = "food_and_drink"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
+                    name = "Groceries",
+                    iconIdentifier = "groceries",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "groceries"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
                     name = "Transportation",
-                    iconIdentifier = "commute",
+                    iconIdentifier = "transportation",
                     type = TransactionType.EXPENSE,
                     standardKey = "transportation"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Bills",
-                    iconIdentifier = "receipt_long",
+                    name = "Fuel",
+                    iconIdentifier = "fuel",
                     type = TransactionType.EXPENSE,
-                    standardKey = "utilities"
+                    standardKey = "fuel"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Shopping",
-                    iconIdentifier = "shopping_bag",
+                    iconIdentifier = "shopping",
                     type = TransactionType.EXPENSE,
                     standardKey = "shopping"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
-                    name = "Entertainment",
-                    iconIdentifier = "theaters",
+                    name = "Bills & Utilities",
+                    iconIdentifier = "utilities",
                     type = TransactionType.EXPENSE,
-                    standardKey = "entertainment"
+                    standardKey = "utilities"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Housing",
+                    iconIdentifier = "housing",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "housing"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Health",
-                    iconIdentifier = "health_and_safety",
+                    iconIdentifier = "health",
                     type = TransactionType.EXPENSE,
                     standardKey = "health"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
+                    name = "Insurance",
+                    iconIdentifier = "insurance",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "insurance"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Personal Care",
+                    iconIdentifier = "personal_care",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "personal_care"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Entertainment",
+                    iconIdentifier = "entertainment",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "entertainment"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
                     name = "Education",
-                    iconIdentifier = "school",
+                    iconIdentifier = "education",
                     type = TransactionType.EXPENSE,
                     standardKey = "education"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
+                    name = "Holidays & Travel",
+                    iconIdentifier = "travel",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "travel"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Sports & Fitness",
+                    iconIdentifier = "sports_fitness",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "sports_fitness"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Pets",
+                    iconIdentifier = "pets",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "pets"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Gifts & Donations",
+                    iconIdentifier = "gifts_donations",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "gifts_donations"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Fees & Charges",
+                    iconIdentifier = "fees_charges",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "fees_charges"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Miscellaneous",
+                    iconIdentifier = "miscellaneous",
+                    type = TransactionType.EXPENSE,
+                    standardKey = "miscellaneous"
+                ),
+
+                // --- KATEGORI PEMASUKAN (INCOME) ---
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
                     name = "Salary",
-                    iconIdentifier = "payments",
+                    iconIdentifier = "salary",
                     type = TransactionType.INCOME,
                     standardKey = "salary"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Bonus",
-                    iconIdentifier = "emoji_events",
+                    iconIdentifier = "bonus",
                     type = TransactionType.INCOME,
                     standardKey = "bonus"
                 ),
                 CategoryEntity(
                     id = UUID.randomUUID().toString(),
                     name = "Investment",
-                    iconIdentifier = "trending_up",
+                    iconIdentifier = "investment_income",
                     type = TransactionType.INCOME,
                     standardKey = "investment_income"
                 ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Gifts",
+                    iconIdentifier = "gifts_received",
+                    type = TransactionType.INCOME,
+                    standardKey = "gifts_received"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Freelance",
+                    iconIdentifier = "freelance",
+                    type = TransactionType.INCOME,
+                    standardKey = "freelance"
+                ),
+                CategoryEntity(
+                    id = UUID.randomUUID().toString(),
+                    name = "Other Income",
+                    iconIdentifier = "other_income",
+                    type = TransactionType.INCOME,
+                    standardKey = "other_income"
+                )
             )
             categoryDao.insertAllCategories(initialCategories)
 
-            // --- 2. MEMBUAT AKUN DEFAULT DENGAN SALDO AKHIR YANG SUDAH DIHITUNG ---
+            // --- MEMBUAT AKUN DEFAULT ---
             val initialAccounts = listOf(
-                // Saldo awal 500rb, dikurangi 50rb untuk makan siang = 450rb
                 AccountEntity(
-                    id = "acc_cash",
+                    id = UUID.randomUUID().toString(),
                     name = "Cash Wallet",
                     iconIdentifier = "wallet_account",
-                    balance = BigDecimal("450000")
+                    balance = BigDecimal("500000")
                 ),
-                // Saldo awal 10jt, ditambah gaji 15jt, dikurangi belanja 750rb = 24.25jt
                 AccountEntity(
-                    id = "acc_mbanking",
-                    name = "MBanking",
-                    iconIdentifier = "wallet_account",
-                    balance = BigDecimal("24250000")
-                )
+                    id = UUID.randomUUID().toString(),
+                    name = "Main Bank Account",
+                    iconIdentifier = "bank_account",
+                    balance = BigDecimal("10000000")
+                ),
             )
             accountDao.insertAll(initialAccounts)
 
@@ -217,10 +316,9 @@ abstract class AppDatabase : RoomDatabase() {
                     type = TransactionType.EXPENSE,
                     date = LocalDateTime.now().minusDays(2),
                     categoryId = foodCategory.id,
-                    accountId = cashWalletAccount.id // Mengarah ke ID Cash Wallet
+                    accountId = cashWalletAccount.id
                 )
             )
-
             transactionDao.insertAllTransaction(initialTransactions)
         }
     }

@@ -35,7 +35,7 @@ fun UserInfoSection(
         // Menggunakan Image untuk avatar kustom
         // Pastikan drawable ic_zen_panda ada di :core:ui atau :feature:profile
         Image(
-            painter = painterResource(id = R.drawable.ic_game_controller),
+            painter = painterResource(id = R.drawable.utilities),
             contentDescription = "User Avatar",
             modifier = Modifier
                 .size(96.dp)

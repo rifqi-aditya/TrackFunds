@@ -1,6 +1,5 @@
 package com.rifqi.account.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,8 +32,8 @@ import com.rifqi.account.ui.components.AccountCard
 import com.rifqi.account.ui.model.AccountSummaryItem
 import com.rifqi.account.ui.model.AccountsUiState
 import com.rifqi.account.ui.viewmodel.AccountsViewModel
-import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import java.math.BigDecimal
 
 @Composable
@@ -73,12 +71,14 @@ fun AccountsContent(
                     Text("Accounts", style = MaterialTheme.typography.titleMedium)
                 },
                 navigationIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_wallet),
-                        contentDescription = "accounts",
+                    DisplayIconFromResource(
+                        identifier = "wallet_account",
+                        contentDescription = "Accounts Overview",
                         modifier = Modifier
-                            .size(32.dp)
-                            .padding(end = 8.dp),
+                            .padding(end = 8.dp, start = 4.dp)
+                            .size(
+                                24.dp
+                            )
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

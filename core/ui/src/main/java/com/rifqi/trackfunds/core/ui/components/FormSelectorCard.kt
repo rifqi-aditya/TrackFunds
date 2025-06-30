@@ -21,7 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.state.HomeSummary
 import java.math.BigDecimal
 
@@ -88,10 +90,12 @@ fun BalanceCard(
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
                 Icon(
-                    painter = painterResource(R.drawable.ic_arrow_forward_ios),
-                    contentDescription = "Lihat Detail",
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = "Arrow Forward",
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(
+                        20.dp
+                    )
                 )
             }
             Text(
@@ -111,14 +115,14 @@ fun BalanceCard(
                 BalanceDetailItem(
                     label = "Expenses",
                     amount = summary.totalExpenses,
-                    iconRes = R.drawable.ic_expense,
+                    iconRes = R.drawable.expense,
                     textColor = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 24.dp))
                 BalanceDetailItem(
                     label = "Income",
                     amount = summary.totalIncome,
-                    iconRes = R.drawable.ic_income,
+                    iconRes = R.drawable.income,
                     textColor = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -205,7 +209,7 @@ private fun BalanceDetailItemExpensePreview() {
             BalanceDetailItem(
                 label = "Expenses",
                 amount = BigDecimal("1250000.0"),
-                iconRes = R.drawable.ic_expense,
+                iconRes = R.drawable.transfer,
                 textColor = TextOnDarkCardColor,
                 modifier = Modifier.padding(16.dp)
             )
@@ -221,7 +225,7 @@ private fun BalanceDetailItemIncomePreview() {
             BalanceDetailItem(
                 label = "Income",
                 amount = BigDecimal("15000000.0"),
-                iconRes = R.drawable.ic_income,
+                iconRes = R.drawable.transfer,
                 textColor = TextOnDarkCardColor,
                 modifier = Modifier.padding(16.dp)
             )

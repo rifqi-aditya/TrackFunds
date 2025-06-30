@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
 
 @Composable

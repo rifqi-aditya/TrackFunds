@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,8 +45,8 @@ import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.Home
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.theme.extendedColors
-import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.transaction.ui.components.DetailRow
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionDetailEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionDetailUiState
@@ -80,18 +78,18 @@ fun TransactionDetailScreen(
     if (uiState.showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(TransactionDetailEvent.DismissDeleteDialog) },
-            title = { Text("Hapus Transaksi") },
-            text = { Text("Apakah Anda yakin ingin menghapus transaksi ini? Aksi ini tidak dapat dibatalkan.") },
+            title = { Text("Delete Transaction") },
+            text = { Text("Are you sure you want to delete this transaction? This action cannot be undone.") },
             confirmButton = {
                 Button(
                     onClick = { viewModel.onEvent(TransactionDetailEvent.ConfirmDeleteClicked) },
                     // Beri warna error pada tombol konfirmasi hapus
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Hapus") }
+                ) { Text("Delete") }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(TransactionDetailEvent.DismissDeleteDialog) }) {
-                    Text("Batal")
+                    Text("Cancel")
                 }
             }
         )
@@ -119,17 +117,27 @@ fun TransactionDetailContent(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            Icons.AutoMirrored.Rounded.ArrowBack,
-                            "Kembali"
+                            Icons.AutoMirrored.Rounded.ArrowBackIos,
+                            "Back"
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = { onEvent(TransactionDetailEvent.DeleteClicked) }) {
-                        Icon(Icons.Default.Delete, "Hapus")
+                        DisplayIconFromResource(
+                            identifier = "delete",
+                            contentDescription = "Delete Transaction",
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                     IconButton(onClick = { onEvent(TransactionDetailEvent.EditClicked) }) {
-                        Icon(Icons.Default.Edit, "Edit")
+                        DisplayIconFromResource(
+                            identifier = "edit",
+                            contentDescription = "Edit Transaction",
+                            modifier = Modifier.size(
+                                24.dp
+                            )
+                        )
                     }
                 }
             )

@@ -1,7 +1,6 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,13 +36,13 @@ import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
-import com.rifqi.trackfunds.core.ui.R
-import com.rifqi.trackfunds.core.ui.components.ActionDialog
+import com.rifqi.trackfunds.core.ui.components.AddTransactionDialog
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.util.formatDateRangeToString
-import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.formatDateRangeToString
+import com.rifqi.trackfunds.core.ui.utils.getCurrentDateRangePair
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
@@ -77,7 +75,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.isAddActionDialogVisible) { // State ini sekarang mengontrol dialog
-        ActionDialog(
+        AddTransactionDialog(
             onDismissRequest = { viewModel.onEvent(HomeEvent.AddActionDialogDismissed) },
             onScanClick = { viewModel.onEvent(HomeEvent.ScanReceiptClicked) },
             onAddManuallyClick = { viewModel.onEvent(HomeEvent.AddTransactionManuallyClicked) }
@@ -133,9 +131,9 @@ fun HomeScreenContent(
             AppTopAppBar(
                 navigationIcon = {
                     IconButton(onClick = { onEvent(HomeEvent.ChangePeriodClicked) }) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_calendar),
-                            contentDescription = "Pilih Periode",
+                        DisplayIconFromResource(
+                            identifier = "calendar",
+                            contentDescription = "Change Period",
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -159,9 +157,9 @@ fun HomeScreenContent(
                 },
                 actions = {
                     IconButton(onClick = { onEvent(HomeEvent.NotificationsClicked) }) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_notification),
-                            contentDescription = "Notifikasi",
+                        DisplayIconFromResource(
+                            identifier = "notifications",
+                            contentDescription = "Notifications",
                             modifier = Modifier.size(24.dp)
                         )
                     }

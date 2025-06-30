@@ -1,10 +1,6 @@
 package com.rifqi.trackfunds.core.navigation.ui.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountBalanceWallet
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.PieChart
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -13,8 +9,10 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -24,34 +22,35 @@ import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
+import com.rifqi.trackfunds.core.ui.R
 
 sealed class BottomNavItem(
     val graphRoute: AppScreen, // Tipe diubah dari String ke AppScreen
     val title: String,
-    val icon: ImageVector
+    val icon: Int
 ) {
     data object Home : BottomNavItem(
         graphRoute = HomeGraph,
         title = "Home",
-        icon = Icons.Rounded.Home
+        icon = R.drawable.bottom_nav_home
     )
 
     data object Accounts : BottomNavItem(
         graphRoute = AccountsGraph,
         title = "Accounts",
-        icon = Icons.Rounded.AccountBalanceWallet
+        icon = R.drawable.bottom_nav_accounts
     )
 
     data object Budgets : BottomNavItem(
         graphRoute = BudgetsGraph,
         title = "Budgets",
-        icon = Icons.Rounded.PieChart
+        icon = R.drawable.bottom_nav_budgets
     )
 
     data object Profile : BottomNavItem(
         graphRoute = ProfileGraph,
         title = "Profile",
-        icon = Icons.Rounded.Person
+        icon = R.drawable.bottom_nav_report
     )
 }
 
@@ -69,7 +68,13 @@ fun AppBottomNavigationBar(navController: NavHostController) {
     NavigationBar {
         bottomNavItemsList.forEach { screen ->
             NavigationBarItem(
-                icon = { Icon(screen.icon, contentDescription = screen.title) },
+                icon = {
+                    Icon(
+                        painter = painterResource(screen.icon),
+                        contentDescription = screen.title,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
                 label = { Text(screen.title) },
                 selected = currentDestination?.hierarchy?.any {
                     it.route == screen.graphRoute::class.qualifiedName

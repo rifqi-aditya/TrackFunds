@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
 
 @Composable

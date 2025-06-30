@@ -22,8 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
-import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 
 @Composable
 fun BudgetItemRow(

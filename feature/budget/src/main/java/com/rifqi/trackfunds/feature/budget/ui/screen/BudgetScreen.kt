@@ -48,7 +48,7 @@ import com.rifqi.trackfunds.core.navigation.api.AddEditBudget
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.budget.ui.components.BudgetCardItem
 import com.rifqi.trackfunds.feature.budget.ui.components.BudgetRingChart
 import com.rifqi.trackfunds.feature.budget.ui.event.BudgetEvent
@@ -306,7 +306,7 @@ private val previewBudgetItems = listOf(
         "1",
         "c1",
         "Food & Drink",
-        "restaurant",
+        "food_and_drink",
         BigDecimal("1000000"),
         BigDecimal("750000"),
         "2025-06"
@@ -315,7 +315,7 @@ private val previewBudgetItems = listOf(
         "2",
         "c2",
         "Transportation",
-        "commute",
+        "transportation",
         BigDecimal("400000"),
         BigDecimal("450000"),
         "2025-06"
@@ -324,7 +324,7 @@ private val previewBudgetItems = listOf(
         "3",
         "c3",
         "Shopping",
-        "shopping_bag",
+        "shopping",
         BigDecimal("1200000"),
         BigDecimal("500000"),
         "2025-06"

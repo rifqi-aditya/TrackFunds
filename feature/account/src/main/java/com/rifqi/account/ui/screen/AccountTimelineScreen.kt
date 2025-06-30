@@ -41,13 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.account.ui.model.AccountTimelineUiState
 import com.rifqi.account.ui.viewmodel.AccountTimelineViewModel
-import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime

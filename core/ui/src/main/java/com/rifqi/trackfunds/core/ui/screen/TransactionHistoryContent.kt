@@ -1,7 +1,6 @@
 package com.rifqi.trackfunds.core.ui.screen
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -26,13 +24,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.TransactionListItem
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -78,18 +74,18 @@ fun TransactionHistoryContent(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
-                    }
-                    IconButton(onClick = onCalendarClick) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_calendar),
-                            contentDescription = "Filter by Date",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                },
+//                actions = {
+//                    IconButton(onClick = onSearchClick) {
+//                        Icon(Icons.Default.Search, contentDescription = "Search")
+//                    }
+//                    IconButton(onClick = onCalendarClick) {
+//                        Image(
+//                            painter = painterResource(R.drawable.ic_calendar),
+//                            contentDescription = "Filter by Date",
+//                            modifier = Modifier.size(24.dp)
+//                        )
+//                    }
+//                },
             )
         },
         floatingActionButton = {

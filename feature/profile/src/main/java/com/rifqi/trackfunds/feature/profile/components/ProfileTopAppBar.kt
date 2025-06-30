@@ -31,7 +31,7 @@ fun ProfileTopAppBar(
         },
         navigationIcon = {
             Image(
-                painter = painterResource(id = R.drawable.ic_user),
+                painter = painterResource(id = R.drawable.transfer),
                 contentDescription = "Profile",
                 modifier = Modifier
                     .size(32.dp)
@@ -41,7 +41,7 @@ fun ProfileTopAppBar(
         actions = {
             IconButton(onClick = onSettingsClick) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_setting),
+                    painter = painterResource(id = R.drawable.transfer),
                     contentDescription = "Settings",
                     modifier = Modifier.size(24.dp)
                 )

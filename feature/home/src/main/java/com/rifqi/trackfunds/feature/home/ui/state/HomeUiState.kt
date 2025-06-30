@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.feature.home.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.util.getCurrentDateRangePair
-import com.rifqi.trackfunds.core.ui.util.getCurrentMonthAndYear
+import com.rifqi.trackfunds.core.ui.utils.getCurrentDateRangePair
+import com.rifqi.trackfunds.core.ui.utils.getCurrentMonthAndYear
 import java.math.BigDecimal
 import java.time.LocalDate
 

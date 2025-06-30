@@ -22,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rifqi.account.ui.model.AccountSummaryItem
-import com.rifqi.trackfunds.core.ui.util.DisplayIconFromResource
-import com.rifqi.trackfunds.core.ui.util.formatCurrency
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
