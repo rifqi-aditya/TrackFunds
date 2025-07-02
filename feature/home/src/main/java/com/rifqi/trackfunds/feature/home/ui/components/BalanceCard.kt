@@ -71,7 +71,7 @@ fun BalanceCard(
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     ) {
         Column(
@@ -87,12 +87,12 @@ fun BalanceCard(
                 Text(
                     "Monthly Balance",
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                     contentDescription = "Arrow Forward",
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.size(
                         20.dp
                     )
@@ -102,7 +102,7 @@ fun BalanceCard(
                 text = formatCurrency(summary.monthlyBalance),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.padding(top = 4.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -116,14 +116,14 @@ fun BalanceCard(
                     label = "Expenses",
                     amount = summary.totalExpenses,
                     iconRes = R.drawable.expense,
-                    textColor = MaterialTheme.colorScheme.onPrimary
+                    textColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 24.dp))
                 BalanceDetailItem(
                     label = "Income",
                     amount = summary.totalIncome,
                     iconRes = R.drawable.income,
-                    textColor = MaterialTheme.colorScheme.onPrimary
+                    textColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }

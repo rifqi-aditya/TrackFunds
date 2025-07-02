@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":feature:transaction"))
     implementation(project(":feature:budget"))
     implementation(project(":feature:scan"))
+    implementation(project(":feature:reports"))
 
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
@@ -79,7 +80,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    implementation("com.github.PratikFagadiya:AnimatedSmoothBottomNavigation-JetpackCompose:1.1.2")
 
     // Debugging (hanya untuk development)
     debugImplementation(libs.androidx.ui.tooling)

@@ -15,6 +15,7 @@ import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.Report
 import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.core.navigation.api.Settings
@@ -47,6 +48,7 @@ fun AppNavHost(
         accountsNavGraph(navController)
         budgetNavGraph(navController)
         profileNavGraph(navController)
+        reportsNavGraph(navController)
         scanNavGraph(navController)
 
         composable<AddEditTransaction> {
@@ -123,6 +125,10 @@ fun AppNavHost(
         }
         composable<Notifications> {
             PlaceholderScreen(name = "Notifications Screen")
+        }
+
+        composable<Report> {
+
         }
     }
 }

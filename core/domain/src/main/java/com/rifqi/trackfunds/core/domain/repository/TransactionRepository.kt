@@ -1,5 +1,7 @@
 package com.rifqi.trackfunds.core.domain.repository
 
+import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
+import com.rifqi.trackfunds.core.domain.model.CategorySpending
 import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
@@ -78,4 +80,19 @@ interface TransactionRepository {
     ): Flow<List<TransactionItem>>
 
     suspend fun performTransfer(expense: TransactionItem, income: TransactionItem)
+
+    fun getExpenseBreakdownForPeriod(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<CategorySpending>>
+
+    fun getIncomeBreakdownForPeriod(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<CategorySpending>>
+
+    fun getCashFlowSummaryForPeriod(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<CashFlowSummary>
 }

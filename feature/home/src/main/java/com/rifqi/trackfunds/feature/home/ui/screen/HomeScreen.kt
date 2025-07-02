@@ -2,8 +2,10 @@ package com.rifqi.trackfunds.feature.home.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -24,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -125,144 +128,157 @@ fun HomeScreenContent(
         onDismiss = { onEvent(HomeEvent.DialogDismissed) },
         onConfirm = { onEvent(HomeEvent.PeriodChanged(it)) }
     )
-
-    Scaffold(
-        topBar = {
-            AppTopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = { onEvent(HomeEvent.ChangePeriodClicked) }) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            topBar = {
+                AppTopAppBar(
+                    navigationIcon = {
                         DisplayIconFromResource(
                             identifier = "calendar",
                             contentDescription = "Change Period",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(end = 8.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = { onEvent(HomeEvent.ChangePeriodClicked) }
+                                )
                         )
+                    },
+                    title = {
+                        Column(
+                            modifier = Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { onEvent(HomeEvent.ChangePeriodClicked) }
+                            )
+                        ) {
+                            Text(
+                                uiState.currentMonthAndYear,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                dateRangeString,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { onEvent(HomeEvent.NotificationsClicked) }) {
+                            DisplayIconFromResource(
+                                identifier = "notifications",
+                                contentDescription = "Notifications",
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                     }
-                },
-                title = {
-                    Column(
-                        modifier = Modifier.clickable(
-                            onClick = { onEvent(HomeEvent.ChangePeriodClicked) }
-                        )
-                    ) {
-                        Text(
-                            uiState.currentMonthAndYear,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            dateRangeString,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onEvent(HomeEvent.NotificationsClicked) }) {
-                        DisplayIconFromResource(
-                            identifier = "notifications",
-                            contentDescription = "Notifications",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { onEvent(HomeEvent.FabClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Transaction")
-            }
-        }
-    ) { innerPadding ->
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (uiState.error != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "Error: ${uiState.error}",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(16.dp)
                 )
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                uiState.challengeMessage?.let { message ->
-                    item { ChallengeNotificationCard(message = message) }
+        ) { innerPadding ->
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
-                item {
-                    BalanceCard(
-                        summary = uiState.summary,
-                        onClick = { onEvent(HomeEvent.AllTransactionsClicked) }
+            } else if (uiState.error != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Error: ${uiState.error}",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
-                if (uiState.summary != null) {
-                    item {
-                        SummarySection(
-                            title = "Expenses",
-                            items = uiState.summary.expenseSummaries,
-                            onViewAllClick = {
-                                onEvent(
-                                    HomeEvent.TypedTransactionsClicked(
-                                        TransactionType.EXPENSE
-                                    )
-                                )
-                            },
-                            onItemClick = { summaryItem ->
-                                onEvent(
-                                    HomeEvent.CategorySummaryClicked(
-                                        summaryItem
-                                    )
-                                )
-                            },
-                            itemContent = { summaryItem ->
-                                CategorySummaryRow(
-                                    categoryItem = summaryItem,
-                                )
-                            }
-                        )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(top = innerPadding.calculateTopPadding())
+                ) {
+                    uiState.challengeMessage?.let { message ->
+                        item { ChallengeNotificationCard(message = message) }
                     }
                     item {
-                        SummarySection(
-                            title = "Income",
-                            items = uiState.summary.incomeSummaries,
-                            onViewAllClick = {
-                                onEvent(
-                                    HomeEvent.TypedTransactionsClicked(
-                                        TransactionType.INCOME
-                                    )
-                                )
-                            },
-                            onItemClick = { summaryItem ->
-                                onEvent(
-                                    HomeEvent.CategorySummaryClicked(
-                                        summaryItem
-                                    )
-                                )
-                            },
-                            itemContent = { summaryItem ->
-                                CategorySummaryRow(
-                                    categoryItem = summaryItem,
-                                )
-                            }
+                        BalanceCard(
+                            summary = uiState.summary,
+                            onClick = { onEvent(HomeEvent.AllTransactionsClicked) }
                         )
                     }
+                    if (uiState.summary != null) {
+                        item {
+                            SummarySection(
+                                title = "Expenses",
+                                items = uiState.summary.expenseSummaries,
+                                onViewAllClick = {
+                                    onEvent(
+                                        HomeEvent.TypedTransactionsClicked(
+                                            TransactionType.EXPENSE
+                                        )
+                                    )
+                                },
+                                onItemClick = { summaryItem ->
+                                    onEvent(
+                                        HomeEvent.CategorySummaryClicked(
+                                            summaryItem
+                                        )
+                                    )
+                                },
+                                itemContent = { summaryItem ->
+                                    CategorySummaryRow(
+                                        categoryItem = summaryItem,
+                                    )
+                                }
+                            )
+                        }
+                        item {
+                            SummarySection(
+                                title = "Income",
+                                items = uiState.summary.incomeSummaries,
+                                onViewAllClick = {
+                                    onEvent(
+                                        HomeEvent.TypedTransactionsClicked(
+                                            TransactionType.INCOME
+                                        )
+                                    )
+                                },
+                                onItemClick = { summaryItem ->
+                                    onEvent(
+                                        HomeEvent.CategorySummaryClicked(
+                                            summaryItem
+                                        )
+                                    )
+                                },
+                                itemContent = { summaryItem ->
+                                    CategorySummaryRow(
+                                        categoryItem = summaryItem,
+                                    )
+                                }
+                            )
+                        }
+                    }
+                    item { Spacer(modifier = Modifier.height(80.dp)) }
                 }
-                item { Spacer(modifier = Modifier.height(80.dp)) }
             }
+        }
+        FloatingActionButton(
+            onClick = { onEvent(HomeEvent.FabClicked) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Add Transaction")
         }
     }
 }

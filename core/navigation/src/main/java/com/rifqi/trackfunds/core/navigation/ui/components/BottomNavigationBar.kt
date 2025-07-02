@@ -21,7 +21,7 @@ import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
-import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
+import com.rifqi.trackfunds.core.navigation.api.ReportsGraph
 import com.rifqi.trackfunds.core.ui.R
 
 sealed class BottomNavItem(
@@ -47,9 +47,9 @@ sealed class BottomNavItem(
         icon = R.drawable.bottom_nav_budgets
     )
 
-    data object Profile : BottomNavItem(
-        graphRoute = ProfileGraph,
-        title = "Profile",
+    data object Reports : BottomNavItem(
+        graphRoute = ReportsGraph,
+        title = "Reports",
         icon = R.drawable.bottom_nav_report
     )
 }
@@ -58,14 +58,19 @@ val bottomNavItemsList = listOf(
     BottomNavItem.Home,
     BottomNavItem.Accounts,
     BottomNavItem.Budgets,
-    BottomNavItem.Profile
+    BottomNavItem.Reports
 )
 
 @Composable
 fun AppBottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    NavigationBar {
+
+    NavigationBar(
+        modifier = Modifier,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.surface
+    ) {
         bottomNavItemsList.forEach { screen ->
             NavigationBarItem(
                 icon = {

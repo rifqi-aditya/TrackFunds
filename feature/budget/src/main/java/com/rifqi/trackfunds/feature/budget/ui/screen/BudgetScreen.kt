@@ -1,14 +1,13 @@
 package com.rifqi.trackfunds.feature.budget.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -108,186 +107,187 @@ fun BudgetListContent(
     pagerState: PagerState,
     scope: CoroutineScope,
     onEvent: (BudgetEvent) -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            AppTopAppBar(
-                title = {
-                    Text("Budgets", style = MaterialTheme.typography.titleMedium)
-                },
-                navigationIcon = {
-                    DisplayIconFromResource(
-                        identifier = "budgets",
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(end = 8.dp)
-                    )
-                },
-                actions = {
-                    Text(
-                        uiState.currentPeriodDisplay,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { onEvent(BudgetEvent.ChangePeriodClicked) }
-                    )
-                },
-                modifier = Modifier.padding(
-                    horizontal = 16.dp
-                )
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { onEvent(BudgetEvent.AddBudgetClicked) }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Budget")
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val progress = if (uiState.totalBudgeted > BigDecimal.ZERO) {
-                (uiState.totalSpent.toFloat() / uiState.totalBudgeted.toFloat())
-            } else {
-                0f
-            }
-
-            BudgetRingChart(
-                progress = progress,
-                remainingAmount = uiState.remainingOverall,
-                totalAmount = uiState.totalBudgeted,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-                indicator = { tabPositions ->
-                    if (pagerState.currentPage < tabPositions.size) {
-                        TabRowDefaults.PrimaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                            width = tabPositions[pagerState.currentPage].contentWidth
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Scaffold(
+            topBar = {
+                AppTopAppBar(
+                    title = {
+                        Text("Budgets", style = MaterialTheme.typography.titleMedium)
+                    },
+                    navigationIcon = {
+                        DisplayIconFromResource(
+                            identifier = "budgets",
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(end = 8.dp)
+                        )
+                    },
+                    actions = {
+                        Text(
+                            uiState.currentPeriodDisplay,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable { onEvent(BudgetEvent.ChangePeriodClicked) }
                         )
                     }
-                },
-                containerColor = MaterialTheme.colorScheme.background,
-            ) {
-                BudgetTab.entries.forEachIndexed { index, tab ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            onEvent(BudgetEvent.TabSelected(tab))
-                            scope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        },
-                        text = { Text(if (tab == BudgetTab.YOUR_BUDGETS) "Your Budgets" else "Recurring") }
-                    )
-                }
+                )
             }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .background(MaterialTheme.colorScheme.surface),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                val progress = if (uiState.totalBudgeted > BigDecimal.ZERO) {
+                    (uiState.totalSpent.toFloat() / uiState.totalBudgeted.toFloat())
+                } else {
+                    0f
+                }
 
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { pageIndex ->
-                when (pageIndex) {
-                    0 -> { // Halaman "Your Budgets"
-                        if (filteredBudgets.isEmpty() && uiState.categoriesWithBudget.isEmpty()) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                            ) {
-                                Text("No budgets set for this period. Tap '+' to add one.")
-                            }
-                        } else {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(vertical = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                // Filter Chips
-                                item {
-                                    LazyRow(
-                                        contentPadding = PaddingValues(horizontal = 16.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        items(uiState.categoriesWithBudget) { category ->
-                                            val isSelected =
-                                                uiState.selectedCategoryFilterId == category.id
-                                            FilterChip(
-                                                selected = isSelected,
-                                                onClick = {
-                                                    onEvent(
-                                                        BudgetEvent.CategoryFilterClicked(
-                                                            category.id
+                BudgetRingChart(
+                    progress = progress,
+                    remainingAmount = uiState.remainingOverall,
+                    totalAmount = uiState.totalBudgeted,
+                    modifier = Modifier.padding(16.dp)
+                )
+
+                TabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    indicator = { tabPositions ->
+                        if (pagerState.currentPage < tabPositions.size) {
+                            TabRowDefaults.PrimaryIndicator(
+                                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                                width = tabPositions[pagerState.currentPage].contentWidth
+                            )
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                ) {
+                    BudgetTab.entries.forEachIndexed { index, tab ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                onEvent(BudgetEvent.TabSelected(tab))
+                                scope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            },
+                            text = { Text(if (tab == BudgetTab.YOUR_BUDGETS) "Your Budgets" else "Recurring") }
+                        )
+                    }
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) { pageIndex ->
+                    when (pageIndex) {
+                        0 -> { // Halaman "Your Budgets"
+                            if (filteredBudgets.isEmpty() && uiState.categoriesWithBudget.isEmpty()) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp)
+                                ) {
+                                    Text("No budgets set for this period. Tap '+' to add one.")
+                                }
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentPadding = PaddingValues(vertical = 16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    // Filter Chips
+                                    item {
+                                        LazyRow(
+                                            contentPadding = PaddingValues(horizontal = 16.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            items(uiState.categoriesWithBudget) { category ->
+                                                val isSelected =
+                                                    uiState.selectedCategoryFilterId == category.id
+                                                FilterChip(
+                                                    selected = isSelected,
+                                                    onClick = {
+                                                        onEvent(
+                                                            BudgetEvent.CategoryFilterClicked(
+                                                                category.id
+                                                            )
                                                         )
+                                                    },
+                                                    label = { Text(category.name) },
+                                                    shape = MaterialTheme.shapes.large,
+                                                    colors = FilterChipDefaults.filterChipColors(
+                                                        selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(
+                                                            alpha = 0.2f
+                                                        ),
+                                                        selectedLabelColor = MaterialTheme.colorScheme.secondary,
+                                                        selectedLeadingIconColor = MaterialTheme.colorScheme.secondary
+                                                    ),
+                                                    border = FilterChipDefaults.filterChipBorder(
+                                                        selected = isSelected, // <-- Beritahu status terpilih saat ini
+                                                        enabled = true,        // <-- Kita asumsikan chip selalu bisa diklik
+
+                                                        // Warna-warna yang sudah kita definisikan sebelumnya
+                                                        selectedBorderColor = MaterialTheme.colorScheme.secondary,
+                                                        selectedBorderWidth = 1.5.dp,
+                                                        borderColor = MaterialTheme.colorScheme.outline.copy(
+                                                            alpha = 0.5f
+                                                        ),
+                                                        borderWidth = 1.dp
                                                     )
-                                                },
-                                                label = { Text(category.name) },
-                                                shape = MaterialTheme.shapes.large,
-                                                colors = FilterChipDefaults.filterChipColors(
-                                                    selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(
-                                                        alpha = 0.2f
-                                                    ),
-                                                    selectedLabelColor = MaterialTheme.colorScheme.secondary,
-                                                    selectedLeadingIconColor = MaterialTheme.colorScheme.secondary
-                                                ),
-
-                                                // FIX: Lengkapi pemanggilan filterChipBorder dengan status saat ini
-                                                border = FilterChipDefaults.filterChipBorder(
-                                                    selected = isSelected, // <-- Beritahu status terpilih saat ini
-                                                    enabled = true,        // <-- Kita asumsikan chip selalu bisa diklik
-
-                                                    // Warna-warna yang sudah kita definisikan sebelumnya
-                                                    selectedBorderColor = MaterialTheme.colorScheme.secondary,
-                                                    selectedBorderWidth = 1.5.dp,
-                                                    borderColor = MaterialTheme.colorScheme.outline.copy(
-                                                        alpha = 0.5f
-                                                    ),
-                                                    borderWidth = 1.dp
                                                 )
-                                            )
+                                            }
                                         }
                                     }
-                                }
-                                items(
-                                    items = filteredBudgets,
-                                    key = { it.budgetId }
-                                ) { budgetItem ->
-                                    BudgetCardItem(
-                                        item = budgetItem,
-                                        onClick = {
-                                            onEvent(
-                                                BudgetEvent.EditBudgetClicked(
-                                                    budgetItem.budgetId
+                                    items(
+                                        items = filteredBudgets,
+                                        key = { it.budgetId }
+                                    ) { budgetItem ->
+                                        BudgetCardItem(
+                                            item = budgetItem,
+                                            onClick = {
+                                                onEvent(
+                                                    BudgetEvent.EditBudgetClicked(
+                                                        budgetItem.budgetId
+                                                    )
                                                 )
-                                            )
-                                        },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
+                                            },
+                                            modifier = Modifier.padding(horizontal = 16.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    1 -> { // Halaman "Recurring"
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text("Recurring budgets feature coming soon!")
+                        1 -> { // Halaman "Recurring"
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("Recurring budgets feature coming soon!")
+                            }
                         }
                     }
                 }
             }
+        }
+        FloatingActionButton(
+            onClick = { onEvent(BudgetEvent.AddBudgetClicked) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Add Budget")
         }
     }
 }

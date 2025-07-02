@@ -69,7 +69,7 @@ fun BudgetRingChart(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        GradientCircularProgressBar(
+        CircularProgressBar(
             progress = currentProgress,
             modifier = Modifier
                 .fillMaxSize()

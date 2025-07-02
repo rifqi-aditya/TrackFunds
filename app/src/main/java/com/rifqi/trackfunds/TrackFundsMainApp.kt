@@ -1,10 +1,9 @@
 package com.rifqi.trackfunds
 
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.add
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -58,10 +57,13 @@ fun TrackFundsMainApp() {
         },
         bottomBar = {
             if (showBottomBar) {
-                AppBottomNavigationBar(navController = navController)
+                AppBottomNavigationBar(
+                    navController = navController,
+                )
             }
         },
-        contentWindowInsets = WindowInsets.navigationBars.add(WindowInsets.ime)
+        floatingActionButtonPosition = FabPosition.Center,
+        contentWindowInsets = WindowInsets.navigationBars
     ) { innerPadding ->
         AppNavHost(
             navController = navController,

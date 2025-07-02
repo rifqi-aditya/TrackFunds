@@ -50,7 +50,7 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
         "bank_account" -> R.drawable.bank_account
         "transfer" -> R.drawable.transfer
         "calendar" -> R.drawable.calendar
-        "notification" -> R.drawable.notification
+        "notifications" -> R.drawable.notification
         "settings" -> R.drawable.settings
         "search" -> R.drawable.search
         "delete" -> R.drawable.delete

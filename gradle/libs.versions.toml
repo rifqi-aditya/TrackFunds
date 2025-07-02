@@ -112,7 +112,6 @@ androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

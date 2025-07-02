@@ -20,6 +20,12 @@ import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKe
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.report.GetCashFlowSummaryUseCase
+import com.rifqi.trackfunds.core.domain.usecase.report.GetCashFlowSummaryUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCase
+import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCase
+import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
@@ -188,4 +194,23 @@ abstract class DomainModule {
     abstract fun bindScanReceiptUseCase(
         useCaseImpl: ScanReceiptUseCaseImpl
     ): ScanReceiptUseCase
+
+    // --- Report Use Case ---
+    @Binds
+    @Singleton
+    abstract fun bindGetCashFlowSummaryUseCase(
+        useCaseImpl: GetCashFlowSummaryUseCaseImpl
+    ): GetCashFlowSummaryUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetExpenseBreakdownUseCase(
+        useCaseImpl: GetExpenseBreakdownUseCaseImpl
+    ): GetExpenseBreakdownUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetIncomeBreakdownUseCase(
+        useCaseImpl: GetIncomeBreakdownUseCaseImpl
+    ): GetIncomeBreakdownUseCase
 }

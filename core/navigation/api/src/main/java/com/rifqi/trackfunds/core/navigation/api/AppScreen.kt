@@ -22,6 +22,9 @@ data object ProfileGraph : AppScreen
 @Serializable
 data object ScanGraph : AppScreen
 
+@Serializable
+data object ReportsGraph : AppScreen
+
 // --- Screen Routes ---
 @Serializable
 data object Home : AppScreen
@@ -37,6 +40,9 @@ data object Profile : AppScreen
 
 @Serializable
 data object ScanOption : AppScreen
+
+@Serializable
+data object Report : AppScreen
 
 @Serializable
 data object Settings : AppScreen

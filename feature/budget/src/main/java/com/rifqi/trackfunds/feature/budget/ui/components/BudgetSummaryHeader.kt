@@ -33,7 +33,7 @@ fun BudgetSummaryHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Progress bar lingkaran di sebelah kiri
-        GradientCircularProgressBar(
+        CircularProgressBar(
             progress = progress,
             modifier = Modifier.size(80.dp)
         )

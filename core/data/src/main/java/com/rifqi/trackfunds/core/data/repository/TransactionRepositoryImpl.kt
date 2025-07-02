@@ -190,13 +190,27 @@ class TransactionRepositoryImpl @Inject constructor(
         transactionDao.insertTransaction(income.toEntity())
 
         // 2. Update saldo akun asal
-        val fromAccount = accountDao.getAccountById(expense.accountId) ?: throw Exception("Source account not found")
+        val fromAccount = accountDao.getAccountById(expense.accountId)
+            ?: throw Exception("Source account not found")
         val newFromBalance = fromAccount.balance.subtract(expense.amount)
         accountDao.updateAccount(fromAccount.copy(balance = newFromBalance))
 
         // 3. Update saldo akun tujuan
-        val toAccount = accountDao.getAccountById(income.accountId) ?: throw Exception("Destination account not found")
+        val toAccount = accountDao.getAccountById(income.accountId)
+            ?: throw Exception("Destination account not found")
         val newToBalance = toAccount.balance.add(income.amount)
         accountDao.updateAccount(toAccount.copy(balance = newToBalance))
     }
+
+    override fun getExpenseBreakdownForPeriod(startDate: LocalDateTime, endDate: LocalDateTime) =
+        transactionDao.getExpenseBreakdown(startDate = startDate, endDate = endDate)
+            .map { dtoList -> dtoList.map { it.toDomain() } }
+
+    override fun getIncomeBreakdownForPeriod(startDate: LocalDateTime, endDate: LocalDateTime) =
+        transactionDao.getIncomeBreakdown(startDate = startDate, endDate = endDate)
+            .map { dtoList -> dtoList.map { it.toDomain() } }
+
+    override fun getCashFlowSummaryForPeriod(startDate: LocalDateTime, endDate: LocalDateTime) =
+        transactionDao.getCashFlowSummary(startDate = startDate, endDate = endDate)
+            .map { it.toDomain() }
 }
