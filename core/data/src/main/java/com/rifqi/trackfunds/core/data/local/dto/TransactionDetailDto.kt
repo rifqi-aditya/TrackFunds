@@ -17,9 +17,12 @@ data class TransactionDetailDto(
     data class CategoryInfo(
         val name: String,
         @ColumnInfo(name = "icon_identifier")
-        val iconIdentifier: String?
+        val categoryIconIdentifier: String?
     )
+
     data class AccountInfo(
-        val name: String
+        val name: String,
+        @ColumnInfo(name = "icon_identifier")
+        val accountIconIdentifier: String?
     )
 }

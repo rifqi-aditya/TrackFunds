@@ -162,7 +162,7 @@ fun TransactionDetailContent(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     DisplayIconFromResource(
-                        identifier = transaction.iconIdentifier,
+                        identifier = transaction.categoryIconIdentifier,
                         contentDescription = transaction.categoryName,
                         modifier = Modifier
                             .size(64.dp)
@@ -199,7 +199,7 @@ fun TransactionDetailContent(
                     DetailRow(label = "Account Source") {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             DisplayIconFromResource(
-                                identifier = transaction.iconIdentifier,
+                                identifier = transaction.categoryIconIdentifier,
                                 contentDescription = transaction.accountName,
                                 modifier = Modifier
                                     .size(24.dp)
@@ -276,7 +276,7 @@ private val previewTransactionDetail = TransactionItem(
     date = LocalDateTime.of(2025, 6, 27, 10, 30),
     categoryId = "cat-fuel",
     categoryName = "Bensin",
-    iconIdentifier = "local_gas_station",
+    categoryIconIdentifier = "local_gas_station",
     accountId = "acc-kas",
     accountName = "KAS",
 )

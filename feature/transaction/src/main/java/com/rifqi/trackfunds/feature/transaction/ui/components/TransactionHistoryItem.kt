@@ -53,7 +53,7 @@ fun TransactionListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             DisplayIconFromResource(
-                identifier = transaction.iconIdentifier,
+                identifier = transaction.categoryIconIdentifier,
                 contentDescription = transaction.categoryName,
                 modifier = Modifier.size(24.dp)
             )
@@ -104,27 +104,6 @@ fun TransactionListItem(
     }
 }
 
-// --- Preview untuk Komponen ---
-@Preview(showBackground = true, name = "TransactionListItem - Expense")
-@Composable
-private fun TransactionListItemExpensePreview() {
-    TrackFundsTheme {
-        val expenseItem = TransactionItem(
-            id = "1",
-            note = "Makan Malam di Luar",
-            amount = BigDecimal("125000"),
-            type = TransactionType.EXPENSE,
-            date = LocalDateTime.now(),
-            categoryId = "cat1",
-            categoryName = "Makanan",
-            iconIdentifier = "restaurant",
-            accountId = "acc1",
-            accountName = TODO()
-        )
-        TransactionListItem(transaction = expenseItem, onClick = {})
-    }
-}
-
 @Preview(
     showBackground = true,
     name = "TransactionListItem - Income",
@@ -141,7 +120,7 @@ private fun TransactionListItemIncomePreview() {
             date = LocalDateTime.now().minusDays(5),
             categoryId = "cat2",
             categoryName = "Gaji",
-            iconIdentifier = "cash",
+            categoryIconIdentifier = "cash",
             accountId = "acc2",
             accountName = "acc2"
         )

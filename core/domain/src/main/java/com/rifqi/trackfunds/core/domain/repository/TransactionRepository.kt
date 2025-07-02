@@ -95,4 +95,6 @@ interface TransactionRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<CashFlowSummary>
+
+    fun getRecentTransactions(limit: Int): Flow<List<TransactionItem>>
 }

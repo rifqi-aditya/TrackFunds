@@ -18,9 +18,10 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
         date = this.transaction.date,
         categoryId = this.transaction.categoryId ?: "",
         categoryName = this.category.name,
-        iconIdentifier = this.category.iconIdentifier,
+        categoryIconIdentifier = this.category.categoryIconIdentifier,
         accountId = this.transaction.accountId,
         accountName = this.account.name,
+        accountIconIdentifier = this.account.accountIconIdentifier,
         transferPairId = this.transaction.transferPairId
     )
 }

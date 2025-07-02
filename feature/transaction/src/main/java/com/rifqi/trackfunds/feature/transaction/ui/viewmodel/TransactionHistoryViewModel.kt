@@ -27,7 +27,7 @@ val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now().minusDays(1).withHour(9),
         categoryId = "init",
         categoryName = "Initial Balance",
-        iconIdentifier = "stack_of_money",
+        categoryIconIdentifier = "stack_of_money",
         accountId = "acc2",
         accountName = "acc2"
     ),
@@ -39,7 +39,7 @@ val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now().minusDays(1).withHour(9),
         categoryId = "init",
         categoryName = "Initial Balance",
-        iconIdentifier = "wallet",
+        categoryIconIdentifier = "wallet",
         accountId = "acc1",
         accountName = "acc2"
     ),
@@ -51,7 +51,7 @@ val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now().withHour(11).withMinute(56),
         categoryId = "food",
         categoryName = "Makanan",
-        iconIdentifier = "restaurant",
+        categoryIconIdentifier = "restaurant",
         accountId = "acc1",
         accountName = "acc2"
     ),
@@ -63,7 +63,7 @@ val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now().withHour(11).withMinute(55),
         categoryId = "shop",
         categoryName = "Belanja",
-        iconIdentifier = "shopping_cart",
+        categoryIconIdentifier = "shopping_cart",
         accountId = "acc1",
         accountName = "acc2"
     ),
@@ -75,7 +75,7 @@ val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now().withHour(15).withMinute(58),
         categoryId = "health",
         categoryName = "Kesehatan",
-        iconIdentifier = "medical_doctor",
+        categoryIconIdentifier = "medical_doctor",
         accountId = "acc2",
         accountName = "acc2"
     )

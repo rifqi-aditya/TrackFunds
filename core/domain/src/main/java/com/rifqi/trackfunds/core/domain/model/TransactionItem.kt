@@ -12,8 +12,9 @@ data class TransactionItem(
     val note: String,
     val categoryId: String? = null,
     val categoryName: String,
-    val iconIdentifier: String?,
+    val categoryIconIdentifier: String? = null,
     val accountId: String,
     val accountName: String,
+    val accountIconIdentifier: String? = null,
     val transferPairId: String? = null,
 )

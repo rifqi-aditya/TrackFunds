@@ -32,7 +32,7 @@ class PerformTransferUseCaseImpl @Inject constructor(
             accountName = fromAccount.name,
             categoryId = null,
             categoryName = "Transfer",
-            iconIdentifier = "ic_transfer",
+            categoryIconIdentifier = "ic_transfer",
             transferPairId = transferId
         )
 
@@ -46,7 +46,7 @@ class PerformTransferUseCaseImpl @Inject constructor(
             accountName = toAccount.name,
             categoryId = null,
             categoryName = "Transfer",
-            iconIdentifier = "ic_transfer",
+            categoryIconIdentifier = "ic_transfer",
             transferPairId = transferId
         )
 

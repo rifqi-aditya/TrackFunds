@@ -51,7 +51,7 @@ fun TransactionListItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             DisplayIconFromResource(
-                identifier = transaction.iconIdentifier,
+                identifier = transaction.categoryIconIdentifier,
                 contentDescription = transaction.categoryName,
                 modifier = Modifier.size(24.dp)
             )
@@ -113,7 +113,7 @@ private fun TransactionListItemExpensePreview() {
             date = LocalDateTime.now(),
             categoryId = "cat1",
             categoryName = "Makanan",
-            iconIdentifier = "restaurant",
+            categoryIconIdentifier = "restaurant",
             accountId = "acc1",
             accountName = "acc1"
         )
@@ -137,7 +137,7 @@ private fun TransactionListItemIncomePreview() {
             date = LocalDateTime.now().minusDays(5),
             categoryId = "cat2",
             categoryName = "Gaji",
-            iconIdentifier = "cash",
+            categoryIconIdentifier = "cash",
             accountId = "acc2",
             accountName = "acc2"
         )

@@ -27,6 +27,12 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getRecentTransactions(limit: Int): Flow<List<TransactionItem>> {
+        return transactionDao.getRecentTransactions(limit).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     override fun getTransactionById(transactionId: String): Flow<TransactionItem?> {
         return transactionDao.getTransactionWithDetailsById(transactionId).map { dto ->
             dto?.toDomain()
@@ -38,6 +44,7 @@ class TransactionRepositoryImpl @Inject constructor(
             transactions.filter { it.accountId == accountId }
         }
     }
+
 
     override suspend fun insertTransaction(transaction: TransactionItem) {
         // Konversi ke entity dan masukkan ke database
@@ -213,4 +220,6 @@ class TransactionRepositoryImpl @Inject constructor(
     override fun getCashFlowSummaryForPeriod(startDate: LocalDateTime, endDate: LocalDateTime) =
         transactionDao.getCashFlowSummary(startDate = startDate, endDate = endDate)
             .map { it.toDomain() }
+
+
 }

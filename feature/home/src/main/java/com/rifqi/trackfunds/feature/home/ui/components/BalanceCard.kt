@@ -3,10 +3,8 @@ package com.rifqi.trackfunds.feature.home.ui.components
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
-import com.rifqi.trackfunds.feature.home.ui.state.HomeSummary
 import java.math.BigDecimal
 
 val DarkCardBackgroundColor = Color(0xFF004780)
@@ -43,27 +39,12 @@ val TextOnDarkCardColor = Color.White
 
 @Composable
 fun BalanceCard(
-    summary: HomeSummary?,
+    modifier: Modifier = Modifier,
+    monthlyBalance: BigDecimal = BigDecimal.ZERO,
+    totalExpenses: BigDecimal,
+    totalIncome: BigDecimal,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    if (summary == null) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(190.dp)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .background(
-                    DarkCardBackgroundColor.copy(alpha = 0.3f),
-                    shape = MaterialTheme.shapes.large
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(48.dp), color = TextOnDarkCardColor)
-        }
-        return
-    }
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -99,7 +80,7 @@ fun BalanceCard(
                 )
             }
             Text(
-                text = formatCurrency(summary.monthlyBalance),
+                text = formatCurrency(monthlyBalance),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -114,14 +95,14 @@ fun BalanceCard(
             ) {
                 BalanceDetailItem(
                     label = "Expenses",
-                    amount = summary.totalExpenses,
+                    amount = totalExpenses,
                     iconRes = R.drawable.expense,
                     textColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 24.dp))
                 BalanceDetailItem(
                     label = "Income",
-                    amount = summary.totalIncome,
+                    amount = totalIncome,
                     iconRes = R.drawable.income,
                     textColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -164,15 +145,6 @@ fun BalanceDetailItem(
     }
 }
 
-private val previewDummySummaryData = HomeSummary(
-    monthlyBalance = BigDecimal("13750000"),
-    totalExpenses = BigDecimal("1250000"),
-    totalIncome = BigDecimal("15000000"),
-    // List ini bisa kosong karena tidak ditampilkan langsung oleh BalanceCard
-    expenseSummaries = emptyList(),
-    incomeSummaries = emptyList()
-)
-
 
 // --- PREVIEWS ---
 
@@ -182,20 +154,10 @@ private val previewDummySummaryData = HomeSummary(
 private fun BalanceCardLoadedPreview() {
     TrackFundsTheme {
         BalanceCard(
-            summary = previewDummySummaryData,
-            onClick = {}
-        )
-    }
-}
-
-@Preview(name = "BalanceCard - Loading State")
-@Composable
-private fun BalanceCardLoadingPreview() {
-    TrackFundsTheme {
-        // Berikan null pada summary untuk melihat tampilan loading
-        BalanceCard(
-            summary = null,
-            onClick = {}
+            monthlyBalance = BigDecimal("100000"),
+            totalExpenses = BigDecimal("100000"),
+            totalIncome = BigDecimal("100000"),
+            onClick = { },
         )
     }
 }

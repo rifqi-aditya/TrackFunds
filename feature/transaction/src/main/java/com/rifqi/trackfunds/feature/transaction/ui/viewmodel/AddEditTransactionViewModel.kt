@@ -223,7 +223,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 date = currentState.selectedDate.atStartOfDay(),
                 categoryId = currentState.selectedCategory.id,
                 categoryName = currentState.selectedCategory.name,
-                iconIdentifier = currentState.selectedCategory.iconIdentifier,
+                categoryIconIdentifier = currentState.selectedCategory.iconIdentifier,
                 accountId = currentState.selectedAccount.id,
                 accountName = currentState.selectedAccount.name
             )

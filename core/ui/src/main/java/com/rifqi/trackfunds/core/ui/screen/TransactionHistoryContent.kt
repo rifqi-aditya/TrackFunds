@@ -150,7 +150,7 @@ private val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now(),
         categoryId = "c1",
         categoryName = "Salary",
-        iconIdentifier = "cash",
+        categoryIconIdentifier = "cash",
         accountId = "a1",
         accountName = "BCA Mobile"
     ),
@@ -162,7 +162,7 @@ private val DUMMY_ALL_TRANSACTIONS = listOf(
         date = LocalDateTime.now().minusDays(1),
         categoryId = "c2",
         categoryName = "Food & Drink",
-        iconIdentifier = "restaurant",
+        categoryIconIdentifier = "restaurant",
         accountId = "a2",
         accountName = "Cash Wallet"
     )

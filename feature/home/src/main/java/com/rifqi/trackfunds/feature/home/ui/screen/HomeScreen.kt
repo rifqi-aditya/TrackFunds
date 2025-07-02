@@ -1,14 +1,11 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
@@ -42,17 +38,14 @@ import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.core.ui.components.AddTransactionDialog
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
-import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatDateRangeToString
-import com.rifqi.trackfunds.core.ui.utils.getCurrentDateRangePair
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
-import com.rifqi.trackfunds.feature.home.ui.components.ChallengeNotificationCard
+import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionRow
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.state.HomeCategorySummaryItem
-import com.rifqi.trackfunds.feature.home.ui.state.HomeSummary
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 import java.math.BigDecimal
@@ -207,20 +200,39 @@ fun HomeScreenContent(
                         .fillMaxSize(),
                     contentPadding = PaddingValues(top = innerPadding.calculateTopPadding())
                 ) {
-                    uiState.challengeMessage?.let { message ->
-                        item { ChallengeNotificationCard(message = message) }
-                    }
                     item {
                         BalanceCard(
-                            summary = uiState.summary,
-                            onClick = { onEvent(HomeEvent.AllTransactionsClicked) }
+                            onClick = { onEvent(HomeEvent.AllTransactionsClicked) },
+                            monthlyBalance = uiState.monthlyBalance,
+                            totalExpenses = uiState.totalExpenses,
+                            totalIncome = uiState.totalIncome
                         )
                     }
-                    if (uiState.summary != null) {
+                    item {
+                        SummarySection(
+                            title = "Recent Transactions",
+                            items = uiState.recentTransactions, // Gunakan data baru dari state
+                            onViewAllClick = {
+                                onEvent(HomeEvent.AllTransactionsClicked)
+                            },
+                            onItemClick = { transactionItem ->
+                                // Kirim event untuk navigasi ke detail transaksi
+//                                onEvent(HomeEvent.TransactionClicked(transactionItem.id))
+                            },
+                            itemContent = { transactionItem ->
+                                // Gunakan TransactionRow yang sudah Anda buat sebelumnya
+                                RecentTransactionRow(
+                                    transaction = transactionItem,
+                                    onClick = { },
+                                )
+                            }
+                        )
+                    }
+                    if (uiState.expenseSummaries.isNotEmpty()) {
                         item {
                             SummarySection(
                                 title = "Expenses",
-                                items = uiState.summary.expenseSummaries,
+                                items = uiState.expenseSummaries,
                                 onViewAllClick = {
                                     onEvent(
                                         HomeEvent.TypedTransactionsClicked(
@@ -242,10 +254,12 @@ fun HomeScreenContent(
                                 }
                             )
                         }
+                    }
+                    if (uiState.incomeSummaries.isNotEmpty()) {
                         item {
                             SummarySection(
                                 title = "Income",
-                                items = uiState.summary.incomeSummaries,
+                                items = uiState.incomeSummaries,
                                 onViewAllClick = {
                                     onEvent(
                                         HomeEvent.TypedTransactionsClicked(
@@ -268,7 +282,6 @@ fun HomeScreenContent(
                             )
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(80.dp)) }
                 }
             }
         }
@@ -324,76 +337,76 @@ private val previewIncomeSummaries = listOf(
     )
 )
 
-private val previewSummaryData = HomeSummary(
-    monthlyBalance = BigDecimal("6700000"),
-    totalExpenses = BigDecimal("2300000"),
-    totalIncome = BigDecimal("9000000"),
-    expenseSummaries = previewExpenseSummaries,
-    incomeSummaries = previewIncomeSummaries
-)
+//private val previewSummaryData = HomeSummary(
+//    monthlyBalance = BigDecimal("6700000"),
+//    totalExpenses = BigDecimal("2300000"),
+//    totalIncome = BigDecimal("9000000"),
+//    expenseSummaries = previewExpenseSummaries,
+//    incomeSummaries = previewIncomeSummaries
+//)
 
 // --- FUNGSI-FUNGSI PREVIEW ---
 
-@Preview(name = "Home Screen - Loaded", showBackground = true)
-@Preview(
-    name = "Home Screen - Loaded (Dark)",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun HomeScreenContentLoadedPreview() {
-    TrackFundsTheme {
-        HomeScreenContent(
-            uiState = HomeUiState(
-                isLoading = false,
-                summary = previewSummaryData,
-                currentMonthAndYear = "June 2025",
-                dateRangePeriod = getCurrentDateRangePair() // Membutuhkan fungsi utilitas Anda
-            ),
-            onEvent = {}
-        )
-    }
-}
-
-@Preview(name = "Home Screen - Loading", showBackground = true)
-@Composable
-private fun HomeScreenContentLoadingPreview() {
-    TrackFundsTheme {
-        HomeScreenContent(
-            uiState = HomeUiState(isLoading = true),
-            onEvent = {}
-        )
-    }
-}
-
-@Preview(name = "Home Screen - Error", showBackground = true)
-@Composable
-private fun HomeScreenContentErrorPreview() {
-    TrackFundsTheme {
-        HomeScreenContent(
-            uiState = HomeUiState(
-                isLoading = false,
-                error = "Failed to connect to the server. Please try again."
-            ),
-            onEvent = {}
-        )
-    }
-}
-
-@Preview(name = "Home Screen - Empty State", showBackground = true)
-@Composable
-private fun HomeScreenContentEmptyPreview() {
-    TrackFundsTheme {
-        HomeScreenContent(
-            uiState = HomeUiState(
-                isLoading = false,
-                // Summary ada tapi list di dalamnya kosong
-                summary = previewSummaryData.copy(
-                    expenseSummaries = emptyList(),
-                    incomeSummaries = emptyList()
-                )
-            ),
-            onEvent = {}
-        )
-    }
-}
+//@Preview(name = "Home Screen - Loaded", showBackground = true)
+//@Preview(
+//    name = "Home Screen - Loaded (Dark)",
+//    showBackground = true,
+//    uiMode = Configuration.UI_MODE_NIGHT_YES
+//)
+//@Composable
+//private fun HomeScreenContentLoadedPreview() {
+//    TrackFundsTheme {
+//        HomeScreenContent(
+//            uiState = HomeUiState(
+//                isLoading = false,
+//                summary = previewSummaryData,
+//                currentMonthAndYear = "June 2025",
+//                dateRangePeriod = getCurrentDateRangePair() // Membutuhkan fungsi utilitas Anda
+//            ),
+//            onEvent = {}
+//        )
+//    }
+//}
+//
+//@Preview(name = "Home Screen - Loading", showBackground = true)
+//@Composable
+//private fun HomeScreenContentLoadingPreview() {
+//    TrackFundsTheme {
+//        HomeScreenContent(
+//            uiState = HomeUiState(isLoading = true),
+//            onEvent = {}
+//        )
+//    }
+//}
+//
+//@Preview(name = "Home Screen - Error", showBackground = true)
+//@Composable
+//private fun HomeScreenContentErrorPreview() {
+//    TrackFundsTheme {
+//        HomeScreenContent(
+//            uiState = HomeUiState(
+//                isLoading = false,
+//                error = "Failed to connect to the server. Please try again."
+//            ),
+//            onEvent = {}
+//        )
+//    }
+//}
+//
+//@Preview(name = "Home Screen - Empty State", showBackground = true)
+//@Composable
+//private fun HomeScreenContentEmptyPreview() {
+//    TrackFundsTheme {
+//        HomeScreenContent(
+//            uiState = HomeUiState(
+//                isLoading = false,
+//                // Summary ada tapi list di dalamnya kosong
+//                summary = previewSummaryData.copy(
+//                    expenseSummaries = emptyList(),
+//                    incomeSummaries = emptyList()
+//                )
+//            ),
+//            onEvent = {}
+//        )
+//    }
+//}

@@ -38,6 +38,23 @@ interface TransactionDao {
     )
     fun getTransactionsWithDetails(): Flow<List<TransactionDetailDto>>
 
+    @Query(
+        """
+        SELECT 
+            t.*,
+            c.name AS category_name,
+            c.icon_identifier AS category_icon_identifier,
+            a.icon_identifier AS account_icon_identifier,
+            a.name AS account_name
+        FROM transactions AS t
+        LEFT JOIN categories AS c ON t.category_id = c.id
+        INNER JOIN accounts AS a ON t.account_id = a.id
+        ORDER BY t.date DESC
+        LIMIT :limit
+    """
+    )
+    fun getRecentTransactions(limit: Int): Flow<List<TransactionDetailDto>>
+
     @Transaction
     @Query(
         """
@@ -142,37 +159,49 @@ interface TransactionDao {
     /**
      * Menghitung total pengeluaran per kategori untuk rentang tanggal tertentu.
      */
-    @Query("""
+    @Query(
+        """
         SELECT c.name as categoryName, SUM(t.amount) as totalAmount
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         WHERE t.type = 'EXPENSE' AND t.date BETWEEN :startDate AND :endDate
         GROUP BY c.name
         ORDER BY totalAmount DESC
-    """)
-    fun getExpenseBreakdown(startDate: LocalDateTime, endDate: LocalDateTime): Flow<List<CategorySpendingDto>>
+    """
+    )
+    fun getExpenseBreakdown(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<CategorySpendingDto>>
 
     /**
      * Menghitung total pemasukan per kategori untuk rentang tanggal tertentu.
      */
-    @Query("""
+    @Query(
+        """
         SELECT c.name as categoryName, SUM(t.amount) as totalAmount
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         WHERE t.type = 'INCOME' AND t.date BETWEEN :startDate AND :endDate
         GROUP BY c.name
         ORDER BY totalAmount DESC
-    """)
-    fun getIncomeBreakdown(startDate: LocalDateTime, endDate: LocalDateTime): Flow<List<CategorySpendingDto>>
+    """
+    )
+    fun getIncomeBreakdown(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<List<CategorySpendingDto>>
 
     /**
      * Menghitung total pemasukan dan pengeluaran untuk ringkasan alur kas.
      */
-    @Query("""
+    @Query(
+        """
         SELECT
             (SELECT SUM(amount) FROM transactions WHERE type = 'INCOME' AND date BETWEEN :startDate AND :endDate) as total_income,
             (SELECT SUM(amount) FROM transactions WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate) as total_expense
-    """)
+    """
+    )
     fun getCashFlowSummary(startDate: LocalDateTime, endDate: LocalDateTime): Flow<CashFlowDto>
 
 
