@@ -24,8 +24,9 @@ import java.math.BigDecimal
 
 @Composable
 fun BudgetSummaryRow(
+    modifier: Modifier = Modifier,
     item: BudgetItem,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit = {},
 ) {
     val gradientBrush = when {
         item.progress > 0.8f -> Brush.horizontalGradient(
@@ -41,9 +42,11 @@ fun BudgetSummaryRow(
         )
     }
 
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = item.categoryName,

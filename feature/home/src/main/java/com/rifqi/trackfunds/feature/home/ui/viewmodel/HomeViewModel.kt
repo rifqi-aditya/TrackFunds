@@ -9,9 +9,11 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransaction
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
+import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.mapper.toHomeCategorySummary
@@ -92,21 +94,27 @@ class HomeViewModel @Inject constructor(
                 }
 
                 HomeEvent.AllTransactionsClicked -> _navigationEvent.emit(AllTransactions)
+                HomeEvent.BudgetsScreenClicked -> _navigationEvent.emit(BudgetsGraph)
                 HomeEvent.NotificationsClicked -> _navigationEvent.emit(Notifications)
+
                 is HomeEvent.CategorySummaryClicked -> _navigationEvent.emit(
                     CategoryTransactions(event.item.categoryId, event.item.categoryName)
                 )
 
                 is HomeEvent.TypedTransactionsClicked -> _navigationEvent.emit(
-                    TypedTransactions(
-                        event.type
-                    )
+                    TypedTransactions(event.type)
                 )
+
+                is HomeEvent.TransactionClicked -> _navigationEvent.emit(
+                    TransactionDetail(event.transactionId)
+                )
+
                 // State Management Events
                 HomeEvent.FabClicked -> _uiState.update { it.copy(isAddActionDialogVisible = true) }
                 HomeEvent.ChangePeriodClicked -> _uiState.update { it.copy(showMonthPickerDialog = true) }
                 HomeEvent.DialogDismissed -> _uiState.update { it.copy(showMonthPickerDialog = false) }
                 is HomeEvent.PeriodChanged -> changePeriod(event.newPeriod)
+
             }
         }
     }

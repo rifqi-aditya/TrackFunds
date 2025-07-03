@@ -2,7 +2,6 @@ package com.rifqi.trackfunds.feature.home.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,20 +35,18 @@ import java.util.Locale
 
 @Composable
 fun RecentTransactionRow(
-    transaction: TransactionItem,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    item: TransactionItem,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         DisplayIconFromResource(
-            identifier = transaction.categoryIconIdentifier,
-            contentDescription = transaction.categoryName,
+            identifier = item.categoryIconIdentifier,
+            contentDescription = item.categoryName,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -62,7 +59,7 @@ fun RecentTransactionRow(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = transaction.note.ifEmpty { "-" },
+                text = item.note.ifEmpty { "-" },
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
@@ -72,8 +69,8 @@ fun RecentTransactionRow(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 DisplayIconFromResource(
-                    identifier = transaction.accountName,
-                    contentDescription = transaction.categoryName,
+                    identifier = item.accountName,
+                    contentDescription = item.categoryName,
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
@@ -81,25 +78,23 @@ fun RecentTransactionRow(
                         .padding(4.dp)
                 )
                 Text(
-                    text = transaction.accountName,
+                    text = item.accountName,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                    // FIX: Tambahkan dua properti ini
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false)
                 )
                 Box(
                     modifier = Modifier
-                        .size(4.dp) // Ukuran titik bisa disesuaikan
+                        .size(4.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Warna titik
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             shape = CircleShape
                         )
                 )
                 Text(
-                    text = transaction.date.format(
+                    text = item.date.format(
                         DateTimeFormatter.ofPattern(
                             "dd MMMM yyyy",
                             Locale.getDefault()
@@ -112,10 +107,10 @@ fun RecentTransactionRow(
 
         }
         Text(
-            text = formatCurrency(transaction.amount),
+            text = formatCurrency(item.amount),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
-            color = if (transaction.type == TransactionType.EXPENSE
+            color = if (item.type == TransactionType.EXPENSE
             ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
         )
     }
@@ -164,13 +159,11 @@ private fun RecentTransactionRowPreview() {
         // Gunakan Column untuk menumpuk beberapa contoh
         Column {
             RecentTransactionRow(
-                transaction = previewExpenseTransaction,
-                onClick = {}
+                item = previewExpenseTransaction,
             )
             HorizontalDivider()
             RecentTransactionRow(
-                transaction = previewIncomeTransaction,
-                onClick = {}
+                item = previewIncomeTransaction,
             )
         }
     }

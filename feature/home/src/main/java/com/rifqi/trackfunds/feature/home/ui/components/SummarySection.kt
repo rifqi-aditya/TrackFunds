@@ -19,18 +19,19 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun <T> SummarySection(
+    modifier: Modifier = Modifier,
     title: String,
     items: List<T>?,
     onViewAllClick: () -> Unit,
-    onItemClick: (T) -> Unit,
+    onItemClick: ((T) -> Unit)? = null,
     itemContent: @Composable (item: T) -> Unit,
-    modifier: Modifier = Modifier
-) {
+
+    ) {
     Column(modifier = modifier.padding(vertical = 8.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, ),
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -44,9 +45,15 @@ fun <T> SummarySection(
             }
         }
         if (!items.isNullOrEmpty()) {
-            Column {
+            Column(modifier = Modifier.padding(top = 4.dp)) {
                 items.forEachIndexed { index, item ->
-                    Box(modifier = Modifier.clickable { onItemClick(item) }) {
+                    val itemModifier = if (onItemClick != null) {
+                        Modifier.clickable { onItemClick(item) }
+                    } else {
+                        Modifier
+                    }
+
+                    Box(modifier = itemModifier) {
                         itemContent(item)
                     }
 
@@ -61,7 +68,7 @@ fun <T> SummarySection(
             }
         } else {
             Text(
-                "Belum ada transaksi.", // Diubah ke Bahasa Indonesia
+                "Belum ada transaksi.",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 16.dp)

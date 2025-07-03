@@ -34,6 +34,7 @@ import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
+import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.core.ui.components.AddTransactionDialog
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
@@ -42,7 +43,6 @@ import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatDateRangeToString
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.BudgetSummaryRow
-import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionRow
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
@@ -66,6 +66,7 @@ fun HomeScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToAddTransaction: () -> Unit,
     onNavigateToScanReceipt: () -> Unit,
+    onNavigateToTransactionDetail: (transactionId: String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -89,6 +90,10 @@ fun HomeScreen(
                 is Notifications -> onNavigateToNotifications()
                 is AddEditTransaction -> onNavigateToAddTransaction()
                 is ScanGraph -> onNavigateToScanReceipt()
+                is TransactionDetail -> {
+                    onNavigateToTransactionDetail(screen.transactionId)
+                }
+
                 else -> {}
             }
         }
@@ -210,95 +215,33 @@ fun HomeScreenContent(
                     item {
                         SummarySection(
                             title = "Recent Transactions",
-                            items = uiState.recentTransactions, // Gunakan data baru dari state
+                            items = uiState.recentTransactions,
                             onViewAllClick = {
                                 onEvent(HomeEvent.AllTransactionsClicked)
                             },
                             onItemClick = { transactionItem ->
-                                // Kirim event untuk navigasi ke detail transaksi
-                                onEvent(HomeEvent.RecentTransactionItemClicked(transactionItem.id))
+                                onEvent(HomeEvent.TransactionClicked(transactionItem.id))
                             },
                             itemContent = { transactionItem ->
-                                // Gunakan TransactionRow yang sudah Anda buat sebelumnya
                                 RecentTransactionRow(
-                                    transaction = transactionItem,
-                                    onClick = { },
+                                    item = transactionItem,
                                 )
                             }
                         )
                     }
                     item {
                         SummarySection(
-                            title = "Your Budgets",
-                            items = uiState.topBudgets, // Gunakan data baru dari state
+                            title = "Your budgets",
+                            items = uiState.topBudgets,
                             onViewAllClick = {
                                 onEvent(HomeEvent.AllTransactionsClicked)
                             },
-                            onItemClick = { transactionItem ->
-                                // Kirim event untuk navigasi ke detail transaksi
-//                                onEvent(HomeEvent.TransactionClicked(transactionItem.id))
-                            },
                             itemContent = { topBudgetItem ->
-                                // Gunakan TransactionRow yang sudah Anda buat sebelumnya
                                 BudgetSummaryRow(
                                     item = topBudgetItem,
                                 )
                             }
                         )
-                    }
-                    if (uiState.expenseSummaries.isNotEmpty()) {
-                        item {
-                            SummarySection(
-                                title = "Expenses",
-                                items = uiState.expenseSummaries,
-                                onViewAllClick = {
-                                    onEvent(
-                                        HomeEvent.TypedTransactionsClicked(
-                                            TransactionType.EXPENSE
-                                        )
-                                    )
-                                },
-                                onItemClick = { summaryItem ->
-                                    onEvent(
-                                        HomeEvent.CategorySummaryClicked(
-                                            summaryItem
-                                        )
-                                    )
-                                },
-                                itemContent = { summaryItem ->
-                                    CategorySummaryRow(
-                                        categoryItem = summaryItem,
-                                    )
-                                }
-                            )
-                        }
-                    }
-                    if (uiState.incomeSummaries.isNotEmpty()) {
-                        item {
-                            SummarySection(
-                                title = "Income",
-                                items = uiState.incomeSummaries,
-                                onViewAllClick = {
-                                    onEvent(
-                                        HomeEvent.TypedTransactionsClicked(
-                                            TransactionType.INCOME
-                                        )
-                                    )
-                                },
-                                onItemClick = { summaryItem ->
-                                    onEvent(
-                                        HomeEvent.CategorySummaryClicked(
-                                            summaryItem
-                                        )
-                                    )
-                                },
-                                itemContent = { summaryItem ->
-                                    CategorySummaryRow(
-                                        categoryItem = summaryItem,
-                                    )
-                                }
-                            )
-                        }
                     }
                 }
             }

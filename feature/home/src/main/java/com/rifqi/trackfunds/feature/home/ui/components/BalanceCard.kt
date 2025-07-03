@@ -66,7 +66,7 @@ fun BalanceCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Monthly Balance",
+                    "This month's balance",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
