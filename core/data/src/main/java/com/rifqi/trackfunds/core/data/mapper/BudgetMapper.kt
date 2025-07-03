@@ -11,7 +11,7 @@ fun BudgetWithDetailsDto.toDomain(): BudgetItem {
         categoryId = this.categoryId,
         categoryName = this.categoryName ?: "",
         categoryIconIdentifier = this.categoryIconIdentifier,
-        budgetAmount = this.budgetAmount,
+        budgetAmount = this.budgetAmount ?: BigDecimal.ZERO,
         spentAmount = this.spentAmount,
         period = this.period
     )
@@ -21,7 +21,7 @@ fun BudgetItem.toEntity(): BudgetEntity {
     return BudgetEntity(
         id = this.budgetId,
         categoryId = this.categoryId,
-        amount = this.budgetAmount ?: BigDecimal.ZERO,
+        amount = this.budgetAmount,
         period = this.period
     )
 }

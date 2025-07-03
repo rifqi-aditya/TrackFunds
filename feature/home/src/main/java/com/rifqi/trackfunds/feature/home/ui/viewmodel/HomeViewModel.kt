@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
@@ -10,7 +11,7 @@ import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Notifications
-import com.rifqi.trackfunds.core.navigation.api.ScanOption
+import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.mapper.toHomeCategorySummary
@@ -44,7 +45,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getCategorySummariesUseCase: GetCategorySummariesUseCase,
-    private val getRecentTransactionsUseCase: GetRecentTransactionsUseCase
+    private val getRecentTransactionsUseCase: GetRecentTransactionsUseCase,
+    private val getTopBudgetsUseCase: GetTopBudgetsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -76,13 +78,17 @@ class HomeViewModel @Inject constructor(
             when (event) {
                 // Navigation Events
                 HomeEvent.AddTransactionManuallyClicked -> {
-                    _uiState.update { it.copy(isAddActionDialogVisible = false) }
                     _navigationEvent.emit(AddEditTransaction())
                 }
 
                 HomeEvent.ScanReceiptClicked -> {
-                    _uiState.update { it.copy(isAddActionDialogVisible = false) }
-                    _navigationEvent.emit(ScanOption)
+                    _navigationEvent.emit(ScanGraph)
+                }
+
+                HomeEvent.AddActionDialogDismissed -> _uiState.update {
+                    it.copy(
+                        isAddActionDialogVisible = false
+                    )
                 }
 
                 HomeEvent.AllTransactionsClicked -> _navigationEvent.emit(AllTransactions)
@@ -96,15 +102,8 @@ class HomeViewModel @Inject constructor(
                         event.type
                     )
                 )
-
                 // State Management Events
                 HomeEvent.FabClicked -> _uiState.update { it.copy(isAddActionDialogVisible = true) }
-                HomeEvent.AddActionDialogDismissed -> _uiState.update {
-                    it.copy(
-                        isAddActionDialogVisible = false
-                    )
-                }
-
                 HomeEvent.ChangePeriodClicked -> _uiState.update { it.copy(showMonthPickerDialog = true) }
                 HomeEvent.DialogDismissed -> _uiState.update { it.copy(showMonthPickerDialog = false) }
                 is HomeEvent.PeriodChanged -> changePeriod(event.newPeriod)
@@ -138,8 +137,14 @@ class HomeViewModel @Inject constructor(
         val expenseFlow =
             getCategorySummariesUseCase(TransactionType.EXPENSE, startDateTime, endDateTime)
         val recentFlow = getRecentTransactionsUseCase()
+        val topBudgetsFlow = getTopBudgetsUseCase(YearMonth.now())
 
-        return combine(incomeFlow, expenseFlow, recentFlow) { incomeList, expenseList, recentList ->
+        return combine(
+            incomeFlow,
+            expenseFlow,
+            recentFlow,
+            topBudgetsFlow,
+        ) { incomeList, expenseList, recentList, topBudgetsList ->
             val totalIncome = incomeList.sumOf { it.totalAmount }
             val totalExpenses = expenseList.sumOf { it.totalAmount }
 
@@ -150,6 +155,7 @@ class HomeViewModel @Inject constructor(
                 incomeSummaries = incomeList.map { it.toHomeCategorySummary() },
                 expenseSummaries = expenseList.map { it.toHomeCategorySummary() },
                 recentTransactions = recentList,
+                topBudgets = topBudgetsList,
                 error = null
             )
         }

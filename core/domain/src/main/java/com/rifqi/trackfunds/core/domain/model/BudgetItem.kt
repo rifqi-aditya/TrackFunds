@@ -8,7 +8,7 @@ data class BudgetItem(
     val categoryId: String,
     val categoryName: String,
     val categoryIconIdentifier: String?,
-    val budgetAmount: BigDecimal?, // Jumlah yang dianggarkan
+    val budgetAmount: BigDecimal, // Jumlah yang dianggarkan
     val spentAmount: BigDecimal,  // Jumlah yang sudah dihabiskan
     val period: String // Contoh: "2025-06" untuk Juni 2025
 ) {
@@ -17,7 +17,7 @@ data class BudgetItem(
         get() = (budgetAmount ?: BigDecimal.ZERO).subtract(spentAmount)
 
     val progress: Float
-        get() = if (budgetAmount != null && budgetAmount > BigDecimal.ZERO) {
+        get() = if (budgetAmount > BigDecimal.ZERO) {
             spentAmount.divide(budgetAmount, 2, RoundingMode.HALF_UP).toFloat().coerceIn(0f, 1f)
         } else {
             0f

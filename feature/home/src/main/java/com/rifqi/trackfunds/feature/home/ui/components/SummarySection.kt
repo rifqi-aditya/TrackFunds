@@ -30,7 +30,7 @@ fun <T> SummarySection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp, ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -44,7 +44,7 @@ fun <T> SummarySection(
             }
         }
         if (!items.isNullOrEmpty()) {
-            Column(modifier = Modifier.padding(top = 4.dp)) {
+            Column {
                 items.forEachIndexed { index, item ->
                     Box(modifier = Modifier.clickable { onItemClick(item) }) {
                         itemContent(item)

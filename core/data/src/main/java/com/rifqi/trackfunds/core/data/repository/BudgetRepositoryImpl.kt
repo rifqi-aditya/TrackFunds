@@ -22,6 +22,13 @@ class BudgetRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getTopBudgets(period: YearMonth, limit: Int): Flow<List<BudgetItem>> {
+        val periodString = period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        return budgetDao.getTopBudgetsWithDetails(periodString, limit).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     override suspend fun getBudgetById(budgetId: String): BudgetItem? {
         return budgetDao.getBudgetWithDetailsById(budgetId)?.toDomain()
     }

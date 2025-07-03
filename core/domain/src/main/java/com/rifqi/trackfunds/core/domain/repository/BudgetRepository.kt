@@ -7,6 +7,8 @@ import java.time.YearMonth
 interface BudgetRepository {
     fun getBudgetsForPeriod(period: YearMonth): Flow<List<BudgetItem>>
 
+    fun getTopBudgets(period: YearMonth, limit: Int): Flow<List<BudgetItem>>
+
     suspend fun getBudgetById(budgetId: String): BudgetItem?
 
     suspend fun addBudget(budgetItem: BudgetItem)

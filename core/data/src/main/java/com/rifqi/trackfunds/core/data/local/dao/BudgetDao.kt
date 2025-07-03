@@ -61,6 +61,28 @@ interface BudgetDao {
     )
     suspend fun getBudgetWithDetailsById(budgetId: String): BudgetWithDetailsDto?
 
+    @Transaction
+    @Query("""
+        SELECT
+            b.id as budgetId,
+            b.amount as budgetAmount,
+            b.period as period,
+            c.id as categoryId,
+            c.name as categoryName,
+            c.icon_identifier as categoryIconIdentifier,
+            COALESCE(SUM(t.amount), 0) as spentAmount
+        FROM budgets AS b
+        INNER JOIN categories AS c ON b.category_id = c.id
+        LEFT JOIN transactions AS t ON t.category_id = c.id 
+                                    AND t.type = 'EXPENSE' 
+                                    AND b.period = :periodString
+        WHERE b.period = :periodString
+        GROUP BY b.id
+        ORDER BY b.amount DESC
+        LIMIT :limit
+    """)
+    fun getTopBudgetsWithDetails(periodString: String, limit: Int): Flow<List<BudgetWithDetailsDto>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBudget(budget: BudgetEntity)
 

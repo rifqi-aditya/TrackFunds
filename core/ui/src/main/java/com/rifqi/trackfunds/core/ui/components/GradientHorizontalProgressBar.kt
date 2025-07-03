@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.budget.ui.components
+package com.rifqi.trackfunds.core.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

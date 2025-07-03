@@ -12,6 +12,8 @@ import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
@@ -176,6 +178,12 @@ abstract class DomainModule {
     abstract fun bindGetBudgetByIdUseCase(
         useCaseImpl: GetBudgetByIdUseCaseImpl
     ): GetBudgetByIdUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetTopBudgetsUseCase(
+        useCaseImpl: GetTopBudgetsUseCaseImpl
+    ): GetTopBudgetsUseCase
 
     @Binds
     @Singleton

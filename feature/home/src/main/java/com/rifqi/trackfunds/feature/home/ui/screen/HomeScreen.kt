@@ -41,14 +41,13 @@ import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatDateRangeToString
 import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
+import com.rifqi.trackfunds.feature.home.ui.components.BudgetSummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.CategorySummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionRow
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
-import com.rifqi.trackfunds.feature.home.ui.state.HomeCategorySummaryItem
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
-import java.math.BigDecimal
 import java.time.YearMonth
 
 
@@ -217,13 +216,32 @@ fun HomeScreenContent(
                             },
                             onItemClick = { transactionItem ->
                                 // Kirim event untuk navigasi ke detail transaksi
-//                                onEvent(HomeEvent.TransactionClicked(transactionItem.id))
+                                onEvent(HomeEvent.RecentTransactionItemClicked(transactionItem.id))
                             },
                             itemContent = { transactionItem ->
                                 // Gunakan TransactionRow yang sudah Anda buat sebelumnya
                                 RecentTransactionRow(
                                     transaction = transactionItem,
                                     onClick = { },
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        SummarySection(
+                            title = "Your Budgets",
+                            items = uiState.topBudgets, // Gunakan data baru dari state
+                            onViewAllClick = {
+                                onEvent(HomeEvent.AllTransactionsClicked)
+                            },
+                            onItemClick = { transactionItem ->
+                                // Kirim event untuk navigasi ke detail transaksi
+//                                onEvent(HomeEvent.TransactionClicked(transactionItem.id))
+                            },
+                            itemContent = { topBudgetItem ->
+                                // Gunakan TransactionRow yang sudah Anda buat sebelumnya
+                                BudgetSummaryRow(
+                                    item = topBudgetItem,
                                 )
                             }
                         )
@@ -295,118 +313,3 @@ fun HomeScreenContent(
         }
     }
 }
-
-private val previewExpenseSummaries = listOf(
-    HomeCategorySummaryItem(
-        "c1",
-        "Food & Drink",
-        "restaurant",
-        TransactionType.EXPENSE,
-        BigDecimal("750000")
-    ),
-    HomeCategorySummaryItem(
-        "c2",
-        "Transportation",
-        "commute",
-        TransactionType.EXPENSE,
-        BigDecimal("350000")
-    ),
-    HomeCategorySummaryItem(
-        "c3",
-        "Shopping",
-        "shopping_bag",
-        TransactionType.EXPENSE,
-        BigDecimal("1200000")
-    )
-)
-
-private val previewIncomeSummaries = listOf(
-    HomeCategorySummaryItem(
-        "c4",
-        "Salary",
-        "payments",
-        TransactionType.INCOME,
-        BigDecimal("7500000")
-    ),
-    HomeCategorySummaryItem(
-        "c5",
-        "Freelance",
-        "work",
-        TransactionType.INCOME,
-        BigDecimal("1500000")
-    )
-)
-
-//private val previewSummaryData = HomeSummary(
-//    monthlyBalance = BigDecimal("6700000"),
-//    totalExpenses = BigDecimal("2300000"),
-//    totalIncome = BigDecimal("9000000"),
-//    expenseSummaries = previewExpenseSummaries,
-//    incomeSummaries = previewIncomeSummaries
-//)
-
-// --- FUNGSI-FUNGSI PREVIEW ---
-
-//@Preview(name = "Home Screen - Loaded", showBackground = true)
-//@Preview(
-//    name = "Home Screen - Loaded (Dark)",
-//    showBackground = true,
-//    uiMode = Configuration.UI_MODE_NIGHT_YES
-//)
-//@Composable
-//private fun HomeScreenContentLoadedPreview() {
-//    TrackFundsTheme {
-//        HomeScreenContent(
-//            uiState = HomeUiState(
-//                isLoading = false,
-//                summary = previewSummaryData,
-//                currentMonthAndYear = "June 2025",
-//                dateRangePeriod = getCurrentDateRangePair() // Membutuhkan fungsi utilitas Anda
-//            ),
-//            onEvent = {}
-//        )
-//    }
-//}
-//
-//@Preview(name = "Home Screen - Loading", showBackground = true)
-//@Composable
-//private fun HomeScreenContentLoadingPreview() {
-//    TrackFundsTheme {
-//        HomeScreenContent(
-//            uiState = HomeUiState(isLoading = true),
-//            onEvent = {}
-//        )
-//    }
-//}
-//
-//@Preview(name = "Home Screen - Error", showBackground = true)
-//@Composable
-//private fun HomeScreenContentErrorPreview() {
-//    TrackFundsTheme {
-//        HomeScreenContent(
-//            uiState = HomeUiState(
-//                isLoading = false,
-//                error = "Failed to connect to the server. Please try again."
-//            ),
-//            onEvent = {}
-//        )
-//    }
-//}
-//
-//@Preview(name = "Home Screen - Empty State", showBackground = true)
-//@Composable
-//private fun HomeScreenContentEmptyPreview() {
-//    TrackFundsTheme {
-//        HomeScreenContent(
-//            uiState = HomeUiState(
-//                isLoading = false,
-//                // Summary ada tapi list di dalamnya kosong
-//                summary = previewSummaryData.copy(
-//                    expenseSummaries = emptyList(),
-//                    incomeSummaries = emptyList()
-//                )
-//            ),
-//            onEvent = {}
-//        )
-//    }
-//}

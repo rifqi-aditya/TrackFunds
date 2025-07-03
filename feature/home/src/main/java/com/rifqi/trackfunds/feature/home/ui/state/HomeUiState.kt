@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.home.ui.state
 
+import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.utils.getCurrentDateRangePair
@@ -37,6 +38,7 @@ data class HomeUiState(
     val incomeSummaries: List<HomeCategorySummaryItem> = emptyList(),
     val expenseSummaries: List<HomeCategorySummaryItem> = emptyList(),
     val recentTransactions: List<TransactionItem> = emptyList(),
+    val topBudgets: List<BudgetItem> = emptyList(),
 
     // Kontrol UI
     val showMonthPickerDialog: Boolean = false,
