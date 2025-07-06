@@ -55,7 +55,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "trackfunds_app_database"
                 )
-                    .fallbackToDestructiveMigration() // Hapus ini di produksi!
                     .addCallback(AppDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
@@ -293,7 +292,7 @@ abstract class AppDatabase : RoomDatabase() {
             val initialTransactions = listOf(
                 TransactionEntity(
                     id = UUID.randomUUID().toString(),
-                    note = "Monthly Salary",
+                    description = "Monthly Salary",
                     amount = BigDecimal("15000000"),
                     type = TransactionType.INCOME,
                     date = LocalDateTime.now().minusDays(5),
@@ -302,7 +301,7 @@ abstract class AppDatabase : RoomDatabase() {
                 ),
                 TransactionEntity(
                     id = UUID.randomUUID().toString(),
-                    note = "Monthly Shopping",
+                    description = "Monthly Shopping",
                     amount = BigDecimal("750000"),
                     type = TransactionType.EXPENSE,
                     date = LocalDateTime.now().minusDays(4),
@@ -311,7 +310,7 @@ abstract class AppDatabase : RoomDatabase() {
                 ),
                 TransactionEntity(
                     id = UUID.randomUUID().toString(),
-                    note = "Lunch",
+                    description = "Lunch",
                     amount = BigDecimal("50000"),
                     type = TransactionType.EXPENSE,
                     date = LocalDateTime.now().minusDays(2),

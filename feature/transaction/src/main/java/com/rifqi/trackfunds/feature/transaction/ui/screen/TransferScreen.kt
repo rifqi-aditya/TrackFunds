@@ -32,7 +32,7 @@ import com.rifqi.trackfunds.core.ui.components.AmountInputForm
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.FormSelectorCard
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.NotesInputField
+import com.rifqi.trackfunds.feature.transaction.ui.components.descriptionsInputField
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AccountSelectionMode
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransferUiState
@@ -123,9 +123,9 @@ fun TransferContent(
                 value = uiState.amount,
                 onValueChange = { onEvent(TransferEvent.AmountChanged(it)) }
             )
-            NotesInputField(
-                value = uiState.note,
-                onValueChange = { onEvent(TransferEvent.NoteChanged(it)) }
+            descriptionsInputField(
+                value = uiState.description,
+                onValueChange = { onEvent(TransferEvent.descriptionChanged(it)) }
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -185,7 +185,7 @@ private fun TransferContentFilledPreview() {
                 fromAccount = previewFromAccount,
                 toAccount = previewToAccount,
                 amount = "100000",
-                note = "Bayar patungan"
+                description = "Bayar patungan"
             ),
             onEvent = {},
             onNavigateBack = {},

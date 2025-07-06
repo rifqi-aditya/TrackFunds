@@ -27,7 +27,7 @@ fun ScanResponseDto.toDomain(): ScanResult {
     return ScanResult(
         amount = this.totalAmount?.toBigDecimal(),
         date = transactionDateTime,
-        note = this.merchantName,
+        description = this.merchantName,
         suggestedCategoryKey = this.category
     )
 }

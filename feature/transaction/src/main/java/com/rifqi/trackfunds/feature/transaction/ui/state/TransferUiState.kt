@@ -15,7 +15,7 @@ data class TransferUiState(
     val fromAccount: AccountItem? = null,
     val toAccount: AccountItem? = null,
     val amount: String = "",
-    val note: String = "",
+    val description: String = "",
     val date: LocalDate = LocalDate.now(),
 
     val accountSelectionMode: AccountSelectionMode = AccountSelectionMode.NONE,

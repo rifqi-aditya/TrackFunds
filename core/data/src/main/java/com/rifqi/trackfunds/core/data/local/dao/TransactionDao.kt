@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rifqi.trackfunds.core.data.local.dto.CashFlowDto
 import com.rifqi.trackfunds.core.data.local.dto.CategorySpendingDto
 import com.rifqi.trackfunds.core.data.local.dto.CategoryTransactionSummaryDto
@@ -56,13 +58,18 @@ interface TransactionDao {
     fun getRecentTransactions(limit: Int): Flow<List<TransactionDetailDto>>
 
     @Transaction
+    @RawQuery(observedEntities = [TransactionEntity::class])
+    fun getFilteredTransactionDetailsRaw(query: SimpleSQLiteQuery): Flow<List<TransactionDetailDto>>
+
+    @Transaction
     @Query(
         """
         SELECT 
             t.*,
             c.name AS category_name, 
             c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id

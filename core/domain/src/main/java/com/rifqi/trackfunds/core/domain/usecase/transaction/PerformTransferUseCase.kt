@@ -10,6 +10,6 @@ interface PerformTransferUseCase {
         toAccount: AccountItem,
         amount: BigDecimal,
         date: LocalDateTime,
-        note: String
+        description: String
     )
 }

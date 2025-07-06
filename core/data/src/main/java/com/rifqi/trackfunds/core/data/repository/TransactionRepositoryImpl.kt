@@ -1,17 +1,20 @@
 package com.rifqi.trackfunds.core.data.repository
 
 import androidx.room.Transaction
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
 import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
+import com.rifqi.trackfunds.core.domain.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +30,73 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionItem>> {
+        val queryString = StringBuilder()
+        val args = mutableListOf<Any?>()
+
+        queryString.append(
+            """
+        SELECT
+            t.*,
+            c.name AS category_name,
+            c.icon_identifier AS category_icon_identifier,
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
+        FROM transactions AS t
+        INNER JOIN categories AS c ON t.category_id = c.id
+        INNER JOIN accounts AS a ON t.account_id = a.id
+        WHERE 1=1 
+        """
+        )
+
+        // Filter pencarian (tidak berubah)
+        if (filter.searchQuery.isNotBlank()) {
+            queryString.append(" AND t.description LIKE ?")
+            args.add("%${filter.searchQuery}%")
+        }
+
+        // Filter tipe transaksi (tidak berubah)
+        val type = filter.type
+        if (type != null) {
+            queryString.append(" AND t.type = ?")
+            args.add(filter.type?.name) // Pastikan dikonversi ke String jika kolomnya TEXT
+        }
+
+        // Filter akun (tidak berubah)
+        val accountIds = filter.accountIds
+        if (!accountIds.isNullOrEmpty()) {
+            val placeholders = List(accountIds.size) { "?" }.joinToString(",")
+            queryString.append(" AND t.account_id IN ($placeholders)")
+            args.addAll(accountIds)
+        }
+
+        // Filter kategori (tidak berubah)
+        val categoryIds = filter.categoryIds
+        if (!categoryIds.isNullOrEmpty()) {
+            val placeholders = List(categoryIds.size) { "?" }.joinToString(",")
+            queryString.append(" AND t.category_id IN ($placeholders)")
+            args.addAll(categoryIds)
+        }
+
+        // FIX: Filter tanggal sekarang dinamis
+        val startDate = filter.startDate
+        val endDate = filter.endDate
+        if (startDate != null && endDate != null) {
+            queryString.append(" AND t.date BETWEEN ? AND ?")
+            args.add(startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli())
+            args.add(endDate.atTime(23, 59, 59).toInstant(ZoneOffset.UTC).toEpochMilli())
+        }
+
+        queryString.append(" ORDER BY t.date DESC")
+
+        val simpleSQLiteQuery = SimpleSQLiteQuery(queryString.toString(), args.toTypedArray())
+
+        return transactionDao.getFilteredTransactionDetailsRaw(simpleSQLiteQuery)
+            .map { dtoList ->
+                dtoList.map { it.toDomain() }
+            }
+    }
+
     override fun getRecentTransactions(limit: Int): Flow<List<TransactionItem>> {
         return transactionDao.getRecentTransactions(limit).map { entities ->
             entities.map { it.toDomain() }
@@ -38,6 +108,7 @@ class TransactionRepositoryImpl @Inject constructor(
             dto?.toDomain()
         }
     }
+
 
     override fun getTransactionsForAccount(accountId: String): Flow<List<TransactionItem>> {
         return getTransactions().map { transactions ->

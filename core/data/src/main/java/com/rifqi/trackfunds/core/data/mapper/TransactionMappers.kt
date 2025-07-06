@@ -12,7 +12,7 @@ import com.rifqi.trackfunds.core.domain.model.TransactionItem
 fun TransactionDetailDto.toDomain(): TransactionItem {
     return TransactionItem(
         id = this.transaction.id,
-        note = this.transaction.note,
+        description = this.transaction.description,
         amount = this.transaction.amount,
         type = this.transaction.type,
         date = this.transaction.date,
@@ -33,7 +33,7 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
 fun TransactionItem.toEntity(): TransactionEntity {
     return TransactionEntity(
         id = this.id,
-        note = this.note,
+        description = this.description,
         amount = this.amount,
         type = this.type,
         date = this.date,

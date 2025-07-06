@@ -7,8 +7,8 @@ plugins {
 }
 
 android {
-    namespace = "com.rifqi.trackfunds.core.domain" // Sesuaikan dengan nama paket Anda
-    compileSdk = 35 // Gunakan versi compileSdk yang sama dengan modul :app Anda
+    namespace = "com.rifqi.trackfunds.core.domain"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26 // Samakan dengan minSdk proyek Anda

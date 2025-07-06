@@ -7,7 +7,7 @@ sealed interface TransferEvent {
     data class FromAccountSelected(val account: AccountItem) : TransferEvent
     data class ToAccountSelected(val account: AccountItem) : TransferEvent
     data class AmountChanged(val amount: String) : TransferEvent
-    data class NoteChanged(val note: String) : TransferEvent
+    data class descriptionChanged(val description: String) : TransferEvent
     data class DateChanged(val date: LocalDate) : TransferEvent
     data object SelectFromAccountClicked : TransferEvent
     data object SelectToAccountClicked : TransferEvent

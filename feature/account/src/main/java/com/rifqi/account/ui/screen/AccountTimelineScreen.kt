@@ -137,7 +137,7 @@ fun TransactionTimelineItem(
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = transaction.note.ifEmpty { transaction.categoryName },
+                text = transaction.description.ifEmpty { transaction.categoryName },
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
@@ -272,7 +272,7 @@ fun AccountTimelineScreen(
 private val DUMMY_TIMELINE_TRANSACTIONS = listOf(
     TransactionItem(
         id = "t1",
-        note = "Mbanking initial balance",
+        description = "Mbanking initial balance",
         amount = BigDecimal("210000.0"),
         type = TransactionType.INCOME,
         date = LocalDateTime.now().minusDays(1).withHour(9),
@@ -284,7 +284,7 @@ private val DUMMY_TIMELINE_TRANSACTIONS = listOf(
     ),
     TransactionItem(
         id = "t2",
-        note = "Uang Jajan",
+        description = "Uang Jajan",
         amount = BigDecimal("210000.0"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(11).withMinute(56),
@@ -296,7 +296,7 @@ private val DUMMY_TIMELINE_TRANSACTIONS = listOf(
     ),
     TransactionItem(
         id = "t3",
-        note = "Liquid vape",
+        description = "Liquid vape",
         amount = BigDecimal("210000.0"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().withHour(11).withMinute(55),

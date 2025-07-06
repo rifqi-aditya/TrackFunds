@@ -79,7 +79,7 @@ class TransferViewModel @Inject constructor(
                 _uiState.update { it.copy(amount = event.amount) }
             }
 
-            is TransferEvent.NoteChanged -> _uiState.update { it.copy(note = event.note) }
+            is TransferEvent.descriptionChanged -> _uiState.update { it.copy(description = event.description) }
             is TransferEvent.DateChanged -> _uiState.update {
                 it.copy(
                     date = event.date,
@@ -118,7 +118,7 @@ class TransferViewModel @Inject constructor(
                     toAccount = state.toAccount,
                     amount = BigDecimal(state.amount),
                     date = state.date.atStartOfDay(),
-                    note = state.note
+                    description = state.description
                 )
                 snackbarManager.showMessage("Transfer successful")
                 _uiState.update { it.copy(isLoading = false, isTransferSuccessful = true) }

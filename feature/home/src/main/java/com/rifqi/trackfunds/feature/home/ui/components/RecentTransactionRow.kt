@@ -59,7 +59,7 @@ fun RecentTransactionRow(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = item.note.ifEmpty { "-" },
+                text = item.description.ifEmpty { "-" },
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
@@ -69,8 +69,8 @@ fun RecentTransactionRow(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 DisplayIconFromResource(
-                    identifier = item.accountName,
-                    contentDescription = item.categoryName,
+                    identifier = item.accountIconIdentifier,
+                    contentDescription = item.accountName,
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
@@ -119,7 +119,7 @@ fun RecentTransactionRow(
 // --- DUMMY DATA UNTUK PREVIEW ---
 private val previewExpenseTransaction = TransactionItem(
     id = "trx1",
-    note = "Makan Siang di Kafe",
+    description = "Makan Siang di Kafe",
     amount = BigDecimal("75000"),
     type = TransactionType.EXPENSE,
     date = LocalDateTime.now(),
@@ -133,7 +133,7 @@ private val previewExpenseTransaction = TransactionItem(
 
 private val previewIncomeTransaction = TransactionItem(
     id = "trx2",
-    note = "Gaji Bulanan",
+    description = "Gaji Bulanan",
     amount = BigDecimal("7500000"),
     type = TransactionType.INCOME,
     date = LocalDateTime.now(),

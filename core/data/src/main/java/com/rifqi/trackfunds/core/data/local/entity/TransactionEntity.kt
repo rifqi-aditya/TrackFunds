@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 )
 data class TransactionEntity(
     @PrimaryKey val id: String,
-    val note: String,
+    val description: String,
     val amount: BigDecimal,
     val type: TransactionType,
     val date: LocalDateTime,
@@ -39,5 +39,7 @@ data class TransactionEntity(
     val accountId: String,
 
     @ColumnInfo(name = "transfer_pair_id", index = true)
-    val transferPairId: String? = null
+    val transferPairId: String? = null,
+
+    val savingsGoalId: String? = null
 )

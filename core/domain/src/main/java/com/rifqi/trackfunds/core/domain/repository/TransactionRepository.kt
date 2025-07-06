@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.core.domain.repository
 import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
 import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
+import com.rifqi.trackfunds.core.domain.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,12 @@ interface TransactionRepository {
      * Mengambil semua transaksi sebagai stream data yang reaktif.
      */
     fun getTransactions(): Flow<List<TransactionItem>>
+
+    /**
+     * Mengambil transaksi berdasarkan filter tertentu.
+     * Filter ini bisa mencakup rentang tanggal, tipe transaksi, kategori, dll.
+     */
+    fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionItem>>
 
     /**
      * Mengambil transaksi dalam rentang tanggal tertentu.

@@ -16,6 +16,9 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE id = :categoryId")
     suspend fun getCategoryById(categoryId: String): CategoryEntity?
 
+    @Query("SELECT * FROM categories WHERE id IN (:ids)")
+    suspend fun getCategoriesByIds(ids: List<String>): List<CategoryEntity>
+
     @Query("SELECT * FROM categories WHERE standard_key = :key LIMIT 1")
     suspend fun findByCategoryKey(key: String): CategoryEntity?
 

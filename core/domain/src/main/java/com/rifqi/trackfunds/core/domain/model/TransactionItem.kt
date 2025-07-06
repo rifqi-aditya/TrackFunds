@@ -9,7 +9,7 @@ data class TransactionItem(
     val amount: BigDecimal,
     val type: TransactionType,
     val date: LocalDateTime,
-    val note: String,
+    val description: String,
     val categoryId: String? = null,
     val categoryName: String,
     val categoryIconIdentifier: String? = null,

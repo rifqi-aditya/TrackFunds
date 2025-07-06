@@ -40,6 +40,8 @@ interface CategoryRepository {
      */
     suspend fun getCategoryById(categoryId: String): CategoryItem?
 
+    suspend fun getCategoriesByIds(ids: List<String>): List<CategoryItem>
+
     suspend fun findCategoryByStandardKey(key: String): CategoryItem?
 
     // Anda bisa menambahkan fungsi-fungsi lain di sini sesuai kebutuhan aplikasi,

@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesInputForm( // Mengganti NotesInputField, dibuat mirip AmountInputForm
+fun descriptionsInputForm( // Mengganti descriptionsInputField, dibuat mirip AmountInputForm
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
@@ -30,7 +30,7 @@ fun NotesInputForm( // Mengganti NotesInputField, dibuat mirip AmountInputForm
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Notes (optional)",
+            text = "descriptions (optional)",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)

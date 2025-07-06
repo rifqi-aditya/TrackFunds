@@ -9,7 +9,7 @@ sealed interface AddEditTransactionEvent {
     // Aksi dari Form Input
     data class AmountChanged(val amount: String) : AddEditTransactionEvent
     data class TransactionTypeChanged(val type: TransactionType) : AddEditTransactionEvent
-    data class NoteChanged(val notes: String) : AddEditTransactionEvent
+    data class descriptionChanged(val descriptions: String) : AddEditTransactionEvent
     data class DateChanged(val date: LocalDate) : AddEditTransactionEvent
 
     // Aksi dari Hasil Navigasi

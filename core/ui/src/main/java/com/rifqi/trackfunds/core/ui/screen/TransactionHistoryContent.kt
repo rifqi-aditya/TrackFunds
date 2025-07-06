@@ -144,7 +144,7 @@ fun TransactionHistoryContent(
 private val DUMMY_ALL_TRANSACTIONS = listOf(
     TransactionItem(
         id = "1",
-        note = "Monthly Salary",
+        description = "Monthly Salary",
         amount = BigDecimal("15000000"),
         type = TransactionType.INCOME,
         date = LocalDateTime.now(),
@@ -156,7 +156,7 @@ private val DUMMY_ALL_TRANSACTIONS = listOf(
     ),
     TransactionItem(
         id = "2",
-        note = "Lunch with friends",
+        description = "Lunch with friends",
         amount = BigDecimal("150000"),
         type = TransactionType.EXPENSE,
         date = LocalDateTime.now().minusDays(1),

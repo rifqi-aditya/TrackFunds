@@ -56,6 +56,9 @@ interface AccountDao {
     /**
      * (Opsional untuk masa depan) Menghapus akun berdasarkan ID.
      */
-     @Query("DELETE FROM accounts WHERE id = :accountId")
-     suspend fun deleteAccountById(accountId: String)
+    @Query("DELETE FROM accounts WHERE id = :accountId")
+    suspend fun deleteAccountById(accountId: String)
+
+    @Query("SELECT * FROM accounts WHERE id IN (:ids)")
+    suspend fun getAccountsByIds(ids: List<String>): List<AccountEntity>
 }

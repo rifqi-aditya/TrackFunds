@@ -18,13 +18,13 @@ class PerformTransferUseCaseImpl @Inject constructor(
         toAccount: AccountItem,
         amount: BigDecimal,
         date: LocalDateTime,
-        note: String
+        description: String
     ) {
         val transferId = UUID.randomUUID().toString()
 
         val expenseTransaction = TransactionItem(
             id = UUID.randomUUID().toString(),
-            note = "Transfer to ${toAccount.name}${if (note.isNotBlank()) ": $note" else ""}",
+            description = "Transfer to ${toAccount.name}${if (description.isNotBlank()) ": $description" else ""}",
             amount = amount,
             type = TransactionType.EXPENSE,
             date = date,
@@ -38,7 +38,7 @@ class PerformTransferUseCaseImpl @Inject constructor(
 
         val incomeTransaction = TransactionItem(
             id = UUID.randomUUID().toString(),
-            note = "Transfer from ${fromAccount.name}${if (note.isNotBlank()) ": $note" else ""}",
+            description = "Transfer from ${fromAccount.name}${if (description.isNotBlank()) ": $description" else ""}",
             amount = amount,
             type = TransactionType.INCOME,
             date = date,

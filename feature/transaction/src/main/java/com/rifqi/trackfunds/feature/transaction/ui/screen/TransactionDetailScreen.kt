@@ -173,7 +173,7 @@ fun TransactionDetailContent(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = transaction.note.ifBlank {
+                        text = transaction.description.ifBlank {
                             "-"
                         },
                         style = MaterialTheme.typography.titleMedium
@@ -199,7 +199,7 @@ fun TransactionDetailContent(
                     DetailRow(label = "Account Source") {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             DisplayIconFromResource(
-                                identifier = transaction.categoryIconIdentifier,
+                                identifier = transaction.accountIconIdentifier,
                                 contentDescription = transaction.accountName,
                                 modifier = Modifier
                                     .size(24.dp)
@@ -211,6 +211,7 @@ fun TransactionDetailContent(
                                     )
                                     .padding(4.dp)
                             )
+                            println(transaction.accountIconIdentifier)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = transaction.accountName,
@@ -270,7 +271,7 @@ fun TransactionDetailContent(
 // --- DUMMY DATA UNTUK PREVIEW ---
 private val previewTransactionDetail = TransactionItem(
     id = "trx1",
-    note = "Beli Bensin di Pertamina",
+    description = "Beli Bensin di Pertamina",
     amount = BigDecimal("400000"),
     type = TransactionType.EXPENSE,
     date = LocalDateTime.of(2025, 6, 27, 10, 30),

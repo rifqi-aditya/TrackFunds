@@ -85,7 +85,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 it.copy(selectedTransactionType = event.type, selectedCategory = null)
             }
 
-            is AddEditTransactionEvent.NoteChanged -> _uiState.update { it.copy(notes = event.notes) }
+            is AddEditTransactionEvent.descriptionChanged -> _uiState.update { it.copy(descriptions = event.descriptions) }
             is AddEditTransactionEvent.DateChanged -> _uiState.update {
                 it.copy(
                     selectedDate = event.date,
@@ -174,7 +174,7 @@ class AddEditTransactionViewModel @Inject constructor(
                         selectedDate = transactionItem.date.toLocalDate(),
                         selectedAccount = account,
                         selectedCategory = category,
-                        notes = transactionItem.note
+                        descriptions = transactionItem.description
                     )
                 }
             } else {
@@ -197,7 +197,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 it.copy(
                     // Isi form secara otomatis
                     amount = scanResult.amount?.toPlainString() ?: it.amount,
-                    notes = scanResult.note ?: it.notes,
+                    descriptions = scanResult.description ?: it.descriptions,
                     selectedDate = scanResult.date?.toLocalDate() ?: it.selectedDate,
                     selectedCategory = suggestedCategory ?: it.selectedCategory
                 )
@@ -217,7 +217,7 @@ class AddEditTransactionViewModel @Inject constructor(
 
             val transactionToSave = TransactionItem(
                 id = editingTransactionId ?: UUID.randomUUID().toString(),
-                note = currentState.notes,
+                description = currentState.descriptions,
                 amount = BigDecimal(currentState.amount),
                 type = currentState.selectedTransactionType,
                 date = currentState.selectedDate.atStartOfDay(),

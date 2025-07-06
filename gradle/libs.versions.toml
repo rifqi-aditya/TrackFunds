@@ -46,6 +46,7 @@ jetbrainsKotlinJvm = "2.1.0"
 cameraView = "1.4.2"
 coil = "2.6.0"
 camerax = "1.4.2"
+navigationCommonAndroid = "2.9.1"
 
 [libraries]
 # AndroidX Core & Lifecycle
@@ -111,6 +112,7 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+androidx-navigation-common-android = { group = "androidx.navigation", name = "navigation-common-android", version.ref = "navigationCommonAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

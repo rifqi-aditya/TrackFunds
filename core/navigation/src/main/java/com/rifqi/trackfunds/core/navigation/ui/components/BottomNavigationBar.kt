@@ -17,11 +17,11 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.ReportsGraph
+import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.core.ui.R
 
 sealed class BottomNavItem(
@@ -35,9 +35,9 @@ sealed class BottomNavItem(
         icon = R.drawable.bottom_nav_home
     )
 
-    data object Accounts : BottomNavItem(
-        graphRoute = AccountsGraph,
-        title = "Accounts",
+    data object Transactions : BottomNavItem(
+        graphRoute = TransactionsGraph,
+        title = "Transactions",
         icon = R.drawable.bottom_nav_accounts
     )
 
@@ -56,7 +56,7 @@ sealed class BottomNavItem(
 
 val bottomNavItemsList = listOf(
     BottomNavItem.Home,
-    BottomNavItem.Accounts,
+    BottomNavItem.Transactions,
     BottomNavItem.Budgets,
     BottomNavItem.Reports
 )

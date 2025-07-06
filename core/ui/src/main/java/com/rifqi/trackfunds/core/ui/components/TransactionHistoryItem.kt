@@ -58,7 +58,7 @@ fun TransactionListItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = transaction.note.ifEmpty { transaction.categoryName },
+                    text = transaction.description.ifEmpty { transaction.categoryName },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )
@@ -107,7 +107,7 @@ private fun TransactionListItemExpensePreview() {
     TrackFundsTheme {
         val expenseItem = TransactionItem(
             id = "1",
-            note = "Makan Malam di Luar",
+            description = "Makan Malam di Luar",
             amount = BigDecimal("125000"),
             type = TransactionType.EXPENSE,
             date = LocalDateTime.now(),
@@ -131,7 +131,7 @@ private fun TransactionListItemIncomePreview() {
     TrackFundsTheme(darkTheme = true) {
         val incomeItem = TransactionItem(
             id = "2",
-            note = "Gaji Bulan Ini",
+            description = "Gaji Bulan Ini",
             amount = BigDecimal("125000"),
             type = TransactionType.INCOME,
             date = LocalDateTime.now().minusDays(5),

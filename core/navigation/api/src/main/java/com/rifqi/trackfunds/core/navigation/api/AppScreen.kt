@@ -25,6 +25,9 @@ data object ScanGraph : AppScreen
 @Serializable
 data object ReportsGraph : AppScreen
 
+@Serializable
+data object TransactionsGraph : AppScreen
+
 // --- Screen Routes ---
 @Serializable
 data object Home : AppScreen
@@ -43,6 +46,12 @@ data object ScanOption : AppScreen
 
 @Serializable
 data object Report : AppScreen
+
+@Serializable
+data object Transactions : AppScreen
+
+@Serializable
+data object FilterTransactions : AppScreen
 
 @Serializable
 data object Settings : AppScreen

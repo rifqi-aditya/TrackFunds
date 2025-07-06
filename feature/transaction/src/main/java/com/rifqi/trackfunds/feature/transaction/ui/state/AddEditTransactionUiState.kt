@@ -16,7 +16,7 @@ data class AddEditTransactionUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedAccount: AccountItem? = null,
     val selectedCategory: CategoryItem? = null,
-    val notes: String = "",
+    val descriptions: String = "",
 
     // UI State
     val showDatePicker: Boolean = false,

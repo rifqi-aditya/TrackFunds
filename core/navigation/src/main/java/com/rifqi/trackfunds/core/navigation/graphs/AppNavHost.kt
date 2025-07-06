@@ -11,8 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rifqi.account.ui.screen.SelectAccountScreen
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
-import com.rifqi.trackfunds.core.navigation.api.AllTransactions
-import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.Report
@@ -20,13 +18,9 @@ import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.core.navigation.api.Settings
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
-import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AddEditTransactionScreen
-import com.rifqi.trackfunds.feature.transaction.ui.screen.AllTransactionsScreen
-import com.rifqi.trackfunds.feature.transaction.ui.screen.CategoryTransactionsScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.TransactionDetailScreen
-import com.rifqi.trackfunds.feature.transaction.ui.screen.TypedTransactionsScreen
 
 @Composable
 fun PlaceholderScreen(name: String) {
@@ -45,11 +39,13 @@ fun AppNavHost(
     ) {
 
         homeNavGraph(navController)
-        accountsNavGraph(navController)
+        transactionsNavGraph(navController)
         budgetNavGraph(navController)
-        profileNavGraph(navController)
         reportsNavGraph(navController)
         scanNavGraph(navController)
+        profileNavGraph(navController)
+        accountsNavGraph(navController)
+
 
         composable<AddEditTransaction> {
             AddEditTransactionScreen(
@@ -74,42 +70,6 @@ fun AppNavHost(
         }
 
         // --- Layar Full-Screen ---
-
-        composable<AllTransactions> {
-            AllTransactionsScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToDetailTransaction = { transactionId ->
-                    navController.navigate(TransactionDetail(transactionId))
-                },
-                onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransaction())
-                }
-            )
-        }
-
-        composable<CategoryTransactions> {
-            CategoryTransactionsScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToDetailTransaction = { transactionId ->
-                    navController.navigate(TransactionDetail(transactionId))
-                },
-                onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransaction())
-                }
-            )
-        }
-
-        composable<TypedTransactions> { backStackEntry ->
-            TypedTransactionsScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToDetailTransaction = { transactionId ->
-                    navController.navigate(TransactionDetail(transactionId))
-                },
-                onNavigateToAddTransaction = {
-                    navController.navigate(AddEditTransaction())
-                }
-            )
-        }
 
         composable<TransactionDetail> {
             TransactionDetailScreen(

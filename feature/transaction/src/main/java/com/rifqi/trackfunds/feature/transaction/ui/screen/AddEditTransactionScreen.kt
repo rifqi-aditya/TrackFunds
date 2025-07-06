@@ -45,7 +45,7 @@ import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.FormSelectorCard
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.DateTimeDisplayRow
-import com.rifqi.trackfunds.feature.transaction.ui.components.NotesInputField
+import com.rifqi.trackfunds.feature.transaction.ui.components.descriptionsInputField
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionTypeToggleButtons
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
@@ -193,9 +193,9 @@ fun AddEditTransactionContent(
                 onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
             )
 
-            NotesInputField( // Menggunakan input field biasa, bukan selector
-                value = uiState.notes,
-                onValueChange = { onEvent(AddEditTransactionEvent.NoteChanged(it)) }
+            descriptionsInputField( // Menggunakan input field biasa, bukan selector
+                value = uiState.descriptions,
+                onValueChange = { onEvent(AddEditTransactionEvent.descriptionChanged(it)) }
             )
 
             uiState.selectedCategory?.let {

@@ -17,14 +17,14 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesInputField(
+fun descriptionsInputField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Notes (optional)",
+            text = "descriptions (optional)",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
@@ -35,7 +35,7 @@ fun NotesInputField(
             modifier = Modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 100.dp), // Beri tinggi minimal
-            placeholder = { Text("Write a note...") },
+            placeholder = { Text("Write a description...") },
             singleLine = false, // Izinkan multi-baris
             shape = RoundedCornerShape(16.dp), // Sudut rounded
             colors = TextFieldDefaults.colors(

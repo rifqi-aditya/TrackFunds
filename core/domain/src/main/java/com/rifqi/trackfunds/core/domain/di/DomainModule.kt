@@ -2,6 +2,8 @@ package com.rifqi.trackfunds.core.domain.di
 
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
@@ -16,6 +18,8 @@ import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCase
@@ -36,6 +40,8 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUse
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
@@ -76,6 +82,12 @@ abstract class DomainModule {
 
     @Binds
     @Singleton
+    abstract fun bindGetCategoriesByIdsUseCase(
+        useCaseImpl: GetCategoriesByIdsUseCaseImpl
+    ): GetCategoriesByIdsUseCase
+
+    @Binds
+    @Singleton
     abstract fun bindGetCategoryByStandardKeyUseCase(
         useCaseImpl: GetCategoryByStandardKeyUseCaseImpl
     ): GetCategoryByStandardKeyUseCase
@@ -92,6 +104,12 @@ abstract class DomainModule {
     abstract fun bindGetAccountUseCase(
         useCaseImpl: GetAccountUseCaseImpl
     ): GetAccountUseCase
+
+    @Binds
+    @Singleton
+    abstract fun getAccountsByIdsUseCase(
+        useCaseImpl: GetAccountsByIdsUseCaseImpl
+    ): GetAccountsByIdsUseCase
 
 //    @Binds
 //    @Singleton
@@ -117,6 +135,12 @@ abstract class DomainModule {
     abstract fun bindGetRecentTransactionsUseCase(
         useCaseImpl: GetRecentTransactionsUseCaseImpl
     ): GetRecentTransactionsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetFilteredTransactionsUseCase(
+        useCaseImpl: GetFilteredTransactionsUseCaseImpl
+    ): GetFilteredTransactionsUseCase
 
     @Binds
     @Singleton

@@ -24,4 +24,8 @@ class AccountRepositoryImpl @Inject constructor(
     override suspend fun getAccountById(accountId: String): AccountItem? {
         return accountDao.getAccountById(accountId)?.toDomain()
     }
+
+    override suspend fun getAccountsByIds(ids: List<String>): List<AccountItem> {
+        return accountDao.getAccountsByIds(ids).map { it.toDomain() }
+    }
 }

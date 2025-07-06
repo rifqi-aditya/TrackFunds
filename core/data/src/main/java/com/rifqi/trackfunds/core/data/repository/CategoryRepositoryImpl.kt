@@ -27,6 +27,10 @@ class CategoryRepositoryImpl @Inject constructor(
         return categoryDao.getCategoryById(categoryId)?.toDomain()
     }
 
+    override suspend fun getCategoriesByIds(ids: List<String>): List<CategoryItem> {
+        return categoryDao.getCategoriesByIds(ids).map { it.toDomain() }
+    }
+
     override suspend fun findCategoryByStandardKey(key: String): CategoryItem? {
         return categoryDao.findByCategoryKey(key)?.toDomain()
     }

@@ -17,9 +17,5 @@ interface AccountRepository {
 
     suspend fun getAccountById(accountId: String): AccountItem?
 
-    // Di masa depan, Anda bisa menambahkan fungsi lain di sini, seperti:
-    // suspend fun getAccountById(id: String): AccountItem?
-    // suspend fun addAccount(account: AccountItem)
-    // suspend fun updateAccount(account: AccountItem)
-    // suspend fun deleteAccount(id: String)
+    suspend fun getAccountsByIds(ids: List<String>): List<AccountItem>
 }
