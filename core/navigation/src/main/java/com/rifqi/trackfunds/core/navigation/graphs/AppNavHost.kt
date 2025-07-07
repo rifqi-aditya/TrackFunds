@@ -45,6 +45,7 @@ fun AppNavHost(
         scanNavGraph(navController)
         profileNavGraph(navController)
         accountsNavGraph(navController)
+        savingsNavGraph(navController)
 
 
         composable<AddEditTransaction> {

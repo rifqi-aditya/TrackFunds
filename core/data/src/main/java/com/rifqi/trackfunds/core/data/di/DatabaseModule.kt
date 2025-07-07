@@ -5,6 +5,7 @@ import com.rifqi.trackfunds.core.data.local.AppDatabase
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
+import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import dagger.Module
 import dagger.Provides
@@ -54,6 +55,12 @@ object DatabaseModule {
     @Singleton
     fun provideBudgetDao(appDatabase: AppDatabase): BudgetDao {
         return appDatabase.budgetDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavingsGoalDao(appDatabase: AppDatabase): SavingsGoalDao {
+        return appDatabase.savingsGoalDao()
     }
 
 

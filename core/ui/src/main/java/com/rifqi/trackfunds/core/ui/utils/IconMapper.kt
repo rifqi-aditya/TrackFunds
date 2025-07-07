@@ -61,11 +61,14 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
         "income" -> R.drawable.income
         "expense" -> R.drawable.expense
         "budgets" -> R.drawable.budgets
+        "savings" -> R.drawable.money_bag
 
         // --- IKON GENERIK ---
         "home" -> R.drawable.bottom_nav_home
 //        "profile" -> R.drawable.profile
 //        "report" -> R.drawable.report
+
+        "arrow_back" -> R.drawable.arrow_back
 
 
         // Fallback jika tidak ada ikon yang cocok

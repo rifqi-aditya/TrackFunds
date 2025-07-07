@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.components.AmountInputForm
+import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.components.FormSelectorCard
+import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
@@ -142,7 +142,7 @@ fun AddEditBudgetContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Form untuk Kategori
-            FormSelectorCard(
+            FormSelectorField(
                 label = "Category",
                 value = uiState.selectedCategory?.name ?: "Choose a category",
                 leadingIconRes = uiState.selectedCategory?.iconIdentifier,
@@ -152,7 +152,7 @@ fun AddEditBudgetContent(
             )
 
             // Form untuk Jumlah
-            AmountInputForm(
+            AmountInputField(
                 value = uiState.amount,
                 onValueChange = { onEvent(AddEditBudgetEvent.AmountChanged(it)) }
             )

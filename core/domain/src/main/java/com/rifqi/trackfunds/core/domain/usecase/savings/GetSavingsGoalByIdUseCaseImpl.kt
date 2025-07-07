@@ -1,0 +1,14 @@
+package com.rifqi.trackfunds.core.domain.usecase.savings
+
+import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class GetSavingsGoalByIdUseCaseImpl @Inject constructor(
+    private val repository: SavingsRepository
+) : GetSavingsGoalByIdUseCase {
+    override suspend operator fun invoke(goalId: String): Flow<SavingsGoal?> {
+        return repository.getGoalById(goalId)
+    }
+}

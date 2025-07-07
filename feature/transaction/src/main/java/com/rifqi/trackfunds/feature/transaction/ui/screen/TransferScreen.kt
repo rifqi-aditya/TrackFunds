@@ -28,11 +28,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.ui.components.AmountInputForm
+import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.components.FormSelectorCard
+import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
+import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.descriptionsInputField
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AccountSelectionMode
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransferUiState
@@ -96,7 +96,7 @@ fun TransferContent(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FormSelectorCard(
+            FormSelectorField(
                 label = "From",
                 value = uiState.fromAccount?.name ?: "Choose source account",
                 leadingIconRes = uiState.fromAccount?.iconIdentifier,
@@ -111,7 +111,7 @@ fun TransferContent(
             )
 
             // Form Selector untuk Akun Tujuan
-            FormSelectorCard(
+            FormSelectorField(
                 label = "To",
                 value = uiState.toAccount?.name ?: "Choose destination account",
                 leadingIconRes = uiState.toAccount?.iconIdentifier,
@@ -119,13 +119,16 @@ fun TransferContent(
             )
 
             // Input lainnya
-            AmountInputForm(
+            AmountInputField(
                 value = uiState.amount,
                 onValueChange = { onEvent(TransferEvent.AmountChanged(it)) }
             )
-            descriptionsInputField(
+            GeneralTextInputField(
                 value = uiState.description,
-                onValueChange = { onEvent(TransferEvent.descriptionChanged(it)) }
+                onValueChange = { onEvent(TransferEvent.descriptionChanged(it)) },
+                label = "Description",
+                placeholder = "Enter description",
+                singleLine = true,
             )
 
             Spacer(modifier = Modifier.weight(1f))

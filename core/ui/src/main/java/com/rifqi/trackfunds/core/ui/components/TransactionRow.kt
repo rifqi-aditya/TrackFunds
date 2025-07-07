@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.components
+package com.rifqi.trackfunds.core.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

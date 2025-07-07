@@ -43,7 +43,7 @@ import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
-import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionRow
+import com.rifqi.trackfunds.core.ui.components.TransactionRow
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionListEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionListUiState

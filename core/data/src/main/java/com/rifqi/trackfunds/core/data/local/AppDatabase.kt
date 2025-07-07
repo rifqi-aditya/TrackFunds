@@ -10,10 +10,12 @@ import com.rifqi.trackfunds.core.data.local.converter.Converters
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
+import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
 import com.rifqi.trackfunds.core.data.local.entity.BudgetEntity
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
+import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.CoroutineScope
@@ -27,8 +29,9 @@ import java.util.UUID
     entities = [
         CategoryEntity::class,
         AccountEntity::class,
+        SavingsGoalEntity::class,
         TransactionEntity::class,
-        BudgetEntity::class
+        BudgetEntity::class,
     ],
     version = 1,
     exportSchema = false
@@ -40,6 +43,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
     abstract fun transactionDao(): TransactionDao
     abstract fun budgetDao(): BudgetDao
+    abstract fun savingsGoalDao(): SavingsGoalDao
 
     companion object {
         @Volatile

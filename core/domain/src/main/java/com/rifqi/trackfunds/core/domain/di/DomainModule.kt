@@ -32,6 +32,18 @@ import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCas
 import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCase
 import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.SaveSavingsIconUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.SaveSavingsIconUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
@@ -52,6 +64,8 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByDat
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByDateRangeUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByTypeUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByTypeUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsForSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsForSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
@@ -190,6 +204,12 @@ abstract class DomainModule {
         useCaseImpl: PerformTransferUseCaseImpl
     ): PerformTransferUseCase
 
+    @Binds
+    @Singleton
+    abstract fun bindGetTransactionsForSavingsGoalUseCase(
+        useCaseImpl: GetTransactionsForSavingsGoalUseCaseImpl
+    ): GetTransactionsForSavingsGoalUseCase
+
     // --- Budget Use Case ---
     @Binds
     @Singleton
@@ -252,4 +272,41 @@ abstract class DomainModule {
     abstract fun bindGetIncomeBreakdownUseCase(
         useCaseImpl: GetIncomeBreakdownUseCaseImpl
     ): GetIncomeBreakdownUseCase
+
+    // --- Savings Use Case ---
+    @Binds
+    @Singleton
+    abstract fun bindGetActiveSavingsGoalsUseCase(
+        useCaseImpl: GetActiveSavingsGoalsUseCaseImpl
+    ): GetActiveSavingsGoalsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetSavingsGoalByIdUseCase(
+        useCaseImpl: GetSavingsGoalByIdUseCaseImpl
+    ): GetSavingsGoalByIdUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindCreateSavingsGoalUseCase(
+        useCaseImpl: CreateSavingsGoalUseCaseImpl
+    ): CreateSavingsGoalUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindAddFundsToSavingsGoalUseCase(
+        useCaseImpl: AddFundsToSavingsGoalUseCaseImpl
+    ): AddFundsToSavingsGoalUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindSaveSavingsIconUseCase(
+        useCaseImpl: SaveSavingsIconUseCaseImpl
+    ): SaveSavingsIconUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindDeleteSavingsGoalUseCase(
+        useCaseImpl: DeleteSavingsGoalUseCaseImpl
+    ): DeleteSavingsGoalUseCase
 }

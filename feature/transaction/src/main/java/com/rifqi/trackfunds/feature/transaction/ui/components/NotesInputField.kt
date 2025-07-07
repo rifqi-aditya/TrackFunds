@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun descriptionsInputField(
+fun DescriptionsInputField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier

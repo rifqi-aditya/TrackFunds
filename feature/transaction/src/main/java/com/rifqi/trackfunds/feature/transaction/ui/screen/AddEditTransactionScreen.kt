@@ -39,13 +39,13 @@ import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.ui.components.AmountInputForm
+import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
-import com.rifqi.trackfunds.core.ui.components.FormSelectorCard
+import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
+import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.DateTimeDisplayRow
-import com.rifqi.trackfunds.feature.transaction.ui.components.descriptionsInputField
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionTypeToggleButtons
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
@@ -181,37 +181,41 @@ fun AddEditTransactionContent(
                 onTypeSelected = { onEvent(AddEditTransactionEvent.TransactionTypeChanged(it)) }
             )
 
-            FormSelectorCard(
-                label = "Account",
-                value = uiState.selectedAccount?.name ?: "Choose account",
-                onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
-                leadingIconRes = uiState.selectedAccount?.iconIdentifier,
-            )
-
-            AmountInputForm(
+            AmountInputField(
                 value = uiState.amount,
                 onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
             )
 
-            descriptionsInputField( // Menggunakan input field biasa, bukan selector
-                value = uiState.descriptions,
-                onValueChange = { onEvent(AddEditTransactionEvent.descriptionChanged(it)) }
-            )
-
             uiState.selectedCategory?.let {
                 // Jika kategori sudah dipilih, tampilkan detailnya
-                FormSelectorCard(
+                FormSelectorField(
                     label = "Category",
                     value = it.name,
                     onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
                     leadingIconRes = it.iconIdentifier
                 )
             } ?: // Jika belum ada kategori yang dipilih, tampilkan placeholder
-            FormSelectorCard(
+            FormSelectorField(
                 label = "Category",
                 value = "Choose a category",
                 onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
                 leadingIconRes = ""
+            )
+
+            FormSelectorField(
+                label = "Account",
+                value = uiState.selectedAccount?.name ?: "Choose account",
+                onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
+                leadingIconRes = uiState.selectedAccount?.iconIdentifier,
+            )
+
+            GeneralTextInputField(
+                // Menggunakan input field biasa, bukan selector
+                value = uiState.descriptions,
+                onValueChange = { onEvent(AddEditTransactionEvent.descriptionChanged(it)) },
+                label = "Description",
+                placeholder = "Enter transaction description",
+                singleLine = false,
             )
 
             uiState.error?.let { errorMessage ->
@@ -224,6 +228,7 @@ fun AddEditTransactionContent(
                         .padding(top = 8.dp)
                 )
             }
+
             Button(
                 onClick = { onEvent(AddEditTransactionEvent.SaveClicked) },
                 modifier = Modifier

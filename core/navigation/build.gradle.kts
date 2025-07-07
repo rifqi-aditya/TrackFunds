@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":feature:budget"))
     implementation(project(":feature:scan"))
     implementation(project(":feature:reports"))
+    implementation(project(":feature:savings"))
 
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten

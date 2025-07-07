@@ -104,4 +104,6 @@ interface TransactionRepository {
     ): Flow<CashFlowSummary>
 
     fun getRecentTransactions(limit: Int): Flow<List<TransactionItem>>
+
+    fun getTransactionsByGoalId(goalId: String): Flow<List<TransactionItem>>
 }

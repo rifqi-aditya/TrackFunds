@@ -28,6 +28,9 @@ data object ReportsGraph : AppScreen
 @Serializable
 data object TransactionsGraph : AppScreen
 
+@Serializable
+data object SavingsGraph : AppScreen
+
 // --- Screen Routes ---
 @Serializable
 data object Home : AppScreen
@@ -97,3 +100,12 @@ data object CameraScan : AppScreen
 @Serializable
 data class ReceiptPreview(val imageUri: String) : AppScreen
 
+
+@Serializable
+data object Savings : AppScreen
+
+@Serializable
+data class AddEditSavingsGoal(val goalId: String? = null) : AppScreen
+
+@Serializable
+data class SavingsDetail(val goalId: String) : AppScreen

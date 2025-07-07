@@ -10,6 +10,7 @@ import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
 import com.rifqi.trackfunds.core.navigation.api.Home
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
@@ -28,7 +29,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
                 onNavigateToTypedTransactions = { transactionType ->
                     navController.navigate(TypedTransactions(transactionType))
                 },
-                onNavigateToNotifications = { navController.navigate(Notifications) },
+                onNavigateToNotifications = { navController.navigate(SavingsGraph) },
                 onNavigateToAddTransaction = {
                     navController.navigate(AddEditTransaction())
                 },

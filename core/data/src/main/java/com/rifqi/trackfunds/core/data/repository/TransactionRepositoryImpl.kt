@@ -293,4 +293,9 @@ class TransactionRepositoryImpl @Inject constructor(
             .map { it.toDomain() }
 
 
+    override fun getTransactionsByGoalId(goalId: String): Flow<List<TransactionItem>> {
+        return transactionDao.getTransactionsByGoalId(goalId).map { dtoList ->
+            dtoList.map { it.toDomain() }
+        }
+    }
 }

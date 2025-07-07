@@ -3,11 +3,13 @@ package com.rifqi.trackfunds.core.data.di
 import com.rifqi.trackfunds.core.data.repository.AccountRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.BudgetRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.CategoryRepositoryImpl
+import com.rifqi.trackfunds.core.data.repository.SavingsRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.ScanRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.TransactionRepositoryImpl
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.BudgetRepository
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
+import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
 import com.rifqi.trackfunds.core.domain.repository.ScanRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import dagger.Binds
@@ -23,8 +25,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCategoryRepository(
-        categoryRepositoryImpl: CategoryRepositoryImpl // Hilt tahu cara membuat ini karena constructornya @Inject
-    ): CategoryRepository // Saat CategoryRepository diminta, Hilt akan menyediakan CategoryRepositoryImpl
+        categoryRepositoryImpl: CategoryRepositoryImpl
+    ): CategoryRepository
 
     @Binds
     @Singleton
@@ -49,4 +51,10 @@ abstract class RepositoryModule {
     abstract fun bindScanRepository(
         scanRepositoryImpl: ScanRepositoryImpl
     ): ScanRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSavingsRepository(
+        savingsRepositoryImpl: SavingsRepositoryImpl
+    ): SavingsRepository
 }

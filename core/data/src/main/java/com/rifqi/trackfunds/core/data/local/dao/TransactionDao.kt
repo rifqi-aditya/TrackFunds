@@ -31,7 +31,8 @@ interface TransactionDao {
             t.*,
             c.name AS category_name,
             c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
         FROM transactions AS t
         LEFT JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
@@ -46,8 +47,8 @@ interface TransactionDao {
             t.*,
             c.name AS category_name,
             c.icon_identifier AS category_icon_identifier,
-            a.icon_identifier AS account_icon_identifier,
-            a.name AS account_name
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
         FROM transactions AS t
         LEFT JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
@@ -85,7 +86,8 @@ interface TransactionDao {
             t.*,
             c.name AS category_name, 
             c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
@@ -129,7 +131,8 @@ interface TransactionDao {
             t.*,
             c.name AS category_name, 
             c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
@@ -149,7 +152,8 @@ interface TransactionDao {
             t.*,
             c.name AS category_name, 
             c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name
+            a.name AS account_name,
+            a.icon_identifier AS account_icon_identifier
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
@@ -210,6 +214,24 @@ interface TransactionDao {
     """
     )
     fun getCashFlowSummary(startDate: LocalDateTime, endDate: LocalDateTime): Flow<CashFlowDto>
+
+    @Transaction
+    @Query(
+        """
+    SELECT
+        t.*,
+        c.name AS category_name, 
+        c.icon_identifier AS category_icon_identifier,
+        a.name AS account_name,
+        a.icon_identifier AS account_icon_identifier
+    FROM transactions AS t
+    LEFT JOIN categories AS c ON t.category_id = c.id
+    LEFT JOIN accounts AS a ON t.account_id = a.id
+    WHERE t.savings_goal_id = :goalId
+    ORDER BY t.date DESC
+"""
+    )
+    fun getTransactionsByGoalId(goalId: String): Flow<List<TransactionDetailDto>>
 
 
     @Query("SELECT * FROM transactions WHERE id = :transactionId")

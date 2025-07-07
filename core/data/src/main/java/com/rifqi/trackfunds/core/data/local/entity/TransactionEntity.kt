@@ -22,6 +22,12 @@ import java.time.LocalDateTime
             parentColumns = ["id"],
             childColumns = ["account_id"],
             onDelete = ForeignKey.CASCADE // Jika akun dihapus, transaksinya juga terhapus
+        ),
+        ForeignKey(
+            entity = SavingsGoalEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["savings_goal_id"],
+            onDelete = ForeignKey.SET_NULL
         )
     ]
 )
@@ -41,5 +47,6 @@ data class TransactionEntity(
     @ColumnInfo(name = "transfer_pair_id", index = true)
     val transferPairId: String? = null,
 
+    @ColumnInfo(name = "savings_goal_id", index = true)
     val savingsGoalId: String? = null
 )
