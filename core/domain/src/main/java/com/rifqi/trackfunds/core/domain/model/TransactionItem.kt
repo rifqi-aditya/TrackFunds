@@ -17,4 +17,5 @@ data class TransactionItem(
     val accountName: String,
     val accountIconIdentifier: String? = null,
     val transferPairId: String? = null,
+    val savingsGoalId: String? = null,
 )

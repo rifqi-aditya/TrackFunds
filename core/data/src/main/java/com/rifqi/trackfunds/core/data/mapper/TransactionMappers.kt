@@ -22,7 +22,8 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
         accountId = this.transaction.accountId,
         accountName = this.account.name,
         accountIconIdentifier = this.account.accountIconIdentifier,
-        transferPairId = this.transaction.transferPairId
+        transferPairId = this.transaction.transferPairId,
+        savingsGoalId = this.transaction.savingsGoalId,
     )
 }
 
@@ -39,7 +40,8 @@ fun TransactionItem.toEntity(): TransactionEntity {
         date = this.date,
         categoryId = this.categoryId,
         accountId = this.accountId,
-        transferPairId = this.transferPairId
+        transferPairId = this.transferPairId,
+        savingsGoalId = this.savingsGoalId
     )
 }
 

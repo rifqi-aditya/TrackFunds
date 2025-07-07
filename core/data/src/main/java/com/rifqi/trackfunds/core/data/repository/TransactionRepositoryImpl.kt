@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.core.data.repository
 import androidx.room.Transaction
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
+import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
@@ -21,7 +22,8 @@ import javax.inject.Singleton
 @Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val transactionDao: TransactionDao,
-    private val accountDao: AccountDao
+    private val accountDao: AccountDao,
+    private val savingsGoalDao: SavingsGoalDao
 ) : TransactionRepository {
 
     override fun getTransactions(): Flow<List<TransactionItem>> {
@@ -121,7 +123,7 @@ class TransactionRepositoryImpl @Inject constructor(
         // Konversi ke entity dan masukkan ke database
         transactionDao.insertTransaction(transaction.toEntity())
 
-        // Update saldo akun terkait
+        // Update saldo akun terkait (logika ini tetap sama)
         val account = accountDao.getAccountById(transaction.accountId)
         if (account != null) {
             val newBalance = if (transaction.type == TransactionType.INCOME) {
@@ -130,6 +132,15 @@ class TransactionRepositoryImpl @Inject constructor(
                 account.balance.subtract(transaction.amount)
             }
             accountDao.updateAccount(account.copy(balance = newBalance))
+        }
+
+        // FIX 2: Tambahkan logika untuk update saldo tabungan
+        // Cek apakah transaksi ini terhubung ke sebuah tujuan tabungan
+        transaction.savingsGoalId?.let { goalId ->
+            // Pastikan tipe transaksinya adalah "setoran" (yang kita catat sebagai Expense)
+            if (transaction.type == TransactionType.EXPENSE) {
+                savingsGoalDao.addFundsToGoal(goalId, transaction.amount)
+            }
         }
     }
 

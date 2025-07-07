@@ -8,11 +8,15 @@ import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.model.ScanResult
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
@@ -38,6 +42,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 import javax.inject.Inject
 
@@ -52,6 +57,8 @@ class AddEditTransactionViewModel @Inject constructor(
     private val getCategoryUseCase: GetCategoryUseCase,
     private val resultManager: NavigationResultManager,
     private val getCategoryByStandardKeyUseCase: GetCategoryByStandardKeyUseCase,
+    private val getActiveSavingsGoalsUseCase: GetActiveSavingsGoalsUseCase,
+    private val addFundsToSavingsGoalUseCase: AddFundsToSavingsGoalUseCase,
     private val snackbarManager: SnackbarManager,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -67,10 +74,20 @@ class AddEditTransactionViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<AppScreen>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    private val _savingsGoals = MutableStateFlow<List<SavingsGoal>>(emptyList())
+    val savingsGoals = _savingsGoals.asStateFlow()
+
     init {
         if (isEditMode) {
             loadTransactionForEdit(editingTransactionId!!)
         }
+
+        viewModelScope.launch {
+            getActiveSavingsGoalsUseCase().collect {
+                _savingsGoals.value = it
+            }
+        }
+
         observeNavigationResults()
     }
 
@@ -82,10 +99,15 @@ class AddEditTransactionViewModel @Inject constructor(
             }
 
             is AddEditTransactionEvent.TransactionTypeChanged -> _uiState.update {
-                it.copy(selectedTransactionType = event.type, selectedCategory = null)
+                it.copy(
+                    selectedTransactionType = event.type,
+                    selectedCategory = null,
+                    selectedAccount = null,
+                    selectedSavingsGoal = null
+                )
             }
 
-            is AddEditTransactionEvent.descriptionChanged -> _uiState.update { it.copy(descriptions = event.descriptions) }
+            is AddEditTransactionEvent.DescriptionChanged -> _uiState.update { it.copy(descriptions = event.descriptions) }
             is AddEditTransactionEvent.DateChanged -> _uiState.update {
                 it.copy(
                     selectedDate = event.date,
@@ -142,7 +164,25 @@ class AddEditTransactionViewModel @Inject constructor(
                 _navigationEvent.emit(
                     Home
                 )
-            } // Atau reset
+            }
+            // Atau reset
+            AddEditTransactionEvent.SavingsGoalSelectorClicked -> {
+                _uiState.update { it.copy(showSavingsGoalSheet = true) }
+            }
+
+            // Event untuk menutup sheet
+            AddEditTransactionEvent.SavingsGoalSheetDismissed -> {
+                _uiState.update { it.copy(showSavingsGoalSheet = false) }
+            }
+
+            is AddEditTransactionEvent.SavingsGoalSelected -> {
+                _uiState.update {
+                    it.copy(
+                        selectedSavingsGoal = event.goal,
+                        showSavingsGoalSheet = false
+                    )
+                }
+            }
         }
     }
 
@@ -205,41 +245,85 @@ class AddEditTransactionViewModel @Inject constructor(
         }
     }
 
-    fun saveTransaction() {
+    private fun saveTransaction() {
         viewModelScope.launch {
             val currentState = _uiState.value
-            if (currentState.selectedAccount == null || currentState.selectedCategory == null || currentState.amount.isBlank()) {
-                _uiState.update { it.copy(error = "Please fill all required fields.") }
-                return@launch
-            }
-
             _uiState.update { it.copy(isLoading = true) }
 
-            val transactionToSave = TransactionItem(
-                id = editingTransactionId ?: UUID.randomUUID().toString(),
-                description = currentState.descriptions,
-                amount = BigDecimal(currentState.amount),
-                type = currentState.selectedTransactionType,
-                date = currentState.selectedDate.atStartOfDay(),
-                categoryId = currentState.selectedCategory.id,
-                categoryName = currentState.selectedCategory.name,
-                categoryIconIdentifier = currentState.selectedCategory.iconIdentifier,
-                accountId = currentState.selectedAccount.id,
-                accountName = currentState.selectedAccount.name
-            )
+            // Cek tipe transaksi yang dipilih
+            if (currentState.selectedTransactionType == TransactionType.SAVINGS) {
+                // --- ALUR UNTUK TABUNGAN ---
 
-            try {
-                if (isEditMode) {
-                    updateTransactionUseCase(transactionToSave)
-                    snackbarManager.showMessage("Transaction updated successfully")
-                } else {
-                    addTransactionUseCase(transactionToSave)
-                    snackbarManager.showMessage("Transaction saved successfully")
+                // Validasi untuk form tabungan
+                if (currentState.selectedAccount == null || currentState.selectedSavingsGoal == null || currentState.amount.isBlank()) {
+                    _uiState.update { it.copy(error = "Akun dan Tujuan Tabungan harus diisi.", isLoading = false) }
+                    return@launch
                 }
-                _navigationEvent.emit(Home)
-            } catch (e: Exception) {
-                snackbarManager.showMessage("Error: ${e.message}")
-                _uiState.update { it.copy(isLoading = false, error = e.message) }
+
+                // Transaksi untuk tabungan dicatat sebagai 'Expense'
+                // karena mengurangi saldo akun, tetapi dihubungkan ke savingsGoalId.
+                val savingsTransaction = TransactionItem(
+                    id = editingTransactionId ?: UUID.randomUUID().toString(),
+                    description = currentState.descriptions,
+                    amount = BigDecimal(currentState.amount),
+                    type = TransactionType.EXPENSE,
+                    date = currentState.selectedDate.atTime(LocalTime.MAX),
+                    categoryId = currentState.selectedCategory?.id, // Gunakan ID & nama dari tujuan tabungan
+                    categoryName = currentState.selectedCategory?.name ?: "",
+                    categoryIconIdentifier = currentState.selectedSavingsGoal.iconIdentifier,
+                    accountId = currentState.selectedAccount.id,
+                    accountName = currentState.selectedAccount.name,
+                    savingsGoalId = currentState.selectedSavingsGoal.id // Hubungkan ke ID tujuan tabungan
+                )
+
+                try {
+                    // 1. Catat sebagai transaksi pengeluaran biasa
+                    addTransactionUseCase(savingsTransaction)
+                    // 2. Tambahkan dana ke tujuan tabungan
+                    addFundsToSavingsGoalUseCase(
+                        goalId = currentState.selectedSavingsGoal.id,
+                        amount = BigDecimal(currentState.amount)
+                    )
+                    snackbarManager.showMessage("Setoran berhasil ditambahkan")
+                    _navigationEvent.emit(Home) // Kembali ke Home
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(isLoading = false, error = e.message) }
+                }
+
+            } else {
+                // --- ALUR UNTUK INCOME & EXPENSE (TETAP SAMA) ---
+
+                // Validasi untuk form standar
+                if (currentState.selectedAccount == null || currentState.selectedCategory == null || currentState.amount.isBlank()) {
+                    _uiState.update { it.copy(error = "Please fill all required fields.", isLoading = false) }
+                    return@launch
+                }
+
+                val transactionToSave = TransactionItem(
+                    id = editingTransactionId ?: UUID.randomUUID().toString(),
+                    description = currentState.descriptions,
+                    amount = BigDecimal(currentState.amount),
+                    type = currentState.selectedTransactionType,
+                    date = currentState.selectedDate.atTime(LocalTime.MAX),
+                    categoryId = currentState.selectedCategory.id,
+                    categoryName = currentState.selectedCategory.name,
+                    categoryIconIdentifier = currentState.selectedCategory.iconIdentifier,
+                    accountId = currentState.selectedAccount.id,
+                    accountName = currentState.selectedAccount.name
+                )
+
+                try {
+                    if (isEditMode) {
+                        updateTransactionUseCase(transactionToSave)
+                        snackbarManager.showMessage("Transaction updated successfully")
+                    } else {
+                        addTransactionUseCase(transactionToSave)
+                        snackbarManager.showMessage("Transaction saved successfully")
+                    }
+                    _navigationEvent.emit(Home) // Kembali ke Home
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(isLoading = false, error = e.message) }
+                }
             }
         }
     }

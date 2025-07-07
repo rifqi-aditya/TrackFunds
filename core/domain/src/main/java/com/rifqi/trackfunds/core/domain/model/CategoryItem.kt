@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.domain.model
 import java.util.UUID
 
 enum class TransactionType {
-    EXPENSE, INCOME
+    EXPENSE, INCOME, SAVINGS
 }
 
 data class CategoryItem(

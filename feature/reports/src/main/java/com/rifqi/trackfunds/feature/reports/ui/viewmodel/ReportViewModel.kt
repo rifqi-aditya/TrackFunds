@@ -39,6 +39,7 @@ class ReportViewModel @Inject constructor(
             when (state.activeBreakdownType) {
                 TransactionType.EXPENSE -> state.expenseBreakdown
                 TransactionType.INCOME -> state.incomeBreakdown
+                TransactionType.SAVINGS -> emptyList() // Savings breakdown not implemented
             }
         }.stateIn(
             scope = viewModelScope,

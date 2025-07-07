@@ -2,12 +2,13 @@ package com.rifqi.trackfunds.feature.transaction.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -21,10 +22,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,15 +42,17 @@ import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
+import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
+import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.DateTimeDisplayRow
-import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionTypeToggleButtons
+import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
+import com.rifqi.trackfunds.feature.transaction.ui.components.SavingsGoalSelectionRow
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
+import com.rifqi.trackfunds.feature.transaction.ui.model.transactionTypes
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -59,6 +64,7 @@ import java.math.BigDecimal
  * - Menangani event UI dan meneruskannya ke ViewModel.
  * - Menampilkan dialog.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTransactionScreen(
     viewModel: AddEditTransactionViewModel = hiltViewModel(),
@@ -66,6 +72,8 @@ fun AddEditTransactionScreen(
     onNavigate: (AppScreen) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val savingsGoals = viewModel.savingsGoals.collectAsState(initial = emptyList()).value
+    val sheetState = rememberModalBottomSheetState()
 
     CustomDatePickerDialog(
         showDialog = uiState.showDatePicker,
@@ -77,6 +85,32 @@ fun AddEditTransactionScreen(
             viewModel.onDateSelected(newDate)
         }
     )
+
+    if (uiState.showSavingsGoalSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.onEvent(AddEditTransactionEvent.SavingsGoalSheetDismissed) },
+            sheetState = sheetState
+        ) {
+            // Isi dari BottomSheet
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    "Pilih Tujuan Tabungan",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(savingsGoals) { goal ->
+                        SavingsGoalSelectionRow(
+                            goal = goal,
+                            onClick = {
+                                viewModel.onEvent(AddEditTransactionEvent.SavingsGoalSelected(goal))
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
@@ -160,83 +194,19 @@ fun AddEditTransactionContent(
                 )
             )
         },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Spacer(modifier = Modifier.height(0.dp))
-
-            DateTimeDisplayRow(
-                selectedDate = uiState.selectedDate,
-                onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) }
-            )
-
-            TransactionTypeToggleButtons(
-                selectedType = uiState.selectedTransactionType,
-                onTypeSelected = { onEvent(AddEditTransactionEvent.TransactionTypeChanged(it)) }
-            )
-
-            AmountInputField(
-                value = uiState.amount,
-                onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
-            )
-
-            uiState.selectedCategory?.let {
-                // Jika kategori sudah dipilih, tampilkan detailnya
-                FormSelectorField(
-                    label = "Category",
-                    value = it.name,
-                    onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
-                    leadingIconRes = it.iconIdentifier
-                )
-            } ?: // Jika belum ada kategori yang dipilih, tampilkan placeholder
-            FormSelectorField(
-                label = "Category",
-                value = "Choose a category",
-                onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
-                leadingIconRes = ""
-            )
-
-            FormSelectorField(
-                label = "Account",
-                value = uiState.selectedAccount?.name ?: "Choose account",
-                onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
-                leadingIconRes = uiState.selectedAccount?.iconIdentifier,
-            )
-
-            GeneralTextInputField(
-                // Menggunakan input field biasa, bukan selector
-                value = uiState.descriptions,
-                onValueChange = { onEvent(AddEditTransactionEvent.descriptionChanged(it)) },
-                label = "Description",
-                placeholder = "Enter transaction description",
-                singleLine = false,
-            )
-
-            uiState.error?.let { errorMessage ->
-                Text(
-                    text = errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
-            }
-
+        bottomBar = {
             Button(
                 onClick = { onEvent(AddEditTransactionEvent.SaveClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(innerPadding)
+                    .padding(16.dp)
                     .height(56.dp),
                 shape = MaterialTheme.shapes.large,
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
@@ -252,6 +222,137 @@ fun AddEditTransactionContent(
                 }
             }
         }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+        ) {
+            AnimatedSlideToggleButton(
+                items = transactionTypes,
+                selectedItem = uiState.selectedTransactionType,
+                onItemSelected = { onEvent(AddEditTransactionEvent.TransactionTypeChanged(it)) },
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                when (uiState.selectedTransactionType) {
+                    TransactionType.SAVINGS -> {
+                        SavingsFormContent(uiState = uiState, onEvent = onEvent)
+                    }
+
+                    else -> {
+                        StandardFormContent(uiState = uiState, onEvent = onEvent)
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun StandardFormContent(
+    uiState: AddEditTransactionUiState,
+    onEvent: (AddEditTransactionEvent) -> Unit
+) {
+    AmountInputField(
+        value = uiState.amount,
+        placeholder = "0",
+        onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
+    )
+
+    FormSelectorField(
+        label = "Category",
+        value = uiState.selectedCategory?.name ?: "Choose category",
+        onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
+        leadingIconRes = uiState.selectedCategory?.iconIdentifier,
+    )
+
+    FormSelectorField(
+        label = "Source Account",
+        value = uiState.selectedAccount?.name ?: "Choose account",
+        onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
+        leadingIconRes = uiState.selectedAccount?.iconIdentifier,
+    )
+
+    DatePickerField(
+        label = "Date",
+        value = uiState.selectedDate,
+        onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) },
+    )
+
+    GeneralTextInputField(
+        value = uiState.descriptions,
+        onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
+        label = "Description",
+        placeholder = "Enter transaction description",
+        singleLine = false,
+    )
+
+    uiState.error?.let { errorMessage ->
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
+    }
+}
+
+@Composable
+private fun SavingsFormContent(
+    uiState: AddEditTransactionUiState,
+    onEvent: (AddEditTransactionEvent) -> Unit
+) {
+    FormSelectorField(
+        label = "Savings Goal",
+        value = uiState.selectedSavingsGoal?.name ?: "Choose savings goal",
+        onClick = { onEvent(AddEditTransactionEvent.SavingsGoalSelectorClicked) },
+        leadingIconRes = uiState.selectedSavingsGoal?.iconIdentifier,
+    )
+
+    FormSelectorField(
+        label = "Source Account",
+        value = uiState.selectedAccount?.name ?: "Choose account",
+        onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
+        leadingIconRes = uiState.selectedAccount?.iconIdentifier,
+    )
+
+    AmountInputField(
+        value = uiState.amount,
+        placeholder = "0",
+        onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
+    )
+
+    DatePickerField(
+        label = "Date",
+        value = uiState.selectedDate,
+        onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) },
+    )
+
+    GeneralTextInputField(
+        value = uiState.descriptions,
+        onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
+        label = "Description",
+        placeholder = "Enter transaction description",
+        singleLine = false,
+    )
+    uiState.error?.let { errorMessage ->
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
     }
 }
 
@@ -297,7 +398,8 @@ fun EditTransactionContentLightPreview() {
             uiState = AddEditTransactionUiState(
                 amount = "150000",
                 selectedCategory = previewDummyCategory,
-                selectedAccount = previewDummyAccount
+                selectedAccount = previewDummyAccount,
+                selectedTransactionType = TransactionType.SAVINGS
             ),
             isEditMode = true,
             onEvent = { },
