@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.usecase.savings
 
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 
 interface CreateSavingsGoalUseCase {
-    suspend operator fun invoke(goal: SavingsGoal)
+    suspend operator fun invoke(goal: SavingsGoalItem)
 }

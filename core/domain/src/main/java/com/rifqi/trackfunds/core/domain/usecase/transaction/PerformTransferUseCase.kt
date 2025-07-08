@@ -1,15 +1,7 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import java.math.BigDecimal
-import java.time.LocalDateTime
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 
 interface PerformTransferUseCase {
-    suspend operator fun invoke(
-        fromAccount: AccountItem,
-        toAccount: AccountItem,
-        amount: BigDecimal,
-        date: LocalDateTime,
-        description: String
-    )
+    suspend operator fun invoke(expense: TransactionItem, income: TransactionItem)
 }

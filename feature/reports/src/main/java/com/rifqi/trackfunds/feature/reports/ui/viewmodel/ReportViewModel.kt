@@ -2,33 +2,36 @@ package com.rifqi.trackfunds.feature.reports.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
+import com.rifqi.trackfunds.core.domain.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.usecase.report.GetCashFlowSummaryUseCase
-import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCase
-import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.feature.reports.ui.event.ReportEvent
 import com.rifqi.trackfunds.feature.reports.ui.state.ReportUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.YearMonth
 import javax.inject.Inject
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ReportViewModel @Inject constructor(
-    private val getCashFlowSummaryUseCase: GetCashFlowSummaryUseCase,
-    private val getExpenseBreakdownUseCase: GetExpenseBreakdownUseCase,
-    private val getIncomeBreakdownUseCase: GetIncomeBreakdownUseCase
+    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportUiState())
@@ -39,7 +42,7 @@ class ReportViewModel @Inject constructor(
             when (state.activeBreakdownType) {
                 TransactionType.EXPENSE -> state.expenseBreakdown
                 TransactionType.INCOME -> state.incomeBreakdown
-                TransactionType.SAVINGS -> emptyList() // Savings breakdown not implemented
+                else -> emptyList()
             }
         }.stateIn(
             scope = viewModelScope,
@@ -48,14 +51,21 @@ class ReportViewModel @Inject constructor(
         )
 
     init {
-        loadReportDataForCurrentPeriod()
+        viewModelScope.launch {
+            _uiState
+                .map { it.currentPeriod }
+                .distinctUntilChanged()
+                .onEach { period ->
+                    loadDataForPeriod(period)
+                }
+                .collect()
+        }
     }
 
     fun onEvent(event: ReportEvent) {
         when (event) {
             is ReportEvent.PeriodChanged -> {
                 _uiState.update { it.copy(currentPeriod = event.newPeriod) }
-                loadReportDataForCurrentPeriod()
             }
 
             is ReportEvent.BreakdownTypeSelected -> {
@@ -64,31 +74,49 @@ class ReportViewModel @Inject constructor(
         }
     }
 
-    private fun loadReportDataForCurrentPeriod() {
+    private fun loadDataForPeriod(period: YearMonth) {
         viewModelScope.launch {
-            val period = _uiState.value.currentPeriod
-            val startDate = period.atDay(1).atStartOfDay()
-            val endDate = period.atEndOfMonth().atTime(23, 59, 59)
+            val startDate = period.atDay(1)
+            val endDate = period.atEndOfMonth()
+            val filter = TransactionFilter(startDate = startDate, endDate = endDate)
 
-            // Gabungkan semua Flow dari UseCase menjadi satu
-            combine(
-                getCashFlowSummaryUseCase(startDate, endDate),
-                getExpenseBreakdownUseCase(startDate, endDate),
-                getIncomeBreakdownUseCase(startDate, endDate)
-            ) { cashFlow, expenseList, incomeList ->
-                // Buat objek state baru dengan semua data yang diterima
-                _uiState.value.copy(
-                    isLoading = false,
-                    cashFlowSummary = cashFlow,
-                    expenseBreakdown = expenseList,
-                    incomeBreakdown = incomeList
-                )
-            }
+            getFilteredTransactionsUseCase(filter)
                 .onStart { _uiState.update { it.copy(isLoading = true, error = null) } }
                 .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
-                .collect { newState ->
-                    // Update state utama dengan hasil gabungan
-                    _uiState.value = newState
+                .collect { transactions ->
+                    val totalIncome = transactions.filter { it.type == TransactionType.INCOME }
+                        .sumOf { it.amount }
+                    val totalExpense = transactions.filter { it.type == TransactionType.EXPENSE }
+                        .sumOf { it.amount }
+
+                    val expenseBreakdown = transactions
+                        .filter { it.type == TransactionType.EXPENSE && it.category != null }
+                        .groupBy { it.category!! }
+                        .map { (category, transactionList) ->
+                            CategorySpending(category.name, transactionList.sumOf { it.amount })
+                        }
+                        .sortedByDescending { it.totalAmount }
+
+                    val incomeBreakdown = transactions
+                        .filter { it.type == TransactionType.INCOME && it.category != null }
+                        .groupBy { it.category!! }
+                        .map { (category, transactionList) ->
+                            CategorySpending(category.name, transactionList.sumOf { it.amount })
+                        }
+                        .sortedByDescending { it.totalAmount }
+
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            cashFlowSummary = CashFlowSummary(
+                                totalIncome,
+                                totalExpense,
+                                netCashFlow = totalIncome.subtract(totalExpense)
+                            ),
+                            expenseBreakdown = expenseBreakdown,
+                            incomeBreakdown = incomeBreakdown
+                        )
+                    }
                 }
         }
     }

@@ -2,10 +2,11 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransactionsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AllTransactions
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
@@ -16,7 +17,7 @@ import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
-import com.rifqi.trackfunds.feature.home.ui.mapper.toHomeCategorySummary
+import com.rifqi.trackfunds.feature.home.ui.state.HomeCategorySummaryItem
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,8 +47,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getCategorySummariesUseCase: GetCategorySummariesUseCase,
-    private val getRecentTransactionsUseCase: GetRecentTransactionsUseCase,
+    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
     private val getTopBudgetsUseCase: GetTopBudgetsUseCase
 ) : ViewModel() {
 
@@ -137,15 +137,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadDataForPeriod(startDate: LocalDate, endDate: LocalDate): Flow<HomeUiState> {
-        val startDateTime = startDate.atStartOfDay()
-        val endDateTime = endDate.atTime(23, 59, 59)
+        // Buat filter dasar untuk periode ini
+        val baseFilter = TransactionFilter(startDate = startDate, endDate = endDate)
 
-        val incomeFlow =
-            getCategorySummariesUseCase(TransactionType.INCOME, startDateTime, endDateTime)
-        val expenseFlow =
-            getCategorySummariesUseCase(TransactionType.EXPENSE, startDateTime, endDateTime)
-        val recentFlow = getRecentTransactionsUseCase()
-        val topBudgetsFlow = getTopBudgetsUseCase(YearMonth.now())
+        // Panggil UseCase dengan filter yang berbeda untuk setiap kebutuhan
+        val recentFlow = getFilteredTransactionsUseCase(baseFilter.copy(limit = 5)) // Ambil 5 transaksi terakhir
+        val incomeFlow = getFilteredTransactionsUseCase(baseFilter.copy(type = TransactionType.INCOME))
+        val expenseFlow = getFilteredTransactionsUseCase(baseFilter.copy(type = TransactionType.EXPENSE))
+        val topBudgetsFlow = getTopBudgetsUseCase(YearMonth.from(startDate))
 
         return combine(
             incomeFlow,
@@ -153,15 +152,17 @@ class HomeViewModel @Inject constructor(
             recentFlow,
             topBudgetsFlow,
         ) { incomeList, expenseList, recentList, topBudgetsList ->
-            val totalIncome = incomeList.sumOf { it.totalAmount }
-            val totalExpenses = expenseList.sumOf { it.totalAmount }
+            // Logika kalkulasi tetap sama
+            val totalIncome = incomeList.sumOf { it.amount }
+            val totalExpenses = expenseList.sumOf { it.amount }
 
             _uiState.value.copy(
                 isLoading = false,
                 totalIncome = totalIncome,
                 totalExpenses = totalExpenses,
-                incomeSummaries = incomeList.map { it.toHomeCategorySummary() },
-                expenseSummaries = expenseList.map { it.toHomeCategorySummary() },
+                // Kita sekarang perlu membuat ringkasan kategori secara manual di sini
+                incomeSummaries = incomeList.toCategorySummary(),
+                expenseSummaries = expenseList.toCategorySummary(),
                 recentTransactions = recentList,
                 topBudgets = topBudgetsList,
                 error = null
@@ -169,5 +170,20 @@ class HomeViewModel @Inject constructor(
         }
             .onStart { emit(_uiState.value.copy(isLoading = true)) }
             .catch { e -> emit(_uiState.value.copy(isLoading = false, error = e.message)) }
+    }
+
+    // Fungsi helper baru untuk membuat ringkasan
+    private fun List<TransactionItem>.toCategorySummary(): List<HomeCategorySummaryItem> {
+        return this.groupBy { it.category }
+            .map { (category, transactions) ->
+                HomeCategorySummaryItem(
+                    categoryId = category?.id ?: "",
+                    categoryName = category?.name ?: "Uncategorized",
+                    categoryIconIdentifier = category?.iconIdentifier,
+                    transactionType = transactions.first().type,
+                    totalAmount = transactions.sumOf { it.amount }
+                )
+            }
+            .sortedByDescending { it.totalAmount }
     }
 }

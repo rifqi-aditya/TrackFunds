@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.feature.transaction.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.time.LocalDate
 
@@ -17,7 +17,7 @@ data class AddEditTransactionUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedAccount: AccountItem? = null,
     val selectedCategory: CategoryItem? = null,
-    val selectedSavingsGoal: SavingsGoal? = null,
+    val selectedSavingsGoalItem: SavingsGoalItem? = null,
     val descriptions: String = "",
 
     // UI State
@@ -25,4 +25,4 @@ data class AddEditTransactionUiState(
     val showDeleteConfirmDialog: Boolean = false,
     val showSavingsGoalSheet: Boolean = false,
 
-)
+    )

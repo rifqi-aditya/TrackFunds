@@ -22,7 +22,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.time.LocalDateTime
 import java.util.UUID
 
 @Database(
@@ -77,7 +76,6 @@ abstract class AppDatabase : RoomDatabase() {
                     populateDatabase(
                         database.categoryDao(),
                         database.accountDao(),
-                        database.transactionDao()
                     )
                 }
             }
@@ -86,7 +84,6 @@ abstract class AppDatabase : RoomDatabase() {
         suspend fun populateDatabase(
             categoryDao: CategoryDao,
             accountDao: AccountDao,
-            transactionDao: TransactionDao
         ) {
             // --- MEMBUAT KATEGORI DEFAULT DENGAN STANDARD KEY & ICON IDENTIFIER YANG SAMA ---
             val initialCategories = listOf(
@@ -280,49 +277,6 @@ abstract class AppDatabase : RoomDatabase() {
                 ),
             )
             accountDao.insertAll(initialAccounts)
-
-            // --- 3. MEMBUAT TRANSAKSI DUMMY DENGAN FOREIGN KEY YANG BENAR ---
-
-            // Mengambil ID dari list di atas untuk memastikan foreign key valid
-            val salaryCategory = initialCategories.find { it.name == "Salary" }!!
-            val shoppingCategory = initialCategories.find { it.name == "Shopping" }!!
-            val foodCategory = initialCategories.find { it.name == "Food & Drink" }!!
-
-            val cashWalletAccount = initialAccounts.find { it.name == "Cash Wallet" }!!
-            val mbankingAccount =
-                initialAccounts.find { it.name == "MBanking" }!!
-
-            // Daftar transaksi dummy sekarang diaktifkan
-            val initialTransactions = listOf(
-                TransactionEntity(
-                    id = UUID.randomUUID().toString(),
-                    description = "Monthly Salary",
-                    amount = BigDecimal("15000000"),
-                    type = TransactionType.INCOME,
-                    date = LocalDateTime.now().minusDays(5),
-                    categoryId = salaryCategory.id,
-                    accountId = mbankingAccount.id // Mengarah ke ID MBanking
-                ),
-                TransactionEntity(
-                    id = UUID.randomUUID().toString(),
-                    description = "Monthly Shopping",
-                    amount = BigDecimal("750000"),
-                    type = TransactionType.EXPENSE,
-                    date = LocalDateTime.now().minusDays(4),
-                    categoryId = shoppingCategory.id,
-                    accountId = mbankingAccount.id // Mengarah ke ID MBanking
-                ),
-                TransactionEntity(
-                    id = UUID.randomUUID().toString(),
-                    description = "Lunch",
-                    amount = BigDecimal("50000"),
-                    type = TransactionType.EXPENSE,
-                    date = LocalDateTime.now().minusDays(2),
-                    categoryId = foodCategory.id,
-                    accountId = cashWalletAccount.id
-                )
-            )
-            transactionDao.insertAllTransaction(initialTransactions)
         }
     }
 }

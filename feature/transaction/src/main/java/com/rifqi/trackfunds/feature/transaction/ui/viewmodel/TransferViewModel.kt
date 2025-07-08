@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AccountSelectionMode
@@ -18,6 +20,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.time.LocalTime
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -112,18 +116,35 @@ class TransferViewModel @Inject constructor(
             }
 
             _uiState.update { it.copy(isLoading = true) }
+
+            val transferId = UUID.randomUUID().toString()
+            val date = state.date.atTime(LocalTime.now())
+            val amount = BigDecimal(state.amount)
+
+            val expense = TransactionItem(
+                description = "Transfer to ${state.toAccount.name}${if (state.description.isNotBlank()) ": ${state.description}" else ""}",
+                amount = amount,
+                type = TransactionType.EXPENSE,
+                date = date,
+                account = state.fromAccount,
+                transferPairId = transferId
+            )
+            val income = TransactionItem(
+                description = "Transfer from ${state.fromAccount.name}${if (state.description.isNotBlank()) ": ${state.description}" else ""}",
+                amount = amount,
+                type = TransactionType.INCOME,
+                date = date,
+                account = state.toAccount,
+                transferPairId = transferId
+            )
+
             try {
-                performTransferUseCase(
-                    fromAccount = state.fromAccount,
-                    toAccount = state.toAccount,
-                    amount = BigDecimal(state.amount),
-                    date = state.date.atStartOfDay(),
-                    description = state.description
-                )
-                snackbarManager.showMessage("Transfer successful")
+                // Panggil UseCase dengan objek yang sudah jadi
+                performTransferUseCase(expense, income)
+                snackbarManager.showMessage("Transfer berhasil")
                 _uiState.update { it.copy(isLoading = false, isTransferSuccessful = true) }
             } catch (e: Exception) {
-                snackbarManager.showMessage("Transfer failed: ${e.message}")
+                snackbarManager.showMessage("Transfer gagal: ${e.message}")
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }

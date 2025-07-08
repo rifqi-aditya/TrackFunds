@@ -10,165 +10,88 @@ import androidx.room.Update
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rifqi.trackfunds.core.data.local.dto.CashFlowDto
 import com.rifqi.trackfunds.core.data.local.dto.CategorySpendingDto
-import com.rifqi.trackfunds.core.data.local.dto.CategoryTransactionSummaryDto
 import com.rifqi.trackfunds.core.data.local.dto.TransactionDetailDto
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
+/**
+ * Data Access Object for the transactions table.
+ * Handles all database operations related to transactions.
+ */
 @Dao
 interface TransactionDao {
 
+    // =================================================================
+    // CREATE / UPDATE OPERATIONS
+    // =================================================================
+
     /**
-     * Query utama untuk mengambil daftar transaksi dengan detail kategori dan akun.
-     * Menggunakan LEFT JOIN agar transaksi tetap tampil meskipun kategorinya sudah dihapus.
+     * Inserts a single transaction. If a transaction with the same ID exists, it gets replaced.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTransaction(transaction: TransactionEntity)
+
+    /**
+     * Updates an existing transaction.
+     */
+    @Update
+    suspend fun updateTransaction(transaction: TransactionEntity)
+
+    // =================================================================
+    // READ (GET) OPERATIONS
+    // =================================================================
+
+    /**
+     * Gets a single transaction entity by its ID, without any details.
+     * Useful for quick internal checks.
+     */
+    @Query("SELECT * FROM transactions WHERE id = :transactionId")
+    suspend fun getTransactionById(transactionId: String): TransactionEntity?
+
+    /**
+     * Gets a single transaction with its full details including category, account, and savings goal info.
      */
     @Transaction
     @Query(
         """
         SELECT 
             t.*,
-            c.name AS category_name,
-            c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier
-        FROM transactions AS t
-        LEFT JOIN categories AS c ON t.category_id = c.id
-        INNER JOIN accounts AS a ON t.account_id = a.id
-        ORDER BY t.date DESC
-    """
-    )
-    fun getTransactionsWithDetails(): Flow<List<TransactionDetailDto>>
-
-    @Query(
-        """
-        SELECT 
-            t.*,
-            c.name AS category_name,
-            c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier
-        FROM transactions AS t
-        LEFT JOIN categories AS c ON t.category_id = c.id
-        INNER JOIN accounts AS a ON t.account_id = a.id
-        ORDER BY t.date DESC
-        LIMIT :limit
-    """
-    )
-    fun getRecentTransactions(limit: Int): Flow<List<TransactionDetailDto>>
-
-    @Transaction
-    @RawQuery(observedEntities = [TransactionEntity::class])
-    fun getFilteredTransactionDetailsRaw(query: SimpleSQLiteQuery): Flow<List<TransactionDetailDto>>
-
-    @Transaction
-    @Query(
-        """
-        SELECT 
-            t.*,
             c.name AS category_name, 
             c.icon_identifier AS category_icon_identifier,
             a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier
+            a.icon_identifier AS account_icon_identifier,
+            a.balance AS account_balance,
+            s.id AS savings_goal_id,
+            s.name AS savings_goal_name,
+            s.icon_identifier AS savings_goal_icon_identifier,
+            s.target_date AS savings_goal_target_date,
+            s.target_amount AS savings_goal_target_amount,
+            s.current_amount AS savings_goal_current_amount,
+            CASE WHEN s.current_amount >= s.target_amount THEN 1 ELSE 0 END AS savings_goal_is_achieved
         FROM transactions AS t
-        INNER JOIN categories AS c ON t.category_id = c.id
+        LEFT JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
+        LEFT JOIN savings_goals AS s ON t.savings_goal_id = s.id
         WHERE t.id = :transactionId
     """
     )
     fun getTransactionWithDetailsById(transactionId: String): Flow<TransactionDetailDto?>
 
+    /**
+     * The main query function that retrieves a list of transactions based on dynamic filters.
+     * NOTE: The implementation for this is in the Repository, not here. This is the DAO interface.
+     */
     @Transaction
-    @Query(
-        """
-        SELECT 
-            t.*,
-            c.name AS category_name, 
-            c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier
-        FROM transactions AS t
-        INNER JOIN categories AS c ON t.category_id = c.id
-        INNER JOIN accounts AS a ON t.account_id = a.id
-        WHERE t.type = :type AND t.date BETWEEN :startDate AND :endDate
-        ORDER BY t.date DESC
-    """
-    )
-    fun getTransactionsWithDetailsByType(
-        type: TransactionType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionDetailDto>>
+    @RawQuery(observedEntities = [TransactionEntity::class])
+    fun getFilteredTransactionDetailsRaw(query: SimpleSQLiteQuery): Flow<List<TransactionDetailDto>>
 
-
-    @Transaction
-    @Query(
-        """
-        SELECT 
-            c.id as categoryId, 
-            c.name as categoryName, 
-            c.icon_identifier as categoryIconIdentifier,
-            t.type as transactionType,
-            SUM(t.amount) as totalAmount
-        FROM transactions AS t
-        INNER JOIN categories AS c ON t.category_id = c.id
-        WHERE t.type = :type AND t.date BETWEEN :startDate AND :endDate 
-        GROUP BY c.id
-        ORDER BY totalAmount DESC
-    """
-    )
-    fun getCategoryTransactionSummaries(
-        type: TransactionType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<CategoryTransactionSummaryDto>>
-
-    @Transaction
-    @Query(
-        """
-        SELECT
-            t.*,
-            c.name AS category_name, 
-            c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier
-        FROM transactions AS t
-        INNER JOIN categories AS c ON t.category_id = c.id
-        INNER JOIN accounts AS a ON t.account_id = a.id
-        WHERE t.date BETWEEN :startDate AND :endDate
-        ORDER BY t.date DESC
-    """
-    )
-    fun getTransactionsWithDetailsByDateRange(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionDetailDto>>
-
-    @Transaction
-    @Query(
-        """
-        SELECT 
-            t.*,
-            c.name AS category_name, 
-            c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier
-        FROM transactions AS t
-        INNER JOIN categories AS c ON t.category_id = c.id
-        INNER JOIN accounts AS a ON t.account_id = a.id
-        WHERE t.category_id = :categoryId AND t.date BETWEEN :startDate AND :endDate
-        ORDER BY t.date DESC
-    """
-    )
-    fun getTransactionsWithDetailsByCategoryId(
-        categoryId: String,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionDetailDto>>
+    // =================================================================
+    // AGGREGATION / REPORTING OPERATIONS
+    // =================================================================
 
     /**
-     * Menghitung total pengeluaran per kategori untuk rentang tanggal tertentu.
+     * Calculates spending totals for each category within a given date range.
      */
     @Query(
         """
@@ -186,7 +109,7 @@ interface TransactionDao {
     ): Flow<List<CategorySpendingDto>>
 
     /**
-     * Menghitung total pemasukan per kategori untuk rentang tanggal tertentu.
+     * Calculates income totals for each category within a given date range.
      */
     @Query(
         """
@@ -204,7 +127,7 @@ interface TransactionDao {
     ): Flow<List<CategorySpendingDto>>
 
     /**
-     * Menghitung total pemasukan dan pengeluaran untuk ringkasan alur kas.
+     * Calculates the total income and total expense for a given date range.
      */
     @Query(
         """
@@ -215,39 +138,13 @@ interface TransactionDao {
     )
     fun getCashFlowSummary(startDate: LocalDateTime, endDate: LocalDateTime): Flow<CashFlowDto>
 
-    @Transaction
-    @Query(
-        """
-    SELECT
-        t.*,
-        c.name AS category_name, 
-        c.icon_identifier AS category_icon_identifier,
-        a.name AS account_name,
-        a.icon_identifier AS account_icon_identifier
-    FROM transactions AS t
-    LEFT JOIN categories AS c ON t.category_id = c.id
-    LEFT JOIN accounts AS a ON t.account_id = a.id
-    WHERE t.savings_goal_id = :goalId
-    ORDER BY t.date DESC
-"""
-    )
-    fun getTransactionsByGoalId(goalId: String): Flow<List<TransactionDetailDto>>
+    // =================================================================
+    // DELETE OPERATIONS
+    // =================================================================
 
-
-    @Query("SELECT * FROM transactions WHERE id = :transactionId")
-    suspend fun getTransactionById(transactionId: String): TransactionEntity?
-
-    @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTransaction(transaction: TransactionEntity)
-
-    @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllTransaction(transaction: List<TransactionEntity>)
-
-    @Update
-    suspend fun updateTransaction(transaction: TransactionEntity)
-
+    /**
+     * Deletes a transaction from the database by its ID.
+     */
     @Query("DELETE FROM transactions WHERE id = :transactionId")
     suspend fun deleteTransactionById(transactionId: String)
 }

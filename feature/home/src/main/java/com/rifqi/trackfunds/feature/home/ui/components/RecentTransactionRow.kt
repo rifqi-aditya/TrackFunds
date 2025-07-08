@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.home.ui.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,15 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
-import java.math.BigDecimal
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -45,8 +39,8 @@ fun RecentTransactionRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         DisplayIconFromResource(
-            identifier = item.categoryIconIdentifier,
-            contentDescription = item.categoryName,
+            identifier = item.category?.iconIdentifier,
+            contentDescription = item.category?.name,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -69,8 +63,8 @@ fun RecentTransactionRow(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 DisplayIconFromResource(
-                    identifier = item.accountIconIdentifier,
-                    contentDescription = item.accountName,
+                    identifier = item.account.iconIdentifier,
+                    contentDescription = item.account.name,
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
@@ -78,7 +72,7 @@ fun RecentTransactionRow(
                         .padding(4.dp)
                 )
                 Text(
-                    text = item.accountName,
+                    text = item.account.name,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -113,58 +107,5 @@ fun RecentTransactionRow(
             color = if (item.type == TransactionType.EXPENSE
             ) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
         )
-    }
-}
-
-// --- DUMMY DATA UNTUK PREVIEW ---
-private val previewExpenseTransaction = TransactionItem(
-    id = "trx1",
-    description = "Makan Siang di Kafe",
-    amount = BigDecimal("75000"),
-    type = TransactionType.EXPENSE,
-    date = LocalDateTime.now(),
-    categoryId = "cat1",
-    categoryName = "Makan & Minum",
-    categoryIconIdentifier = "food",
-    accountId = "acc1",
-    accountName = "Cash",
-    accountIconIdentifier = "cash",
-)
-
-private val previewIncomeTransaction = TransactionItem(
-    id = "trx2",
-    description = "Gaji Bulanan",
-    amount = BigDecimal("7500000"),
-    type = TransactionType.INCOME,
-    date = LocalDateTime.now(),
-    categoryId = "cat2",
-    categoryName = "Gaji",
-    categoryIconIdentifier = "salary",
-    accountId = "acc2",
-    accountName = "Bank",
-    accountIconIdentifier = "bank",
-)
-
-// --- FUNGSI PREVIEW ---
-
-@Preview(name = "Recent Transaction Rows - Light", showBackground = true)
-@Preview(
-    name = "Recent Transaction Rows - Dark",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun RecentTransactionRowPreview() {
-    TrackFundsTheme {
-        // Gunakan Column untuk menumpuk beberapa contoh
-        Column {
-            RecentTransactionRow(
-                item = previewExpenseTransaction,
-            )
-            HorizontalDivider()
-            RecentTransactionRow(
-                item = previewIncomeTransaction,
-            )
-        }
     }
 }

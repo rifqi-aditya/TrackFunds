@@ -38,19 +38,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
+import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionListEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionListUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionListViewModel
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 /**
@@ -252,106 +246,3 @@ fun TransactionScreenContent(
         }
     }
 }
-
-// --- DUMMY DATA UNTUK PREVIEW ---
-private val previewTransactions = listOf(
-    TransactionItem(
-        id = "1",
-        amount = BigDecimal("50000"),
-        type = TransactionType.EXPENSE,
-        date = LocalDateTime.now(),
-        description = "Kopi Pagi",
-        categoryName = "Makan & Minum",
-        accountName = "Dompet Digital",
-        categoryIconIdentifier = "restaurant",
-        categoryId = "cat3",
-        accountId = "acc3",
-        accountIconIdentifier = "bank_account",
-        transferPairId = "trf1"
-    ),
-    TransactionItem(
-        id = "2",
-        amount = BigDecimal("7500000"),
-        type = TransactionType.INCOME,
-        date = LocalDateTime.now().minusDays(1),
-        description = "Gaji Bulanan",
-        categoryName = "Gaji",
-        accountName = "Rekening Utama",
-        categoryIconIdentifier = "salary",
-        categoryId = "cat1",
-        accountId = "acc1",
-        accountIconIdentifier = "bank_account",
-        transferPairId = "trf2"
-    ),
-    TransactionItem(
-        id = "3",
-        amount = BigDecimal("150000"),
-        type = TransactionType.EXPENSE,
-        date = LocalDateTime.now().minusDays(2),
-        description = "Bensin Motor",
-        categoryName = "Transportasi",
-        accountName = "Uang Tunai",
-        categoryIconIdentifier = "transportation",
-        categoryId = "cat2",
-        accountId = "acc2",
-        accountIconIdentifier = "bank_account",
-        transferPairId = "trf1",
-    )
-)
-
-private val previewUiStateLoaded = TransactionListUiState(
-    isLoading = false,
-    activeFilter = TransactionFilter(
-        searchQuery = "",
-        categoryIds = listOf("cat1", "cat2"),
-        startDate = LocalDate.now(),
-        endDate = LocalDate.now(),
-    ),
-    transactions = previewTransactions,
-    totalIncome = BigDecimal("7500000"),
-    totalExpense = BigDecimal("225000")
-)
-
-// --- FUNGSI-FUNGSI PREVIEW ---
-//
-//@Preview(showBackground = true, name = "Transaction Screen - Loaded")
-//@Composable
-//private fun TransactionScreenContentLoadedPreview() {
-//    TrackFundsTheme {
-//        TransactionScreenContent(
-//            uiState = previewUiStateLoaded,
-//            onEvent = {},
-//            activeChips = TODO(),
-//            onTransactionClick = TODO(),
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "Transaction Screen - Empty")
-//@Composable
-//private fun TransactionScreenContentEmptyPreview() {
-//    TrackFundsTheme {
-//        TransactionScreenContent(
-//            uiState = previewUiStateLoaded.copy(
-//                transactions = emptyList(),
-//                error = "Tidak ada transaksi ditemukan." // Contoh pesan error saat kosong
-//            ),
-//            onEvent = {},
-//            onNavigateToFilter = {},
-//            onTransactionClick = {}
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true, name = "Transaction Screen - Loading")
-//@Composable
-//private fun TransactionScreenContentLoadingPreview() {
-//    TrackFundsTheme {
-//        TransactionScreenContent(
-//            uiState = TransactionListUiState(isLoading = true),
-//            onEvent = {},
-//            onNavigateToFilter = {},
-//            onTransactionClick = {}
-//        )
-//    }
-//}

@@ -8,13 +8,12 @@ data class BudgetItem(
     val categoryId: String,
     val categoryName: String,
     val categoryIconIdentifier: String?,
-    val budgetAmount: BigDecimal, // Jumlah yang dianggarkan
-    val spentAmount: BigDecimal,  // Jumlah yang sudah dihabiskan
-    val period: String // Contoh: "2025-06" untuk Juni 2025
+    val budgetAmount: BigDecimal,
+    val spentAmount: BigDecimal,
+    val period: String
 ) {
-    // Properti bantuan untuk kemudahan di UI
     val remainingAmount: BigDecimal
-        get() = (budgetAmount ?: BigDecimal.ZERO).subtract(spentAmount)
+        get() = budgetAmount.subtract(spentAmount)
 
     val progress: Float
         get() = if (budgetAmount > BigDecimal.ZERO) {

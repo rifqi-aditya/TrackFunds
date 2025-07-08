@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.transaction.ui.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,14 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.theme.extendedColors
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -52,8 +48,6 @@ import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionDetailEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionDetailUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionDetailViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.math.BigDecimal
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -162,8 +156,8 @@ fun TransactionDetailContent(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     DisplayIconFromResource(
-                        identifier = transaction.categoryIconIdentifier,
-                        contentDescription = transaction.categoryName,
+                        identifier = transaction.category?.iconIdentifier,
+                        contentDescription = transaction.category?.name,
                         modifier = Modifier
                             .size(64.dp)
                             .clip(CircleShape)
@@ -199,8 +193,8 @@ fun TransactionDetailContent(
                     DetailRow(label = "Account Source") {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             DisplayIconFromResource(
-                                identifier = transaction.accountIconIdentifier,
-                                contentDescription = transaction.accountName,
+                                identifier = transaction.account.iconIdentifier,
+                                contentDescription = transaction.account.name,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clip(CircleShape)
@@ -211,10 +205,9 @@ fun TransactionDetailContent(
                                     )
                                     .padding(4.dp)
                             )
-                            println(transaction.accountIconIdentifier)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = transaction.accountName,
+                                text = transaction.account.name,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.secondary
@@ -242,7 +235,7 @@ fun TransactionDetailContent(
 
                     DetailRow(label = "Category") {
                         Text(
-                            text = transaction.categoryName,
+                            text = transaction.category?.name ?: "-",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.secondary
@@ -264,40 +257,5 @@ fun TransactionDetailContent(
                 }
             }
         }
-    }
-}
-
-
-// --- DUMMY DATA UNTUK PREVIEW ---
-private val previewTransactionDetail = TransactionItem(
-    id = "trx1",
-    description = "Beli Bensin di Pertamina",
-    amount = BigDecimal("400000"),
-    type = TransactionType.EXPENSE,
-    date = LocalDateTime.of(2025, 6, 27, 10, 30),
-    categoryId = "cat-fuel",
-    categoryName = "Bensin",
-    categoryIconIdentifier = "local_gas_station",
-    accountId = "acc-kas",
-    accountName = "KAS",
-)
-
-@Preview(showBackground = true, name = "Transaction Detail - Light Mode")
-@Preview(
-    showBackground = true,
-    name = "Transaction Detail - Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun TransactionDetailContentPreview() {
-    TrackFundsTheme {
-        TransactionDetailContent(
-            uiState = TransactionDetailUiState(
-                isLoading = false,
-                transaction = previewTransactionDetail
-            ),
-            onEvent = {},
-            onNavigateBack = {}
-        )
     }
 }

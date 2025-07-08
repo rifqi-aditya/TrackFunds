@@ -1,109 +1,43 @@
 package com.rifqi.trackfunds.core.domain.repository
 
-import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
-import com.rifqi.trackfunds.core.domain.model.CategorySpending
-import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDateTime
+import java.math.BigDecimal
 
-/**
- * Interface (kontrak) untuk Repository Transaksi.
- */
 interface TransactionRepository {
-
-    // --- READ ---
     /**
-     * Mengambil semua transaksi sebagai stream data yang reaktif.
-     */
-    fun getTransactions(): Flow<List<TransactionItem>>
-
-    /**
-     * Mengambil transaksi berdasarkan filter tertentu.
-     * Filter ini bisa mencakup rentang tanggal, tipe transaksi, kategori, dll.
+     * Retrieves a filtered list of transactions.
+     * This is the main function to get transactions based on various criteria.
      */
     fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionItem>>
 
     /**
-     * Mengambil transaksi dalam rentang tanggal tertentu.
-     */
-    fun getTransactionsByDateRange(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionItem>>
-
-    /**
-     * Mengambil transaksi berdasarkan tipe (EXPENSE atau INCOME).
-     */
-    fun getTransactionsByType(
-        type: TransactionType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionItem>>
-
-    /**
-     * Mengambil transaksi untuk akun spesifik.
-     */
-    fun getTransactionsForAccount(accountId: String): Flow<List<TransactionItem>>
-
-    /**
-     * Mengambil satu transaksi berdasarkan ID-nya.
+     * Retrieves a single transaction by its ID.
      */
     fun getTransactionById(transactionId: String): Flow<TransactionItem?>
 
-    // --- CREATE ---
     /**
-     * Menyimpan transaksi baru ke dalam data source.
-     * Ini juga harus mengupdate saldo akun terkait.
+     * Inserts a new transaction and updates the corresponding account balance.
      */
     suspend fun insertTransaction(transaction: TransactionItem)
 
-    // --- UPDATE ---
     /**
-     * Memperbarui transaksi yang sudah ada.
-     * Ini harus menangani perubahan pada saldo akun yang lama dan baru jika akun berubah.
+     * Updates an existing transaction and adjusts account balances accordingly.
      */
-    suspend fun updateTransaction(transaction: TransactionItem)
+    suspend fun updateTransaction(
+        transaction: TransactionItem,
+        oldAmount: BigDecimal,
+        oldAccountId: String
+    )
 
-    // --- DELETE ---
     /**
-     * Menghapus transaksi berdasarkan ID.
-     * Ini juga harus mengembalikan (revert) saldo akun terkait.
+     * Deletes a transaction and reverts the account balance.
      */
-    suspend fun deleteTransaction(transactionId: String)
+    suspend fun deleteTransaction(transaction: TransactionItem)
 
-    fun getCategorySummaries(
-        type: TransactionType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<CategorySummaryItem>>
-
-    fun getTransactionsByCategoryId(
-        categoryId: String,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TransactionItem>>
-
+    /**
+     * Executes a transfer between two accounts by creating an expense and an income transaction atomically.
+     */
     suspend fun performTransfer(expense: TransactionItem, income: TransactionItem)
-
-    fun getExpenseBreakdownForPeriod(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<CategorySpending>>
-
-    fun getIncomeBreakdownForPeriod(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<CategorySpending>>
-
-    fun getCashFlowSummaryForPeriod(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<CashFlowSummary>
-
-    fun getRecentTransactions(limit: Int): Flow<List<TransactionItem>>
-
-    fun getTransactionsByGoalId(goalId: String): Flow<List<TransactionItem>>
 }

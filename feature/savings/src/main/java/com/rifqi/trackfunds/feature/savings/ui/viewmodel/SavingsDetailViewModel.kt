@@ -4,9 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.rifqi.trackfunds.core.domain.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsForSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AddEditSavingsGoal
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.feature.savings.ui.event.SavingsDetailEvent
@@ -27,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SavingsDetailViewModel @Inject constructor(
     private val getSavingsGoalByIdUseCase: GetSavingsGoalByIdUseCase,
-    private val getTransactionsForSavingsGoalUseCase: GetTransactionsForSavingsGoalUseCase,
+    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
     private val deleteSavingsGoalUseCase: DeleteSavingsGoalUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -42,9 +43,12 @@ class SavingsDetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            // Buat filter khusus untuk mengambil transaksi yang terhubung dengan goalId ini
+            val transactionFilter = TransactionFilter(savingsGoalId = goalId)
+
             combine(
                 getSavingsGoalByIdUseCase(goalId),
-                getTransactionsForSavingsGoalUseCase(goalId)
+                getFilteredTransactionsUseCase(transactionFilter)
             ) { goal, transactions ->
                 _uiState.update {
                     it.copy(
@@ -56,12 +60,7 @@ class SavingsDetailViewModel @Inject constructor(
             }
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = e.message
-                        )
-                    }
+                    _uiState.update { it.copy(isLoading = false, error = e.message) }
                 }
                 .collect()
         }

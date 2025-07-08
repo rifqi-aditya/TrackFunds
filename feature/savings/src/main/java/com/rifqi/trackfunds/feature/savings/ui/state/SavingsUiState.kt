@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.savings.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import java.math.BigDecimal
 
 /**
@@ -14,5 +14,5 @@ data class SavingsUiState(
     val totalSavings: BigDecimal = BigDecimal.ZERO,
 
     // Daftar semua tujuan tabungan yang aktif
-    val savingsGoals: List<SavingsGoal> = emptyList()
+    val savingsGoalItems: List<SavingsGoalItem> = emptyList()
 )

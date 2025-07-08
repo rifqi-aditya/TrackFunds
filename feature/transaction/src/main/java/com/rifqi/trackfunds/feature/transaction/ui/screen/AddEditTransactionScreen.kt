@@ -129,7 +129,7 @@ fun AddEditTransactionScreen(
             text = { Text("Are you sure you want to delete this transaction? This action cannot be undone.") },
             confirmButton = {
                 Button(
-                    onClick = { viewModel.onConfirmDelete() },
+                    onClick = { viewModel.onEvent(AddEditTransactionEvent.ConfirmDeleteClicked) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) { Text("Delete") }
             },
@@ -228,6 +228,7 @@ fun AddEditTransactionContent(
                 .fillMaxWidth()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             AnimatedSlideToggleButton(
                 items = transactionTypes,
@@ -313,9 +314,9 @@ private fun SavingsFormContent(
 ) {
     FormSelectorField(
         label = "Savings Goal",
-        value = uiState.selectedSavingsGoal?.name ?: "Choose savings goal",
+        value = uiState.selectedSavingsGoalItem?.name ?: "Choose savings goal",
         onClick = { onEvent(AddEditTransactionEvent.SavingsGoalSelectorClicked) },
-        leadingIconRes = uiState.selectedSavingsGoal?.iconIdentifier,
+        leadingIconRes = uiState.selectedSavingsGoalItem?.iconIdentifier,
     )
 
     FormSelectorField(

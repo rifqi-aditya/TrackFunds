@@ -18,14 +18,14 @@ interface SavingsGoalDao {
     suspend fun updateGoal(goal: SavingsGoalEntity)
 
     // Mengambil semua tujuan tabungan yang masih aktif
-    @Query("SELECT * FROM savings_goals WHERE isAchieved = 0 ORDER BY targetDate ASC")
+    @Query("SELECT * FROM savings_goals WHERE is_achieved = 0 ORDER BY target_date ASC")
     fun getActiveGoals(): Flow<List<SavingsGoalEntity>>
 
     @Query("SELECT * FROM savings_goals WHERE id = :goalId")
     fun getGoalById(goalId: String): Flow<SavingsGoalEntity?>
 
     // Menambah jumlah saldo pada tujuan tabungan tertentu
-    @Query("UPDATE savings_goals SET currentAmount = currentAmount + :amount WHERE id = :goalId")
+    @Query("UPDATE savings_goals SET current_amount = current_amount + :amount WHERE id = :goalId")
     suspend fun addFundsToGoal(goalId: String, amount: BigDecimal)
 
     @Query("DELETE FROM savings_goals WHERE id = :goalId")

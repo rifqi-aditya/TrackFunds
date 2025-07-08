@@ -66,9 +66,6 @@ data object Notifications : AppScreen
 data object Transfer : AppScreen
 
 @Serializable
-data class AccountTimeline(val accountId: String) : AppScreen
-
-@Serializable
 data class AddEditBudget(val period: String, val budgetId: String? = null) : AppScreen
 
 @Serializable

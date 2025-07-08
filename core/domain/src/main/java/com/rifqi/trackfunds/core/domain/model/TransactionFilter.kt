@@ -8,5 +8,7 @@ data class TransactionFilter(
     val endDate: LocalDate? = null,
     val accountIds: List<String>? = null,
     val categoryIds: List<String>? = null,
-    val type: TransactionType? = null
+    val savingsGoalId: String? = null,
+    val type: TransactionType? = null,
+    val limit: Int? = null,
 )

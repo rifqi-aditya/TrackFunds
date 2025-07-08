@@ -56,30 +56,37 @@ class TransactionDetailViewModel @Inject constructor(
     }
 
     fun onEvent(event: TransactionDetailEvent) {
-        viewModelScope.launch {
-            when (event) {
-                TransactionDetailEvent.EditClicked -> {
+        when (event) {
+            TransactionDetailEvent.EditClicked -> {
+                viewModelScope.launch {
                     _navigationEvent.emit(AddEditTransaction(transactionId = transactionId))
                 }
+            }
 
-                TransactionDetailEvent.DeleteClicked -> {
-                    _uiState.update { it.copy(showDeleteConfirmDialog = true) }
-                }
+            TransactionDetailEvent.DeleteClicked -> {
+                _uiState.update { it.copy(showDeleteConfirmDialog = true) }
+            }
 
-                TransactionDetailEvent.ConfirmDeleteClicked -> {
-                    _uiState.update { it.copy(showDeleteConfirmDialog = false, isLoading = true) }
-                    try {
-                        deleteTransactionUseCase(transactionId)
-                        // Kirim sinyal kembali ke layar sebelumnya untuk menutup halaman ini
-                        _navigationEvent.emit(Home) // Atau rute lain yang sesuai
-                    } catch (e: Exception) {
-                        _uiState.update { it.copy(isLoading = false, error = e.message) }
-                    }
-                }
+            TransactionDetailEvent.ConfirmDeleteClicked -> {
+                deleteTransaction()
+            }
 
-                TransactionDetailEvent.DismissDeleteDialog -> {
-                    _uiState.update { it.copy(showDeleteConfirmDialog = false) }
-                }
+            TransactionDetailEvent.DismissDeleteDialog -> {
+                _uiState.update { it.copy(showDeleteConfirmDialog = false) }
+            }
+        }
+    }
+
+    private fun deleteTransaction() {
+        val transactionToDelete = _uiState.value.transaction ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
+            try {
+                deleteTransactionUseCase(transactionToDelete)
+                _navigationEvent.emit(Home)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }
     }

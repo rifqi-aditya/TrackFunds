@@ -8,7 +8,7 @@ import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import com.rifqi.trackfunds.core.domain.model.ScanResult
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
@@ -74,8 +74,10 @@ class AddEditTransactionViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<AppScreen>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
-    private val _savingsGoals = MutableStateFlow<List<SavingsGoal>>(emptyList())
-    val savingsGoals = _savingsGoals.asStateFlow()
+    private val _savingsGoalsItem = MutableStateFlow<List<SavingsGoalItem>>(emptyList())
+    val savingsGoals = _savingsGoalsItem.asStateFlow()
+
+    private var originalTransaction: TransactionItem? = null
 
     init {
         if (isEditMode) {
@@ -84,11 +86,32 @@ class AddEditTransactionViewModel @Inject constructor(
 
         viewModelScope.launch {
             getActiveSavingsGoalsUseCase().collect {
-                _savingsGoals.value = it
+                _savingsGoalsItem.value = it
             }
         }
 
         observeNavigationResults()
+    }
+
+    private fun loadTransactionForEdit(id: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            // Ambil dan simpan transaksi awal untuk perbandingan saat update
+            getTransactionByIdUseCase(id).first()?.let { transaction ->
+                originalTransaction = transaction
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        amount = transaction.amount.toPlainString(),
+                        selectedTransactionType = transaction.type,
+                        selectedDate = transaction.date.toLocalDate(),
+                        selectedAccount = transaction.account,
+                        selectedCategory = transaction.category,
+                        descriptions = transaction.description
+                    )
+                }
+            } ?: _uiState.update { it.copy(isLoading = false, error = "Transaction not found.") }
+        }
     }
 
     fun onEvent(event: AddEditTransactionEvent) {
@@ -103,7 +126,7 @@ class AddEditTransactionViewModel @Inject constructor(
                     selectedTransactionType = event.type,
                     selectedCategory = null,
                     selectedAccount = null,
-                    selectedSavingsGoal = null
+                    selectedSavingsGoalItem = null
                 )
             }
 
@@ -125,13 +148,16 @@ class AddEditTransactionViewModel @Inject constructor(
 
             // Aksi Klik Tombol/UI
             AddEditTransactionEvent.SaveClicked -> saveTransaction()
-            AddEditTransactionEvent.DeleteClicked -> _uiState.update {
-                it.copy(
-                    showDeleteConfirmDialog = true
-                )
+            AddEditTransactionEvent.DeleteClicked -> {
+                if (isEditMode) {
+                    _uiState.update { it.copy(showDeleteConfirmDialog = true) }
+                }
             }
 
-            AddEditTransactionEvent.ConfirmDeleteClicked -> deleteTransaction()
+            AddEditTransactionEvent.ConfirmDeleteClicked -> {
+                originalTransaction?.let { deleteTransaction(it) }
+            }
+
             AddEditTransactionEvent.DismissDeleteDialog -> _uiState.update {
                 it.copy(
                     showDeleteConfirmDialog = false
@@ -178,7 +204,7 @@ class AddEditTransactionViewModel @Inject constructor(
             is AddEditTransactionEvent.SavingsGoalSelected -> {
                 _uiState.update {
                     it.copy(
-                        selectedSavingsGoal = event.goal,
+                        selectedSavingsGoalItem = event.goal,
                         showSavingsGoalSheet = false
                     )
                 }
@@ -195,32 +221,6 @@ class AddEditTransactionViewModel @Inject constructor(
             }
             if (resultData != null) resultManager.setResult(null)
         }.launchIn(viewModelScope)
-    }
-
-    private fun loadTransactionForEdit(id: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val transactionItem = getTransactionByIdUseCase(id).first()
-
-            if (transactionItem != null) {
-                val account = getAccountUseCase(transactionItem.accountId)
-                val category = transactionItem.categoryId?.let { getCategoryUseCase(it) }
-
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        amount = transactionItem.amount.toPlainString(),
-                        selectedTransactionType = transactionItem.type,
-                        selectedDate = transactionItem.date.toLocalDate(),
-                        selectedAccount = account,
-                        selectedCategory = category,
-                        descriptions = transactionItem.description
-                    )
-                }
-            } else {
-                _uiState.update { it.copy(isLoading = false, error = "Transaction not found.") }
-            }
-        }
     }
 
     private fun handleScanResult(scanResult: ScanResult) {
@@ -248,14 +248,14 @@ class AddEditTransactionViewModel @Inject constructor(
     private fun saveTransaction() {
         viewModelScope.launch {
             val currentState = _uiState.value
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, error = null) } // Set loading dan hapus error lama
 
             // Cek tipe transaksi yang dipilih
             if (currentState.selectedTransactionType == TransactionType.SAVINGS) {
                 // --- ALUR UNTUK TABUNGAN ---
 
                 // Validasi untuk form tabungan
-                if (currentState.selectedAccount == null || currentState.selectedSavingsGoal == null || currentState.amount.isBlank()) {
+                if (currentState.selectedAccount == null || currentState.selectedSavingsGoalItem == null || currentState.amount.isBlank()) {
                     _uiState.update { it.copy(error = "Akun dan Tujuan Tabungan harus diisi.", isLoading = false) }
                     return@launch
                 }
@@ -264,16 +264,14 @@ class AddEditTransactionViewModel @Inject constructor(
                 // karena mengurangi saldo akun, tetapi dihubungkan ke savingsGoalId.
                 val savingsTransaction = TransactionItem(
                     id = editingTransactionId ?: UUID.randomUUID().toString(),
-                    description = currentState.descriptions,
+                    description = currentState.descriptions.ifBlank { "Setoran ke ${currentState.selectedSavingsGoalItem.name}" },
                     amount = BigDecimal(currentState.amount),
                     type = TransactionType.EXPENSE,
-                    date = currentState.selectedDate.atTime(LocalTime.MAX),
-                    categoryId = currentState.selectedCategory?.id, // Gunakan ID & nama dari tujuan tabungan
-                    categoryName = currentState.selectedCategory?.name ?: "",
-                    categoryIconIdentifier = currentState.selectedSavingsGoal.iconIdentifier,
-                    accountId = currentState.selectedAccount.id,
-                    accountName = currentState.selectedAccount.name,
-                    savingsGoalId = currentState.selectedSavingsGoal.id // Hubungkan ke ID tujuan tabungan
+                    date = currentState.selectedDate.atTime(LocalTime.now()),
+                    category = null, // Transaksi tabungan tidak memiliki kategori pengeluaran
+                    account = currentState.selectedAccount,
+                    savingsGoalItem = currentState.selectedSavingsGoalItem,
+                    transferPairId = null
                 )
 
                 try {
@@ -281,7 +279,7 @@ class AddEditTransactionViewModel @Inject constructor(
                     addTransactionUseCase(savingsTransaction)
                     // 2. Tambahkan dana ke tujuan tabungan
                     addFundsToSavingsGoalUseCase(
-                        goalId = currentState.selectedSavingsGoal.id,
+                        goalId = currentState.selectedSavingsGoalItem.id,
                         amount = BigDecimal(currentState.amount)
                     )
                     snackbarManager.showMessage("Setoran berhasil ditambahkan")
@@ -291,11 +289,11 @@ class AddEditTransactionViewModel @Inject constructor(
                 }
 
             } else {
-                // --- ALUR UNTUK INCOME & EXPENSE (TETAP SAMA) ---
+                // --- ALUR UNTUK INCOME & EXPENSE ---
 
                 // Validasi untuk form standar
                 if (currentState.selectedAccount == null || currentState.selectedCategory == null || currentState.amount.isBlank()) {
-                    _uiState.update { it.copy(error = "Please fill all required fields.", isLoading = false) }
+                    _uiState.update { it.copy(error = "Akun dan Kategori harus diisi.", isLoading = false) }
                     return@launch
                 }
 
@@ -304,21 +302,22 @@ class AddEditTransactionViewModel @Inject constructor(
                     description = currentState.descriptions,
                     amount = BigDecimal(currentState.amount),
                     type = currentState.selectedTransactionType,
-                    date = currentState.selectedDate.atTime(LocalTime.MAX),
-                    categoryId = currentState.selectedCategory.id,
-                    categoryName = currentState.selectedCategory.name,
-                    categoryIconIdentifier = currentState.selectedCategory.iconIdentifier,
-                    accountId = currentState.selectedAccount.id,
-                    accountName = currentState.selectedAccount.name
+                    date = currentState.selectedDate.atTime(LocalTime.now()),
+                    category = currentState.selectedCategory,
+                    account = currentState.selectedAccount,
+                    savingsGoalItem = null // Bukan transaksi tabungan
                 )
 
                 try {
                     if (isEditMode) {
-                        updateTransactionUseCase(transactionToSave)
-                        snackbarManager.showMessage("Transaction updated successfully")
+                        // Pastikan originalTransaction tidak null untuk mendapatkan data lama
+                        originalTransaction?.let { oldTx ->
+                            updateTransactionUseCase(transactionToSave, oldTx.amount, oldTx.account.id)
+                            snackbarManager.showMessage("Transaksi berhasil diperbarui")
+                        }
                     } else {
                         addTransactionUseCase(transactionToSave)
-                        snackbarManager.showMessage("Transaction saved successfully")
+                        snackbarManager.showMessage("Transaksi berhasil disimpan")
                     }
                     _navigationEvent.emit(Home) // Kembali ke Home
                 } catch (e: Exception) {
@@ -328,22 +327,14 @@ class AddEditTransactionViewModel @Inject constructor(
         }
     }
 
-    fun deleteTransaction() {
-        if (isEditMode) {
-            _uiState.update { it.copy(showDeleteConfirmDialog = true) }
-        }
-    }
-
-    fun onConfirmDelete() {
-        if (isEditMode) {
-            viewModelScope.launch {
-                _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
-                try {
-                    deleteTransactionUseCase(editingTransactionId!!)
-                    _uiState.update { it.copy(isLoading = false, isTransactionSaved = true) }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(isLoading = false, error = e.message) }
-                }
+    private fun deleteTransaction(transactionToDelete: TransactionItem) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
+            try {
+                deleteTransactionUseCase(transactionToDelete)
+                _navigationEvent.emit(Home)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }
     }

@@ -26,12 +26,6 @@ import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKe
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.report.GetCashFlowSummaryUseCase
-import com.rifqi.trackfunds.core.domain.usecase.report.GetCashFlowSummaryUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCase
-import com.rifqi.trackfunds.core.domain.usecase.report.GetExpenseBreakdownUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCase
-import com.rifqi.trackfunds.core.domain.usecase.report.GetIncomeBreakdownUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCase
@@ -50,24 +44,10 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCas
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetCategorySummariesUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransactionsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetRecentTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByCategoryIdUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByCategoryIdUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByDateRangeUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByTypeUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsByTypeUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsForSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsForSavingsGoalUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCase
@@ -140,45 +120,9 @@ abstract class DomainModule {
 
     @Binds
     @Singleton
-    abstract fun bindGetTransactionsUseCase(
-        useCaseImpl: GetTransactionsUseCaseImpl
-    ): GetTransactionsUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetRecentTransactionsUseCase(
-        useCaseImpl: GetRecentTransactionsUseCaseImpl
-    ): GetRecentTransactionsUseCase
-
-    @Binds
-    @Singleton
     abstract fun bindGetFilteredTransactionsUseCase(
         useCaseImpl: GetFilteredTransactionsUseCaseImpl
     ): GetFilteredTransactionsUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetCategorySummariesUseCase(
-        useCaseImpl: GetCategorySummariesUseCaseImpl
-    ): GetCategorySummariesUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetTransactionsByDateRangeUseCase(
-        useCaseImpl: GetTransactionsByDateRangeUseCaseImpl
-    ): GetTransactionsByDateRangeUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetTransactionsByTypeUseCase(
-        useCaseImpl: GetTransactionsByTypeUseCaseImpl
-    ): GetTransactionsByTypeUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetTransactionsByCategoryIdUseCase(
-        getTransactionsByCategoryIdUseCaseImpl: GetTransactionsByCategoryIdUseCaseImpl
-    ): GetTransactionsByCategoryIdUseCase
 
     @Binds
     @Singleton
@@ -203,12 +147,6 @@ abstract class DomainModule {
     abstract fun bindPerformTransferUseCase(
         useCaseImpl: PerformTransferUseCaseImpl
     ): PerformTransferUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetTransactionsForSavingsGoalUseCase(
-        useCaseImpl: GetTransactionsForSavingsGoalUseCaseImpl
-    ): GetTransactionsForSavingsGoalUseCase
 
     // --- Budget Use Case ---
     @Binds
@@ -254,24 +192,6 @@ abstract class DomainModule {
         useCaseImpl: ScanReceiptUseCaseImpl
     ): ScanReceiptUseCase
 
-    // --- Report Use Case ---
-    @Binds
-    @Singleton
-    abstract fun bindGetCashFlowSummaryUseCase(
-        useCaseImpl: GetCashFlowSummaryUseCaseImpl
-    ): GetCashFlowSummaryUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetExpenseBreakdownUseCase(
-        useCaseImpl: GetExpenseBreakdownUseCaseImpl
-    ): GetExpenseBreakdownUseCase
-
-    @Binds
-    @Singleton
-    abstract fun bindGetIncomeBreakdownUseCase(
-        useCaseImpl: GetIncomeBreakdownUseCaseImpl
-    ): GetIncomeBreakdownUseCase
 
     // --- Savings Use Case ---
     @Binds
