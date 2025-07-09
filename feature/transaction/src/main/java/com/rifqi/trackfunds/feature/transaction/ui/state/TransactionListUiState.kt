@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import java.math.BigDecimal
 

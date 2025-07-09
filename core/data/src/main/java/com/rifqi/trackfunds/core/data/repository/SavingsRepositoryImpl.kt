@@ -6,6 +6,7 @@ import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
 import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
 import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,13 @@ class SavingsRepositoryImpl @Inject constructor(
         return savingsGoalDao.getActiveGoals().map { entityList ->
             entityList.map { it.toDomain() }
         }
+    }
+
+    override fun getFilteredGoals(filter: SavingsFilter): Flow<List<SavingsGoalItem>> {
+        return savingsGoalDao.getFilteredGoals(isAchieved = filter.isAchieved)
+            .map { entityList ->
+                entityList.map { it.toDomain() }
+            }
     }
 
     override suspend fun getGoalById(goalId: String): Flow<SavingsGoalItem?> {

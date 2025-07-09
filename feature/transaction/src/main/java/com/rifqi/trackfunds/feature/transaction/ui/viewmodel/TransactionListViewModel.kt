@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.feature.transaction.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCase
@@ -151,7 +151,7 @@ class TransactionListViewModel @Inject constructor(
 
 
         val dateLabel = when {
-            filter.startDate == null && filter.endDate == null -> null // All Time, jangan tampilkan chip
+            filter.startDate == null && filter.endDate == null -> null
             filter.startDate == today && filter.endDate == today -> DateRangeOption.TODAY.displayName
             filter.startDate == today.minusDays(6) && filter.endDate == today -> DateRangeOption.LAST_7_DAYS.displayName
 

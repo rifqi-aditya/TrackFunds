@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase

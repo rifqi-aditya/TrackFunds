@@ -8,6 +8,7 @@ import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
 import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import java.math.BigDecimal
 
 /**
  * Maps a [TransactionDetailDto] (a flat object from the database query)
@@ -15,52 +16,40 @@ import com.rifqi.trackfunds.core.domain.model.TransactionItem
  * It safely handles cases where a transaction might not have a category or a savings goal.
  */
 fun TransactionDetailDto.toDomain(): TransactionItem {
-    // 1. Ambil data transaksi dasar
-    val transactionEntity = this.transaction
-
-    // 2. Buat objek CategoryItem hanya jika data kategori tidak null
-    val categoryItem = this.category?.let { categoryInfo ->
-        transactionEntity.categoryId?.let { categoryId ->
-            CategoryItem(
-                id = categoryId,
-                name = categoryInfo.name,
-                iconIdentifier = categoryInfo.categoryIconIdentifier,
-                type = transactionEntity.type
-            )
-        }
-    }
-
-    // 3. Buat objek SavingsGoalItem hanya jika data tabungan tidak null
-    val savingsGoalItem = this.savingsGoal?.let { savingsInfo ->
-        transactionEntity.savingsGoalId?.let { goalId ->
-            SavingsGoalItem(
-                id = goalId,
-                name = savingsInfo.name,
-                iconIdentifier = savingsInfo.iconIdentifier,
-                targetAmount = savingsInfo.targetAmount.toBigDecimal(),
-                currentAmount = savingsInfo.currentAmount.toBigDecimal(),
-                targetDate = savingsInfo.targetDate,
-                isAchieved = savingsInfo.isAchieved
-            )
-        }
-    }
-
-    // 4. Buat objek TransactionItem final
     return TransactionItem(
-        id = transactionEntity.id,
-        description = transactionEntity.description,
-        amount = transactionEntity.amount,
-        type = transactionEntity.type,
-        date = transactionEntity.date,
-        transferPairId = transactionEntity.transferPairId,
-        category = categoryItem,
-        savingsGoalItem = savingsGoalItem,
-        // Account selalu ada karena menggunakan INNER JOIN
+        id = this.transaction.id,
+        description = this.transaction.description,
+        amount = this.transaction.amount,
+        type = this.transaction.type,
+        date = this.transaction.date,
+        transferPairId = this.transaction.transferPairId,
+
+        category = this.category?.let { categoryInfo ->
+            CategoryItem(
+                id = this.transaction.categoryId ?: "",
+                name = categoryInfo.name ?: "",
+                iconIdentifier = categoryInfo.categoryIconIdentifier ?: "",
+                type = transaction.type,
+            )
+        },
+
+        savingsGoalItem = this.savingsGoal?.let { savingsInfo ->
+            SavingsGoalItem(
+                id = this.transaction.savingsGoalId ?: "",
+                name = savingsInfo.name ?: "",
+                iconIdentifier = savingsInfo.iconIdentifier ?: "",
+                targetAmount = savingsInfo.targetAmount ?: BigDecimal.ZERO,
+                currentAmount = savingsInfo.currentAmount ?: BigDecimal.ZERO,
+                targetDate = savingsInfo.targetDate,
+                isAchieved = savingsInfo.isAchieved ?: false
+            )
+        },
+
         account = AccountItem(
-            id = transactionEntity.accountId,
+            id = this.transaction.accountId,
             name = this.account.name,
             iconIdentifier = this.account.accountIconIdentifier,
-            balance = this.account.balance
+            balance = this.account.balance ?: BigDecimal.ZERO
         )
     )
 }

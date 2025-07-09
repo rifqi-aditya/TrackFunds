@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.core.navigation.api
 
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -80,15 +79,6 @@ data class SelectCategory(val transactionType: String) : AppScreen
 
 // --- Layar Daftar Transaksi (Reusable) ---
 @Serializable
-data object AllTransactions : AppScreen
-
-@Serializable
-data class CategoryTransactions(val categoryId: String, val categoryName: String) : AppScreen
-
-@Serializable
-data class TypedTransactions(val transactionType: TransactionType) : AppScreen
-
-@Serializable
 data class TransactionDetail(val transactionId: String) : AppScreen
 
 @Serializable
@@ -96,7 +86,6 @@ data object CameraScan : AppScreen
 
 @Serializable
 data class ReceiptPreview(val imageUri: String) : AppScreen
-
 
 @Serializable
 data object Savings : AppScreen

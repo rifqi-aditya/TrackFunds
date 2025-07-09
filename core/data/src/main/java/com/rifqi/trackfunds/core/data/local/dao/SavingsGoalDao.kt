@@ -21,6 +21,15 @@ interface SavingsGoalDao {
     @Query("SELECT * FROM savings_goals WHERE is_achieved = 0 ORDER BY target_date ASC")
     fun getActiveGoals(): Flow<List<SavingsGoalEntity>>
 
+    @Query(
+        """
+        SELECT * FROM savings_goals
+        WHERE (:isAchieved IS NULL OR is_achieved = :isAchieved)
+        ORDER BY target_date ASC
+    """
+    )
+    fun getFilteredGoals(isAchieved: Boolean?): Flow<List<SavingsGoalEntity>>
+
     @Query("SELECT * FROM savings_goals WHERE id = :goalId")
     fun getGoalById(goalId: String): Flow<SavingsGoalEntity?>
 

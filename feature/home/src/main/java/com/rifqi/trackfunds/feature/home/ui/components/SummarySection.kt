@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun <T> SummarySection(
+fun <T>SummarySection(
     modifier: Modifier = Modifier,
     title: String,
     items: List<T>?,

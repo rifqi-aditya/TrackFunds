@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.repository
 
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import kotlinx.coroutines.flow.Flow
 import java.math.BigDecimal

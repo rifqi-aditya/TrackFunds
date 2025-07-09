@@ -5,6 +5,8 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import com.rifqi.trackfunds.core.ui.R
 
@@ -62,6 +64,7 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
         "expense" -> R.drawable.expense
         "budgets" -> R.drawable.budgets
         "savings" -> R.drawable.money_bag
+        "money" -> R.drawable.money
 
         // --- IKON GENERIK ---
         "home" -> R.drawable.bottom_nav_home
@@ -69,6 +72,9 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
 //        "report" -> R.drawable.report
 
         "arrow_back" -> R.drawable.arrow_back
+        "arrow_forward" -> R.drawable.arrow_forward
+        "arrow_down" -> R.drawable.arrow_down
+        "plus" -> R.drawable.plus
 
 
         // Fallback jika tidak ada ikon yang cocok
@@ -77,19 +83,28 @@ fun mapIconIdentifierToDrawableRes(identifier: String?): Int {
 }
 
 /**
- * Composable helper untuk menampilkan ikon berdasarkan identifier string dari drawable resource.
+ * Composable helper untuk menampilkan ikon dari drawable resource.
+ *
+ * @param identifier String identifier untuk drawable resource.
+ * @param contentDescription Deskripsi konten untuk aksesibilitas.
+ * @param modifier Modifier untuk kustomisasi.
+ * @param tint Warna opsional untuk ikon. Defaultnya tidak mengubah warna asli.
  */
 @Composable
 fun DisplayIconFromResource(
     identifier: String?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    tint: Color = Color.Unspecified // Parameter opsional untuk tint
 ) {
+    // Anda perlu mengganti ini dengan implementasi pemetaan Anda yang sebenarnya
     val resourceId = mapIconIdentifierToDrawableRes(identifier)
 
     Image(
         painter = painterResource(id = resourceId),
         contentDescription = contentDescription,
-        modifier = modifier
+        modifier = modifier,
+        // Terapkan tint hanya jika warna ditentukan
+        colorFilter = if (tint != Color.Unspecified) ColorFilter.tint(tint) else null
     )
 }

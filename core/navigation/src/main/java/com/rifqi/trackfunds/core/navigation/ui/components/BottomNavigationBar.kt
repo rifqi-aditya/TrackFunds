@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -25,7 +26,7 @@ import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.core.ui.R
 
 sealed class BottomNavItem(
-    val graphRoute: AppScreen, // Tipe diubah dari String ke AppScreen
+    val graphRoute: AppScreen,
     val title: String,
     val icon: Int
 ) {
@@ -82,18 +83,14 @@ fun AppBottomNavigationBar(navController: NavHostController) {
                 },
                 label = { Text(screen.title) },
                 selected = currentDestination?.hierarchy?.any {
-                    it.route == screen.graphRoute::class.qualifiedName
+                    it.hasRoute(route = screen.graphRoute::class)
                 } == true,
                 onClick = {
                     navController.navigate(screen.graphRoute) {
-                        // Pop up ke start destination dari graph untuk menghindari tumpukan back stack besar
-                        // saat memilih ulang item yang sama atau berpindah tab.
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        // Hindari membuat banyak copy dari destinasi yang sama saat item dipilih ulang
                         launchSingleTop = true
-                        // Restore state saat navigasi kembali ke item yang sudah dipilih sebelumnya
                         restoreState = true
                     }
                 },

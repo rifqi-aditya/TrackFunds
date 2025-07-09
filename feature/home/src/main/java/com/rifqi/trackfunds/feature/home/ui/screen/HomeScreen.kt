@@ -1,54 +1,55 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.BudgetItem
+import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
-import com.rifqi.trackfunds.core.navigation.api.AllTransactions
-import com.rifqi.trackfunds.core.navigation.api.CategoryTransactions
-import com.rifqi.trackfunds.core.navigation.api.Notifications
-import com.rifqi.trackfunds.core.navigation.api.ScanGraph
-import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
-import com.rifqi.trackfunds.core.navigation.api.TypedTransactions
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.Home
 import com.rifqi.trackfunds.core.ui.components.AddTransactionDialog
-import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
-import com.rifqi.trackfunds.core.ui.utils.formatDateRangeToString
-import com.rifqi.trackfunds.feature.home.ui.components.BalanceCard
 import com.rifqi.trackfunds.feature.home.ui.components.BudgetSummaryRow
+import com.rifqi.trackfunds.feature.home.ui.components.HomeHeader
+import com.rifqi.trackfunds.feature.home.ui.components.InsightCard
 import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionRow
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
-import java.time.YearMonth
+import kotlinx.coroutines.flow.collectLatest
+import java.math.BigDecimal
+import java.time.LocalDateTime
 
 
 /**
@@ -60,41 +61,25 @@ import java.time.YearMonth
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToAllTransactions: () -> Unit,
-    onNavigateToCategoryTransactions: (categoryId: String, categoryName: String) -> Unit,
-    onNavigateToTypedTransactions: (TransactionType) -> Unit,
-    onNavigateToNotifications: () -> Unit,
-    onNavigateToAddTransaction: () -> Unit,
-    onNavigateToScanReceipt: () -> Unit,
-    onNavigateToTransactionDetail: (transactionId: String) -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigate: (AppScreen) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState.isAddActionDialogVisible) { // State ini sekarang mengontrol dialog
+    if (uiState.isAddActionDialogVisible) {
         AddTransactionDialog(
             onDismissRequest = { viewModel.onEvent(HomeEvent.AddActionDialogDismissed) },
             onScanClick = { viewModel.onEvent(HomeEvent.ScanReceiptClicked) },
             onAddManuallyClick = { viewModel.onEvent(HomeEvent.AddTransactionManuallyClicked) }
         )
     }
+
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect { screen ->
-            when (screen) {
-                is AllTransactions -> onNavigateToAllTransactions()
-                is CategoryTransactions -> onNavigateToCategoryTransactions(
-                    screen.categoryId,
-                    screen.categoryName
-                )
-
-                is TypedTransactions -> onNavigateToTypedTransactions(screen.transactionType)
-                is Notifications -> onNavigateToNotifications()
-                is AddEditTransaction -> onNavigateToAddTransaction()
-                is ScanGraph -> onNavigateToScanReceipt()
-                is TransactionDetail -> {
-                    onNavigateToTransactionDetail(screen.transactionId)
-                }
-
-                else -> {}
+        viewModel.navigationEvent.collectLatest { screen ->
+            if (screen is Home) {
+                onNavigateBack()
+            } else {
+                onNavigate(screen)
             }
         }
     }
@@ -117,142 +102,178 @@ fun HomeScreenContent(
     uiState: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
 ) {
-    val dateRangeString = formatDateRangeToString(uiState.dateRangePeriod)
 
-    MonthYearPickerDialog(
-        showDialog = uiState.showMonthPickerDialog,
-        initialYearMonth = YearMonth.from(uiState.dateRangePeriod.first),
-        onDismiss = { onEvent(HomeEvent.DialogDismissed) },
-        onConfirm = { onEvent(HomeEvent.PeriodChanged(it)) }
-    )
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Scaffold(
-            topBar = {
-                AppTopAppBar(
-                    navigationIcon = {
-                        DisplayIconFromResource(
-                            identifier = "calendar",
-                            contentDescription = "Change Period",
-                            modifier = Modifier
-                                .size(32.dp)
-                                .padding(end = 8.dp)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null,
-                                    onClick = { onEvent(HomeEvent.ChangePeriodClicked) }
-                                )
-                        )
-                    },
-                    title = {
-                        Column(
-                            modifier = Modifier.clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { onEvent(HomeEvent.ChangePeriodClicked) }
-                            )
-                        ) {
-                            Text(
-                                uiState.currentMonthAndYear,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                dateRangeString,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { onEvent(HomeEvent.NotificationsClicked) }) {
-                            DisplayIconFromResource(
-                                identifier = "notifications",
-                                contentDescription = "Notifications",
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-                    }
-                )
-            }
-        ) { innerPadding ->
-            if (uiState.isLoading) {
-                Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 80.dp)
+        ) {
+            item {
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
-                    CircularProgressIndicator()
-                }
-            } else if (uiState.error != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Error: ${uiState.error}",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(16.dp)
+                    Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+
+                    HomeHeader(
+                        userName = "Rifqi Aditya",
+                        onProfileClick = { },
+                        onNotificationsClick = {},
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    InsightCard(
+                        totalExpenseThisMonth = uiState.totalExpenseThisMonth,
+                        totalBalance = uiState.totalBalance,
+                        totalSavings = uiState.totalSavings,
+                        totalAccounts = uiState.totalAccounts,
+                        onBalanceClick = { onEvent(HomeEvent.BalanceClicked) },
+                        onSavingsClick = { onEvent(HomeEvent.SavingsClicked) },
+                        onAccountsClick = { onEvent(HomeEvent.AccountsClicked) },
                     )
                 }
-            } else {
-                LazyColumn(
+            }
+
+            item {
+                Column(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(top = innerPadding.calculateTopPadding())
+                        .fillParentMaxSize()
+                        .background(MaterialTheme.colorScheme.surface),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    item {
-                        BalanceCard(
-                            onClick = { onEvent(HomeEvent.AllTransactionsClicked) },
-                            monthlyBalance = uiState.monthlyBalance,
-                            totalExpenses = uiState.totalExpenses,
-                            totalIncome = uiState.totalIncome
-                        )
-                    }
-                    item {
-                        SummarySection(
-                            title = "Recent Transactions",
-                            items = uiState.recentTransactions,
-                            onViewAllClick = {
-                                onEvent(HomeEvent.AllTransactionsClicked)
-                            },
-                            onItemClick = { transactionItem ->
-                                onEvent(HomeEvent.TransactionClicked(transactionItem.id))
-                            },
-                            itemContent = { transactionItem ->
-                                RecentTransactionRow(
-                                    item = transactionItem,
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        SummarySection(
-                            title = "Your budgets",
-                            items = uiState.topBudgets,
-                            onViewAllClick = {
-                                onEvent(HomeEvent.AllTransactionsClicked)
-                            },
-                            itemContent = { topBudgetItem ->
-                                BudgetSummaryRow(
-                                    item = topBudgetItem,
-                                )
-                            }
-                        )
-                    }
+                    SummarySection(
+                        title = "Recent Transactions",
+                        items = uiState.recentTransactions,
+                        onViewAllClick = {
+                            onEvent(HomeEvent.AllTransactionsClicked)
+                        },
+                        onItemClick = { transactionItem ->
+                            onEvent(HomeEvent.TransactionClicked(transactionItem.id))
+                        },
+                        itemContent = { transactionItem ->
+                            RecentTransactionRow(
+                                item = transactionItem,
+                            )
+                        }
+                    )
+                    SummarySection(
+                        title = "Your budgets",
+                        items = uiState.topBudgets,
+                        onViewAllClick = {
+                            onEvent(HomeEvent.AllBudgetsClicked)
+                        },
+                        itemContent = { topBudgetItem ->
+                            BudgetSummaryRow(
+                                item = topBudgetItem,
+                            )
+                        }
+                    )
+
                 }
             }
         }
+
         FloatingActionButton(
             onClick = { onEvent(HomeEvent.FabClicked) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp)
+                .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primary
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Add Transaction")
+            DisplayIconFromResource(
+                identifier = "plus",
+                contentDescription = "Add Transaction",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(24.dp),
+                tint = MaterialTheme.colorScheme.surface
+            )
         }
+    }
+}
+
+private val previewDummyAccount1 =
+    AccountItem("acc1", "Dompet Digital", "wallet_account", BigDecimal("1500000"))
+private val previewDummyAccount2 =
+    AccountItem("acc2", "Rekening Utama", "bank_account", BigDecimal("10000000"))
+
+private val previewDummyCategory1 =
+    CategoryItem("cat1", "Makan & Minum", "restaurant", TransactionType.EXPENSE)
+private val previewDummyCategory2 = CategoryItem("cat2", "Gaji", "salary", TransactionType.INCOME)
+
+private val previewTransactions = listOf(
+    // Transaksi Pengeluaran
+    TransactionItem(
+        id = "1",
+        amount = BigDecimal("50000"),
+        type = TransactionType.EXPENSE,
+        date = LocalDateTime.now(),
+        description = "Kopi Pagi",
+        category = previewDummyCategory1,
+        account = previewDummyAccount1
+    ),
+    // Transaksi Pemasukan
+    TransactionItem(
+        id = "2",
+        amount = BigDecimal("7500000"),
+        type = TransactionType.INCOME,
+        date = LocalDateTime.now().minusDays(1),
+        description = "Gaji Bulanan",
+        category = previewDummyCategory2,
+        account = previewDummyAccount2
+    )
+)
+
+private val previewBudgets = listOf(
+    BudgetItem(
+        budgetId = "b1",
+        categoryName = "Makan & Minum",
+        budgetAmount = BigDecimal("2000000"),
+        spentAmount = BigDecimal("1250000"),
+        categoryId = previewDummyCategory1.name,
+        categoryIconIdentifier = previewDummyCategory1.iconIdentifier,
+        period = ""
+    ),
+    BudgetItem(
+        budgetId = "b2",
+        categoryName = "Transportasi",
+        budgetAmount = BigDecimal("700000"),
+        spentAmount = BigDecimal("1550000"),
+        categoryId = previewDummyCategory2.name,
+        categoryIconIdentifier = previewDummyCategory2.iconIdentifier,
+        period = ""
+    )
+)
+
+private val previewLoadedState = HomeUiState(
+    isLoading = false,
+    recentTransactions = previewTransactions,
+    topBudgets = previewBudgets
+)
+
+// --- FUNGSI PREVIEW ---
+@Preview(showBackground = true, name = "Home Screen - Loaded")
+@Composable
+private fun HomeScreenContentLoadedPreview() {
+    TrackFundsTheme {
+        HomeScreenContent(
+            uiState = previewLoadedState,
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Home Screen - Loading")
+@Composable
+private fun HomeScreenContentLoadingPreview() {
+    TrackFundsTheme {
+        HomeScreenContent(
+            uiState = HomeUiState(isLoading = true),
+            onEvent = {}
+        )
     }
 }

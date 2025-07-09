@@ -10,5 +10,5 @@ data class AccountEntity(
     @PrimaryKey val id: String,
     val name: String,
     @ColumnInfo(name = "icon_identifier") val iconIdentifier: String?,
-    val balance: BigDecimal
+    val balance: BigDecimal = BigDecimal.ZERO,
 )

@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.feature.transaction.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.FilterEvent

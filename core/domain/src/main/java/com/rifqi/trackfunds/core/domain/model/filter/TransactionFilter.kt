@@ -1,5 +1,6 @@
-package com.rifqi.trackfunds.core.domain.model
+package com.rifqi.trackfunds.core.domain.model.filter
 
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.time.LocalDate
 
 data class TransactionFilter(

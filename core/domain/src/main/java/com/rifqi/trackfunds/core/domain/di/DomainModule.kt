@@ -34,6 +34,8 @@ import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.SaveSavingsIconUseCase
@@ -199,6 +201,12 @@ abstract class DomainModule {
     abstract fun bindGetActiveSavingsGoalsUseCase(
         useCaseImpl: GetActiveSavingsGoalsUseCaseImpl
     ): GetActiveSavingsGoalsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetFilteredSavingsGoalsUseCase(
+        useCaseImpl: GetFilteredSavingsGoalsUseCaseImpl
+    ): GetFilteredSavingsGoalsUseCase
 
     @Binds
     @Singleton

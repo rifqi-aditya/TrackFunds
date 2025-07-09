@@ -7,9 +7,9 @@ import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

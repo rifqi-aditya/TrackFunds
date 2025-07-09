@@ -3,10 +3,9 @@ package com.rifqi.trackfunds.feature.home.ui.state
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.utils.getCurrentDateRangePair
-import com.rifqi.trackfunds.core.ui.utils.getCurrentMonthAndYear
 import java.math.BigDecimal
-import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
 /**
  * Represents the entire state for the HomeScreen.
@@ -14,40 +13,35 @@ import java.time.LocalDate
  *
  * @param isLoading True if data is currently being loaded.
  * @param error An error message string if an error occurs, null otherwise.
- * @param currentMonthAndYear A formatted string for the currently selected period (e.g., "June 2025").
- * @param dateRangePeriod The start and end date of the currently selected period.
- * @param totalIncome The sum of all income for the selected period.
- * @param totalExpenses The sum of all expenses for the selected period.
- * @param incomeSummaries A list of income summaries grouped by category.
- * @param expenseSummaries A list of expense summaries grouped by category.
+ * @param currentMonth A formatted string for the currently month's.
+ * @param userName The name of the current user.
+ * @param totalExpenseThisMonth The sum of all expenses for the current month.
+ * @param totalBalance The sum of all balances from all accounts.
+ * @param totalSavings The sum of all current amounts from all savings goals.
+ * @param totalAccounts The total number of user accounts.
  * @param recentTransactions A list of the most recent transactions.
- * @param showMonthPickerDialog True if the month/year picker dialog should be shown.
  * @param isAddActionDialogVisible True if the action dialog (for Add/Scan) should be shown.
  */
 data class HomeUiState(
     val isLoading: Boolean = true,
     val error: String? = null,
-    val currentMonthAndYear: String = getCurrentMonthAndYear(),
-    val dateRangePeriod: Pair<LocalDate, LocalDate> = getCurrentDateRangePair(),
 
-    // Data ringkasan sekarang berada di level atas
-    val totalIncome: BigDecimal = BigDecimal.ZERO,
-    val totalExpenses: BigDecimal = BigDecimal.ZERO,
+    // Data Header
+    val userName: String = "Rifqi Aditya",
 
-    // Daftar-daftar data
-    val incomeSummaries: List<HomeCategorySummaryItem> = emptyList(),
-    val expenseSummaries: List<HomeCategorySummaryItem> = emptyList(),
+    // Data Balance Card
+    val currentMonth: String = YearMonth.now().format(DateTimeFormatter.ofPattern("MMMM")),
+    val totalExpenseThisMonth: BigDecimal = BigDecimal.ZERO,
+    val totalBalance: BigDecimal = BigDecimal.ZERO,
+    val totalSavings: BigDecimal = BigDecimal.ZERO,
+    val totalAccounts: Int = 0,
+
     val recentTransactions: List<TransactionItem> = emptyList(),
     val topBudgets: List<BudgetItem> = emptyList(),
 
     // Kontrol UI
-    val showMonthPickerDialog: Boolean = false,
     val isAddActionDialogVisible: Boolean = false
-) {
-    // Properti kalkulasi untuk kemudahan
-    val monthlyBalance: BigDecimal
-        get() = totalIncome.subtract(totalExpenses)
-}
+)
 
 /**
  * Represents a summarized view of transactions for a single category.

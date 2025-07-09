@@ -20,29 +20,29 @@ data class TransactionDetailDto(
     val savingsGoal: SavingsGoalInfo?
 ) {
     data class CategoryInfo(
-        val name: String,
+        val name: String?,
         @ColumnInfo(name = "icon_identifier")
-        val categoryIconIdentifier: String
+        val categoryIconIdentifier: String?
     )
 
     data class AccountInfo(
         val name: String,
         @ColumnInfo(name = "icon_identifier")
         val accountIconIdentifier: String,
-        val balance: BigDecimal
+        val balance: BigDecimal? = BigDecimal.ZERO
     )
 
     data class SavingsGoalInfo(
-        val name: String,
+        val name: String?,
         @ColumnInfo(name = "icon_identifier")
-        val iconIdentifier: String,
+        val iconIdentifier: String?,
         @ColumnInfo(name = "target_date")
         val targetDate: LocalDateTime?,
         @ColumnInfo(name = "target_amount")
-        val targetAmount: String,
+        val targetAmount: BigDecimal?,
         @ColumnInfo(name = "current_amount")
-        val currentAmount: String,
+        val currentAmount: BigDecimal?,
         @ColumnInfo(name = "is_achieved")
-        val isAchieved: Boolean = false
+        val isAchieved: Boolean?
     )
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
-import com.rifqi.trackfunds.core.domain.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.feature.reports.ui.event.ReportEvent

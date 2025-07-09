@@ -33,10 +33,7 @@ import com.rifqi.trackfunds.core.domain.model.CategorySpending
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
-import com.rifqi.trackfunds.core.ui.theme.extendedColors
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
-import com.rifqi.trackfunds.feature.reports.ui.components.CashflowBarChart
-import com.rifqi.trackfunds.feature.reports.ui.components.CashflowData
 import com.rifqi.trackfunds.feature.reports.ui.components.CustomDonutChart
 import com.rifqi.trackfunds.feature.reports.ui.event.ReportEvent
 import com.rifqi.trackfunds.feature.reports.ui.state.ReportUiState
@@ -202,20 +199,18 @@ fun ReportContent(
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
 
-                                val cashflowData = listOf(
-                                    CashflowData(
-                                        "Income",
-                                        summary.totalIncome.toFloat(),
-                                        MaterialTheme.extendedColors.income
-                                    ),
-                                    CashflowData(
-                                        "Expenses",
-                                        summary.totalExpense.toFloat(),
-                                        MaterialTheme.extendedColors.expense
-                                    ),
-                                )
-
-                                CashflowBarChart(data = cashflowData)
+//                                val cashflowData = listOf(
+//                                    CashflowData(
+//                                        "Income",
+//                                        summary.totalIncome.toFloat(),
+//                                        MaterialTheme.extendedColors.income
+//                                    ),
+//                                    CashflowData(
+//                                        "Expenses",
+//                                        summary.totalExpense.toFloat(),
+//                                        MaterialTheme.extendedColors.expense
+//                                    ),
+//                                )
                             }
                         }
                     }
