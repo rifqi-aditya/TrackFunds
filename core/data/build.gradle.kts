@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -25,7 +27,27 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField(
+                "String",
+                "GEMINI_API_KEY",
+                gradleLocalProperties(
+                    rootDir,
+                    providers
+                ).getProperty("GEMINI_API_KEY")
+            )
         }
+        debug {
+            buildConfigField(
+                "String",
+                "GEMINI_API_KEY",
+                gradleLocalProperties(
+                    rootDir,
+                    providers
+                ).getProperty("GEMINI_API_KEY")
+            )
+        }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -36,6 +58,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

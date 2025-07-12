@@ -1,6 +1,7 @@
 package com.rifqi.trackfunds.core.data.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.rifqi.trackfunds.core.data.remote.api.GeminiApiService
 import com.rifqi.trackfunds.core.data.remote.api.ReceiptApiService
 import dagger.Module
 import dagger.Provides
@@ -53,5 +54,17 @@ object NetworkModule {
     @Singleton
     fun provideReceiptApiService(retrofit: Retrofit): ReceiptApiService {
         return retrofit.create(ReceiptApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeminiApiService(okHttpClient: OkHttpClient): GeminiApiService {
+        val json = Json { ignoreUnknownKeys = true }
+        return Retrofit.Builder()
+            .baseUrl("https://generativelanguage.googleapis.com/")
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
+            .create(GeminiApiService::class.java)
     }
 }
