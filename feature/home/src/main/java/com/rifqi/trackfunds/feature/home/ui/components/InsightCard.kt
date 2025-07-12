@@ -40,7 +40,7 @@ fun InsightCard(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.inverseSurface
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

@@ -260,10 +260,8 @@ fun ReportContent(
                                     label = { Text("Income") },
                                     shape = MaterialTheme.shapes.large,
                                     colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = MaterialTheme.colorScheme.secondary.copy(
-                                            alpha = 0.2f
-                                        ),
-                                        selectedLabelColor = MaterialTheme.colorScheme.secondary,
+                                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                                         selectedLeadingIconColor = MaterialTheme.colorScheme.secondary
                                     ),
                                 )

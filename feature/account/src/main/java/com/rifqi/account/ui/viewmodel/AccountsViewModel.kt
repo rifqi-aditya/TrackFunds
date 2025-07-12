@@ -9,8 +9,8 @@ import com.rifqi.trackfunds.core.navigation.api.AddEditAccount
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -22,8 +22,7 @@ class AccountsViewModel @Inject constructor(
     getAccountsUseCase: GetAccountsUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AccountsUiState())
-    val uiState = getAccountsUseCase()
+    val uiState: StateFlow<AccountsUiState> = getAccountsUseCase()
         .map { accounts ->
             AccountsUiState(
                 isLoading = false,

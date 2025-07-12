@@ -102,7 +102,6 @@ fun HomeScreenContent(
     uiState: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
 ) {
-
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -113,7 +112,6 @@ fun HomeScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                        .background(MaterialTheme.colorScheme.primary)
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
                     Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))

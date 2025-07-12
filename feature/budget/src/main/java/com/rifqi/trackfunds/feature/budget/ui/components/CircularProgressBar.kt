@@ -6,13 +6,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.ui.theme.extendedColors
+import com.rifqi.trackfunds.core.ui.theme.AppTheme
 
 @Composable
 fun CircularProgressBar(
@@ -24,9 +23,9 @@ fun CircularProgressBar(
 
     // Logika untuk menentukan warna berdasarkan progres
     val progressColor = when {
-        progress >= 0.8f -> MaterialTheme.extendedColors.expense
-        progress > 0.6f -> Color(0xFFFFA000)
-        else -> MaterialTheme.colorScheme.primary
+        progress >= 0.8f -> AppTheme.extendedColors.chartConditionWarning
+        progress > 0.6f -> AppTheme.extendedColors.chartConditionGood
+        else -> AppTheme.extendedColors.chartConditionNeutral
     }
 
     val trackColor = MaterialTheme.colorScheme.surfaceVariant

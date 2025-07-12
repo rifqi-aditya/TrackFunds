@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 @Composable
 fun HomeHeader(
@@ -41,7 +40,7 @@ fun HomeHeader(
                 Icons.Default.AccountCircle,
                 "Profile",
                 modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.surface
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -51,7 +50,7 @@ fun HomeHeader(
             Text(
                 "Hi, $userName",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Ellipsis
@@ -59,20 +58,20 @@ fun HomeHeader(
             Text(
                 "Welcome back!",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
-        Row {
-            IconButton(onClick = onNotificationsClick) {
-                DisplayIconFromResource(
-                    identifier = "notifications",
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.surface
-                )
-            }
-        }
+//        Row {
+//            IconButton(onClick = onNotificationsClick) {
+//                DisplayIconFromResource(
+//                    identifier = "notifications",
+//                    contentDescription = "Notifications",
+//                    modifier = Modifier.size(32.dp),
+//                    tint = MaterialTheme.colorScheme.onSurface
+//                )
+//            }
+//        }
     }
 }
 

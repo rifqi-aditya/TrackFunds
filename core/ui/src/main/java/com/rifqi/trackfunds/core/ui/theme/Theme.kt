@@ -10,6 +10,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
@@ -253,26 +254,36 @@ val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
-// Definisikan warna extended untuk mode terang
-private val LightExtendedColors = ExtendedColorScheme(
-    income = IncomeGreen,
-    onIncomeContainer = OnIncomeContainer,
-    incomeContainer = IncomeContainer,
-    expense = ExpenseRed,
-    onExpenseContainer = OnExpenseContainer,
-    expenseContainer = ExpenseContainer
+@Immutable
+data class ExtendedColors(
+    val textIncome: Color,
+    val textExpense: Color,
+    val chartConditionGood: Color,
+    val chartConditionWarning: Color,
+    val chartConditionNeutral: Color,
+    val chartCategory1: Color,
+    val chartCategory2: Color,
+    val chartCategory3: Color,
+    val chartCategory4: Color,
+    val chartCategory5: Color,
+    val chartCategory6: Color
 )
 
-// Definisikan warna extended untuk mode gelap
-private val DarkExtendedColors = ExtendedColorScheme(
-    // Anda bisa mendefinisikan warna yang berbeda untuk mode gelap jika perlu
-    income = Color(0xFF7FDD9A), // Contoh: Hijau lebih cerah di mode gelap
-    onIncomeContainer = OnIncomeContainer,
-    incomeContainer = Color(0xFF005329),
-    expense = Color(0xFFFFB4AB), // Contoh: Merah lebih cerah di mode gelap
-    onExpenseContainer = OnExpenseContainer,
-    expenseContainer = Color(0xFF93000A)
-)
+val LocalExtendedColors = staticCompositionLocalOf {
+    ExtendedColors(
+        textIncome = Color.Unspecified,
+        textExpense = Color.Unspecified,
+        chartConditionGood = Color.Unspecified,
+        chartConditionWarning = Color.Unspecified,
+        chartConditionNeutral = Color.Unspecified,
+        chartCategory1 = Color.Unspecified,
+        chartCategory2 = Color.Unspecified,
+        chartCategory3 = Color.Unspecified,
+        chartCategory4 = Color.Unspecified,
+        chartCategory5 = Color.Unspecified,
+        chartCategory6 = Color.Unspecified
+    )
+}
 
 @Composable
 fun TrackFundsTheme(
@@ -290,9 +301,38 @@ fun TrackFundsTheme(
         else -> lightScheme
     }
 
-    val extendedColors = if (darkTheme) DarkExtendedColors else LightExtendedColors
-    
-    CompositionLocalProvider(LocalExtendedColorScheme provides extendedColors) {
+    val extendedColors = if (darkTheme) {
+        ExtendedColors(
+            textIncome = TextIncome,
+            textExpense = TextExpense,
+            chartConditionGood = ChartConditionGood,
+            chartConditionWarning = ChartConditionWarning,
+            chartConditionNeutral = ChartConditionNeutralDark, // Gunakan versi Dark
+            chartCategory1 = ChartCategory1,
+            chartCategory2 = ChartCategory2,
+            chartCategory3 = ChartCategory3,
+            chartCategory4 = ChartCategory4,
+            chartCategory5 = ChartCategory5,
+            chartCategory6 = ChartCategory6
+        )
+    } else {
+        ExtendedColors(
+            textIncome = TextIncome,
+            textExpense = TextExpense,
+            chartConditionGood = ChartConditionGood,
+            chartConditionWarning = ChartConditionWarning,
+            chartConditionNeutral = ChartConditionNeutralLight, // Gunakan versi Light
+            chartCategory1 = ChartCategory1,
+            chartCategory2 = ChartCategory2,
+            chartCategory3 = ChartCategory3,
+            chartCategory4 = ChartCategory4,
+            chartCategory5 = ChartCategory5,
+            chartCategory6 = ChartCategory6
+        )
+    }
+
+
+    CompositionLocalProvider(LocalExtendedColors provides extendedColors) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = AppTypography,
@@ -300,5 +340,10 @@ fun TrackFundsTheme(
             content = content
         )
     }
+}
 
+object AppTheme {
+    val extendedColors: ExtendedColors
+        @Composable
+        get() = LocalExtendedColors.current
 }
