@@ -1,11 +1,17 @@
 package com.rifqi.trackfunds.core.domain.di
 
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCase
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.account.AddAccountUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.AddAccountUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.account.DeleteAccountUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.DeleteAccountUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountByIdUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountByIdUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.account.UpdateAccountUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.UpdateAccountUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
@@ -97,21 +103,33 @@ abstract class DomainModule {
 
     @Binds
     @Singleton
-    abstract fun bindGetAccountUseCase(
-        useCaseImpl: GetAccountUseCaseImpl
-    ): GetAccountUseCase
-
-    @Binds
-    @Singleton
     abstract fun getAccountsByIdsUseCase(
         useCaseImpl: GetAccountsByIdsUseCaseImpl
     ): GetAccountsByIdsUseCase
 
-//    @Binds
-//    @Singleton
-//    abstract fun bindGetAccountDetailsUseCase(
-//        useCaseImpl: GetAccountDetailsUseCaseImpl
-//    ): GetAccountDetailsUseCase
+    @Binds
+    @Singleton
+    abstract fun bindAddAccountUseCase(
+        useCaseImpl: AddAccountUseCaseImpl
+    ): AddAccountUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindUpdateAccountUseCase(
+        useCaseImpl: UpdateAccountUseCaseImpl
+    ): UpdateAccountUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindDeleteAccountUseCase(
+        useCaseImpl: DeleteAccountUseCaseImpl
+    ): DeleteAccountUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetAccountByIdUseCase(
+        useCaseImpl: GetAccountByIdUseCaseImpl
+    ): GetAccountByIdUseCase
 
     // --- Transaction Use Cases ---
     @Binds

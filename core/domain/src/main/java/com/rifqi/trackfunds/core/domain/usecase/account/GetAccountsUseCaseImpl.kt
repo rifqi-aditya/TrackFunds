@@ -10,6 +10,6 @@ class GetAccountsUseCaseImpl @Inject constructor(
 ) : GetAccountsUseCase {
 
     override operator fun invoke(): Flow<List<AccountItem>> {
-        return accountRepository.getAccounts()
+        return accountRepository.getAllAccounts()
     }
 }

@@ -4,11 +4,10 @@ import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import javax.inject.Inject
 
-class GetAccountUseCaseImpl @Inject constructor(
+class AddAccountUseCaseImpl @Inject constructor(
     private val repository: AccountRepository
-) : GetAccountUseCase {
-
-    override suspend operator fun invoke(accountId: String): AccountItem? {
-        return repository.getAccountById(accountId)
+) : AddAccountUseCase {
+    override suspend operator fun invoke(account: AccountItem) {
+        repository.addAccount(account)
     }
 }
