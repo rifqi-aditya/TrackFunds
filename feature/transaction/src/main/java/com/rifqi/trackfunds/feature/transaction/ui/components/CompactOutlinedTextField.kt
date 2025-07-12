@@ -56,7 +56,7 @@ fun CompactOutlinedTextField(
                 modifier = Modifier
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        color = MaterialTheme.colorScheme.primary,
                         shape = CircleShape
                     )
                     .padding(horizontal = 12.dp),

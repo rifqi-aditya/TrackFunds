@@ -127,7 +127,6 @@ fun TransactionScreenContent(
                             Icon(
                                 Icons.Default.Search,
                                 contentDescription = "Search",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     )
@@ -137,25 +136,22 @@ fun TransactionScreenContent(
                         shape = CircleShape,
                         border = BorderStroke(
                             width = 1.dp,
-                            color = MaterialTheme.colorScheme.primaryContainer
+                            color = MaterialTheme.colorScheme.primary
                         ),
                     ) {
                         Icon(
                             Icons.Default.FilterAlt,
                             contentDescription = "Filter",
-                            tint = MaterialTheme.colorScheme.primaryContainer,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             "Filter",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.primaryContainer
                         )
                     }
                 }
             }
-
 
             if (activeChips.isNotEmpty()) {
                 item {
@@ -196,17 +192,15 @@ fun TransactionScreenContent(
                                 shape = MaterialTheme.shapes.large,
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Color.Transparent,
-                                    selectedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedLabelColor = MaterialTheme.colorScheme.primary
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(
                                     selected = true,
                                     enabled = true,
 
-                                    selectedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedBorderColor = MaterialTheme.colorScheme.primary,
                                     selectedBorderWidth = 1.5.dp,
-                                    borderColor = MaterialTheme.colorScheme.outline.copy(
-                                        alpha = 0.5f
-                                    ),
+                                    borderColor = MaterialTheme.colorScheme.outline,
                                     borderWidth = 1.dp
                                 )
                             )
