@@ -68,11 +68,11 @@ fun AccountsContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Accounts", style = MaterialTheme.typography.titleMedium)
+                    Text("Manage Account", style = MaterialTheme.typography.titleMedium)
                 },
                 navigationIcon = {
                     DisplayIconFromResource(
-                        identifier = "wallet_account",
+                        identifier = "arrow_back",
                         contentDescription = "Accounts Overview",
                         modifier = Modifier
                             .padding(end = 8.dp, start = 4.dp)
