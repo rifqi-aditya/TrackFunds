@@ -342,7 +342,7 @@ fun TrackFundsTheme(
     }
 }
 
-object AppTheme {
+object TrackFundsTheme {
     val extendedColors: ExtendedColors
         @Composable
         get() = LocalExtendedColors.current

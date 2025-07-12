@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
-import com.rifqi.trackfunds.core.ui.theme.AppTheme
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.models.BarProperties
 import ir.ehsannarmani.compose_charts.models.Bars
@@ -51,20 +51,20 @@ fun CashflowProfileCard(
 
             val incomeBrush = Brush.verticalGradient(
                 colors = listOf(
-                    AppTheme.extendedColors.textIncome,
-                    AppTheme.extendedColors.textIncome.copy(alpha = 0.5f)
+                    TrackFundsTheme.extendedColors.textIncome,
+                    TrackFundsTheme.extendedColors.textIncome.copy(alpha = 0.5f)
                 )
             )
             val expenseBrush = Brush.verticalGradient(
                 colors = listOf(
-                    AppTheme.extendedColors.textExpense,
-                    AppTheme.extendedColors.textExpense.copy(alpha = 0.5f)
+                    TrackFundsTheme.extendedColors.textExpense,
+                    TrackFundsTheme.extendedColors.textExpense.copy(alpha = 0.5f)
                 )
             )
             val savingsBrush = Brush.verticalGradient(
                 colors = listOf(
-                    AppTheme.extendedColors.chartConditionGood,
-                    AppTheme.extendedColors.chartConditionGood.copy(alpha = 0.5f)
+                    TrackFundsTheme.extendedColors.chartConditionGood,
+                    TrackFundsTheme.extendedColors.chartConditionGood.copy(alpha = 0.5f)
                 )
             )
 

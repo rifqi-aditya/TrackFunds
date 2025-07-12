@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.theme.AppTheme
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.time.format.DateTimeFormatter
@@ -106,7 +106,7 @@ fun RecentTransactionRow(
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.SemiBold,
             color = if (item.type == TransactionType.EXPENSE
-            ) AppTheme.extendedColors.textExpense else AppTheme.extendedColors.textIncome
+            ) TrackFundsTheme.extendedColors.textExpense else TrackFundsTheme.extendedColors.textIncome
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.home.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -139,8 +138,7 @@ fun HomeScreenContent(
             item {
                 Column(
                     modifier = Modifier
-                        .fillParentMaxSize()
-                        .background(MaterialTheme.colorScheme.surface),
+                        .fillParentMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     SummarySection(

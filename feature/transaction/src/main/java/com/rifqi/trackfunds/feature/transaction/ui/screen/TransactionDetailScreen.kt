@@ -40,7 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.ui.theme.AppTheme
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.transaction.ui.components.DetailRow
@@ -181,9 +181,9 @@ fun TransactionDetailContent(
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (transaction.type == TransactionType.INCOME) {
-                            AppTheme.extendedColors.textIncome
+                            TrackFundsTheme.extendedColors.textIncome
                         } else {
-                            AppTheme.extendedColors.textExpense
+                            TrackFundsTheme.extendedColors.textExpense
                         }
                     )
 

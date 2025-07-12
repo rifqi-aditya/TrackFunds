@@ -195,7 +195,6 @@ fun ReportContent(
                         onBreakdownTypeSelected = { type ->
                             onEvent(ReportEvent.BreakdownTypeSelected(type))
                         },
-                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                     uiState.cashFlowSummary?.let { summary ->
