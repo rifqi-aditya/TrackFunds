@@ -1,5 +1,6 @@
 package com.rifqi.account.ui.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,18 +21,23 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.account.ui.components.AccountCard
-import com.rifqi.account.ui.model.AccountSummaryItem
-import com.rifqi.account.ui.model.AccountsUiState
+import com.rifqi.account.ui.event.AccountsEvent
+import com.rifqi.account.ui.state.AccountsUiState
 import com.rifqi.account.ui.viewmodel.AccountsViewModel
+import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import java.math.BigDecimal
@@ -39,19 +45,21 @@ import java.math.BigDecimal
 @Composable
 fun AccountsScreen(
     viewModel: AccountsViewModel = hiltViewModel(),
-    onNavigateToWalletDetail: (walletId: String) -> Unit,
-    onNavigateToTransfer: () -> Unit
+    onNavigate: (AppScreen) -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { screen ->
+            onNavigate(screen)
+        }
+    }
+
     AccountsContent(
         uiState = uiState,
-        onAccountClick = { accountId ->
-            onNavigateToWalletDetail(accountId)
-        },
-        onTransferFabClick = {
-            onNavigateToTransfer()
-        },
+        onEvent = viewModel::onEvent,
+        onNavigateBack = onNavigateBack
     )
 }
 
@@ -59,26 +67,28 @@ fun AccountsScreen(
 @Composable
 fun AccountsContent(
     uiState: AccountsUiState,
-    onAccountClick: (String) -> Unit,
-    onTransferFabClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onEvent: (AccountsEvent) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     Scaffold(
-        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Manage Account", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "Manage Account", style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp
+                        )
+                    )
                 },
                 navigationIcon = {
                     DisplayIconFromResource(
                         identifier = "arrow_back",
                         contentDescription = "Accounts Overview",
                         modifier = Modifier
-                            .padding(end = 8.dp, start = 4.dp)
-                            .size(
-                                24.dp
-                            )
+                            .padding(end = 8.dp)
+                            .size(24.dp)
+                            .clickable { onNavigateBack() }
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -92,7 +102,7 @@ fun AccountsContent(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onTransferFabClick,
+                onClick = {},
                 shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.SwapHoriz, contentDescription = "Transfer Antar Akun")
@@ -132,7 +142,7 @@ fun AccountsContent(
                 ) { account ->
                     AccountCard(
                         account = account,
-                        onClick = { onAccountClick(account.id) }
+                        onClick = { onEvent(AccountsEvent.AccountClicked(account.id)) }
                     )
                 }
             }
@@ -147,19 +157,19 @@ private fun AccountsScreenLightPreview() {
     TrackFundsTheme(darkTheme = false) {
         // Data dummy sekarang menggunakan BigDecimal
         val dummyAccounts = listOf(
-            AccountSummaryItem(
+            AccountItem(
                 id = "1",
                 name = "Tabungan Utama",
                 balance = BigDecimal("250750.50"),
                 iconIdentifier = "ic_book_overview"
             ),
-            AccountSummaryItem(
+            AccountItem(
                 id = "2",
                 name = "Mobile Banking",
                 balance = BigDecimal("1235000.00"),
                 iconIdentifier = "ic_mbanking"
             ),
-            AccountSummaryItem(
+            AccountItem(
                 id = "3",
                 name = "Dompet Digital",
                 balance = BigDecimal("789200.75"),
@@ -169,15 +179,14 @@ private fun AccountsScreenLightPreview() {
 
         val dummyState = AccountsUiState(
             isLoading = false,
-            // Total saldo juga diubah ke BigDecimal
             totalBalance = BigDecimal("2274951.25"),
             accounts = dummyAccounts
         )
 
         AccountsContent(
             uiState = dummyState,
-            onAccountClick = {},
-            onTransferFabClick = {},
+            onEvent = { },
+            onNavigateBack = { },
         )
     }
 }

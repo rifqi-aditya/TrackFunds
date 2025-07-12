@@ -12,7 +12,7 @@ import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import com.rifqi.trackfunds.core.domain.model.ScanResult
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountUseCase
+import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCase
@@ -53,7 +53,7 @@ class AddEditTransactionViewModel @Inject constructor(
     private val addTransactionUseCase: AddTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
-    private val getAccountUseCase: GetAccountUseCase,
+    private val getAccountUseCase: GetAccountsUseCase,
     private val getCategoryUseCase: GetCategoryUseCase,
     private val resultManager: NavigationResultManager,
     private val getCategoryByStandardKeyUseCase: GetCategoryByStandardKeyUseCase,

@@ -2,66 +2,59 @@ package com.rifqi.account.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.account.ui.model.AccountSummaryItem
-import com.rifqi.account.ui.model.AccountsUiState
+import com.rifqi.account.ui.event.AccountsEvent
+import com.rifqi.account.ui.state.AccountsUiState
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
+import com.rifqi.trackfunds.core.navigation.api.AddEditAccount
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
-    private val getAccountsUseCase: GetAccountsUseCase
+    getAccountsUseCase: GetAccountsUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AccountsUiState(isLoading = true))
-    val uiState: StateFlow<AccountsUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AccountsUiState())
+    val uiState = getAccountsUseCase()
+        .map { accounts ->
+            AccountsUiState(
+                isLoading = false,
+                accounts = accounts,
+                totalBalance = accounts.sumOf { it.balance }
+            )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AccountsUiState(isLoading = true)
+        )
 
-    init {
-        loadAccountsData()
-    }
+    private val _navigationEvent = MutableSharedFlow<AppScreen>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
 
-    private fun loadAccountsData() {
+    fun onEvent(event: AccountsEvent) {
         viewModelScope.launch {
-            getAccountsUseCase()
-                .onStart {
-                    _uiState.update { it.copy(isLoading = true) }
+            when (event) {
+                is AccountsEvent.AccountClicked -> {
+                    _navigationEvent.emit(AddEditAccount(accountId = event.accountId))
                 }
-                .catch { exception ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            // Anda bisa menambahkan properti 'error' pada UiState
-                            // error = exception.message
-                        )
-                    }
-                }
-                .collect { accountsFromUseCase ->
-                    val accountsForUi = accountsFromUseCase.map { domainAccount ->
-                        AccountSummaryItem(
-                            id = domainAccount.id,
-                            name = domainAccount.name,
-                            balance = domainAccount.balance,
-                            iconIdentifier = "wallet_account"
-                        )
-                    }
 
-                    val totalBalance = accountsFromUseCase.sumOf { it.balance }
-
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            totalBalance = totalBalance,
-                            accounts = accountsForUi
-                        )
-                    }
+                AccountsEvent.TransferClicked -> {
+                    // _navigationEvent.emit(Transfer)
                 }
+
+                AccountsEvent.AddAccountClicked -> {
+                    _navigationEvent.emit(AddEditAccount())
+                }
+            }
         }
     }
 }

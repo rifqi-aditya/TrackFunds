@@ -1,5 +1,7 @@
 package com.rifqi.account.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,15 +22,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.account.ui.model.AccountSummaryItem
+import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
+import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountCard(
-    account: AccountSummaryItem,
+    account: AccountItem,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -36,7 +41,13 @@ fun AccountCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        )
     ) {
         Row(
             modifier = Modifier
@@ -69,6 +80,22 @@ fun AccountCard(
                     .size(18.dp),
                 contentDescription = "Details",
             )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AccountCardPreview() {
+    val dummyAccount = AccountItem(
+        id = "1",
+        name = "Rekening Utama",
+        balance = BigDecimal("12500000"),
+        iconIdentifier = "bank_account"
+    )
+    TrackFundsTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            AccountCard(account = dummyAccount, onClick = {})
         }
     }
 }

@@ -70,6 +70,9 @@ data class AddEditBudget(val period: String, val budgetId: String? = null) : App
 @Serializable
 data class AddEditTransaction(val transactionId: String? = null) : AppScreen
 
+@Serializable
+data class AddEditAccount(val accountId: String? = null) : AppScreen
+
 // --- Layar Pemilihan (Shared) ---
 @Serializable
 data object SelectAccount : AppScreen
@@ -92,6 +95,7 @@ data object Savings : AppScreen
 
 @Serializable
 data class AddEditSavingsGoal(val goalId: String? = null) : AppScreen
+
 
 @Serializable
 data class SavingsDetail(val goalId: String) : AppScreen
