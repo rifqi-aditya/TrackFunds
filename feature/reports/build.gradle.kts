@@ -81,6 +81,8 @@ dependencies {
 
     implementation(libs.lottie.compose)
 
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.7")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.feature.transaction.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.feature.transaction.ui.model.DateRangeOption
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import java.time.LocalDate
 
 /**

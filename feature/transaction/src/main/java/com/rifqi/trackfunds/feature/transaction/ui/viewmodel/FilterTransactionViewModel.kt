@@ -7,7 +7,7 @@ import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.FilterEvent
-import com.rifqi.trackfunds.feature.transaction.ui.model.DateRangeOption
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.feature.transaction.ui.state.FilterTransactionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

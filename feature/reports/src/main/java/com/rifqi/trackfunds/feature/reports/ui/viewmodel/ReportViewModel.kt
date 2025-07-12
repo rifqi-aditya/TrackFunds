@@ -2,10 +2,12 @@ package com.rifqi.trackfunds.feature.reports.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.feature.reports.ui.event.ReportEvent
 import com.rifqi.trackfunds.feature.reports.ui.state.ReportUiState
@@ -24,14 +26,15 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.YearMonth
+import java.time.LocalDate
 import javax.inject.Inject
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ReportViewModel @Inject constructor(
-    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase
+    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
+    private val getFilteredSavingsGoalsUseCase: GetFilteredSavingsGoalsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportUiState())
@@ -53,10 +56,10 @@ class ReportViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _uiState
-                .map { it.currentPeriod }
+                .map { it.dateRange }
                 .distinctUntilChanged()
-                .onEach { period ->
-                    loadDataForPeriod(period)
+                .onEach { dateRange ->
+                    loadDataForPeriod(dateRange.first, dateRange.second)
                 }
                 .collect()
         }
@@ -71,13 +74,45 @@ class ReportViewModel @Inject constructor(
             is ReportEvent.BreakdownTypeSelected -> {
                 _uiState.update { it.copy(activeBreakdownType = event.type) }
             }
+
+            ReportEvent.ChangePeriodClicked -> _uiState.update { it.copy(showPeriodSheet = true) }
+            ReportEvent.PeriodSheetDismissed -> _uiState.update { it.copy(showPeriodSheet = false) }
+
+            is ReportEvent.DateOptionSelected -> {
+                val (startDate, endDate) = calculateDateRangeFromOption(event.option)
+                _uiState.update {
+                    it.copy(
+                        dateRange = Pair(startDate, endDate),
+                        selectedDateOption = event.option,
+                        showPeriodSheet = false
+                    )
+                }
+            }
+
+            ReportEvent.CustomDateRangeClicked -> {
+                _uiState.update { it.copy(showDatePicker = true, showPeriodSheet = false) }
+            }
+
+            ReportEvent.DatePickerDismissed -> {
+                _uiState.update { it.copy(showDatePicker = false) }
+            }
+
+            is ReportEvent.DateRangeSelected -> {
+                _uiState.update {
+                    it.copy(
+                        dateRange = Pair(event.startDate, event.endDate),
+                        customStartDate = event.startDate,
+                        customEndDate = event.endDate,
+                        selectedDateOption = DateRangeOption.CUSTOM,
+                        showDatePicker = false
+                    )
+                }
+            }
         }
     }
 
-    private fun loadDataForPeriod(period: YearMonth) {
+    private fun loadDataForPeriod(startDate: LocalDate?, endDate: LocalDate?) {
         viewModelScope.launch {
-            val startDate = period.atDay(1)
-            val endDate = period.atEndOfMonth()
             val filter = TransactionFilter(startDate = startDate, endDate = endDate)
 
             getFilteredTransactionsUseCase(filter)
@@ -118,6 +153,18 @@ class ReportViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun calculateDateRangeFromOption(option: DateRangeOption): Pair<LocalDate?, LocalDate?> {
+        val today = LocalDate.now()
+        return when (option) {
+            DateRangeOption.ALL_TIME -> Pair(null, null)
+            DateRangeOption.TODAY -> Pair(today, today)
+            DateRangeOption.LAST_7_DAYS -> Pair(today.minusDays(6), today)
+            DateRangeOption.LAST_30_DAYS -> Pair(today.minusMonths(1).plusDays(1), today)
+            DateRangeOption.LAST_90_DAYS -> Pair(today.minusMonths(3).plusDays(1), today)
+            DateRangeOption.CUSTOM -> Pair(null, null) // TODO: Perbaiki 
         }
     }
 }

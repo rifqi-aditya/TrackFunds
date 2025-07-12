@@ -38,7 +38,7 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.ChipData
 import com.rifqi.trackfunds.feature.transaction.ui.components.FilterGroup
 import com.rifqi.trackfunds.feature.transaction.ui.event.FilterEvent
-import com.rifqi.trackfunds.feature.transaction.ui.model.DateRangeOption
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.feature.transaction.ui.state.FilterTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.FilterTransactionViewModel
 import java.math.BigDecimal

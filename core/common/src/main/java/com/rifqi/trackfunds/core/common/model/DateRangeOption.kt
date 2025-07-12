@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.model
+package com.rifqi.trackfunds.core.common.model
 
 enum class DateRangeOption(val displayName: String) {
     ALL_TIME("All Time"),

@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.event
 
-import com.rifqi.trackfunds.feature.transaction.ui.model.DateRangeOption
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import java.time.LocalDate
 
 /**
