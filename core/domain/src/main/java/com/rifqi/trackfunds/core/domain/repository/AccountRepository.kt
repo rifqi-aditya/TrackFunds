@@ -9,13 +9,10 @@ import kotlinx.coroutines.flow.Flow
  * sementara lapisan data akan menyediakan implementasi 'bagaimana' cara melakukannya.
  */
 interface AccountRepository {
-
-    /**
-     * Mengambil semua akun sebagai stream data yang reaktif.
-     */
-    fun getAccounts(): Flow<List<AccountItem>>
-
+    fun getAllAccounts(): Flow<List<AccountItem>>
     suspend fun getAccountById(accountId: String): AccountItem?
-
     suspend fun getAccountsByIds(ids: List<String>): List<AccountItem>
+    suspend fun addAccount(account: AccountItem)
+    suspend fun updateAccount(account: AccountItem)
+    suspend fun deleteAccount(accountId: String)
 }

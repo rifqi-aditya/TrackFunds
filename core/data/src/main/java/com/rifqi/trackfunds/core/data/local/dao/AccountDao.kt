@@ -16,7 +16,7 @@ interface AccountDao {
      * Mengembalikan Flow agar UI bisa bereaksi terhadap perubahan data.
      */
     @Query("SELECT * FROM accounts ORDER BY name ASC")
-    fun getAccounts(): Flow<List<AccountEntity>>
+    fun getAllAccounts(): Flow<List<AccountEntity>>
 
     /**
      * Mengambil satu akun spesifik berdasarkan ID-nya.
