@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.FilterTransactions
@@ -24,6 +26,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -41,6 +45,7 @@ class TransactionListViewModel @Inject constructor(
     private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
     private val getCategoriesByIdsUseCase: GetCategoriesByIdsUseCase,
     private val getAccountsByIdsUseCase: GetAccountsByIdsUseCase,
+    private val getFilteredSavingsGoalsUseCase: GetFilteredSavingsGoalsUseCase,
     private val resultManager: NavigationResultManager
 ) : ViewModel() {
 
@@ -50,13 +55,17 @@ class TransactionListViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<AppScreen>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    private val transactionsFlow = _uiState
+        .map { it.activeFilter }
+        .distinctUntilChanged()
+        .flatMapLatest { filter ->
+            getFilteredTransactionsUseCase(filter)
+        }
 
     val activeFilterChips: StateFlow<List<ActiveFilterChip>> =
         _uiState.map { it.activeFilter }
             .distinctUntilChanged()
-            .transformLatest { filter ->
-                emit(buildActiveFilterChips(filter))
-            }
+            .transformLatest { filter -> emit(buildActiveFilterChips(filter)) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -65,36 +74,41 @@ class TransactionListViewModel @Inject constructor(
 
     init {
         applyInitialDateFilter()
-
-        viewModelScope.launch {
-            _uiState
-                .map { it.activeFilter }
-                .distinctUntilChanged()
-                .flatMapLatest { filter ->
-                    getFilteredTransactionsUseCase(filter)
-                }
-                .catch { e ->
-                    _uiState.update { it.copy(isLoading = false, error = e.message) }
-                }
-                .collect { transactionList ->
-                    val totalIncome = transactionList.filter { it.type == TransactionType.INCOME }
-                        .sumOf { it.amount }
-                    val totalExpense = transactionList.filter { it.type == TransactionType.EXPENSE }
-                        .sumOf { it.amount }
-
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            transactions = transactionList,
-                            totalIncome = totalIncome,
-                            totalExpense = totalExpense,
-                            error = if (transactionList.isEmpty()) "No transactions found." else null
-                        )
-                    }
-
-                }
-        }
+        observeDataChanges()
         observeFilterResult()
+    }
+
+    private fun observeDataChanges() {
+        viewModelScope.launch {
+            combine(
+                transactionsFlow,
+                getFilteredSavingsGoalsUseCase(SavingsFilter(isAchieved = null))
+            ) { transactionList, allSavingsGoals ->
+
+                // Lakukan kalkulasi
+                val totalIncome =
+                    transactionList.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
+                val totalExpense = transactionList.filter { it.type == TransactionType.EXPENSE }
+                    .sumOf { it.amount }
+                val totalSavings = allSavingsGoals.sumOf { it.currentAmount }
+                val spendableBalance = totalIncome - (totalExpense + totalSavings)
+
+                // Update state dengan semua data yang sudah dihitung
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        transactions = transactionList,
+                        totalIncome = totalIncome,
+                        totalExpense = totalExpense,
+                        totalSavings = totalSavings,
+                        spendableBalance = spendableBalance,
+                        error = if (transactionList.isEmpty()) "No transactions found." else null
+                    )
+                }
+            }
+                .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
+                .collect()
+        }
     }
 
     fun onEvent(event: TransactionListEvent) {

@@ -1,8 +1,10 @@
 package com.rifqi.trackfunds.feature.home.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +19,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -40,41 +46,56 @@ fun InsightCard(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.inverseSurface
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("This Month's Spending's", style = MaterialTheme.typography.titleMedium)
-            Text(
-                formatCurrency(totalExpenseThisMonth),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+        Box {
+            // Gambar pola di lapisan bawah
+            Image(
+                painter = painterResource(id = R.drawable.insight_card_background),
+                contentDescription = null,
+                modifier = Modifier.matchParentSize(),
+                contentScale = ContentScale.Crop,
+                alpha = 0.9f
             )
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    "This Month's Spending's",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+                Text(
+                    formatCurrency(totalExpenseThisMonth),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                InfoItem(
-                    label = "Total Balance",
-                    value = formatCurrency(totalBalance),
-                    iconIdentifier = "money",
-                    onClick = onBalanceClick,
-                    modifier = Modifier.weight(1f)
-                )
-                InfoItem(
-                    label = "Savings",
-                    value = formatCurrency(totalSavings),
-                    iconIdentifier = "savings",
-                    onClick = onSavingsClick,
-                    modifier = Modifier.weight(1f)
-                )
-                InfoItem(
-                    label = "Accounts",
-                    value = "$totalAccounts Account",
-                    iconIdentifier = "wallet_account",
-                    onClick = onAccountsClick,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    InfoItem(
+                        label = "Total Balance",
+                        value = formatCurrency(totalBalance),
+                        iconIdentifier = "money",
+                        onClick = onBalanceClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                    InfoItem(
+                        label = "Savings",
+                        value = formatCurrency(totalSavings),
+                        iconIdentifier = "savings",
+                        onClick = onSavingsClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                    InfoItem(
+                        label = "Accounts",
+                        value = "$totalAccounts Account",
+                        iconIdentifier = "wallet_account",
+                        onClick = onAccountsClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
@@ -101,8 +122,13 @@ private fun InfoItem(
             contentDescription = label,
             modifier = Modifier.size(24.dp)
         )
-        Text(label, style = MaterialTheme.typography.labelMedium)
-        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        Text(label, style = MaterialTheme.typography.labelMedium, color = Color.White)
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
     }
 }
 

@@ -36,11 +36,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
 import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
+import com.rifqi.trackfunds.feature.transaction.ui.components.SummaryCard
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionListEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionListUiState
@@ -87,18 +90,29 @@ fun TransactionScreenContent(
 ) {
     Scaffold(
         topBar = {
-            // TODO: Tambahkan TopAppBar jika diperlukan
+            AppTopAppBar(
+                title = {
+                    Text(
+                        "Transaction",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
+                    )
+                }
+            )
         }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding())
                 .fillMaxSize()
         ) {
             // Item 1: Kartu Ringkasan Saldo
             item {
-                // TODO: Buat atau panggil komponen BalanceSummaryCard
-                // Contoh: BalanceSummaryCard(income = uiState.totalIncome, expense = uiState.totalExpense)
+                SummaryCard(
+                    spendableBalance = uiState.spendableBalance,
+                    totalIncome = uiState.totalIncome,
+                    totalExpense = uiState.totalExpense,
+                    totalSavings = uiState.totalSavings
+                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
 

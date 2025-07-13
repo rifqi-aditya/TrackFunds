@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -63,8 +64,8 @@ fun CashflowProfileCard(
             )
             val savingsBrush = Brush.verticalGradient(
                 colors = listOf(
-                    TrackFundsTheme.extendedColors.chartConditionGood,
-                    TrackFundsTheme.extendedColors.chartConditionGood.copy(alpha = 0.5f)
+                    Color(0xFF0D5EA6),
+                    Color(0xFF0D5EA6).copy(alpha = 0.5f)
                 )
             )
 
