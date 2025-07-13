@@ -1,6 +1,7 @@
 package com.rifqi.trackfunds.feature.transaction.ui.screen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -35,7 +37,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -104,6 +105,7 @@ fun TransactionScreenContent(
             modifier = Modifier
                 .padding(top = innerPadding.calculateTopPadding())
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             // Item 1: Kartu Ringkasan Saldo
             item {
@@ -113,7 +115,7 @@ fun TransactionScreenContent(
                     totalExpense = uiState.totalExpense,
                     totalSavings = uiState.totalSavings
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             // Item 2: SearchBar dan Tombol Filter
@@ -151,6 +153,10 @@ fun TransactionScreenContent(
                         border = BorderStroke(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.primary
+                        ),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            contentColor = MaterialTheme.colorScheme.primary
                         ),
                     ) {
                         Icon(
@@ -205,7 +211,7 @@ fun TransactionScreenContent(
                                 },
                                 shape = MaterialTheme.shapes.large,
                                 colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color.Transparent,
+                                    selectedContainerColor = MaterialTheme.colorScheme.background,
                                     selectedLabelColor = MaterialTheme.colorScheme.primary
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(

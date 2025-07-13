@@ -41,9 +41,7 @@ fun CompactOutlinedTextField(
         onValueChange = onValueChange,
         modifier = modifier
             .background(
-                MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                    alpha = 0.1f
-                ),
+                MaterialTheme.colorScheme.background,
                 CircleShape
             )
             .height(40.dp),

@@ -1,6 +1,7 @@
 package com.rifqi.trackfunds.core.ui.utils
 
 import java.math.BigDecimal
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.YearMonth
@@ -10,8 +11,13 @@ import java.util.Locale
 
 fun formatCurrency(amount: BigDecimal, locale: Locale = Locale("in", "ID")): String {
     val currencyFormat = NumberFormat.getCurrencyInstance(locale)
+    // Ubah simbol "Rp" menjadi "Rp "
+    (currencyFormat as DecimalFormat).let {
+        val symbols = it.decimalFormatSymbols
+        symbols.currencySymbol = "Rp "
+        it.decimalFormatSymbols = symbols
+    }
     currencyFormat.maximumFractionDigits = 0
-    currencyFormat.minimumFractionDigits = 0
     return currencyFormat.format(amount)
 }
 
