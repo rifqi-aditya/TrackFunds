@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.categories.ui.model
+package com.rifqi.trackfunds.feature.categories.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 

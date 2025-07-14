@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.Accounts
+import com.rifqi.trackfunds.core.navigation.api.Categories
 import com.rifqi.trackfunds.core.navigation.api.Profile
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 import com.rifqi.trackfunds.core.navigation.api.Settings
@@ -18,7 +19,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             ProfileScreen(
                 onNavigateToSettings = { navController.navigate(Settings) },
                 onNavigateToManageAccounts = { navController.navigate(Accounts) },
-                onNavigateToManageCategories = { /* TODO */ },
+                onNavigateToManageCategories = { navController.navigate(Categories) },
                 onLogout = { /* TODO */ }
             )
         }

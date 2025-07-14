@@ -14,6 +14,7 @@ import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
+import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
@@ -81,6 +82,7 @@ class HomeViewModel @Inject constructor(
                 HomeEvent.AccountsClicked -> _navigationEvent.emit(AccountsGraph)
                 HomeEvent.BalanceClicked -> _navigationEvent.emit(AccountsGraph)
                 HomeEvent.SavingsClicked -> _navigationEvent.emit(SavingsGraph)
+                HomeEvent.ProfileClicked -> _navigationEvent.emit(ProfileGraph)
 
                 is HomeEvent.TransactionClicked -> _navigationEvent.emit(
                     TransactionDetail(event.transactionId)

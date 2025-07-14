@@ -26,7 +26,6 @@ import java.math.BigDecimal
 fun BudgetSummaryRow(
     modifier: Modifier = Modifier,
     item: BudgetItem,
-    onClick: () -> Unit = {},
 ) {
     val gradientBrush = when {
         item.progress > 0.8f -> Brush.horizontalGradient(

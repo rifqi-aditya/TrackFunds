@@ -6,8 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
-import com.rifqi.trackfunds.feature.categories.ui.model.SelectCategoryUiState
+import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
+import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.feature.categories.ui.state.SelectCategoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectCategoryViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getFilteredCategoriesUseCase: GetFilteredCategoriesUseCase,
     savedStateHandle: SavedStateHandle,
     private val resultManager: NavigationResultManager
 ) : ViewModel() {
@@ -41,7 +42,7 @@ class SelectCategoryViewModel @Inject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            getCategoriesUseCase()
+            getFilteredCategoriesUseCase(filter = CategoryFilter())
                 .map { allCategories ->
                     // Lakukan filter di sini, sebelum di-collect
                     allCategories.filter { it.type == transactionTypeToDisplay }

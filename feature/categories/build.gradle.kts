@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
+    implementation(project(":core:navigation:api"))
 
     // AndroidX Core & Lifecycle
     implementation(libs.androidx.core.ktx)

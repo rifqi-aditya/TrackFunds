@@ -8,36 +8,33 @@ import java.text.DecimalFormat
 
 class CurrencyVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        // Ambil teks asli (angka bersih)
         val originalText = text.text
         if (originalText.isEmpty()) {
             return TransformedText(text, OffsetMapping.Identity)
         }
 
-        // Ubah string angka menjadi Long agar bisa diformat
-        val number = originalText.toLongOrNull() ?: return TransformedText(text, OffsetMapping.Identity)
+        // Hindari error jika teks tidak bisa di-parse menjadi Long
+        val number = try {
+            originalText.toLong()
+        } catch (e: NumberFormatException) {
+            return TransformedText(text, OffsetMapping.Identity)
+        }
 
-        // Format angka dengan pemisah titik
         val formatter = DecimalFormat("#,###")
         val formattedText = formatter.format(number).replace(",", ".")
 
-        // Buat OffsetMapping untuk mengatur posisi kursor dengan benar
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                // Hitung berapa banyak titik yang ada sebelum posisi kursor asli
-                val dotsBefore = formattedText.slice(0 until offset + (offset - 1) / 3)
+                val dotsBefore = formattedText.take(offset + (offset - 1) / 3)
                     .count { it == '.' }
-                return offset + dotsBefore
+                return (offset + dotsBefore).coerceAtMost(formattedText.length)
             }
-
             override fun transformedToOriginal(offset: Int): Int {
-                // Hitung berapa banyak titik yang ada sebelum posisi kursor yang diformat
-                val dotsBefore = formattedText.slice(0 until offset)
+                val dotsBefore = formattedText.take(offset)
                     .count { it == '.' }
-                return offset - dotsBefore
+                return (offset - dotsBefore).coerceAtLeast(0)
             }
         }
-
         return TransformedText(AnnotatedString(formattedText), offsetMapping)
     }
 }

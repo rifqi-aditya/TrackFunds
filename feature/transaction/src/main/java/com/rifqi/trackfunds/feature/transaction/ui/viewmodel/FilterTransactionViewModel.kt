@@ -3,11 +3,12 @@ package com.rifqi.trackfunds.feature.transaction.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
+import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.FilterEvent
-import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.feature.transaction.ui.state.FilterTransactionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilterTransactionViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getFilteredCategoriesUseCase: GetFilteredCategoriesUseCase,
     private val getAccountsUseCase: GetAccountsUseCase,
     private val resultManager: NavigationResultManager,
 ) : ViewModel() {
@@ -93,7 +94,9 @@ class FilterTransactionViewModel @Inject constructor(
     private fun loadInitialData() {
         viewModelScope.launch {
             combine(
-                getCategoriesUseCase(),
+                getFilteredCategoriesUseCase(
+                    filter = CategoryFilter()
+                ),
                 getAccountsUseCase()
             ) { categories, accounts ->
                 _uiState.update {
@@ -104,7 +107,7 @@ class FilterTransactionViewModel @Inject constructor(
                     )
                 }
             }.catch { e ->
-                _uiState.update { it.copy(isLoading = false /* error = e.message */) }
+                _uiState.update { it.copy(isLoading = false) }
             }.collect()
         }
     }

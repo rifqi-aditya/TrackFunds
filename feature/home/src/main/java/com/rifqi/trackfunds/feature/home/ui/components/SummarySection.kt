@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.home.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun <T>SummarySection(
+fun <T> SummarySection(
     modifier: Modifier = Modifier,
     title: String,
     items: List<T>?,
@@ -27,7 +28,10 @@ fun <T>SummarySection(
     itemContent: @Composable (item: T) -> Unit,
 
     ) {
-    Column(modifier = modifier.padding(vertical = 8.dp)) {
+    Column(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -38,14 +42,16 @@ fun <T>SummarySection(
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             TextButton(onClick = onViewAllClick) {
                 Text(
-                    "View all",
-                    style = MaterialTheme.typography.labelLarge,
+                    "View Detail",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
         }
         if (!items.isNullOrEmpty()) {
-            Column(modifier = Modifier.padding(top = 4.dp)) {
+            Column {
                 items.forEachIndexed { index, item ->
                     val itemModifier = if (onItemClick != null) {
                         Modifier.clickable { onItemClick(item) }

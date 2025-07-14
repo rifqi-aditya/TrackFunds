@@ -3,7 +3,6 @@ package com.rifqi.trackfunds.feature.home.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -104,20 +101,18 @@ fun HomeScreenContent(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(8.dp),
                 ) {
                     Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
                     HomeHeader(
                         userName = "Rifqi Aditya",
-                        onProfileClick = { },
+                        onProfileClick = { onEvent(HomeEvent.ProfileClicked)},
                         onNotificationsClick = {},
                         modifier = Modifier
                             .padding(top = 8.dp)
@@ -139,10 +134,10 @@ fun HomeScreenContent(
                 Column(
                     modifier = Modifier
                         .fillParentMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     SummarySection(
-                        title = "Recent Transactions",
+                        title = "Recent transactions",
                         items = uiState.recentTransactions,
                         onViewAllClick = {
                             onEvent(HomeEvent.AllTransactionsClicked)

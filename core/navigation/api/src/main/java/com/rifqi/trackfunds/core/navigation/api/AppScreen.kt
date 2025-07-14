@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.core.navigation.api
 
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -63,6 +64,15 @@ data object Notifications : AppScreen
 
 @Serializable
 data object Transfer : AppScreen
+
+@Serializable
+data object Categories : AppScreen
+
+@Serializable
+data class AddEditCategory(
+    val categoryId: String? = null,
+    val type: TransactionType? = null
+) : AppScreen
 
 @Serializable
 data class AddEditBudget(val period: String, val budgetId: String? = null) : AppScreen

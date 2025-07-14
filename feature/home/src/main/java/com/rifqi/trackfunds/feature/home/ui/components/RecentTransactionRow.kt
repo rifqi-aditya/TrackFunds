@@ -43,10 +43,10 @@ fun RecentTransactionRow(
             identifier = item.category?.iconIdentifier,
             contentDescription = item.category?.name,
             modifier = Modifier
-                .size(40.dp)
+                .size(42.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.1f))
-                .padding(8.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(6.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(
@@ -55,7 +55,7 @@ fun RecentTransactionRow(
         ) {
             Text(
                 text = item.description.ifEmpty { "-" },
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium
             )
             Row(
@@ -69,7 +69,7 @@ fun RecentTransactionRow(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.1f))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(4.dp)
                 )
                 Text(

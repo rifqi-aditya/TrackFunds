@@ -24,14 +24,18 @@ import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.category.AddCategoryUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.AddCategoryUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCase
-import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.category.UpdateCategoryUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.UpdateCategoryUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCase
@@ -72,9 +76,9 @@ abstract class DomainModule {
     // --- Category Use Cases ---
     @Binds
     @Singleton
-    abstract fun bindGetCategoriesUseCase(
-        useCaseImpl: GetCategoriesUseCaseImpl
-    ): GetCategoriesUseCase
+    abstract fun bindGetFilteredCategoriesUseCase(
+        useCaseImpl: GetFilteredCategoriesUseCaseImpl
+    ): GetFilteredCategoriesUseCase
 
     @Binds
     @Singleton
@@ -93,6 +97,18 @@ abstract class DomainModule {
     abstract fun bindGetCategoryByStandardKeyUseCase(
         useCaseImpl: GetCategoryByStandardKeyUseCaseImpl
     ): GetCategoryByStandardKeyUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindUpdateCategoryUseCase(
+        useCaseImpl: UpdateCategoryUseCaseImpl
+    ): UpdateCategoryUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindAddCategoryUseCase(
+        useCaseImpl: AddCategoryUseCaseImpl
+    ): AddCategoryUseCase
 
     // --- Account Use Cases ---
     @Binds

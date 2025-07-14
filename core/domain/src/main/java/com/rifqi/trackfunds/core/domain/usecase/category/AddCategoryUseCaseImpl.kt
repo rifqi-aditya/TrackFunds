@@ -4,10 +4,10 @@ import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
 import javax.inject.Inject
 
-class GetCategoryByStandardKeyUseCaseImpl @Inject constructor(
+class AddCategoryUseCaseImpl @Inject constructor(
     private val repository: CategoryRepository
-) : GetCategoryByStandardKeyUseCase {
-    override suspend operator fun invoke(key: String): CategoryItem? {
-        return repository.getCategoryByStandardKey(key)
+) : AddCategoryUseCase {
+    override suspend operator fun invoke(category: CategoryItem) {
+        repository.insertCategory(category)
     }
 }

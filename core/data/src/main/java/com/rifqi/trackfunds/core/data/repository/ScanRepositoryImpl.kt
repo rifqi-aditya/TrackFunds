@@ -30,7 +30,11 @@ class ScanRepositoryImpl @Inject constructor(
         val imageBase64 = imageUri.toBase64(context)
             ?: throw Exception("Gagal mengonversi gambar ke Base64.")
 
-        val categories = categoryDao.getAllCategories().first()
+        val categories = categoryDao.getFilteredCategories(
+            type = null,
+            isUnbudgeted = null,
+            budgetPeriod = null
+        ).first()
 
         val prompt = createGeminiPrompt(categories)
 

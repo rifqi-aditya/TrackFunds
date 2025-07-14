@@ -10,7 +10,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rifqi.account.ui.screen.SelectAccountScreen
+import com.rifqi.trackfunds.core.navigation.api.AddEditCategory
 import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
+import com.rifqi.trackfunds.core.navigation.api.Categories
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.Report
@@ -18,6 +20,8 @@ import com.rifqi.trackfunds.core.navigation.api.SelectAccount
 import com.rifqi.trackfunds.core.navigation.api.SelectCategory
 import com.rifqi.trackfunds.core.navigation.api.Settings
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
+import com.rifqi.trackfunds.feature.categories.ui.screen.AddEditCategoryScreen
+import com.rifqi.trackfunds.feature.categories.ui.screen.CategoriesScreen
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.AddEditTransactionScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.TransactionDetailScreen
@@ -68,6 +72,21 @@ fun AppNavHost(
                 onNavigateToAddCategory = { },
                 onSearchClicked = { },
             )
+        }
+
+        composable<Categories> {
+            CategoriesScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigate = { screen ->
+                    navController.navigate(screen)
+                }
+            )
+        }
+
+        composable<AddEditCategory> {
+            AddEditCategoryScreen {
+                navController.popBackStack()
+            }
         }
 
         // --- Layar Full-Screen ---
