@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -34,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
@@ -85,7 +84,11 @@ fun AddEditBudgetScreen(
                 ) { Text("Delete") }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.onEvent(AddEditBudgetEvent.DismissDeleteDialog) }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.onEvent(AddEditBudgetEvent.DismissDeleteDialog) }) {
+                    Text(
+                        "Cancel"
+                    )
+                }
             }
         )
     }
@@ -114,14 +117,10 @@ fun AddEditBudgetContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = { Text(if (isEditMode) "Edit Budget" else "Add Budget") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBackIos, "Back")
-                    }
-                },
+                title = if (isEditMode) "Edit Budget" else "Add Budget",
+                onNavigateBack = onNavigateBack,
+                isFullScreen = true,
                 actions = {
-                    // Tombol hapus hanya muncul di mode edit
                     if (isEditMode) {
                         IconButton(onClick = { onEvent(AddEditBudgetEvent.DeleteClicked) }) {
                             Icon(Icons.Default.Delete, contentDescription = "Delete Budget")
@@ -163,7 +162,9 @@ fun AddEditBudgetContent(
             Button(
                 onClick = { onEvent(AddEditBudgetEvent.SaveBudgetClicked) },
                 enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             ) {
                 if (uiState.isLoading) CircularProgressIndicator() else Text(if (isEditMode) "Save Changes" else "Save Budget")
             }
@@ -213,7 +214,11 @@ private fun AddBudgetContentFilledPreview() {
 }
 
 @Preview(showBackground = true, name = "Edit Budget Mode")
-@Preview(showBackground = true, name = "Edit Budget Mode (Dark)", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "Edit Budget Mode (Dark)",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 private fun EditBudgetContentPreview() {
     TrackFundsTheme {

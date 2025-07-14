@@ -34,9 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.account.ui.event.AddEditAccountEvent
 import com.rifqi.account.ui.model.DefaultAccountsIcons
@@ -121,25 +119,9 @@ fun AddEditAccountContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = {
-                    Text(
-                        uiState.screenTitle, style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp
-                        )
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        DisplayIconFromResource(
-                            identifier = "arrow_back",
-                            contentDescription = "back to accounts overview",
-                            modifier = Modifier
-                                .padding(end = 8.dp, start = 4.dp)
-                                .size(24.dp)
-                        )
-                    }
-                },
+                title = if (uiState.isEditMode) "Edit Account" else "Add New Account",
+                isFullScreen = true,
+                onNavigateBack = onNavigateBack,
                 actions = {
                     if (uiState.isEditMode) {
                         IconButton(onClick = { onEvent(AddEditAccountEvent.DeleteClicked) }) {

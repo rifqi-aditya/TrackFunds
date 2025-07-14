@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
@@ -22,7 +21,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -102,21 +100,9 @@ fun ScanOptionContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = {
-                    Text(
-                        text = "Select Source",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.ArrowBackIos,
-                            contentDescription = "Back",
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                },
+                title = "Scan Receipt",
+                onNavigateBack = onNavigateBack,
+                isFullScreen = true
             )
         }
     ) { innerPadding ->

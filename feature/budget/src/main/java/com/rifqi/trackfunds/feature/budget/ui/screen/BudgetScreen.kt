@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -47,7 +46,6 @@ import com.rifqi.trackfunds.core.navigation.api.AddEditBudget
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.budget.ui.components.BudgetCardItem
 import com.rifqi.trackfunds.feature.budget.ui.components.BudgetRingChart
 import com.rifqi.trackfunds.feature.budget.ui.event.BudgetEvent
@@ -115,18 +113,7 @@ fun BudgetListContent(
         Scaffold(
             topBar = {
                 AppTopAppBar(
-                    title = {
-                        Text("Budgets", style = MaterialTheme.typography.titleMedium)
-                    },
-                    navigationIcon = {
-                        DisplayIconFromResource(
-                            identifier = "budgets",
-                            contentDescription = "Back",
-                            modifier = Modifier
-                                .size(32.dp)
-                                .padding(end = 8.dp)
-                        )
-                    },
+                    title = "Budgets",
                     actions = {
                         Text(
                             uiState.currentPeriodDisplay,

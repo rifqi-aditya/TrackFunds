@@ -22,7 +22,6 @@ import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.ReportsGraph
-import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.core.ui.R
 
 sealed class BottomNavItem(
@@ -37,7 +36,7 @@ sealed class BottomNavItem(
     )
 
     data object Transactions : BottomNavItem(
-        graphRoute = TransactionsGraph,
+        graphRoute = com.rifqi.trackfunds.core.navigation.api.Transactions,
         title = "Transactions",
         icon = R.drawable.bottom_nav_accounts
     )

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.reports.ui.components.CashflowProfileCard
 import com.rifqi.trackfunds.feature.reports.ui.components.FinancialAllocationCard
 import com.rifqi.trackfunds.feature.reports.ui.components.PeriodFilterBottomSheet
@@ -135,24 +133,7 @@ fun ReportContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = {
-                    Text(
-                        "Financial reports",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                },
-                navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 8.dp, end = 8.dp)
-                    ) {
-                        DisplayIconFromResource(
-                            identifier = "budgets",
-                            contentDescription = "Back",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                },
+                title = "Financial Report",
                 actions = {
                     Text(
                         "June 2025",

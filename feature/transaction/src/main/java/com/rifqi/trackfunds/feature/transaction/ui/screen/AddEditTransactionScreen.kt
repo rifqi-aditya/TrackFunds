@@ -2,17 +2,18 @@ package com.rifqi.trackfunds.feature.transaction.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -164,21 +165,9 @@ fun AddEditTransactionContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = {
-                    Text(
-                        if (isEditMode) "Edit Transaction" else "Add Transaction",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.ArrowBackIos,
-                            contentDescription = "Back",
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                },
+                title = if (isEditMode) "Edit Transaction" else "Add Transaction",
+                onNavigateBack = onNavigateBack,
+                isFullScreen = true,
                 actions = {
                     if (isEditMode) {
                         IconButton(onClick = { onEvent(AddEditTransactionEvent.DeleteClicked) }) {
@@ -188,6 +177,7 @@ fun AddEditTransactionContent(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.width(48.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent

@@ -1,7 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.screen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -37,7 +36,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
@@ -92,12 +90,7 @@ fun TransactionScreenContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = {
-                    Text(
-                        "Transaction",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
-                    )
-                }
+                title = "Transactions",
             )
         }
     ) { innerPadding ->
@@ -105,7 +98,6 @@ fun TransactionScreenContent(
             modifier = Modifier
                 .padding(top = innerPadding.calculateTopPadding())
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
         ) {
             // Item 1: Kartu Ringkasan Saldo
             item {
