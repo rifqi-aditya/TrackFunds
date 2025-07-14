@@ -55,7 +55,7 @@ fun RecentTransactionRow(
         ) {
             Text(
                 text = item.description.ifEmpty { "-" },
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                 fontWeight = FontWeight.Medium
             )
             Row(
@@ -67,14 +67,14 @@ fun RecentTransactionRow(
                     identifier = item.account.iconIdentifier,
                     contentDescription = item.account.name,
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(20.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(4.dp)
                 )
                 Text(
                     text = item.account.name,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -91,11 +91,11 @@ fun RecentTransactionRow(
                 Text(
                     text = item.date.format(
                         DateTimeFormatter.ofPattern(
-                            "dd MMMM yyyy",
+                            "dd MMM yyyy",
                             Locale.getDefault()
                         )
                     ),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -103,7 +103,7 @@ fun RecentTransactionRow(
         }
         Text(
             text = formatCurrency(item.amount),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = if (item.type == TransactionType.EXPENSE
             ) TrackFundsTheme.extendedColors.textExpense else TrackFundsTheme.extendedColors.textIncome

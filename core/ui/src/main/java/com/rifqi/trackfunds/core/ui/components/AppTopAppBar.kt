@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -28,8 +29,8 @@ fun AppTopAppBar(
     onNavigateBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
-        containerColor = MaterialTheme.colorScheme.surface,
-        scrolledContainerColor = MaterialTheme.colorScheme.surface
+        containerColor = Color.Transparent,
+        scrolledContainerColor = Color.Transparent
     )
 ) {
     val titleStyle = if (isFullScreen) {

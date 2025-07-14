@@ -100,22 +100,22 @@ fun HomeScreenContent(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
                 ) {
                     Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
                     HomeHeader(
                         userName = "Rifqi Aditya",
-                        onProfileClick = { onEvent(HomeEvent.ProfileClicked)},
+                        onProfileClick = { onEvent(HomeEvent.ProfileClicked) },
                         onNotificationsClick = {},
-                        modifier = Modifier
-                            .padding(top = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     InsightCard(
@@ -131,11 +131,7 @@ fun HomeScreenContent(
             }
 
             item {
-                Column(
-                    modifier = Modifier
-                        .fillParentMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxSize()) {
                     SummarySection(
                         title = "Recent transactions",
                         items = uiState.recentTransactions,
@@ -149,10 +145,10 @@ fun HomeScreenContent(
                             RecentTransactionRow(
                                 item = transactionItem,
                             )
-                        }
+                        },
                     )
                     SummarySection(
-                        title = "Your budgets",
+                        title = "Remaining budgets",
                         items = uiState.topBudgets,
                         onViewAllClick = {
                             onEvent(HomeEvent.AllBudgetsClicked)
