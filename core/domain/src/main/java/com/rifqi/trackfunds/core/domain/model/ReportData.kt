@@ -10,5 +10,6 @@ data class CategorySpending(
 data class CashFlowSummary(
     val totalIncome: BigDecimal,
     val totalExpense: BigDecimal,
+    val totalSavings: BigDecimal,
     val netCashFlow: BigDecimal
 )

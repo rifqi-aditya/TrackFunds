@@ -15,5 +15,8 @@ data class CashFlowDto(
     val totalIncome: BigDecimal?,
 
     @ColumnInfo(name = "total_expense")
-    val totalExpense: BigDecimal?
+    val totalExpense: BigDecimal?,
+
+    @ColumnInfo(name = "savings_total")
+    val savingsTotal: BigDecimal? = null
 )

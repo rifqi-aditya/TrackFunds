@@ -7,7 +7,6 @@ import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
-import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.feature.reports.ui.event.ReportEvent
 import com.rifqi.trackfunds.feature.reports.ui.state.ReportUiState
@@ -34,7 +33,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ReportViewModel @Inject constructor(
     private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
-    private val getFilteredSavingsGoalsUseCase: GetFilteredSavingsGoalsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportUiState())
@@ -123,6 +121,8 @@ class ReportViewModel @Inject constructor(
                         .sumOf { it.amount }
                     val totalExpense = transactions.filter { it.type == TransactionType.EXPENSE }
                         .sumOf { it.amount }
+                    val totalSavings = transactions.filter { it.type == TransactionType.SAVINGS }
+                        .sumOf { it.amount }
 
                     val expenseBreakdown = transactions
                         .filter { it.type == TransactionType.EXPENSE && it.category != null }
@@ -146,6 +146,7 @@ class ReportViewModel @Inject constructor(
                             cashFlowSummary = CashFlowSummary(
                                 totalIncome,
                                 totalExpense,
+                                totalSavings,
                                 netCashFlow = totalIncome.subtract(totalExpense)
                             ),
                             expenseBreakdown = expenseBreakdown,
@@ -164,7 +165,7 @@ class ReportViewModel @Inject constructor(
             DateRangeOption.LAST_7_DAYS -> Pair(today.minusDays(6), today)
             DateRangeOption.LAST_30_DAYS -> Pair(today.minusMonths(1).plusDays(1), today)
             DateRangeOption.LAST_90_DAYS -> Pair(today.minusMonths(3).plusDays(1), today)
-            DateRangeOption.CUSTOM -> Pair(null, null) // TODO: Perbaiki 
+            DateRangeOption.CUSTOM -> Pair(null, null) // TODO: Perbaiki
         }
     }
 }

@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.feature.reports.ui.components
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -40,11 +42,17 @@ fun CashflowProfileCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface),
+            .clip(MaterialTheme.shapes.large)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = MaterialTheme.shapes.large
+            )
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Profil arus kas kamu",
+                text = "Your Cash flow Profile",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -90,7 +98,7 @@ fun CashflowProfileCard(
                                 ),
                                 Bars.Data(
                                     label = "Savings",
-                                    value = 1_000_000.0,
+                                    value = summary.totalSavings.toDouble(),
                                     color = savingsBrush
                                 )
                             ),
@@ -100,7 +108,7 @@ fun CashflowProfileCard(
                 labelProperties = LabelProperties(
                     enabled = true,
                     textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         fontSize = 24.sp
                     )
                 ),
@@ -128,9 +136,8 @@ fun CashflowProfileCard(
                     )
                 ),
                 indicatorProperties = HorizontalIndicatorProperties(
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 12.sp,
+                    textStyle = MaterialTheme.typography.labelMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     contentBuilder = { value ->
                         when {
@@ -153,16 +160,15 @@ fun CashflowProfileCard(
                 ),
                 labelHelperProperties = LabelHelperProperties(
                     enabled = true,
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 12.sp
-                    )
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
                 ),
                 popupProperties = PopupProperties(
                     textStyle = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.inverseOnSurface
                     ),
+                    containerColor = MaterialTheme.colorScheme.inverseSurface,
                     contentBuilder = { _, _, value ->
                         when {
                             value >= 1_000_000 -> {

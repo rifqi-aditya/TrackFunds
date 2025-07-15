@@ -4,11 +4,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.CategorySpending
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.reports.ui.components.CashflowProfileCard
 import com.rifqi.trackfunds.feature.reports.ui.components.FinancialAllocationCard
 import com.rifqi.trackfunds.feature.reports.ui.components.PeriodFilterBottomSheet
@@ -135,16 +138,32 @@ fun ReportContent(
             AppTopAppBar(
                 title = "Financial Report",
                 actions = {
-                    Text(
-                        "June 2025",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                    Column(
                         modifier = Modifier
-                            .padding(end = 8.dp)
-                            .clickable {
-                                onEvent(ReportEvent.ChangePeriodClicked)
-                            }
-                    )
+                            .padding(end = 16.dp)
+                            .clickable(
+                                onClick = { onEvent(ReportEvent.ChangePeriodClicked) }
+                            )
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                uiState.selectedDateOption.displayName,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                            )
+                            DisplayIconFromResource(
+                                identifier = "arrow_down",
+                                contentDescription = "Change Period",
+                                modifier = Modifier
+                                    .size(14.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 },
             )
         },
@@ -176,6 +195,7 @@ fun ReportContent(
                         onBreakdownTypeSelected = { type ->
                             onEvent(ReportEvent.BreakdownTypeSelected(type))
                         },
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                     uiState.cashFlowSummary?.let { summary ->

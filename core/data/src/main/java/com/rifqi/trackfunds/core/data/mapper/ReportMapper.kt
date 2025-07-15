@@ -16,9 +16,11 @@ fun CategorySpendingDto.toDomain(): CategorySpending {
 fun CashFlowDto.toDomain(): CashFlowSummary {
     val income = this.totalIncome ?: BigDecimal.ZERO
     val expense = this.totalExpense ?: BigDecimal.ZERO
+    val savings = this.savingsTotal ?: BigDecimal.ZERO
     return CashFlowSummary(
         totalIncome = income,
         totalExpense = expense,
+        totalSavings = savings,
         netCashFlow = income - expense
     )
 }

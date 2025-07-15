@@ -45,22 +45,34 @@ fun FinancialAllocationCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Bagaimana alokasi danamu?", // Ganti dengan stringResource
+                text = "How is your funds allocated?",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 // Refactor FilterChip untuk menghindari duplikasi
                 TransactionType.entries.forEach { type ->
+                    if (type == TransactionType.SAVINGS) return@forEach
                     FilterChip(
                         selected = activeBreakdownType == type,
                         onClick = { onBreakdownTypeSelected(type) },
-                        label = { Text(type.name.capitalize()) },
+                        label = { Text(type.name) },
                         shape = MaterialTheme.shapes.large,
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            selectedContainerColor = MaterialTheme.colorScheme.inverseSurface,
+                            selectedLabelColor = MaterialTheme.colorScheme.surface
                         ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            selected = activeBreakdownType == type,
+                            enabled = true,
+
+                            selectedBorderColor = MaterialTheme.colorScheme.surface,
+                            selectedBorderWidth = 1.5.dp,
+                            borderColor = MaterialTheme.colorScheme.outline.copy(
+                                alpha = 0.5f
+                            ),
+                            borderWidth = 1.dp
+                        )
                     )
                 }
             }

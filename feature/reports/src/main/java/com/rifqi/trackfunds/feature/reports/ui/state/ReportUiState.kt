@@ -14,6 +14,7 @@ data class ReportUiState(
     val cashFlowSummary: CashFlowSummary? = null,
     val expenseBreakdown: List<CategorySpending> = emptyList(),
     val incomeBreakdown: List<CategorySpending> = emptyList(),
+    val savingsBreakdown: List<CategorySpending> = emptyList(),
     val error: String? = null,
     val showMonthPickerDialog: Boolean = false,
     val selectedDateOption: DateRangeOption = DateRangeOption.LAST_30_DAYS,
