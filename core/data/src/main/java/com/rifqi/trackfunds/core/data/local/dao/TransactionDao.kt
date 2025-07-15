@@ -127,13 +127,14 @@ interface TransactionDao {
     ): Flow<List<CategorySpendingDto>>
 
     /**
-     * Calculates the total income and total expense for a given date range.
+     * Calculates the total income, expense and total savings for a given date range.
      */
     @Query(
         """
         SELECT
             (SELECT SUM(amount) FROM transactions WHERE type = 'INCOME' AND date BETWEEN :startDate AND :endDate) as total_income,
-            (SELECT SUM(amount) FROM transactions WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate) as total_expense
+            (SELECT SUM(amount) FROM transactions WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate) as total_expense,
+            (SELECT SUM(amount) FROM transactions WHERE type = 'SAVINGS' AND date BETWEEN :startDate AND :endDate) as savings_total
     """
     )
     fun getCashFlowSummary(startDate: LocalDateTime, endDate: LocalDateTime): Flow<CashFlowDto>
