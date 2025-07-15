@@ -211,6 +211,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         selectedCategory = event.category,
+                        activeSheet = null
                     )
                 }
             }
@@ -219,6 +220,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         selectedAccount = event.account,
+                        activeSheet = null
                     )
                 }
             }
@@ -227,6 +229,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         selectedSavingsGoal = event.goal,
+                        activeSheet = null
                     )
                 }
             }
@@ -361,7 +364,7 @@ class AddEditTransactionViewModel @Inject constructor(
             id = editingTransactionId ?: UUID.randomUUID().toString(),
             description = state.description,
             amount = state.amount.toBigDecimal(),
-            type = if (isSavings) TransactionType.EXPENSE else state.selectedTransactionType,
+            type = if (isSavings) TransactionType.SAVINGS else state.selectedTransactionType,
             date = state.selectedDate.atTime(LocalTime.now()),
             category = if (isSavings) null else state.selectedCategory,
             account = state.selectedAccount!!,
