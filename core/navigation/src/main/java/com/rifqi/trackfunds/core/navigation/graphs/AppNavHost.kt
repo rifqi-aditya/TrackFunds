@@ -1,5 +1,9 @@
 package com.rifqi.trackfunds.core.navigation.graphs
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -39,6 +43,12 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = HomeGraph,
+        enterTransition = {
+            EnterTransition.None
+        },
+        exitTransition = {
+            ExitTransition.None
+        },
         modifier = modifier,
     ) {
 
@@ -52,7 +62,20 @@ fun AppNavHost(
         savingsNavGraph(navController)
 
 
-        composable<AddEditTransaction> {
+        composable<AddEditTransaction>(
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(500)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(500)
+                )
+            }
+        ) {
             AddEditTransactionScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigate = { screen -> navController.navigate(screen) },

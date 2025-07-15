@@ -1,5 +1,8 @@
 package com.rifqi.trackfunds.core.navigation.graphs
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,7 +17,10 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
     navigation<HomeGraph>(
         startDestination = Home,
     ) {
-        composable<Home> {
+        composable<Home>(
+            enterTransition = { fadeIn(animationSpec = tween(400)) },
+            exitTransition = { fadeOut(animationSpec = tween(400)) }
+        ) {
             HomeScreen(
                 onNavigateBack = {
                     navController.popBackStack()

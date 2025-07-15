@@ -1,5 +1,8 @@
 package com.rifqi.trackfunds.core.navigation.graphs
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -15,7 +18,10 @@ fun NavGraphBuilder.budgetNavGraph(navController: NavHostController) {
     navigation<BudgetsGraph>(
         startDestination = Budgets
     ) {
-        composable<Budgets> {
+        composable<Budgets>(
+            enterTransition = { fadeIn(animationSpec = tween(400)) },
+            exitTransition = { fadeOut(animationSpec = tween(400)) }
+        ) {
             BudgetScreen(
                 onNavigateToAddEditBudget = { route ->
                     navController.navigate(route)
