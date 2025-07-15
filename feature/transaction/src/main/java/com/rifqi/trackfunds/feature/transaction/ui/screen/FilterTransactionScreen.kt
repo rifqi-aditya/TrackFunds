@@ -12,33 +12,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.ChipData
 import com.rifqi.trackfunds.feature.transaction.ui.components.FilterGroup
 import com.rifqi.trackfunds.feature.transaction.ui.event.FilterEvent
-import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.feature.transaction.ui.state.FilterTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.FilterTransactionViewModel
 import java.math.BigDecimal
@@ -73,16 +73,25 @@ fun FilterScreenContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Filter") },
-                navigationIcon = { IconButton(onClick = onNavigateBack) { /* ... */ } })
+            AppTopAppBar(
+                title = "Filter",
+                onNavigateBack = onNavigateBack,
+                isFullScreen = true,
+            )
         },
         bottomBar = {
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                onClick = { onEvent(FilterEvent.ApplyFilterClicked) }
+                    .padding(16.dp)
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.large,
+                onClick = { onEvent(FilterEvent.ApplyFilterClicked) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                )
+
             ) {
                 Text("Apply Filter")
             }
@@ -126,12 +135,11 @@ fun FilterScreenContent(
                 )
             }
 
-            // Bagian Tanggal Transaksi
             item {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         "Transaction Date",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.weight(1f)
                     )
                     TextButton(onClick = { onEvent(FilterEvent.ManualDateSelectionClicked) }) {
@@ -152,14 +160,14 @@ fun FilterScreenContent(
                                 label = { Text(option.displayName) },
                                 shape = MaterialTheme.shapes.large,
                                 colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color.Transparent,
-                                    selectedLabelColor = MaterialTheme.colorScheme.primaryContainer
+                                    selectedContainerColor = MaterialTheme.colorScheme.inverseSurface,
+                                    selectedLabelColor = MaterialTheme.colorScheme.surface
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(
                                     selected = isSelected,
                                     enabled = true,
 
-                                    selectedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedBorderColor = MaterialTheme.colorScheme.surface,
                                     selectedBorderWidth = 1.5.dp,
                                     borderColor = MaterialTheme.colorScheme.outline.copy(
                                         alpha = 0.5f

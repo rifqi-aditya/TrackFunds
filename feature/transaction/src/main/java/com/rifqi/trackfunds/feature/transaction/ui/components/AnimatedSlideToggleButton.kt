@@ -81,7 +81,7 @@ fun <T> AnimatedSlideToggleButton(
                 .padding(vertical = 6.dp, horizontal = 6.dp)
                 .offset(x = indicatorOffset)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(MaterialTheme.colorScheme.onSurface)
         )
 
         // Teks di atas indikator
@@ -112,7 +112,7 @@ fun <T> AnimatedSlideToggleButton(
                 ) {
                     Text(
                         text = toggleItem.label,
-                        color = if (selectedIndex == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                        color = if (selectedIndex == index) MaterialTheme.colorScheme.inverseOnSurface else MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }

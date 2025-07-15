@@ -1,7 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -128,8 +127,7 @@ fun BudgetListContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .background(MaterialTheme.colorScheme.surface),
+                    .padding(top = paddingValues.calculateTopPadding()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val progress = if (uiState.totalBudgeted > BigDecimal.ZERO) {

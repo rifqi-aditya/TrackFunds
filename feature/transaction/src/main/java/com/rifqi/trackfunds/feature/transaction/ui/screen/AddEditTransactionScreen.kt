@@ -189,8 +189,8 @@ fun AddEditTransactionContent(
                 shape = MaterialTheme.shapes.large,
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
                 )
             ) {
                 if (uiState.isLoading) {

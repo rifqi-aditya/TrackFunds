@@ -38,7 +38,6 @@ fun SummaryCard(
             .fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -56,7 +55,7 @@ fun SummaryCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             Card(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .shadow(
                         elevation = 4.dp,
