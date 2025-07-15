@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,14 +64,17 @@ fun <T> AnimatedSlideToggleButton(
         label = "indicatorOffset"
     )
 
+    val outerCornerRadius = 16.dp
+    val distance = 4.dp
+
     // Wadah utama dengan border
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .clip(CircleShape)
+            .clip(RoundedCornerShape(outerCornerRadius))
             .background(Color.Transparent)
-            .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(outerCornerRadius))
     ) {
         // Indikator yang bisa bergeser
         Box(
@@ -80,7 +83,7 @@ fun <T> AnimatedSlideToggleButton(
                 .fillMaxHeight()
                 .padding(vertical = 6.dp, horizontal = 6.dp)
                 .offset(x = indicatorOffset)
-                .clip(CircleShape)
+                .clip(RoundedCornerShape(outerCornerRadius - distance))
                 .background(MaterialTheme.colorScheme.onSurface)
         )
 
@@ -101,7 +104,7 @@ fun <T> AnimatedSlideToggleButton(
                                 }
                             }
                         }
-                        .clip(MaterialTheme.shapes.large)
+                        .clip(RoundedCornerShape(outerCornerRadius - distance))
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,

@@ -6,31 +6,34 @@ import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.time.LocalDate
 
+/**
+ * Represents all user actions on the Add/Edit Transaction screen.
+ */
 sealed interface AddEditTransactionEvent {
-    // Aksi dari Form Input
     data class AmountChanged(val amount: String) : AddEditTransactionEvent
-    data class TransactionTypeChanged(val type: TransactionType) : AddEditTransactionEvent
-    data class DescriptionChanged(val descriptions: String) : AddEditTransactionEvent
-    data class DateChanged(val date: LocalDate) : AddEditTransactionEvent
+    data class TypeChanged(val type: TransactionType) : AddEditTransactionEvent
+    data class DescriptionChanged(val description: String) : AddEditTransactionEvent
+    data class DateSelected(val date: LocalDate) : AddEditTransactionEvent
+    data class CategorySearchChanged(val query: String) : AddEditTransactionEvent
 
-    // Aksi dari Hasil Navigasi
+    // Events for opening selection UI (e.g., BottomSheets or Dialogs)
+    data object CategorySelectorClicked : AddEditTransactionEvent
+    data object AccountSelectorClicked : AddEditTransactionEvent
+    data object SavingsGoalSelectorClicked : AddEditTransactionEvent
+    data object DateSelectorClicked : AddEditTransactionEvent
+
+    // Events for handling selection results
     data class AccountSelected(val account: AccountItem) : AddEditTransactionEvent
     data class CategorySelected(val category: CategoryItem) : AddEditTransactionEvent
     data class SavingsGoalSelected(val goal: SavingsGoalItem) : AddEditTransactionEvent
 
-    // Aksi Klik Tombol/UI
+    // Events for dismissing selection UI
+    data object DismissSheet : AddEditTransactionEvent
+    data object DismissDatePicker : AddEditTransactionEvent
+    data object DismissDeleteDialog : AddEditTransactionEvent
+
+    // General button click events
     data object SaveClicked : AddEditTransactionEvent
     data object DeleteClicked : AddEditTransactionEvent
     data object ConfirmDeleteClicked : AddEditTransactionEvent
-    data object DismissDeleteDialog : AddEditTransactionEvent
-    data object DateSelectorClicked : AddEditTransactionEvent
-    data object CategorySelectorClicked : AddEditTransactionEvent
-    data object AccountSelectorClicked : AddEditTransactionEvent
-    data object SavingsGoalSelectorClicked : AddEditTransactionEvent
-    data object SavingsGoalSheetDismissed : AddEditTransactionEvent
-    data object ScanReceiptClicked : AddEditTransactionEvent
-
-    // Aksi untuk mereset state
-    data object ErrorMessageShown : AddEditTransactionEvent
-    data object NavigationHandled : AddEditTransactionEvent // Untuk mereset sinyal navigasi
 }

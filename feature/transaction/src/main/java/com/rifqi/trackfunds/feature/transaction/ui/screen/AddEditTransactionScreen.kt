@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,7 +25,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,9 +47,15 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
-import com.rifqi.trackfunds.feature.transaction.ui.components.SavingsGoalSelectionRow
+import com.rifqi.trackfunds.feature.transaction.ui.components.bottomsheets.SelectionItem
+import com.rifqi.trackfunds.feature.transaction.ui.components.bottomsheets.SelectionList
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
+import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.AccountSelected
+import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.CategorySearchChanged
+import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.CategorySelected
+import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.SavingsGoalSelected
 import com.rifqi.trackfunds.feature.transaction.ui.model.transactionTypes
+import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditSheetType
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -71,45 +75,71 @@ fun AddEditTransactionScreen(
     onNavigate: (AppScreen) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val savingsGoals = viewModel.savingsGoals.collectAsState(initial = emptyList()).value
-    val sheetState = rememberModalBottomSheetState()
+    val categoriesForSelection by viewModel.categoriesForSelection.collectAsState()
 
     CustomDatePickerDialog(
         showDialog = uiState.showDatePicker,
         initialDate = uiState.selectedDate,
         onDismiss = {
-            viewModel.onDatePickerDismissed()
+            viewModel.onEvent(AddEditTransactionEvent.DismissDatePicker)
         },
         onConfirm = { newDate ->
-            viewModel.onDateSelected(newDate)
+            viewModel.onEvent(AddEditTransactionEvent.DateSelected(newDate))
         }
     )
 
-    if (uiState.showSavingsGoalSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { viewModel.onEvent(AddEditTransactionEvent.SavingsGoalSheetDismissed) },
-            sheetState = sheetState
-        ) {
-            // Isi dari BottomSheet
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Pilih Tujuan Tabungan",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(savingsGoals) { goal ->
-                        SavingsGoalSelectionRow(
-                            goal = goal,
-                            onClick = {
-                                viewModel.onEvent(AddEditTransactionEvent.SavingsGoalSelected(goal))
-                            }
-                        )
-                    }
+    if (uiState.activeSheet != null) {
+        ModalBottomSheet(onDismissRequest = { viewModel.onEvent(AddEditTransactionEvent.DismissSheet) }) {
+            when (uiState.activeSheet) {
+                AddEditSheetType.CATEGORY -> {
+                    SelectionList(
+                        title = "Pilih Kategori",
+                        items = categoriesForSelection,
+                        itemBuilder = { category ->
+                            SelectionItem(category.id, category.name, category.iconIdentifier)
+                        },
+                        onItemSelected = { category ->
+                            viewModel.onEvent(CategorySelected(category))
+                        },
+                        isSearchable = true,
+                        searchQuery = uiState.categorySearchQuery,
+                        onSearchQueryChanged = { query ->
+                            viewModel.onEvent(CategorySearchChanged(query))
+                        },
+                    )
                 }
+
+                AddEditSheetType.ACCOUNT -> {
+                    SelectionList(
+                        title = "Select Account",
+                        items = uiState.allAccounts,
+                        itemBuilder = { account ->
+                            SelectionItem(account.id, account.name, account.iconIdentifier)
+                        },
+                        onItemSelected = { account ->
+                            viewModel.onEvent(AccountSelected(account))
+                        },
+                    )
+                }
+
+                AddEditSheetType.SAVINGS_GOAL -> {
+                    SelectionList(
+                        title = "Pilih Kategori",
+                        items = uiState.allSavingsGoals,
+                        itemBuilder = { savings ->
+                            SelectionItem(savings.id, savings.name, savings.iconIdentifier)
+                        },
+                        onItemSelected = { savings ->
+                            viewModel.onEvent(SavingsGoalSelected(savings))
+                        },
+                    )
+                }
+
+                null -> TODO()
             }
         }
     }
+
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
@@ -123,7 +153,7 @@ fun AddEditTransactionScreen(
 
     if (uiState.showDeleteConfirmDialog) {
         AlertDialog(
-            onDismissRequest = { viewModel.onDismissDeleteDialog() },
+            onDismissRequest = { viewModel.onEvent(AddEditTransactionEvent.DismissDeleteDialog) },
             title = { Text("Delete Transaction") },
             text = { Text("Are you sure you want to delete this transaction? This action cannot be undone.") },
             confirmButton = {
@@ -133,7 +163,11 @@ fun AddEditTransactionScreen(
                 ) { Text("Delete") }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.onDismissDeleteDialog() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.onEvent(AddEditTransactionEvent.DismissDeleteDialog) }) {
+                    Text(
+                        "Cancel"
+                    )
+                }
             }
         )
     }
@@ -174,9 +208,15 @@ fun AddEditTransactionContent(
                                 contentDescription = "Delete Transaction"
                             )
                         }
+                    } else {
+                        Spacer(modifier = Modifier.width(48.dp))
                     }
-                    Spacer(modifier = Modifier.width(48.dp))
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
+                )
             )
         },
         bottomBar = {
@@ -211,14 +251,14 @@ fun AddEditTransactionContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding() + 16.dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             AnimatedSlideToggleButton(
                 items = transactionTypes,
                 selectedItem = uiState.selectedTransactionType,
-                onItemSelected = { onEvent(AddEditTransactionEvent.TransactionTypeChanged(it)) },
+                onItemSelected = { onEvent(AddEditTransactionEvent.TypeChanged(it)) },
             )
             Column(
                 modifier = Modifier
@@ -273,7 +313,7 @@ private fun StandardFormContent(
     )
 
     GeneralTextInputField(
-        value = uiState.descriptions,
+        value = uiState.description,
         onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
         label = "Description",
         placeholder = "Enter transaction description",
@@ -299,9 +339,9 @@ private fun SavingsFormContent(
 ) {
     FormSelectorField(
         label = "Savings Goal",
-        value = uiState.selectedSavingsGoalItem?.name ?: "Choose savings goal",
+        value = uiState.selectedSavingsGoal?.name ?: "Choose savings goal",
         onClick = { onEvent(AddEditTransactionEvent.SavingsGoalSelectorClicked) },
-        leadingIconRes = uiState.selectedSavingsGoalItem?.iconIdentifier,
+        leadingIconRes = uiState.selectedSavingsGoal?.iconIdentifier,
     )
 
     FormSelectorField(
@@ -324,7 +364,7 @@ private fun SavingsFormContent(
     )
 
     GeneralTextInputField(
-        value = uiState.descriptions,
+        value = uiState.description,
         onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
         label = "Description",
         placeholder = "Enter transaction description",
