@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter
  * @param totalSavings The sum of all current amounts from all savings goals.
  * @param totalAccounts The total number of user accounts.
  * @param recentTransactions A list of the most recent transactions.
- * @param isAddActionDialogVisible True if the action dialog (for Add/Scan) should be shown.
  */
 data class HomeUiState(
     val isLoading: Boolean = true,
@@ -38,9 +37,6 @@ data class HomeUiState(
 
     val recentTransactions: List<TransactionItem> = emptyList(),
     val topBudgets: List<BudgetItem> = emptyList(),
-
-    // Kontrol UI
-    val isAddActionDialogVisible: Boolean = false
 )
 
 /**

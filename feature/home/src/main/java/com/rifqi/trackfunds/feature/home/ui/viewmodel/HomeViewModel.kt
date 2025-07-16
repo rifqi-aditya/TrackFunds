@@ -10,13 +10,11 @@ import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
-import com.rifqi.trackfunds.core.navigation.api.ScanGraph
 import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
@@ -67,15 +65,6 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeEvent) {
         viewModelScope.launch {
             when (event) {
-                // Navigation Events
-                HomeEvent.AddActionDialogDismissed -> _uiState.update {
-                    it.copy(
-                        isAddActionDialogVisible = false
-                    )
-                }
-
-                HomeEvent.AddTransactionManuallyClicked -> _navigationEvent.emit(AddEditTransaction())
-                HomeEvent.ScanReceiptClicked -> _navigationEvent.emit(ScanGraph)
                 HomeEvent.AllTransactionsClicked -> _navigationEvent.emit(TransactionsGraph)
                 HomeEvent.AllBudgetsClicked -> _navigationEvent.emit(BudgetsGraph)
                 HomeEvent.NotificationsClicked -> _navigationEvent.emit(Notifications)
@@ -87,9 +76,6 @@ class HomeViewModel @Inject constructor(
                 is HomeEvent.TransactionClicked -> _navigationEvent.emit(
                     TransactionDetail(event.transactionId)
                 )
-
-                // State Management Events
-                HomeEvent.FabClicked -> _uiState.update { it.copy(isAddActionDialogVisible = true) }
             }
         }
     }

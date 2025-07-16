@@ -25,8 +25,8 @@ import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 @Composable
 fun AddTransactionDialog(
     onDismissRequest: () -> Unit,
-    onScanClick: () -> Unit,
-    onAddManuallyClick: () -> Unit
+    onScanClicked: () -> Unit,
+    onAddManuallyClicked: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -59,7 +59,7 @@ fun AddTransactionDialog(
                     description = "Upload and review your receipts.",
                     iconIdentifier = "scan_receipt",
                     onClick = {
-                        onScanClick()
+                        onScanClicked()
                         onDismissRequest()
                     }
                 )
@@ -69,7 +69,7 @@ fun AddTransactionDialog(
                     description = "Record your transaction manually.",
                     iconIdentifier = "edit",
                     onClick = {
-                        onAddManuallyClick()
+                        onAddManuallyClicked()
                         onDismissRequest()
                     }
                 )
@@ -93,8 +93,8 @@ private fun ActionDialogPreview() {
     TrackFundsTheme {
         AddTransactionDialog(
             onDismissRequest = {},
-            onScanClick = {},
-            onAddManuallyClick = {}
+            onScanClicked = {},
+            onAddManuallyClicked = {}
         )
     }
 }

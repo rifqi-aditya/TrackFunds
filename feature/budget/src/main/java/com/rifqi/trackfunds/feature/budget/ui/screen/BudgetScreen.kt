@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -130,7 +132,7 @@ fun BudgetListContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = paddingValues.calculateTopPadding()),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val progress = if (uiState.totalBudgeted > BigDecimal.ZERO) {
                     (uiState.totalSpent.toFloat() / uiState.totalBudgeted.toFloat())
@@ -148,6 +150,7 @@ fun BudgetListContent(
                         strokeWidth = 14.dp
                     )
                 }
+                Spacer(Modifier.height(8.dp))
                 Text(
                     text = "Current Month Overview",
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -180,7 +183,6 @@ fun BudgetListContent(
                         )
                     }
                 }
-
                 Text(
                     text = "Budget per Category",
                     style = MaterialTheme.typography.titleMedium.copy(

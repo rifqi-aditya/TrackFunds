@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.screen.TrackFundsMainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TrackFundsTheme {
-                TrackFundsMainApp()
+                TrackFundsMainScreen()
             }
         }
     }

@@ -107,7 +107,7 @@ fun TransactionScreenContent(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(top = innerPadding.calculateTopPadding())
+                .padding(innerPadding)
                 .fillMaxSize()
         ) {
             SummaryCard(
