@@ -60,7 +60,7 @@ fun BudgetCardItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = CardDefaults.outlinedCardBorder(
             enabled = true
@@ -77,7 +77,7 @@ fun BudgetCardItem(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(item.categoryName, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Monthly • ${item.period}",
+                        "Period • ${item.period}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

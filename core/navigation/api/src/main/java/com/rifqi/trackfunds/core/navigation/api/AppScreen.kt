@@ -75,7 +75,7 @@ data class AddEditCategory(
 ) : AppScreen
 
 @Serializable
-data class AddEditBudget(val period: String, val budgetId: String? = null) : AppScreen
+data class AddEditBudget(val period: String? = null, val budgetId: String? = null) : AppScreen
 
 @Serializable
 data class AddEditTransaction(val transactionId: String? = null) : AppScreen

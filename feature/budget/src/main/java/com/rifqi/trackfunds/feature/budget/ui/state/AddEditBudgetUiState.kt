@@ -12,7 +12,5 @@ data class AddEditBudgetUiState(
     val isBudgetSaved: Boolean = false,
     val error: String? = null,
     val showDeleteConfirmDialog: Boolean = false,
-
-    // FIX: Tambahkan ini untuk menyimpan spentAmount saat mode edit
     val initialSpentAmount: BigDecimal = BigDecimal.ZERO
 )

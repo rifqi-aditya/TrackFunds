@@ -1,16 +1,35 @@
 package com.rifqi.trackfunds.feature.budget.ui.event
 
-import com.rifqi.trackfunds.feature.budget.ui.model.BudgetTab
 import java.time.YearMonth
 
+/**
+ * Represents all possible user actions that can occur on the Budget screen.
+ */
 sealed interface BudgetEvent {
-    data class ChangePeriod(val newPeriod: YearMonth) : BudgetEvent
+    /**
+     * Event triggered when the user clicks the button to add a new budget.
+     */
     data object AddBudgetClicked : BudgetEvent
-    data class EditBudgetClicked(val budgetId: String) : BudgetEvent
-    data class TabSelected(val tab: BudgetTab) : BudgetEvent
-    data class CategoryFilterClicked(val categoryId: String) : BudgetEvent
-    data object ClearCategoryFilter : BudgetEvent
+
+    /**
+     * Event triggered when the user clicks on a specific budget item in the list.
+     * @param budgetId The unique identifier of the budget item that was clicked.
+     */
+    data class BudgetItemClicked(val budgetId: String) : BudgetEvent
+
+    /**
+     * Event triggered when the user clicks the UI element to open the month selection dialog.
+     */
     data object ChangePeriodClicked : BudgetEvent
+
+    /**
+     * Event triggered when the user selects a new month and year from the picker dialog.
+     * @param newPeriod The new [YearMonth] selected by the user.
+     */
     data class PeriodSelected(val newPeriod: YearMonth) : BudgetEvent
-    data object DialogDismissed : BudgetEvent
+
+    /**
+     * Event triggered when the month picker dialog is dismissed without a selection.
+     */
+    data object MonthPickerDialogDismissed : BudgetEvent
 }

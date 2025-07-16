@@ -4,9 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -19,19 +17,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.utils.formatCurrency
-import java.math.BigDecimal
 
 @Composable
 fun BudgetRingChart(
     progress: Float,
-    remainingAmount: BigDecimal,
-    totalAmount: BigDecimal,
     size: Dp = 200.dp,
     strokeWidth: Dp = 20.dp,
     modifier: Modifier = Modifier
@@ -44,36 +39,42 @@ fun BudgetRingChart(
     )
     LaunchedEffect(Unit) { animationPlayed = true }
 
+    val percentageValue = progress * 100f
+    val percentageText = "%.1f%% Used".format(percentageValue)
+
+    // 2. Tentukan teks status dan warnanya berdasarkan persentase
+    val (statusText, statusColor) = when {
+        progress > 1f -> "Over Budget" to TrackFundsTheme.extendedColors.textExpense
+        progress >= 0.9f -> "Nearing Limit" to Color.Yellow
+        progress >= 0.5f -> "On Track" to TrackFundsTheme.extendedColors.textIncome
+        else -> "Safe to Spend" to TrackFundsTheme.extendedColors.textIncome
+    }
+
     Box(
         modifier = modifier.size(size),
         contentAlignment = Alignment.Center
     ) {
-        // Teks di tengah chart (tidak berubah)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = formatCurrency(remainingAmount),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.secondary
+                text = percentageText,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Remaining from ${formatCurrency(totalAmount)}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "June 2025 - June 2025",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = statusText,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = statusColor
+                )
             )
         }
         CircularProgressBar(
             progress = currentProgress,
             modifier = Modifier
                 .fillMaxSize()
-                .size(size - strokeWidth * 2f)
+                .size(size - strokeWidth * 2f),
+            strokeWidth = strokeWidth
         )
     }
 }
@@ -86,8 +87,6 @@ private fun BudgetRingChartPreview() {
         Box(modifier = Modifier.padding(16.dp)) {
             BudgetRingChart(
                 progress = 0.75f,
-                remainingAmount = BigDecimal("100000"),
-                totalAmount = BigDecimal("1000000")
             )
         }
     }
