@@ -117,7 +117,12 @@ class BudgetViewModel @Inject constructor(
      */
     private fun navigateToBudgetScreen(budgetId: String? = null) {
         viewModelScope.launch {
-            _navigationEvent.emit(AddEditBudget(budgetId = budgetId))
+            _navigationEvent.emit(
+                AddEditBudget(
+                    period = uiState.value.currentPeriod.toString(),
+                    budgetId = budgetId
+                )
+            )
         }
     }
 

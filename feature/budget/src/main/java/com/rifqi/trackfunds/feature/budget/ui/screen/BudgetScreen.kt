@@ -102,7 +102,7 @@ fun BudgetListContent(
                             modifier = Modifier
                                 .padding(end = 16.dp)
                                 .clickable(
-                                    onClick = { }
+                                    onClick = { onEvent(BudgetEvent.ChangePeriodClicked) },
                                 )
                         ) {
                             Row(
@@ -226,9 +226,20 @@ fun BudgetListContent(
             onClick = { onEvent(BudgetEvent.AddBudgetClicked) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp)
+                .padding(end = 16.dp, bottom = 16.dp),
+            containerColor = MaterialTheme.colorScheme.primary,
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Add Budget")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Budget")
+                Text(
+                    "Add Budget",
+                )
+            }
+
         }
     }
 }
