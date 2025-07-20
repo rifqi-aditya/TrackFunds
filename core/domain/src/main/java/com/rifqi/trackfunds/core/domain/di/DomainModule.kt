@@ -12,6 +12,12 @@ import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.account.UpdateAccountUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.UpdateAccountUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.auth.LoginUserUseCase
+import com.rifqi.trackfunds.core.domain.usecase.auth.LoginUserUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.auth.LogoutUserUseCase
+import com.rifqi.trackfunds.core.domain.usecase.auth.LogoutUserUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCase
+import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
@@ -67,6 +73,7 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUse
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -271,4 +278,25 @@ abstract class DomainModule {
     abstract fun bindDeleteSavingsGoalUseCase(
         useCaseImpl: DeleteSavingsGoalUseCaseImpl
     ): DeleteSavingsGoalUseCase
+
+
+    @Binds
+    @ViewModelScoped // Pastikan lifecycle-nya sesuai
+    abstract fun bindLoginUserUseCase(
+        impl: LoginUserUseCaseImpl
+    ): LoginUserUseCase
+
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindRegisterUserUseCase(
+        impl: RegisterUserUseCaseImpl
+    ): RegisterUserUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindLogoutUserUseCase(
+        impl: LogoutUserUseCaseImpl
+    ): LogoutUserUseCase
+
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "597335988331",
+    "project_id": "trackfunds-462507",
+    "storage_bucket": "trackfunds-462507.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597335988331:android:e7a714c3c10eb9b5c0f92e",
+        "android_client_info": {
+          "package_name": "com.rifqi.trackfunds"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCMQdAUUGrOm9lyZLO74b7i4JO5Maedzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
