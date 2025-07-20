@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
-import com.rifqi.trackfunds.core.navigation.api.ReceiptPreview
+import com.rifqi.trackfunds.core.navigation.api.ScanRoutes
 import com.rifqi.trackfunds.feature.scan.ui.event.ReceiptPreviewEvent
 import com.rifqi.trackfunds.feature.scan.ui.state.ReceiptPreviewUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +33,7 @@ class ReceiptPreviewViewModel @Inject constructor(
 
     init {
         // Ambil argumen, decode, dan simpan ke dalam state
-        val args: ReceiptPreview = savedStateHandle.toRoute()
+        val args: ScanRoutes.ReceiptPreview = savedStateHandle.toRoute()
         val decodedUriString = Uri.decode(args.imageUri) // FIX 1: Decode URI string
         val imageUri = decodedUriString.toUri() // FIX 2: Parse menjadi objek Uri
         _uiState.update { it.copy(imageUri = imageUri) } // FIX 3: Simpan ke dalam UiState

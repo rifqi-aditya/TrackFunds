@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditCategory
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.feature.categories.ui.event.CategoryListEvent
 import com.rifqi.trackfunds.feature.categories.ui.state.CategoryListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,12 +68,12 @@ class CategoryListViewModel @Inject constructor(
             when (event) {
                 is CategoryListEvent.CategoryClicked -> {
                     // Kirim sinyal untuk navigasi ke halaman edit dengan membawa ID
-                    _navigationEvent.emit(AddEditCategory(categoryId = event.categoryId))
+                    _navigationEvent.emit(SharedRoutes.AddEditCategory(categoryId = event.categoryId))
                 }
 
                 is CategoryListEvent.AddCategoryClicked -> {
                     // Kirim sinyal untuk navigasi ke halaman tambah dengan membawa TIPE
-                    _navigationEvent.emit(AddEditCategory(type = event.type))
+                    _navigationEvent.emit(SharedRoutes.AddEditCategory(type = event.type))
                 }
             }
         }

@@ -3,9 +3,9 @@ package com.rifqi.trackfunds.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.event.TrackFundsMainEvent
 import com.rifqi.trackfunds.state.TrackFundsMainState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +43,7 @@ class TrackFundsMainViewModel @Inject constructor(
                 }
 
                 TrackFundsMainEvent.AddTransactionManuallyClicked -> {
-                    _navigationEvent.emit(AddEditTransaction())
+                    _navigationEvent.emit(TransactionRoutes.AddEditTransaction())
                 }
 
                 TrackFundsMainEvent.ScanReceiptClicked -> {

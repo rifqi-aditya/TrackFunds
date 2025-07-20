@@ -41,6 +41,8 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
     implementation(project(":core:navigation:api"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:splash"))
     implementation(project(":feature:home"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:account"))
@@ -50,7 +52,6 @@ dependencies {
     implementation(project(":feature:scan"))
     implementation(project(":feature:reports"))
     implementation(project(":feature:savings"))
-
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
     implementation(platform(libs.androidx.compose.bom)) // Gunakan versi terbaru yang stabil

@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.feature.scan.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.CameraScan
+import com.rifqi.trackfunds.core.navigation.api.ScanRoutes
 import com.rifqi.trackfunds.feature.scan.ui.event.ScanOptionEvent
 import com.rifqi.trackfunds.feature.scan.ui.state.ScanOptionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +28,7 @@ class ScanOptionViewModel @Inject constructor(
         when (event) {
             ScanOptionEvent.SelectFromCameraClicked -> {
                 viewModelScope.launch {
-                    _navigationEvent.emit(CameraScan)
+                    _navigationEvent.emit(ScanRoutes.CameraScan)
                 }
             }
 

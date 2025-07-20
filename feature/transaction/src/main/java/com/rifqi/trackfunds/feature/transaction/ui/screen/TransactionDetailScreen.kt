@@ -38,8 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
-import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -62,8 +62,8 @@ fun TransactionDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
             when (screen) {
-                is AddEditTransaction -> onNavigateToEdit(screen.transactionId!!)
-                is Home -> onNavigateBack() // Kembali setelah berhasil hapus
+                is TransactionRoutes.AddEditTransaction -> onNavigateToEdit(screen.transactionId!!)
+                is HomeRoutes.Home -> onNavigateBack()
                 else -> {}
             }
         }

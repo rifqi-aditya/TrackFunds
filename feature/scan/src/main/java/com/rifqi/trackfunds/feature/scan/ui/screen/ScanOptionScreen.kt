@@ -39,7 +39,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.rifqi.trackfunds.core.navigation.api.CameraScan
+import com.rifqi.trackfunds.core.navigation.api.ScanRoutes
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -68,7 +68,7 @@ fun ScanOptionScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
-            if (screen is CameraScan) {
+            if (screen is ScanRoutes.CameraScan) {
                 onNavigateToCamera()
             }
         }

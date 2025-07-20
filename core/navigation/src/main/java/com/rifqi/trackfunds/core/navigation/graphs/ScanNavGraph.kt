@@ -5,50 +5,48 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
-import com.rifqi.trackfunds.core.navigation.api.CameraScan
-import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.navigation.api.ReceiptPreview
+import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.navigation.api.ScanGraph
-import com.rifqi.trackfunds.core.navigation.api.ScanOption
+import com.rifqi.trackfunds.core.navigation.api.ScanRoutes
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.feature.scan.ui.screen.CameraScanScreen
 import com.rifqi.trackfunds.feature.scan.ui.screen.ReceiptPreviewScreen
 import com.rifqi.trackfunds.feature.scan.ui.screen.ScanOptionScreen
 
 fun NavGraphBuilder.scanNavGraph(navController: NavHostController) {
     navigation<ScanGraph>(
-        startDestination = ScanOption,
+        startDestination = ScanRoutes.ScanOption,
     ) {
-        composable<ScanOption> {
+        composable<ScanRoutes.ScanOption> {
             ScanOptionScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToCamera = { navController.navigate(CameraScan) },
+                onNavigateToCamera = { navController.navigate(ScanRoutes.CameraScan) },
                 onNavigateToPreview = { imageUri ->
                     val encodedUri = Uri.encode(imageUri.toString())
-                    navController.navigate(ReceiptPreview(imageUri = encodedUri))
+                    navController.navigate(ScanRoutes.ReceiptPreview(imageUri = encodedUri))
                 }
             )
         }
 
-        composable<CameraScan> {
+        composable<ScanRoutes.CameraScan> {
             CameraScanScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onPhotoTaken = { uri ->
                     val encodedUri = Uri.encode(uri.toString())
 
-                    navController.navigate(ReceiptPreview(imageUri = encodedUri)) {
-                        popUpTo<ScanOption>()
+                    navController.navigate(ScanRoutes.ReceiptPreview(imageUri = encodedUri)) {
+                        popUpTo<ScanRoutes.ScanOption>()
                     }
                 }
             )
         }
 
-        composable<ReceiptPreview> {
+        composable<ScanRoutes.ReceiptPreview> {
             ReceiptPreviewScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onScanSuccessAndNavigate = {
-                    navController.popBackStack<Home>(inclusive = false)
-                    navController.navigate(AddEditTransaction())
+                    navController.popBackStack<HomeRoutes.Home>(inclusive = false)
+                    navController.navigate(TransactionRoutes.AddEditTransaction())
                 }
             )
         }

@@ -21,9 +21,9 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCas
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditSheetType
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
@@ -65,7 +65,7 @@ class AddEditTransactionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val args: AddEditTransaction = savedStateHandle.toRoute()
+    private val args: TransactionRoutes.AddEditTransaction = savedStateHandle.toRoute()
     private val editingTransactionId: String? = args.transactionId
     val isEditMode: Boolean = editingTransactionId != null
 
@@ -320,7 +320,7 @@ class AddEditTransactionViewModel @Inject constructor(
                         snackbarManager.showMessage("Transaksi berhasil disimpan")
                     }
                 }
-                _navigationEvent.emit(Home)
+                _navigationEvent.emit(HomeRoutes.Home)
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false, error = e.message) }
             }
@@ -332,7 +332,7 @@ class AddEditTransactionViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
             try {
                 deleteTransactionUseCase(transactionToDelete)
-                _navigationEvent.emit(Home)
+                _navigationEvent.emit(HomeRoutes.Home)
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }

@@ -27,7 +27,7 @@ import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.home.ui.components.BudgetSummaryRow
 import com.rifqi.trackfunds.feature.home.ui.components.HomeHeader
@@ -58,7 +58,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
-            if (screen is Home) {
+            if (screen is HomeRoutes.Home) {
                 onNavigateBack()
             } else {
                 onNavigate(screen)

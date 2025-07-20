@@ -8,8 +8,8 @@ import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditSavingsGoal
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
 import com.rifqi.trackfunds.feature.savings.ui.event.SavingsDetailEvent
 import com.rifqi.trackfunds.feature.savings.ui.state.SavingsDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +33,7 @@ class SavingsDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val goalId: String = savedStateHandle.toRoute<AddEditSavingsGoal>().goalId!!
+    private val goalId: String = savedStateHandle.toRoute<SavingsRoutes.AddEditSavingsGoal>().goalId!!
 
     private val _uiState = MutableStateFlow(SavingsDetailUiState())
     val uiState = _uiState.asStateFlow()
@@ -70,7 +70,7 @@ class SavingsDetailViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 SavingsDetailEvent.EditGoalClicked -> {
-                    _navigationEvent.emit(AddEditSavingsGoal(goalId = goalId))
+                    _navigationEvent.emit(SavingsRoutes.AddEditSavingsGoal(goalId = goalId))
                 }
 
                 SavingsDetailEvent.AddFundsClicked -> {

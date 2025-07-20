@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.account.ui.event.AccountsEvent
 import com.rifqi.account.ui.state.AccountsUiState
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditAccount
+import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,7 +43,7 @@ class AccountsViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is AccountsEvent.AccountClicked -> {
-                    _navigationEvent.emit(AddEditAccount(accountId = event.accountId))
+                    _navigationEvent.emit(AccountRoutes.AddEditAccount(accountId = event.accountId))
                 }
 
                 AccountsEvent.TransferClicked -> {
@@ -51,7 +51,7 @@ class AccountsViewModel @Inject constructor(
                 }
 
                 AccountsEvent.AddAccountClicked -> {
-                    _navigationEvent.emit(AddEditAccount())
+                    _navigationEvent.emit(AccountRoutes.AddEditAccount())
                 }
             }
         }

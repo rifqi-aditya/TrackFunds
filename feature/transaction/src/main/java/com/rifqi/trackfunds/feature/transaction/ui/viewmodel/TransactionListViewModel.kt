@@ -12,7 +12,7 @@ import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCa
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.FilterTransactions
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionListEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 import com.rifqi.trackfunds.feature.transaction.ui.model.FilterChipType
@@ -127,7 +127,7 @@ class TransactionListViewModel @Inject constructor(
                 viewModelScope.launch {
                     resultManager.setArgument(_uiState.value.activeFilter)
 
-                    _navigationEvent.emit(FilterTransactions)
+                    _navigationEvent.emit(TransactionRoutes.FilterTransactions)
                 }
             }
 

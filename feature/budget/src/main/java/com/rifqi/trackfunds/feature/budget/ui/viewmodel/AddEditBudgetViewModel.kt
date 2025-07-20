@@ -12,7 +12,7 @@ import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditBudget
+import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,7 +41,7 @@ class AddEditBudgetViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val args: AddEditBudget = savedStateHandle.toRoute()
+    private val args: BudgetRoutes.AddEditBudget = savedStateHandle.toRoute()
     private val editingBudgetId: String? = args.budgetId
 
     val isEditMode: Boolean = editingBudgetId != null

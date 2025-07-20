@@ -3,9 +3,8 @@ package com.rifqi.trackfunds.feature.savings.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditSavingsGoal
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.SavingsDetail
+import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
 import com.rifqi.trackfunds.feature.savings.ui.event.SavingsEvent
 import com.rifqi.trackfunds.feature.savings.ui.state.SavingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,11 +56,11 @@ class SavingsViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 SavingsEvent.AddNewGoalClicked -> {
-                    _navigationEvent.emit(AddEditSavingsGoal())
+                    _navigationEvent.emit(SavingsRoutes.AddEditSavingsGoal())
                 }
 
                 is SavingsEvent.GoalClicked -> {
-                    _navigationEvent.emit(SavingsDetail(goalId = event.goalId))
+                    _navigationEvent.emit(SavingsRoutes.SavingsDetail(goalId = event.goalId))
                 }
             }
         }

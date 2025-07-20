@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.navigation.api.AddEditBudget
+import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -54,13 +54,13 @@ import java.time.YearMonth
 @Composable
 fun BudgetScreen(
     viewModel: BudgetViewModel = hiltViewModel(),
-    onNavigateToAddEditBudget: (AddEditBudget) -> Unit,
+    onNavigateToAddEditBudget: (BudgetRoutes.AddEditBudget) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { screen ->
-            if (screen is AddEditBudget) {
+            if (screen is BudgetRoutes.AddEditBudget) {
                 onNavigateToAddEditBudget(screen)
             }
         }

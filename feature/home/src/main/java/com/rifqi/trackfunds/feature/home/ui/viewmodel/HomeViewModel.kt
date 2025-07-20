@@ -12,10 +12,10 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransacti
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
-import com.rifqi.trackfunds.core.navigation.api.Notifications
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
+import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
 import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
-import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
@@ -35,6 +35,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
+
 
 /**
  * Manages the UI state and business logic for the HomeScreen.
@@ -67,14 +68,14 @@ class HomeViewModel @Inject constructor(
             when (event) {
                 HomeEvent.AllTransactionsClicked -> _navigationEvent.emit(TransactionsGraph)
                 HomeEvent.AllBudgetsClicked -> _navigationEvent.emit(BudgetsGraph)
-                HomeEvent.NotificationsClicked -> _navigationEvent.emit(Notifications)
+                HomeEvent.NotificationsClicked -> _navigationEvent.emit(ProfileRoutes.Notifications)
                 HomeEvent.AccountsClicked -> _navigationEvent.emit(AccountsGraph)
                 HomeEvent.BalanceClicked -> _navigationEvent.emit(AccountsGraph)
                 HomeEvent.SavingsClicked -> _navigationEvent.emit(SavingsGraph)
                 HomeEvent.ProfileClicked -> _navigationEvent.emit(ProfileGraph)
 
                 is HomeEvent.TransactionClicked -> _navigationEvent.emit(
-                    TransactionDetail(event.transactionId)
+                    TransactionRoutes.TransactionDetail(event.transactionId)
                 )
             }
         }

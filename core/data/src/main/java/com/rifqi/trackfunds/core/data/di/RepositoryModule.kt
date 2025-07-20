@@ -8,6 +8,7 @@ import com.rifqi.trackfunds.core.data.repository.SavingsRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.ScanRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.TransactionRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.UserPreferencesRepositoryImpl
+import com.rifqi.trackfunds.core.data.repository.UserRepositoryImpl
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.AuthRepository
 import com.rifqi.trackfunds.core.domain.repository.BudgetRepository
@@ -16,6 +17,7 @@ import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
 import com.rifqi.trackfunds.core.domain.repository.ScanRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -73,4 +75,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         impl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
 }

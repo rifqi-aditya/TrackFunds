@@ -6,8 +6,8 @@ import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetsUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditBudget
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.feature.budget.ui.event.BudgetEvent
 import com.rifqi.trackfunds.feature.budget.ui.state.BudgetUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -118,7 +118,7 @@ class BudgetViewModel @Inject constructor(
     private fun navigateToBudgetScreen(budgetId: String? = null) {
         viewModelScope.launch {
             _navigationEvent.emit(
-                AddEditBudget(
+                BudgetRoutes.AddEditBudget(
                     period = uiState.value.currentPeriod.toString(),
                     budgetId = budgetId
                 )

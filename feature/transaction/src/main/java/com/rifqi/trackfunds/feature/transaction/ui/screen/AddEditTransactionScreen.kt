@@ -38,7 +38,7 @@ import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
@@ -143,7 +143,7 @@ fun AddEditTransactionScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { screen ->
-            if (screen is Home) {
+            if (screen is HomeRoutes.Home) {
                 onNavigateBack()
             } else {
                 onNavigate(screen)

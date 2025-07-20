@@ -4,19 +4,17 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.rifqi.trackfunds.core.navigation.api.AddEditSavingsGoal
-import com.rifqi.trackfunds.core.navigation.api.Savings
-import com.rifqi.trackfunds.core.navigation.api.SavingsDetail
 import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
+import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
 import com.rifqi.trackfunds.feature.savings.ui.screen.AddEditSavingsGoalScreen
 import com.rifqi.trackfunds.feature.savings.ui.screen.SavingsDetailScreen
 import com.rifqi.trackfunds.feature.savings.ui.screen.SavingsScreen
 
 fun NavGraphBuilder.savingsNavGraph(navController: NavHostController) {
     navigation<SavingsGraph>(
-        startDestination = Savings,
+        startDestination = SavingsRoutes.Savings,
     ) {
-        composable<Savings> {
+        composable<SavingsRoutes.Savings> {
             SavingsScreen(
                 onNavigateBack = {
                     navController.popBackStack()
@@ -26,12 +24,12 @@ fun NavGraphBuilder.savingsNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable<AddEditSavingsGoal> {
+        composable<SavingsRoutes.AddEditSavingsGoal> {
             AddEditSavingsGoalScreen {
                 navController.popBackStack()
             }
         }
-        composable<SavingsDetail> {
+        composable<SavingsRoutes.SavingsDetail> {
             SavingsDetailScreen(
                 onNavigateBack = {
                     navController.popBackStack()

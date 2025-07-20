@@ -6,10 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
-import com.rifqi.trackfunds.core.navigation.api.AddEditTransaction
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.Home
-import com.rifqi.trackfunds.core.navigation.api.TransactionDetail
+import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionDetailEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +30,7 @@ class TransactionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val args: TransactionDetail = savedStateHandle.toRoute()
+    private val args: TransactionRoutes.TransactionDetail = savedStateHandle.toRoute()
     val transactionId: String = args.transactionId
 
     private val _uiState = MutableStateFlow(TransactionDetailUiState())
@@ -59,7 +58,7 @@ class TransactionDetailViewModel @Inject constructor(
         when (event) {
             TransactionDetailEvent.EditClicked -> {
                 viewModelScope.launch {
-                    _navigationEvent.emit(AddEditTransaction(transactionId = transactionId))
+                    _navigationEvent.emit(TransactionRoutes.AddEditTransaction(transactionId = transactionId))
                 }
             }
 
@@ -84,7 +83,7 @@ class TransactionDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
             try {
                 deleteTransactionUseCase(transactionToDelete)
-                _navigationEvent.emit(Home)
+                _navigationEvent.emit(HomeRoutes.Home)
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }

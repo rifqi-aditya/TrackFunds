@@ -14,6 +14,7 @@ import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.ReportsGraph
+import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 
 sealed class NavigationItem(
     val graphRoute: AppScreen,
@@ -29,7 +30,7 @@ sealed class NavigationItem(
     )
 
     data object Transactions : NavigationItem(
-        graphRoute = com.rifqi.trackfunds.core.navigation.api.Transactions,
+        graphRoute = TransactionsGraph,
         title = "Transactions",
         selectedIcon = Icons.AutoMirrored.Filled.ReceiptLong,
         unselectedIcon = Icons.AutoMirrored.Outlined.ReceiptLong
