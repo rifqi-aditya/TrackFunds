@@ -1,31 +1,48 @@
 package com.rifqi.trackfunds.feature.profile.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.rifqi.trackfunds.feature.profile.model.ProfileUiState
+import androidx.lifecycle.viewModelScope
+import com.rifqi.trackfunds.core.navigation.api.Accounts
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.Categories
+import com.rifqi.trackfunds.feature.profile.event.ProfileEvent
+import com.rifqi.trackfunds.feature.profile.state.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    // TODO: Inject Use Cases di sini
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
+    private val _navigationEvent = MutableSharedFlow<AppScreen>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
+
     init {
-        // Logika untuk memuat data profil pengguna
         _uiState.update { it.copy(isLoading = false) }
     }
 
-    fun onLogoutClicked() {
-        // TODO: Implementasi logika logout
-        println("Logout clicked")
-    }
 
-    // Fungsi-fungsi event handler lainnya bisa ditambahkan di sini
+    fun onEvent(event: ProfileEvent) {
+        viewModelScope.launch {
+            when (event) {
+                ProfileEvent.LogoutClicked -> {}
+                ProfileEvent.SettingsClicked -> {}
+                ProfileEvent.ManageAccountsClicked -> _navigationEvent.emit(Accounts)
+                ProfileEvent.ManageCategoriesClicked -> _navigationEvent.emit(Categories)
+                is ProfileEvent.DarkModeToggled -> {
+                    // TODO: Simpan preferensi dark mode
+                }
+            }
+        }
+    }
 }

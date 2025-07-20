@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.core.navigation.ui.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,13 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun BottomNavItem(
     label: String,
-    @DrawableRes icon: Int,
+    icon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -38,7 +37,7 @@ fun BottomNavItem(
             if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         Icon(
             // v-- dan di sini
-            painter = painterResource(id = icon),
+            imageVector = icon,
             contentDescription = label,
             modifier = Modifier.size(24.dp), // Ukuran ikon disesuaikan
             tint = color

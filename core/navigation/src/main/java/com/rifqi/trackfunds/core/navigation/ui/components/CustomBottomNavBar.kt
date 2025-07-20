@@ -26,7 +26,7 @@ import com.rifqi.trackfunds.core.navigation.model.NavigationItem
 @Composable
 fun CustomBottomNavBar(
     navController: NavController,
-    items: List<NavigationItem>, // <-- Menerima list dari sealed class Anda
+    items: List<NavigationItem>,
     modifier: Modifier = Modifier
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -62,7 +62,7 @@ fun CustomBottomNavBar(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -72,23 +72,27 @@ fun CustomBottomNavBar(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     val item1 = items[0]
+                    val isSelected1 = currentDestination?.hierarchy?.any { it.route == item1.graphRoute::class.qualifiedName } == true
+                    val icon1 = if (isSelected1) item1.selectedIcon else item1.unselectedIcon
                     BottomNavItem(
                         label = item1.title,
-                        icon = item1.icon,
-                        isSelected = currentDestination?.hierarchy?.any { it.route == item1.graphRoute::class.qualifiedName } == true,
+                        icon = icon1,
+                        isSelected = isSelected1,
                         onClick = { navController.navigate(item1.graphRoute::class.qualifiedName!!) }
                     )
                     val item2 = items[1]
+                    val isSelected2 = currentDestination?.hierarchy?.any { it.route == item2.graphRoute::class.qualifiedName } == true
+                    val icon2 = if (isSelected2) item2.selectedIcon else item2.unselectedIcon
                     BottomNavItem(
                         label = item2.title,
-                        icon = item2.icon,
-                        isSelected = currentDestination?.hierarchy?.any { it.route == item2.graphRoute::class.qualifiedName } == true,
+                        icon = icon2,
+                        isSelected = isSelected2,
                         onClick = { navController.navigate(item2.graphRoute::class.qualifiedName!!) }
                     )
                 }
 
                 // Spacer untuk celah FAB
-                Spacer(modifier = Modifier.weight(0.7f))
+                Spacer(modifier = Modifier.weight(0.4f))
 
                 // Grup Kanan (Item 2 & 3)
                 Row(
@@ -96,16 +100,20 @@ fun CustomBottomNavBar(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     val item3 = items[2]
+                    val isSelected3 = currentDestination?.hierarchy?.any { it.route == item3.graphRoute::class.qualifiedName } == true
+                    val icon3 = if (isSelected3) item3.selectedIcon else item3.unselectedIcon
                     BottomNavItem(
                         label = item3.title,
-                        icon = item3.icon,
-                        isSelected = currentDestination?.hierarchy?.any { it.route == item3.graphRoute::class.qualifiedName } == true,
+                        icon = icon3,
+                        isSelected = isSelected3,
                         onClick = { navController.navigate(item3.graphRoute::class.qualifiedName!!) }
                     )
                     val item4 = items[3]
+                    val isSelected4 = currentDestination?.hierarchy?.any { it.route == item4.graphRoute::class.qualifiedName } == true
+                    val icon4 = if (isSelected4) item4.selectedIcon else item4.unselectedIcon
                     BottomNavItem(
                         label = item4.title,
-                        icon = item4.icon,
+                        icon = icon4,
                         isSelected = currentDestination?.hierarchy?.any { it.route == item4.graphRoute::class.qualifiedName } == true,
                         onClick = { navController.navigate(item4.graphRoute::class.qualifiedName!!) }
                     )

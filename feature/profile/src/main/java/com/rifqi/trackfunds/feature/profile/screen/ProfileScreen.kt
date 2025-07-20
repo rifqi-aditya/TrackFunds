@@ -1,138 +1,161 @@
 package com.rifqi.trackfunds.feature.profile.screen
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.Home
+import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.profile.components.MenuRowItem
-import com.rifqi.trackfunds.feature.profile.components.ProfileTopAppBar
-import com.rifqi.trackfunds.feature.profile.components.UserInfoSection
-import com.rifqi.trackfunds.feature.profile.model.ProfileUiState
+import com.rifqi.trackfunds.feature.profile.components.ProfileHeader
+import com.rifqi.trackfunds.feature.profile.components.SettingsItem
+import com.rifqi.trackfunds.feature.profile.components.SettingsSwitchItem
+import com.rifqi.trackfunds.feature.profile.event.ProfileEvent
+import com.rifqi.trackfunds.feature.profile.state.ProfileUiState
 import com.rifqi.trackfunds.feature.profile.viewmodel.ProfileViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    onNavigateToSettings: () -> Unit,
-    onNavigateToManageAccounts: () -> Unit,
-    onNavigateToManageCategories: () -> Unit,
-    onLogout: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigate: (AppScreen) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var darkModeEnabled by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { screen ->
+            if (screen is Home) {
+                onNavigateBack()
+            } else {
+                onNavigate(screen)
+            }
+        }
+    }
 
     ProfileContent(
         uiState = uiState,
-        onSettingsClicked = onNavigateToSettings,
-        onManageAccountsClicked = onNavigateToManageAccounts,
-        onManageCategoriesClicked = onNavigateToManageCategories,
-        onLogoutClicked = {
-            viewModel.onLogoutClicked()
-            onLogout()
-        }
+        onEvent = viewModel::onEvent,
+        onNavigateBack = onNavigateBack
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileContent(
     uiState: ProfileUiState,
-    onSettingsClicked: () -> Unit,
-    onManageAccountsClicked: () -> Unit,
-    onManageCategoriesClicked: () -> Unit,
-    onLogoutClicked: () -> Unit
+    onEvent: (ProfileEvent) -> Unit,
+    onNavigateBack: () -> Unit,
+    darkModeEnabled: Boolean = true
 ) {
     Scaffold(
         topBar = {
-            ProfileTopAppBar(onSettingsClick = onSettingsClicked)
-        }
-    ) { innerPadding ->
-        // FIX 1: Column utama ini TIDAK LAGI memiliki verticalScroll.
-        // Tugasnya hanya sebagai kerangka untuk menata item secara vertikal.
+            AppTopAppBar(
+                title = "My Account",
+                onNavigateBack = {},
+                isFullScreen = true,
+                actions = { Spacer(Modifier.width(56.dp)) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(paddingValues)
         ) {
-            // -- Bagian yang TIDAK bisa di-scroll --
-            Spacer(modifier = Modifier.height(16.dp))
-            UserInfoSection(
-                userName = uiState.userName,
-                userStatus = uiState.userStatus,
-                onAvatarClick = { /* TODO */ },
-                onCreateAccountClick = { /* TODO */ }
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // FIX 2: Area konten sekarang berada di dalam Column yang bisa scroll
-            // dan menggunakan .weight(1f) agar fleksibel.
-            Column(
-                modifier = Modifier
-                    .weight(1f) // Ambil semua sisa ruang di tengah
-                    .verticalScroll(rememberScrollState())
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                // Semua konten yang mungkin panjang diletakkan di sini
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(text = "Accounts", style = MaterialTheme.typography.titleMedium)
-                    MenuRowItem(
-                        title = "Manage Accounts",
-                        iconIdentifier = "wallet_account",
-                        onClick = onManageAccountsClicked
+                item {
+                    ProfileHeader(
+                        name = uiState.userName,
+                        email = uiState.email
                     )
-                    MenuRowItem(
-                        title = "Categories",
-                        iconIdentifier = "category",
-                        onClick = onManageCategoriesClicked
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = "Transaction", style = MaterialTheme.typography.titleMedium)
-                    MenuRowItem(
-                        title = "Export CSV",
-                        iconIdentifier = "wallet_account",
-                        onClick = { /* TODO */ }
-                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        SettingsItem(title = "Akun Saya", onClick = {
+                            onEvent(ProfileEvent.ManageAccountsClicked)
+                        })
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.surfaceContainer,
+                            thickness = 1.dp
+                        )
+                        SettingsSwitchItem(
+                            title = "Dark Mode",
+                            checked = darkModeEnabled,
+                            onCheckedChange = { }
+                        )
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.surfaceContainer,
+                            thickness = 1.dp
+                        )
+                        SettingsItem(title = "Kelola Kategori", onClick = {
+                            onEvent(ProfileEvent.ManageCategoriesClicked)
+                        })
+                    }
                 }
             }
 
-            // -- Bagian bawah yang TIDAK bisa di-scroll (menempel di bawah) --
             OutlinedButton(
-                onClick = onLogoutClicked,
+                onClick = { /* Aksi Logout */ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp
+                    ), // Padding atas agar ada jarak
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error
                 ),
-                border = ButtonDefaults.outlinedButtonBorder.copy(
-                    brush = SolidColor(MaterialTheme.colorScheme.error)
-                )
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.error
+                ) // Perbaikan kecil untuk border
             ) {
                 Icon(
                     Icons.AutoMirrored.Rounded.Logout,
@@ -169,10 +192,8 @@ fun ProfileScreenLightPreview() {
         )
         ProfileContent(
             uiState = dummyState,
-            onSettingsClicked = {},
-            onManageAccountsClicked = {},
-            onManageCategoriesClicked = {},
-            onLogoutClicked = {}
+            onEvent = {},
+            onNavigateBack = {}
         )
     }
 }
