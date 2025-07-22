@@ -7,7 +7,7 @@ import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
@@ -25,7 +25,7 @@ class TransactionRepositoryImpl @Inject constructor(
     private val savingsGoalDao: SavingsGoalDao
 ) : TransactionRepository {
 
-    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<com.rifqi.trackfunds.core.domain.model.Transaction>> {
+    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionItem>> {
         val queryString = StringBuilder()
         val args = mutableListOf<Any?>()
 
@@ -92,12 +92,12 @@ class TransactionRepositoryImpl @Inject constructor(
             .map { dtoList -> dtoList.map { it.toDomain() } }
     }
 
-    override fun getTransactionById(transactionId: String): Flow<com.rifqi.trackfunds.core.domain.model.Transaction?> {
+    override fun getTransactionById(transactionId: String): Flow<TransactionItem?> {
         return transactionDao.getTransactionWithDetailsById(transactionId).map { it?.toDomain() }
     }
 
     @Transaction
-    override suspend fun insertTransaction(transaction: com.rifqi.trackfunds.core.domain.model.Transaction) {
+    override suspend fun insertTransaction(transaction: TransactionItem) {
         transactionDao.insertTransaction(transaction.toEntity())
 
         val account = accountDao.getAccountById(transaction.account.id) ?: return
@@ -117,7 +117,7 @@ class TransactionRepositoryImpl @Inject constructor(
 
     @Transaction
     override suspend fun updateTransaction(
-        transaction: com.rifqi.trackfunds.core.domain.model.Transaction,
+        transaction: TransactionItem,
         oldAmount: BigDecimal,
         oldAccountId: String
     ) {
@@ -170,7 +170,7 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     @Transaction
-    override suspend fun deleteTransaction(transaction: com.rifqi.trackfunds.core.domain.model.Transaction) {
+    override suspend fun deleteTransaction(transaction: TransactionItem) {
         transactionDao.deleteTransactionById(transaction.id)
 
         val account = accountDao.getAccountById(transaction.account.id) ?: return
@@ -193,7 +193,7 @@ class TransactionRepositoryImpl @Inject constructor(
      * FIX: Re-implement the transfer logic.
      */
     @Transaction
-    override suspend fun performTransfer(expense: com.rifqi.trackfunds.core.domain.model.Transaction, income: com.rifqi.trackfunds.core.domain.model.Transaction) {
+    override suspend fun performTransfer(expense: TransactionItem, income: TransactionItem) {
         // 1. Masukkan transaksi pengeluaran
         transactionDao.insertTransaction(expense.toEntity())
         // 2. Masukkan transaksi pemasukan

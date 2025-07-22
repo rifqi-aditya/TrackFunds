@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
@@ -258,7 +258,7 @@ fun TransactionScreenContent(
 }
 
 private val previewTransactions = listOf(
-    Transaction(
+    TransactionItem(
         id = "1",
         amount = BigDecimal("75000"),
         type = TransactionType.EXPENSE,

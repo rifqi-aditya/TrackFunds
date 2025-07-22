@@ -7,16 +7,16 @@ import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
 import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import java.math.BigDecimal
 
 /**
  * Maps a [TransactionDetailDto] (a flat object from the database query)
- * to a nested [Transaction] domain model.
+ * to a nested [TransactionItem] domain model.
  * It safely handles cases where a transaction might not have a category or a savings goal.
  */
-fun TransactionDetailDto.toDomain(): Transaction {
-    return Transaction(
+fun TransactionDetailDto.toDomain(): TransactionItem {
+    return TransactionItem(
         id = this.transaction.id,
         description = this.transaction.description,
         amount = this.transaction.amount,
@@ -58,7 +58,7 @@ fun TransactionDetailDto.toDomain(): Transaction {
  * Maps a TransactionItem (domain model) to a TransactionEntity (Room entity).
  * Required when saving or updating a transaction.
  */
-fun Transaction.toEntity(): TransactionEntity {
+fun TransactionItem.toEntity(): TransactionEntity {
     return TransactionEntity(
         id = this.id,
         description = this.description,

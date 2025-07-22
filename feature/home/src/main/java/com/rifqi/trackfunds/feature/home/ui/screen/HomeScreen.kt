@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
@@ -163,7 +163,7 @@ private val previewDummyCategory2 = CategoryItem("cat2", "Gaji", "salary", Trans
 
 private val previewTransactions = listOf(
     // Transaksi Pengeluaran
-    Transaction(
+    TransactionItem(
         id = "1",
         amount = BigDecimal("50000"),
         type = TransactionType.EXPENSE,
@@ -173,7 +173,7 @@ private val previewTransactions = listOf(
         account = previewDummyAccount1
     ),
     // Transaksi Pemasukan
-    Transaction(
+    TransactionItem(
         id = "2",
         amount = BigDecimal("7500000"),
         type = TransactionType.INCOME,
