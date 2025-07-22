@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -10,7 +10,7 @@ class UpdateTransactionUseCaseImpl @Inject constructor(
 ) : UpdateTransactionUseCase {
 
     override suspend operator fun invoke(
-        transaction: TransactionItem,
+        transaction: Transaction,
         oldAmount: BigDecimal,
         oldAccountId: String
     ) {

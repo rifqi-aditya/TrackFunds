@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -31,7 +31,7 @@ import java.util.Locale
 @Composable
 fun RecentTransactionRow(
     modifier: Modifier = Modifier,
-    item: TransactionItem,
+    item: Transaction,
 ) {
     Row(
         modifier = modifier

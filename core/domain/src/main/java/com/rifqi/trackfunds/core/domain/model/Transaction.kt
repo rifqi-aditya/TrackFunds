@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class TransactionItem(
+data class Transaction(
     val id: String = UUID.randomUUID().toString(),
     val amount: BigDecimal,
     val type: TransactionType,

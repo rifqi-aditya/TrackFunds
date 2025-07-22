@@ -7,6 +7,7 @@ import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
+import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -62,6 +63,13 @@ object DatabaseModule {
     fun provideSavingsGoalDao(appDatabase: AppDatabase): SavingsGoalDao {
         return appDatabase.savingsGoalDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(database: AppDatabase): UserDao { // <-- Tambahkan ini
+        return database.userDao()
+    }
+
 
 
     // (Opsional) Menyediakan CoroutineScope level aplikasi jika dibutuhkan di tempat lain

@@ -26,6 +26,7 @@ import java.util.UUID
 
 @Database(
     entities = [
+        UserEntity::class,
         CategoryEntity::class,
         AccountEntity::class,
         SavingsGoalEntity::class,
@@ -38,6 +39,7 @@ import java.util.UUID
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
+    abstract fun userDao(): UserDao
     abstract fun categoryDao(): CategoryDao
     abstract fun accountDao(): AccountDao
     abstract fun transactionDao(): TransactionDao

@@ -9,7 +9,7 @@ import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
@@ -69,7 +69,7 @@ class AddEditTransactionViewModel @Inject constructor(
     private val editingTransactionId: String? = args.transactionId
     val isEditMode: Boolean = editingTransactionId != null
 
-    private var originalTransaction: TransactionItem? = null
+    private var originalTransaction: Transaction? = null
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
@@ -327,7 +327,7 @@ class AddEditTransactionViewModel @Inject constructor(
         }
     }
 
-    private fun deleteTransaction(transactionToDelete: TransactionItem) {
+    private fun deleteTransaction(transactionToDelete: Transaction) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
             try {
@@ -358,9 +358,9 @@ class AddEditTransactionViewModel @Inject constructor(
     }
 
     // Fungsi helper untuk membuat objek TransactionItem
-    private fun createTransactionFromState(state: AddEditTransactionUiState): TransactionItem {
+    private fun createTransactionFromState(state: AddEditTransactionUiState): Transaction {
         val isSavings = state.selectedTransactionType == TransactionType.SAVINGS
-        return TransactionItem(
+        return Transaction(
             id = editingTransactionId ?: UUID.randomUUID().toString(),
             description = state.description,
             amount = state.amount.toBigDecimal(),

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -28,7 +28,7 @@ import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 
 @Composable
 fun TransactionRow(
-    item: TransactionItem,
+    item: Transaction,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

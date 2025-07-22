@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.home.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.math.BigDecimal
 import java.time.YearMonth
@@ -35,7 +35,7 @@ data class HomeUiState(
     val totalSavings: BigDecimal = BigDecimal.ZERO,
     val totalAccounts: Int = 0,
 
-    val recentTransactions: List<TransactionItem> = emptyList(),
+    val recentTransactions: List<Transaction> = emptyList(),
     val topBudgets: List<BudgetItem> = emptyList(),
 )
 
