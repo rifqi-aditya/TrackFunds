@@ -14,6 +14,7 @@ fun DocumentSnapshot.toUser(uid: String): User {
         uid = uid,
         fullName = this.getString("fullName"),
         username = this.getString("username"),
+        email = this.getString("email"),
         photoUrl = this.getString("photoUrl"),
         phoneNumber = this.getString("phoneNumber"),
         birthdate = this.getLong("birthdate"),

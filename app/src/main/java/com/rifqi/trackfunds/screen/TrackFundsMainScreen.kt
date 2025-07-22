@@ -29,6 +29,7 @@ import com.rifqi.trackfunds.core.navigation.graphs.AppNavHost
 import com.rifqi.trackfunds.core.navigation.model.navigationItemsLists
 import com.rifqi.trackfunds.core.navigation.ui.components.CustomBottomNavBar
 import com.rifqi.trackfunds.core.ui.components.AddTransactionDialog
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.event.TrackFundsMainEvent
 import com.rifqi.trackfunds.viewmodel.TrackFundsMainViewModel
@@ -120,7 +121,7 @@ fun TrackFundsMainContent(
                     onClick = onFabClick, // Panggil lambda saat diklik
                     shape = CircleShape,
                     modifier = Modifier.offset(y = (+46).dp), // Offset yang disarankan
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = TrackFundsTheme.extendedColors.accentGreen
                 ) {
                     DisplayIconFromResource(
                         identifier = "plus",
@@ -128,7 +129,7 @@ fun TrackFundsMainContent(
                         modifier = Modifier
                             .padding(8.dp)
                             .size(24.dp),
-                        tint = MaterialTheme.colorScheme.surface
+                        tint = TrackFundsTheme.extendedColors.onAccentGreen
                     )
                 }
             }

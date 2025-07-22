@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
+import com.rifqi.trackfunds.core.navigation.api.Auth
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.profile.components.ProfileHeader
@@ -44,21 +44,21 @@ import com.rifqi.trackfunds.feature.profile.components.SettingsSwitchItem
 import com.rifqi.trackfunds.feature.profile.event.ProfileEvent
 import com.rifqi.trackfunds.feature.profile.state.ProfileUiState
 import com.rifqi.trackfunds.feature.profile.viewmodel.ProfileViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigate: (AppScreen) -> Unit
+    onNavigate: (AppScreen) -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var darkModeEnabled by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collectLatest { screen ->
-            if (screen is HomeRoutes.Home) {
-                onNavigateBack()
+        viewModel.navigationEvent.collect { screen ->
+            if (screen == Auth) {
+                onNavigateToLogin()
             } else {
                 onNavigate(screen)
             }
@@ -98,7 +98,9 @@ fun ProfileContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                )
         ) {
             LazyColumn(
                 modifier = Modifier.weight(1f),
@@ -106,7 +108,7 @@ fun ProfileContent(
             ) {
                 item {
                     ProfileHeader(
-                        name = uiState.userName,
+                        name = uiState.fullName,
                         email = uiState.email
                     )
                     Spacer(Modifier.height(16.dp))
@@ -140,7 +142,7 @@ fun ProfileContent(
             }
 
             OutlinedButton(
-                onClick = { /* Aksi Logout */ },
+                onClick = { onEvent(ProfileEvent.LogoutClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -186,8 +188,7 @@ fun ProfileScreenLightPreview() {
     TrackFundsTheme(darkTheme = false) {
         val dummyState = ProfileUiState(
             isLoading = false,
-            userName = "Rifqi Aditya",
-            userStatus = "Anonymous",
+            fullName = "Rifqi Aditya",
             appVersion = "1.0.0-preview"
         )
         ProfileContent(

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @Composable
 fun <T> SummarySection(
@@ -41,7 +42,7 @@ fun <T> SummarySection(
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
-                color = MaterialTheme.colorScheme.primary
+                color = TrackFundsTheme.extendedColors.accentGreen
             )
         }
     }

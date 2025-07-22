@@ -10,6 +10,7 @@ import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.feature.categories.ui.screen.AddEditCategoryScreen
 import com.rifqi.trackfunds.feature.categories.ui.screen.CategoriesScreen
 import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
+import com.rifqi.trackfunds.feature.transaction.ui.screen.AddEditTransactionScreen
 import com.rifqi.trackfunds.feature.transaction.ui.screen.TransactionDetailScreen
 
 /**
@@ -60,6 +61,15 @@ fun NavGraphBuilder.sharedNavGraph(navController: NavHostController) {
             onNavigateBack = { navController.popBackStack() },
             onNavigateToEdit = { transactionId ->
                 navController.navigate(TransactionRoutes.AddEditTransaction(transactionId))
+            }
+        )
+    }
+
+    composable<TransactionRoutes.AddEditTransaction> {
+        AddEditTransactionScreen(
+            onNavigateBack = { navController.popBackStack() },
+            onNavigate = { screen ->
+                navController.navigate(screen)
             }
         )
     }

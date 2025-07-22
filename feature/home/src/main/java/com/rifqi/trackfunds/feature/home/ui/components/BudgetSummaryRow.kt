@@ -37,7 +37,7 @@ fun BudgetSummaryRow(
         )
 
         else -> Brush.horizontalGradient(
-            colors = listOf(Color(0xFF4AB8B3), Color(0xFF358AC8))
+            colors = listOf(Color(0xFF46911E), Color(0xFF46911E))
         )
     }
 

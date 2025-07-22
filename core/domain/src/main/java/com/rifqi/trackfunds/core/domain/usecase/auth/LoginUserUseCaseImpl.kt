@@ -6,11 +6,8 @@ import javax.inject.Inject
 class LoginUserUseCaseImpl @Inject constructor(
     private val authRepository: AuthRepository
 ) : LoginUserUseCase {
-
+    // Tidak ada validasi di sini, hanya aksi utama
     override suspend operator fun invoke(email: String, pass: String): Result<Unit> {
-        if (email.isBlank() || pass.isBlank()) {
-            return Result.failure(IllegalArgumentException("Email and password cannot be empty."))
-        }
         return authRepository.login(email, pass)
     }
 }

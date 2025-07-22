@@ -42,7 +42,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createOrUpdateProfile(
-        user: User, // <-- Terima objek User
+        user: User,
         imageUri: Uri?
     ): Result<Unit> {
         val uid = auth.currentUser?.uid

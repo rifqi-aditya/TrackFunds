@@ -6,11 +6,17 @@ enum class AuthMode {
 }
 
 data class AuthUiState(
-    val email: String = "",
-    val password: String = "",
-    val confirmPassword: String = "",
     val authMode: AuthMode = AuthMode.LOGIN,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val isPasswordVisible: Boolean = false
+
+    // Form fields and their errors
+    val fullName: String = "",
+    val fullNameError: String? = null,
+    val email: String = "",
+    val emailError: String? = null,
+    val password: String = "",
+    val passwordError: String? = null,
+    val confirmPassword: String = "",
+    val confirmPasswordError: String? = null,
+    val isPasswordVisible: Boolean = false,
 )

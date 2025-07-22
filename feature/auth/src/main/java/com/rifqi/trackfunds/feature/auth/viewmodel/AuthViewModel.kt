@@ -2,8 +2,13 @@ package com.rifqi.trackfunds.feature.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rifqi.trackfunds.core.domain.model.ValidationResult
 import com.rifqi.trackfunds.core.domain.usecase.auth.LoginUserUseCase
 import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCase
+import com.rifqi.trackfunds.core.domain.usecase.validator.ValidateConfirmPassword
+import com.rifqi.trackfunds.core.domain.usecase.validator.ValidateEmail
+import com.rifqi.trackfunds.core.domain.usecase.validator.ValidateFullName
+import com.rifqi.trackfunds.core.domain.usecase.validator.ValidatePassword
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.feature.auth.event.AuthEvent
@@ -20,6 +25,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
+    // Input validators
+    private val validateEmail: ValidateEmail,
+    private val validateFullName: ValidateFullName,
+    private val validatePassword: ValidatePassword,
+    private val validateConfirmPassword: ValidateConfirmPassword,
+    // Use cases
     private val loginUserUseCase: LoginUserUseCase,
     private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
@@ -32,6 +43,7 @@ class AuthViewModel @Inject constructor(
 
     fun onEvent(event: AuthEvent) {
         when (event) {
+            is AuthEvent.FullNameChanged -> _uiState.update { it.copy(fullName = event.fullName) }
             is AuthEvent.EmailChanged -> _uiState.update { it.copy(email = event.email) }
             is AuthEvent.PasswordChanged -> _uiState.update { it.copy(password = event.password) }
             is AuthEvent.ConfirmPasswordChanged -> _uiState.update { it.copy(confirmPassword = event.confirmPassword) }
@@ -43,7 +55,6 @@ class AuthViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         authMode = newMode,
-                        errorMessage = null,
                         password = "",
                         confirmPassword = ""
                     )
@@ -51,34 +62,65 @@ class AuthViewModel @Inject constructor(
             }
 
             AuthEvent.Submit -> handleSubmit()
+            AuthEvent.ForgotPasswordClicked -> {
+
+            }
         }
     }
 
     private fun handleSubmit() {
+        val currentState = _uiState.value
+
+        // Panggil setiap validator
+        val emailResult = validateEmail(currentState.email)
+        val passwordResult = validatePassword(currentState.password)
+
+        // Validasi spesifik untuk mode register
+        val fullNameResult =
+            if (currentState.authMode == AuthMode.REGISTER) validateFullName(currentState.fullName) else ValidationResult(
+                isSuccess = true
+            )
+        val confirmPasswordResult =
+            if (currentState.authMode == AuthMode.REGISTER) validateConfirmPassword(
+                currentState.password,
+                currentState.confirmPassword
+            ) else ValidationResult(isSuccess = true)
+
+        // Kumpulkan semua hasil
+        val results = listOf(emailResult, passwordResult, fullNameResult, confirmPasswordResult)
+        val hasError = results.any { !it.isSuccess }
+
+        // Perbarui state UI dengan semua error sekaligus
+        _uiState.update {
+            it.copy(
+                emailError = emailResult.errorMessage,
+                passwordError = passwordResult.errorMessage,
+                fullNameError = fullNameResult.errorMessage,
+                confirmPasswordError = confirmPasswordResult.errorMessage
+            )
+        }
+
+        if (hasError) {
+            return
+        }
+
+        // Jika semua validasi lolos, jalankan aksi utama
         viewModelScope.launch {
-            val currentState = _uiState.value
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true) }
 
-            val result = when (currentState.authMode) {
-                AuthMode.LOGIN -> {
-                    loginUserUseCase(currentState.email, currentState.password)
-                }
-
-                AuthMode.REGISTER -> {
-                    if (currentState.password != currentState.confirmPassword) {
-                        Result.failure(Exception("Passwords do not match."))
-                    } else {
-                        registerUserUseCase(currentState.email, currentState.password)
-                    }
-                }
+            val submissionResult = when (currentState.authMode) {
+                AuthMode.LOGIN -> loginUserUseCase(currentState.email, currentState.password)
+                AuthMode.REGISTER -> registerUserUseCase(
+                    currentState.email,
+                    currentState.password,
+                    currentState.fullName
+                )
             }
 
-            result
-                .onSuccess {
-                    _navigationEvent.emit(HomeGraph)
-                }
+            submissionResult
+                .onSuccess { _navigationEvent.emit(HomeGraph) }
                 .onFailure { error ->
-                    _uiState.update { it.copy(errorMessage = error.message) }
+                    _uiState.update { it.copy(emailError = error.message) }
                 }
 
             _uiState.update { it.copy(isLoading = false) }

@@ -258,6 +258,8 @@ val unspecified_scheme = ColorFamily(
 data class ExtendedColors(
     val textIncome: Color,
     val textExpense: Color,
+    val accentGreen: Color,
+    val onAccentGreen: Color,
     val chartConditionGood: Color,
     val chartConditionWarning: Color,
     val chartConditionNeutral: Color,
@@ -273,6 +275,8 @@ val LocalExtendedColors = staticCompositionLocalOf {
     ExtendedColors(
         textIncome = Color.Unspecified,
         textExpense = Color.Unspecified,
+        accentGreen = Color.Unspecified,
+        onAccentGreen = Color.Unspecified,
         chartConditionGood = Color.Unspecified,
         chartConditionWarning = Color.Unspecified,
         chartConditionNeutral = Color.Unspecified,
@@ -305,9 +309,11 @@ fun TrackFundsTheme(
         ExtendedColors(
             textIncome = TextIncome,
             textExpense = TextExpense,
+            accentGreen = AccentGreenDark,
+            onAccentGreen = OnAccentGreen,
             chartConditionGood = ChartConditionGood,
             chartConditionWarning = ChartConditionWarning,
-            chartConditionNeutral = ChartConditionNeutralDark, // Gunakan versi Dark
+            chartConditionNeutral = ChartConditionNeutralDark,
             chartCategory1 = ChartCategory1,
             chartCategory2 = ChartCategory2,
             chartCategory3 = ChartCategory3,
@@ -319,9 +325,11 @@ fun TrackFundsTheme(
         ExtendedColors(
             textIncome = TextIncome,
             textExpense = TextExpense,
+            accentGreen = AccentGreenLight,
+            onAccentGreen = OnAccentGreen,
             chartConditionGood = ChartConditionGood,
             chartConditionWarning = ChartConditionWarning,
-            chartConditionNeutral = ChartConditionNeutralLight, // Gunakan versi Light
+            chartConditionNeutral = ChartConditionNeutralLight,
             chartCategory1 = ChartCategory1,
             chartCategory2 = ChartCategory2,
             chartCategory3 = ChartCategory3,
