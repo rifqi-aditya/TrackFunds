@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteBudgetUseCaseImpl @Inject constructor(
     private val repository: BudgetRepository
 ) : DeleteBudgetUseCase {
-    override suspend operator fun invoke(budgetId: String) {
-        repository.deleteBudget(budgetId)
+    override suspend operator fun invoke(budgetId: String): Result<Unit> {
+        return repository.deleteBudget(budgetId)
     }
 }

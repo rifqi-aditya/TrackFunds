@@ -7,7 +7,7 @@ import javax.inject.Inject
 class UpdateBudgetUseCaseImpl @Inject constructor(
     private val repository: BudgetRepository
 ) : UpdateBudgetUseCase {
-    override suspend operator fun invoke(budget: BudgetItem) {
-        repository.updateBudget(budget)
+    override suspend operator fun invoke(budget: BudgetItem): Result<Unit> {
+        return repository.updateBudget(budget)
     }
 }

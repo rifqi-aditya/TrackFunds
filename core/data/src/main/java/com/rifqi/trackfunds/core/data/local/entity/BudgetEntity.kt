@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.core.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.math.BigDecimal
 
@@ -13,20 +14,30 @@ import java.math.BigDecimal
             entity = CategoryEntity::class,
             parentColumns = ["id"],
             childColumns = ["category_id"],
-            onDelete = ForeignKey.CASCADE // Jika kategori dihapus, budgetnya juga hilang
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["uid"],
+            childColumns = ["user_uid"],
+            onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["user_uid"]),
+        Index(value = ["category_id"])
     ]
 )
 data class BudgetEntity(
     @PrimaryKey
     val id: String,
 
-    @ColumnInfo(name = "category_id", index = true)
+    @ColumnInfo(name = "user_uid")
+    val userUid: String,
+
+    @ColumnInfo(name = "category_id")
     val categoryId: String,
 
-    // Jumlah yang dianggarkan
     val amount: BigDecimal,
-
-    // Periode budget, contoh: "2025-06"
     val period: String
 )

@@ -16,13 +16,13 @@ import java.time.LocalDateTime
             entity = CategoryEntity::class,
             parentColumns = ["id"],
             childColumns = ["category_id"],
-            onDelete = ForeignKey.SET_NULL // Jika kategori dihapus, biarkan transaksi tetap ada
+            onDelete = ForeignKey.SET_NULL
         ),
         ForeignKey(
             entity = AccountEntity::class,
             parentColumns = ["id"],
             childColumns = ["account_id"],
-            onDelete = ForeignKey.CASCADE // Jika akun dihapus, transaksinya juga terhapus
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = SavingsGoalEntity::class,
@@ -37,25 +37,35 @@ import java.time.LocalDateTime
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["user_uid"])]
+    indices = [
+        Index(value = ["user_uid"]),
+        Index(value = ["category_id"]),
+        Index(value = ["account_id"]),
+        Index(value = ["transfer_pair_id"]),
+        Index(value = ["savings_goal_id"])
+    ]
 )
 data class TransactionEntity(
-    @PrimaryKey val id: String,
-    @ColumnInfo(name = "user_uid") val userUid: String,
+    @PrimaryKey
+    val id: String,
+
+    @ColumnInfo(name = "user_uid")
+    val userUid: String,
+
     val description: String,
     val amount: BigDecimal,
     val type: TransactionType,
     val date: LocalDateTime,
 
-    @ColumnInfo(name = "category_id", index = true)
+    @ColumnInfo(name = "category_id")
     val categoryId: String?,
 
-    @ColumnInfo(name = "account_id", index = true)
+    @ColumnInfo(name = "account_id")
     val accountId: String,
 
-    @ColumnInfo(name = "transfer_pair_id", index = true)
+    @ColumnInfo(name = "transfer_pair_id")
     val transferPairId: String? = null,
 
-    @ColumnInfo(name = "savings_goal_id", index = true)
+    @ColumnInfo(name = "savings_goal_id")
     val savingsGoalId: String? = null
 )

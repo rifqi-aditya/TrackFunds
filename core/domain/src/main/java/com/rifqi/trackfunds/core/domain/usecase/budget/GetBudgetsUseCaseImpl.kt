@@ -9,7 +9,6 @@ import javax.inject.Inject
 class GetBudgetsUseCaseImpl @Inject constructor(
     private val repository: BudgetRepository
 ) : GetBudgetsUseCase {
-
     override operator fun invoke(period: YearMonth): Flow<List<BudgetItem>> {
         return repository.getBudgetsForPeriod(period)
     }

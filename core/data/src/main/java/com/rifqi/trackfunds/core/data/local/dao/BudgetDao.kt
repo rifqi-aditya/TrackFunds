@@ -22,20 +22,18 @@ interface BudgetDao {
             c.id as categoryId,
             c.name as categoryName,
             c.icon_identifier as categoryIconIdentifier,
-            -- Hitung total transaksi pengeluaran untuk kategori ini di rentang waktu yang sesuai
-            -- COALESCE digunakan untuk menghasilkan 0 jika tidak ada transaksi sama sekali
             COALESCE(SUM(t.amount), 0) as spentAmount
         FROM budgets AS b
         INNER JOIN categories AS c ON b.category_id = c.id
-        -- LEFT JOIN penting agar budget dengan 0 transaksi tetap muncul
         LEFT JOIN transactions AS t ON t.category_id = c.id 
-                                    AND t.type = 'EXPENSE' 
-                                    AND strftime('%Y-%m', t.date / 1000, 'unixepoch') = b.period
-        WHERE b.period = :period
+                                   AND t.type = 'EXPENSE' 
+                                   AND strftime('%Y-%m', t.date / 1000, 'unixepoch') = b.period
+                                   AND t.user_uid = :userUid 
+        WHERE b.period = :period AND b.user_uid = :userUid
         GROUP BY b.id, c.id
     """
     )
-    fun getBudgetsWithDetails(period: String): Flow<List<BudgetWithDetailsDto>>
+    fun getBudgetsWithDetails(period: String, userUid: String): Flow<List<BudgetWithDetailsDto>>
 
     @Transaction
     @Query(
@@ -53,16 +51,19 @@ interface BudgetDao {
                 WHERE t.category_id = b.category_id 
                 AND strftime('%Y-%m', t.date / 1000, 'unixepoch') = b.period 
                 AND t.type = 'EXPENSE'
+                AND t.user_uid = :userUid
             ), 0) as spentAmount
         FROM budgets AS b
         INNER JOIN categories AS c ON b.category_id = c.id
-        WHERE b.id = :budgetId
+        WHERE b.id = :budgetId AND b.user_uid = :userUid
     """
     )
-    suspend fun getBudgetWithDetailsById(budgetId: String): BudgetWithDetailsDto?
+    // DITAMBAHKAN: parameter userUid dan filter di WHERE utama dan subquery
+    suspend fun getBudgetWithDetailsById(budgetId: String, userUid: String): BudgetWithDetailsDto?
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT
             b.id as budgetId,
             b.amount as budgetAmount,
@@ -74,14 +75,20 @@ interface BudgetDao {
         FROM budgets AS b
         INNER JOIN categories AS c ON b.category_id = c.id
         LEFT JOIN transactions AS t ON t.category_id = c.id 
-                                    AND t.type = 'EXPENSE' 
-                                    AND b.period = :periodString
-        WHERE b.period = :periodString
+                                   AND t.type = 'EXPENSE' 
+                                   AND t.user_uid = :userUid
+        WHERE b.period = :periodString AND b.user_uid = :userUid
         GROUP BY b.id
-        ORDER BY b.amount DESC
+        ORDER BY spentAmount / b.amount DESC
         LIMIT :limit
-    """)
-    fun getTopBudgetsWithDetails(periodString: String, limit: Int): Flow<List<BudgetWithDetailsDto>>
+    """
+    )
+    // DITAMBAHKAN: parameter userUid dan filter di WHERE dan JOIN
+    fun getTopBudgetsWithDetails(
+        periodString: String,
+        limit: Int,
+        userUid: String
+    ): Flow<List<BudgetWithDetailsDto>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBudget(budget: BudgetEntity)
@@ -89,6 +96,6 @@ interface BudgetDao {
     @Update
     suspend fun updateBudget(budget: BudgetEntity)
 
-    @Query("DELETE FROM budgets WHERE id = :budgetId")
-    suspend fun deleteBudgetById(budgetId: String)
+    @Query("DELETE FROM budgets WHERE id = :budgetId AND user_uid = :userUid")
+    suspend fun deleteBudgetById(budgetId: String, userUid: String)
 }

@@ -1,5 +1,12 @@
 package com.rifqi.trackfunds.core.domain.usecase.budget
 
+/**
+ * Deletes a budget by its ID for the current user.
+ */
 interface DeleteBudgetUseCase {
-    suspend operator fun invoke(budgetId: String)
+    /**
+     * @param budgetId The ID of the budget to delete.
+     * @return A [Result] indicating success or failure.
+     */
+    suspend operator fun invoke(budgetId: String): Result<Unit>
 }

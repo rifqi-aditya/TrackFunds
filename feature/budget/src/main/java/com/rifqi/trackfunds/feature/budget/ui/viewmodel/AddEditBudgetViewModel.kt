@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -63,25 +64,30 @@ class AddEditBudgetViewModel @Inject constructor(
 
     private fun loadBudgetForEdit(id: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val budget = getBudgetByIdUseCase(id)
-            if (budget != null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        selectedCategory = CategoryItem(
-                            id = budget.categoryId,
-                            name = budget.categoryName,
-                            iconIdentifier = budget.categoryIconIdentifier.toString(),
-                            type = TransactionType.EXPENSE
-                        ),
-                        amount = budget.budgetAmount?.toPlainString() ?: "",
-                        initialSpentAmount = budget.spentAmount // Simpan spent amount awal
-                    )
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            // Panggil UseCase dan tangani hasilnya
+            getBudgetByIdUseCase(id)
+                .onSuccess { budget ->
+                    // Blok ini berjalan jika budget berhasil ditemukan
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            selectedCategory = CategoryItem(
+                                id = budget.categoryId,
+                                name = budget.categoryName,
+                                iconIdentifier = budget.categoryIconIdentifier.toString(),
+                                type = TransactionType.EXPENSE
+                            ),
+                            amount = budget.budgetAmount.toPlainString(),
+                            initialSpentAmount = budget.spentAmount // Simpan spent amount awal
+                        )
+                    }
                 }
-            } else {
-                _uiState.update { it.copy(isLoading = false, error = "Budget not found.") }
-            }
+                .onFailure { error ->
+                    // Blok ini berjalan jika terjadi error (misal: budget tidak ditemukan)
+                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                }
         }
     }
 
@@ -147,6 +153,7 @@ class AddEditBudgetViewModel @Inject constructor(
                     }
                     _uiState.update { it.copy(isBudgetSaved = true) }
                 } catch (e: Exception) {
+                    Log.e("AddEditBudgetViewModel", "Error saving budget: ${e.message}")
                     _uiState.update { it.copy(isLoading = false, error = e.message) }
                 }
             }

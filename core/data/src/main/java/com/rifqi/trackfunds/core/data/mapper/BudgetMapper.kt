@@ -17,9 +17,10 @@ fun BudgetWithDetailsDto.toDomain(): BudgetItem {
     )
 }
 
-fun BudgetItem.toEntity(): BudgetEntity {
+fun BudgetItem.toEntity(userUid: String): BudgetEntity {
     return BudgetEntity(
         id = this.budgetId,
+        userUid = userUid,
         categoryId = this.categoryId,
         amount = this.budgetAmount,
         period = this.period
