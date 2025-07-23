@@ -28,7 +28,7 @@ import java.time.LocalDateTime
             parentColumns = ["id"],
             childColumns = ["savings_goal_id"],
             onDelete = ForeignKey.SET_NULL
-        )
+        ),
     ]
 )
 data class TransactionEntity(

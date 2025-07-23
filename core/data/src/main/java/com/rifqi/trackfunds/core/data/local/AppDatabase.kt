@@ -12,11 +12,13 @@ import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
+import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
 import com.rifqi.trackfunds.core.data.local.entity.BudgetEntity
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
 import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
+import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

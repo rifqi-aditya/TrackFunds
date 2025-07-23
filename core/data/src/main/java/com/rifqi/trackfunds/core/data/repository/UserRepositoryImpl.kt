@@ -2,15 +2,15 @@ package com.rifqi.trackfunds.core.data.repository
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
-import com.rifqi.trackfunds.core.data.mapper.toUser
+import com.rifqi.trackfunds.core.data.local.dao.UserDao
+import com.rifqi.trackfunds.core.data.local.entity.UserEntity
+import com.rifqi.trackfunds.core.data.mapper.toDomainModel
 import com.rifqi.trackfunds.core.domain.model.User
 import com.rifqi.trackfunds.core.domain.repository.UserRepository
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,66 +18,48 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore,
+    private val userDao: UserDao,
     private val storage: FirebaseStorage
 ) : UserRepository {
 
-    override fun getProfile(): Flow<User?> = callbackFlow {
-        val uid = auth.currentUser?.uid
-        if (uid == null) {
-            trySend(null)
-            close()
-            return@callbackFlow
+    override fun getProfile(): Flow<User?> {
+        val uid = auth.currentUser?.uid ?: return flowOf(null)
+        return userDao.getProfile(uid).map { entity ->
+            entity?.toDomainModel()
         }
-
-        val docRef = firestore.collection("users").document(uid)
-        val listener = docRef.addSnapshotListener { snapshot, error ->
-            if (error != null || snapshot == null) {
-                close(error)
-                return@addSnapshotListener
-            }
-            trySend(snapshot.toUser(uid))
-        }
-        awaitClose { listener.remove() }
     }
 
-    override suspend fun createOrUpdateProfile(
-        user: User,
-        imageUri: Uri?
-    ): Result<Unit> {
-        val uid = auth.currentUser?.uid
-        return if (uid == null || uid != user.uid) { // Pastikan uid cocok
-            Result.failure(Exception("User not logged in or UID mismatch."))
-        } else {
-            try {
-                var photoUrl: String? = user.photoUrl // Ambil URL yang sudah ada
+    override suspend fun createOrUpdateProfile(user: User, imageUri: Uri?): Result<Unit> {
+        val uid = auth.currentUser?.uid ?: return Result.failure(Exception("User not logged in."))
 
-                // 1. Upload foto baru jika ada
-                if (imageUri != null) {
-                    val storageRef = storage.reference.child("profile_images/$uid/profile.jpg")
-                    storageRef.putFile(imageUri).await()
-                    photoUrl = storageRef.downloadUrl.await().toString()
-                }
+        return try {
+            var finalPhotoUrl = user.photoUrl
 
-                // 2. Siapkan data dari objek User untuk disimpan
-                val userProfileMap = mapOf(
-                    "fullName" to user.fullName,
-                    "username" to user.username,
-                    "birthdate" to user.birthdate,
-                    "gender" to user.gender,
-                    "phoneNumber" to user.phoneNumber,
-                    "photoUrl" to photoUrl
-                )
-
-                // 3. Simpan/update data ke Firestore
-                firestore.collection("users").document(uid)
-                    .set(userProfileMap, SetOptions.merge())
-                    .await()
-
-                Result.success(Unit)
-            } catch (e: Exception) {
-                Result.failure(e)
+            // Logika upload foto ke Firebase Storage tidak berubah
+            if (imageUri != null) {
+                val storageRef = storage.reference.child("profile_images/$uid/profile.jpg")
+                storageRef.putFile(imageUri).await()
+                finalPhotoUrl = storageRef.downloadUrl.await().toString()
             }
+
+            // Buat entity untuk disimpan ke Room
+            val userEntity = UserEntity(
+                uid = uid,
+                email = user.email ?: "",
+                username = user.username,
+                fullName = user.fullName,
+                photoUrl = finalPhotoUrl,
+                phoneNumber = user.phoneNumber,
+                gender = user.gender,
+                birthdate = user.birthdate
+            )
+
+            // Simpan ke database lokal
+            userDao.insertOrUpdateProfile(userEntity)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

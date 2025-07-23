@@ -1,23 +1,38 @@
 package com.rifqi.trackfunds.core.data.mapper
 
-import com.google.firebase.firestore.DocumentSnapshot
+import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.domain.model.User
 
 /**
- * Mengubah objek DocumentSnapshot dari Firestore menjadi objek User dari domain layer.
- *
- * @param uid UID pengguna yang didapat secara terpisah (karena merupakan ID dokumen).
- * @return Objek User yang berisi data profil.
+ * Mengubah UserEntity (objek database) menjadi User (objek domain).
+ * Digunakan saat mengambil data dari database.
  */
-fun DocumentSnapshot.toUser(uid: String): User {
+fun UserEntity.toDomainModel(): User {
     return User(
-        uid = uid,
-        fullName = this.getString("fullName"),
-        username = this.getString("username"),
-        email = this.getString("email"),
-        photoUrl = this.getString("photoUrl"),
-        phoneNumber = this.getString("phoneNumber"),
-        birthdate = this.getLong("birthdate"),
-        gender = this.getString("gender")
+        uid = this.uid,
+        email = this.email,
+        username = this.username,
+        fullName = this.fullName,
+        photoUrl = this.photoUrl,
+        phoneNumber = this.phoneNumber,
+        gender = this.gender,
+        birthdate = this.birthdate
+    )
+}
+
+/**
+ * Mengubah User (objek domain) menjadi UserEntity (objek database).
+ * Digunakan saat menyimpan data ke database.
+ */
+fun User.toEntity(): UserEntity {
+    return UserEntity(
+        uid = this.uid,
+        email = this.email ?: "", // Email di entity tidak boleh null
+        username = this.username,
+        fullName = this.fullName,
+        photoUrl = this.photoUrl,
+        phoneNumber = this.phoneNumber,
+        gender = this.gender,
+        birthdate = this.birthdate
     )
 }
