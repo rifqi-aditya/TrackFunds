@@ -27,7 +27,7 @@ class AccountRepositoryImpl @Inject constructor(
             if (uid == null) {
                 flowOf(emptyList())
             } else {
-                accountDao.getAccountsForUser(uid).map { entities ->
+                accountDao.getAccounts(uid).map { entities ->
                     entities.map { it.toDomain() }
                 }
             }
@@ -39,7 +39,7 @@ class AccountRepositoryImpl @Inject constructor(
             val uid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
-            val accountEntity = accountDao.getAccountByIdForUser(accountId, uid)
+            val accountEntity = accountDao.getAccountById(accountId, uid)
 
             if (accountEntity != null) {
                 Result.success(accountEntity.toDomain())
@@ -53,7 +53,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun getAccountsByIds(ids: List<String>): List<AccountItem> {
         val uid = userPreferencesRepository.userUidFlow.first() ?: return emptyList()
-        return accountDao.getAccountsByIdsForUser(ids, uid).map { it.toDomain() }
+        return accountDao.getAccountsByIds(ids, uid).map { it.toDomain() }
     }
 
     override suspend fun addAccount(account: AccountItem): Result<Unit> {
@@ -85,7 +85,7 @@ class AccountRepositoryImpl @Inject constructor(
             val uid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
-            accountDao.deleteAccountByIdForUser(accountId, uid)
+            accountDao.deleteAccountById(accountId, uid)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

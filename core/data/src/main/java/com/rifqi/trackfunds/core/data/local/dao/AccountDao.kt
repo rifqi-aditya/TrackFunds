@@ -17,7 +17,7 @@ interface AccountDao {
      * @return A Flow that emits a list of accounts, reacting to data changes.
      */
     @Query("SELECT * FROM accounts WHERE user_uid = :userUid ORDER BY name ASC")
-    fun getAccountsForUser(userUid: String): Flow<List<AccountEntity>> // Renamed for clarity
+    fun getAccounts(userUid: String): Flow<List<AccountEntity>> // Renamed for clarity
 
     /**
      * Fetches a specific account by its ID for a specific user.
@@ -26,7 +26,7 @@ interface AccountDao {
      * @return The AccountEntity or null if not found.
      */
     @Query("SELECT * FROM accounts WHERE id = :accountId AND user_uid = :userUid")
-    suspend fun getAccountByIdForUser(accountId: String, userUid: String): AccountEntity? // Renamed for clarity
+    suspend fun getAccountById(accountId: String, userUid: String): AccountEntity? // Renamed for clarity
 
     /**
      * Inserts a single account. If it already exists, it will be replaced.
@@ -55,7 +55,7 @@ interface AccountDao {
      */
     // CHANGED: Added userUid to only count accounts for the current user.
     @Query("SELECT COUNT(id) FROM accounts WHERE user_uid = :userUid")
-    suspend fun getAccountCountForUser(userUid: String): Int
+    suspend fun getAccountCount(userUid: String): Int
 
     /**
 
@@ -65,7 +65,7 @@ interface AccountDao {
      */
     // CHANGED: Added userUid to prevent deleting another user's account.
     @Query("DELETE FROM accounts WHERE id = :accountId AND user_uid = :userUid")
-    suspend fun deleteAccountByIdForUser(accountId: String, userUid: String)
+    suspend fun deleteAccountById(accountId: String, userUid: String)
 
     /**
      * Fetches a list of accounts by their IDs for a specific user.
@@ -74,5 +74,5 @@ interface AccountDao {
      */
     // CHANGED: Added userUid to only fetch accounts for the current user.
     @Query("SELECT * FROM accounts WHERE id IN (:ids) AND user_uid = :userUid")
-    suspend fun getAccountsByIdsForUser(ids: List<String>, userUid: String): List<AccountEntity>
+    suspend fun getAccountsByIds(ids: List<String>, userUid: String): List<AccountEntity>
 }

@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -89,7 +86,8 @@ fun AccountsContent(
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .size(24.dp)
-                            .clickable { onNavigateBack() }
+                            .clickable { onNavigateBack() },
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -104,9 +102,17 @@ fun AccountsContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onEvent(AccountsEvent.AddAccountClicked) },
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.medium,
+                containerColor = TrackFundsTheme.extendedColors.accentGreen
             ) {
-                Icon(Icons.Default.SwapHoriz, contentDescription = "Transfer Antar Akun")
+                DisplayIconFromResource(
+                    identifier = "plus",
+                    contentDescription = "Add Account",
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(24.dp),
+                    tint = TrackFundsTheme.extendedColors.onAccentGreen
+                )
             }
         }
     ) { innerPadding ->
