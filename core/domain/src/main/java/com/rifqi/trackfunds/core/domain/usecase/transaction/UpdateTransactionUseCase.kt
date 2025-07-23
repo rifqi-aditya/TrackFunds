@@ -8,5 +8,5 @@ interface UpdateTransactionUseCase {
         transaction: TransactionItem,
         oldAmount: BigDecimal,
         oldAccountId: String
-    )
+    ): Result<Unit>
 }

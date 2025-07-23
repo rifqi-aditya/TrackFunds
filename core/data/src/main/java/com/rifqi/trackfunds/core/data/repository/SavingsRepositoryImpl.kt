@@ -44,9 +44,13 @@ class SavingsRepositoryImpl @Inject constructor(
         savingsGoalDao.insertGoal(goal.toEntity())
     }
 
-    // Fungsi ini belum kita gunakan, tapi sudah siap
-    override suspend fun addFundsToGoal(goalId: String, amount: BigDecimal) {
-        savingsGoalDao.addFundsToGoal(goalId, amount)
+    override suspend fun addFundsToGoal(goalId: String, amount: BigDecimal): Result<Unit> {
+        return try {
+            savingsGoalDao.addFundsToGoal(goalId, amount)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun copyIconToInternalStorage(imageUri: Uri): String {

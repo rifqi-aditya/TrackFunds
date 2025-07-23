@@ -58,9 +58,10 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
  * Maps a TransactionItem (domain model) to a TransactionEntity (Room entity).
  * Required when saving or updating a transaction.
  */
-fun TransactionItem.toEntity(): TransactionEntity {
+fun TransactionItem.toEntity(userUid: String): TransactionEntity {
     return TransactionEntity(
         id = this.id,
+        userUid = userUid,
         description = this.description,
         amount = this.amount,
         type = this.type,

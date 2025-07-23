@@ -1,9 +1,8 @@
 package com.rifqi.trackfunds.core.domain.repository
 
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import kotlinx.coroutines.flow.Flow
-import java.math.BigDecimal
 
 interface TransactionRepository {
     /**
@@ -20,24 +19,15 @@ interface TransactionRepository {
     /**
      * Inserts a new transaction and updates the corresponding account balance.
      */
-    suspend fun insertTransaction(transaction: TransactionItem)
+    suspend fun insertTransaction(transaction: TransactionItem): Result<Unit>
 
     /**
-     * Updates an existing transaction and adjusts account balances accordingly.
+     * Updates an existing transaction.
      */
-    suspend fun updateTransaction(
-        transaction: TransactionItem,
-        oldAmount: BigDecimal,
-        oldAccountId: String
-    )
+    suspend fun updateTransaction(transaction: TransactionItem): Result<Unit>
 
     /**
      * Deletes a transaction and reverts the account balance.
      */
-    suspend fun deleteTransaction(transaction: TransactionItem)
-
-    /**
-     * Executes a transfer between two accounts by creating an expense and an income transaction atomically.
-     */
-    suspend fun performTransfer(expense: TransactionItem, income: TransactionItem)
+    suspend fun deleteTransaction(transactionId: String): Result<Unit>
 }

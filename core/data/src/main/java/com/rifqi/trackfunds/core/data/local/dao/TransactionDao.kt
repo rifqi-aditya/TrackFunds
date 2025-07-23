@@ -46,8 +46,8 @@ interface TransactionDao {
      * Gets a single transaction entity by its ID, without any details.
      * Useful for quick internal checks.
      */
-    @Query("SELECT * FROM transactions WHERE id = :transactionId")
-    suspend fun getTransactionById(transactionId: String): TransactionEntity?
+    @Query("SELECT * FROM transactions WHERE id = :transactionId AND user_uid = :userUid")
+    suspend fun getTransactionById(transactionId: String, userUid: String): TransactionEntity?
 
     /**
      * Gets a single transaction with its full details including category, account, and savings goal info.
@@ -57,30 +57,27 @@ interface TransactionDao {
         """
         SELECT 
             t.*,
-            c.name AS category_name, 
-            c.icon_identifier AS category_icon_identifier,
-            a.name AS account_name,
-            a.icon_identifier AS account_icon_identifier,
-            a.balance AS account_balance,
-            s.id AS savings_goal_id,
-            s.name AS savings_goal_name,
-            s.icon_identifier AS savings_goal_icon_identifier,
-            s.target_date AS savings_goal_target_date,
-            s.target_amount AS savings_goal_target_amount,
+            c.name AS category_name, c.icon_identifier AS category_icon_identifier,
+            a.name AS account_name, a.icon_identifier AS account_icon_identifier, a.balance AS account_balance,
+            s.id AS savings_goal_id, s.name AS savings_goal_name, s.icon_identifier AS savings_goal_icon_identifier,
+            s.target_date AS savings_goal_target_date, s.target_amount AS savings_goal_target_amount, 
             s.current_amount AS savings_goal_current_amount,
             CASE WHEN s.current_amount >= s.target_amount THEN 1 ELSE 0 END AS savings_goal_is_achieved
         FROM transactions AS t
         LEFT JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id
         LEFT JOIN savings_goals AS s ON t.savings_goal_id = s.id
-        WHERE t.id = :transactionId
+        WHERE t.id = :transactionId AND t.user_uid = :userUid 
     """
     )
-    fun getTransactionWithDetailsById(transactionId: String): Flow<TransactionDetailDto?>
+    fun getTransactionWithDetailsById(
+        transactionId: String,
+        userUid: String
+    ): Flow<TransactionDetailDto?>
 
     /**
      * The main query function that retrieves a list of transactions based on dynamic filters.
-     * NOTE: The implementation for this is in the Repository, not here. This is the DAO interface.
+     * The userUid filter must be added in the Repository before calling this.
      */
     @Transaction
     @RawQuery(observedEntities = [TransactionEntity::class])
@@ -91,61 +88,67 @@ interface TransactionDao {
     // =================================================================
 
     /**
-     * Calculates spending totals for each category within a given date range.
+     * Calculates spending totals for each category within a given date range for a specific user.
      */
     @Query(
         """
         SELECT c.name as categoryName, SUM(t.amount) as totalAmount
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
-        WHERE t.type = 'EXPENSE' AND t.date BETWEEN :startDate AND :endDate
+        WHERE t.type = 'EXPENSE' AND t.date BETWEEN :startDate AND :endDate AND t.user_uid = :userUid
         GROUP BY c.name
         ORDER BY totalAmount DESC
     """
     )
     fun getExpenseBreakdown(
         startDate: LocalDateTime,
-        endDate: LocalDateTime
+        endDate: LocalDateTime,
+        userUid: String
     ): Flow<List<CategorySpendingDto>>
 
     /**
-     * Calculates income totals for each category within a given date range.
+     * Calculates income totals for each category within a given date range for a specific user.
      */
     @Query(
         """
         SELECT c.name as categoryName, SUM(t.amount) as totalAmount
         FROM transactions AS t
         INNER JOIN categories AS c ON t.category_id = c.id
-        WHERE t.type = 'INCOME' AND t.date BETWEEN :startDate AND :endDate
+        WHERE t.type = 'INCOME' AND t.date BETWEEN :startDate AND :endDate AND t.user_uid = :userUid
         GROUP BY c.name
         ORDER BY totalAmount DESC
     """
     )
     fun getIncomeBreakdown(
         startDate: LocalDateTime,
-        endDate: LocalDateTime
+        endDate: LocalDateTime,
+        userUid: String
     ): Flow<List<CategorySpendingDto>>
 
     /**
-     * Calculates the total income, expense and total savings for a given date range.
+     * Calculates the total income, expense and total savings for a given date range for a specific user.
      */
     @Query(
         """
         SELECT
-            (SELECT SUM(amount) FROM transactions WHERE type = 'INCOME' AND date BETWEEN :startDate AND :endDate) as total_income,
-            (SELECT SUM(amount) FROM transactions WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate) as total_expense,
-            (SELECT SUM(amount) FROM transactions WHERE type = 'SAVINGS' AND date BETWEEN :startDate AND :endDate) as savings_total
+            (SELECT SUM(amount) FROM transactions WHERE type = 'INCOME' AND date BETWEEN :startDate AND :endDate AND user_uid = :userUid) as total_income,
+            (SELECT SUM(amount) FROM transactions WHERE type = 'EXPENSE' AND date BETWEEN :startDate AND :endDate AND user_uid = :userUid) as total_expense,
+            (SELECT SUM(amount) FROM transactions WHERE type = 'SAVINGS' AND date BETWEEN :startDate AND :endDate AND user_uid = :userUid) as savings_total
     """
     )
-    fun getCashFlowSummary(startDate: LocalDateTime, endDate: LocalDateTime): Flow<CashFlowDto>
+    fun getCashFlowSummary(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        userUid: String
+    ): Flow<CashFlowDto>
 
     // =================================================================
     // DELETE OPERATIONS
     // =================================================================
 
     /**
-     * Deletes a transaction from the database by its ID.
+     * Deletes a transaction from the database by its ID for a specific user.
      */
-    @Query("DELETE FROM transactions WHERE id = :transactionId")
-    suspend fun deleteTransactionById(transactionId: String)
+    @Query("DELETE FROM transactions WHERE id = :transactionId AND user_uid = :userUid")
+    suspend fun deleteTransactionById(transactionId: String, userUid: String)
 }

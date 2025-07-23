@@ -11,7 +11,7 @@ interface SavingsRepository {
     fun getFilteredGoals(filter: SavingsFilter): Flow<List<SavingsGoalItem>>
     suspend fun getGoalById(goalId: String): Flow<SavingsGoalItem?>
     suspend fun createGoal(goal: SavingsGoalItem)
-    suspend fun addFundsToGoal(goalId: String, amount: BigDecimal)
+    suspend fun addFundsToGoal(goalId: String, amount: BigDecimal): Result<Unit>
     suspend fun copyIconToInternalStorage(imageUri: Uri): String
     suspend fun deleteGoal(goalId: String)
 }

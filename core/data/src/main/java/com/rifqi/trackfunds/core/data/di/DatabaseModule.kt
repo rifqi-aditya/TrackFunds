@@ -8,6 +8,8 @@ import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
+import com.rifqi.trackfunds.core.data.local.transaction.RoomTransactionRunner
+import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +34,12 @@ object DatabaseModule {
         // Jika AppDatabase.getDatabase Anda menerima scope, Anda perlu menyediakannya
         // Untuk versi AppDatabase.kt yang saya berikan sebelumnya, ia membuat scope default.
         return AppDatabase.getDatabase(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTransactionRunner(db: AppDatabase): AppTransactionRunner {
+        return RoomTransactionRunner(db)
     }
 
     @Provides
@@ -69,7 +77,6 @@ object DatabaseModule {
     fun provideUserDao(database: AppDatabase): UserDao { // <-- Tambahkan ini
         return database.userDao()
     }
-
 
 
     // (Opsional) Menyediakan CoroutineScope level aplikasi jika dibutuhkan di tempat lain

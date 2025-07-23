@@ -1,23 +1,47 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
+import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
+import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
 import javax.inject.Inject
 
 class AddTransactionUseCaseImpl @Inject constructor(
     private val transactionRepository: TransactionRepository,
-    private val accountRepository: AccountRepository // Diperlukan untuk update saldo
+    private val accountRepository: AccountRepository,
+    private val savingsRepository: SavingsRepository,
+    private val transactionRunner: AppTransactionRunner
 ) : AddTransactionUseCase {
 
-    override suspend operator fun invoke(transaction: TransactionItem) {
-        // Di sini bisa ditambahkan validasi bisnis, misalnya:
-//         if (transaction.amount <= BigDecimal.ZERO) throw InvalidAmountException("Amount must be positive.")
+    override suspend operator fun invoke(transaction: TransactionItem): Result<Unit> {
+        return try {
+            // Bungkus semua operasi di dalam transactionRunner
+            transactionRunner {
+                // 1. Dapatkan akun yang bersangkutan
+                val account = accountRepository.getAccountById(transaction.account.id).getOrThrow()
 
-        // Logika utama: simpan transaksi dan update saldo akun
-        transactionRepository.insertTransaction(transaction)
+                // 2. Hitung saldo baru
+                val newBalance = if (transaction.type == TransactionType.INCOME) {
+                    account.balance.add(transaction.amount)
+                } else {
+                    account.balance.subtract(transaction.amount)
+                }
 
-        // Logika untuk mengupdate saldo akan ditangani di dalam implementasi repository
-        // atau bisa juga dihandle di sini jika lebih kompleks.
+                // 3. Lakukan semua operasi database
+                transactionRepository.insertTransaction(transaction)
+                accountRepository.updateAccount(account.copy(balance = newBalance))
+
+                transaction.savingsGoalItem?.let {
+                    if (transaction.type == TransactionType.EXPENSE) {
+                        savingsRepository.addFundsToGoal(it.id, transaction.amount)
+                    }
+                }
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
