@@ -60,8 +60,8 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(project(":core:navigation:api"))
-    implementation(project(":feature:categories"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:categories"))
 
     // Hilt (Dependency Injection)
     implementation(libs.hilt.android)

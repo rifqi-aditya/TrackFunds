@@ -40,14 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
+import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
 import com.rifqi.trackfunds.feature.transaction.ui.components.SummaryCard
@@ -57,7 +54,6 @@ import com.rifqi.trackfunds.feature.transaction.ui.model.FilterChipType
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionListUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionListViewModel
 import java.math.BigDecimal
-import java.time.LocalDateTime
 
 
 /**
@@ -257,28 +253,6 @@ fun TransactionScreenContent(
     }
 }
 
-private val previewTransactions = listOf(
-    TransactionItem(
-        id = "1",
-        amount = BigDecimal("75000"),
-        type = TransactionType.EXPENSE,
-        date = LocalDateTime.now(),
-        category = CategoryItem(
-            id = "cat1",
-            name = "Makan & Minum",
-            iconIdentifier = "restaurant",
-            type = TransactionType.EXPENSE
-        ),
-        account = AccountItem(
-            id = "acc1",
-            name = "Cash",
-            iconIdentifier = "wallet",
-            balance = BigDecimal("1000000")
-        ),
-        description = "Shell",
-    ),
-)
-
 private val previewActiveChips = listOf(
     ActiveFilterChip("DATE_RANGE", "Bulan Ini", FilterChipType.DATE_RANGE),
     ActiveFilterChip("cat1", "Makan & Minum", FilterChipType.CATEGORY)
@@ -287,7 +261,7 @@ private val previewActiveChips = listOf(
 private val previewLoadedState = TransactionListUiState(
     isLoading = false,
     activeFilter = TransactionFilter(searchQuery = "Kopi"),
-    transactions = previewTransactions,
+    transactions = DummyData.dummyTransactions,
     totalIncome = BigDecimal("7500000"),
     totalExpense = BigDecimal("225000")
 )

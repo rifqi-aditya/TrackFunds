@@ -26,7 +26,7 @@ data class HomeUiState(
     val error: String? = null,
 
     // Data Header
-    val userName: String = "Rifqi Aditya",
+    val userName: String = "User",
 
     // Data Balance Card
     val currentMonth: String = YearMonth.now().format(DateTimeFormatter.ofPattern("MMMM")),

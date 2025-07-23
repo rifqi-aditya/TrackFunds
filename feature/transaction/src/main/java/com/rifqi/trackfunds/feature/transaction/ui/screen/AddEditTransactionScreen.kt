@@ -34,8 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
@@ -45,6 +43,7 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
+import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
 import com.rifqi.trackfunds.feature.transaction.ui.components.bottomsheets.SelectionItem
@@ -59,7 +58,6 @@ import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditSheetType
 import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.math.BigDecimal
 
 /**
  * Stateful Composable (Container)
@@ -382,32 +380,14 @@ private fun SavingsFormContent(
     }
 }
 
-
-// --- PREVIEW sekarang memanggil AddTransactionContent ---
-
-// Data dummy untuk digunakan di preview
-private val previewDummyAccount =
-    AccountItem(
-        id = "acc",
-        name = "Mbanking BCA",
-        iconIdentifier = "ic_wallet_placeholder",
-        balance = BigDecimal("1000000")
-    )
-private val previewDummyCategory = CategoryItem(
-    id = "cat",
-    name = "Makanan",
-    iconIdentifier = "ic_restaurant",
-    type = TransactionType.EXPENSE
-)
-
 @Preview(showBackground = true, name = "Add Mode")
 @Composable
 fun AddTransactionContentLightPreview() {
     TrackFundsTheme {
         AddEditTransactionContent(
             uiState = AddEditTransactionUiState(
-                selectedCategory = previewDummyCategory,
-                selectedAccount = previewDummyAccount
+                selectedCategory = DummyData.dummyCategory1,
+                selectedAccount = DummyData.dummyAccount1
             ),
             isEditMode = false,
             onEvent = { },
@@ -423,8 +403,8 @@ fun EditTransactionContentLightPreview() {
         AddEditTransactionContent(
             uiState = AddEditTransactionUiState(
                 amount = "150000",
-                selectedCategory = previewDummyCategory,
-                selectedAccount = previewDummyAccount,
+                selectedCategory = DummyData.dummyCategory2,
+                selectedAccount = DummyData.dummyAccount2,
                 selectedTransactionType = TransactionType.SAVINGS
             ),
             isEditMode = true,

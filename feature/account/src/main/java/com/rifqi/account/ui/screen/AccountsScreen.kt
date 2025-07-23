@@ -29,18 +29,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.account.ui.components.AccountCard
 import com.rifqi.account.ui.event.AccountsEvent
+import com.rifqi.account.ui.preview.AccountListPreviewParameterProvider
 import com.rifqi.account.ui.state.AccountsUiState
 import com.rifqi.account.ui.viewmodel.AccountsViewModel
 import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
-import java.math.BigDecimal
 
 @Composable
 fun AccountsScreen(
@@ -102,7 +103,7 @@ fun AccountsContent(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = { onEvent(AccountsEvent.AddAccountClicked) },
                 shape = MaterialTheme.shapes.medium
             ) {
                 Icon(Icons.Default.SwapHoriz, contentDescription = "Transfer Antar Akun")
@@ -153,38 +154,19 @@ fun AccountsContent(
 // --- Preview ---
 @Preview(showBackground = true, name = "Accounts Screen Light")
 @Composable
-private fun AccountsScreenLightPreview() {
+private fun AccountsScreenLightPreview(
+    @PreviewParameter(AccountListPreviewParameterProvider::class) accounts: List<AccountItem>
+) {
     TrackFundsTheme(darkTheme = false) {
-        // Data dummy sekarang menggunakan BigDecimal
-        val dummyAccounts = listOf(
-            AccountItem(
-                id = "1",
-                name = "Tabungan Utama",
-                balance = BigDecimal("250750.50"),
-                iconIdentifier = "ic_book_overview"
-            ),
-            AccountItem(
-                id = "2",
-                name = "Mobile Banking",
-                balance = BigDecimal("1235000.00"),
-                iconIdentifier = "ic_mbanking"
-            ),
-            AccountItem(
-                id = "3",
-                name = "Dompet Digital",
-                balance = BigDecimal("789200.75"),
-                iconIdentifier = "ic_wallet"
-            )
-        )
-
-        val dummyState = AccountsUiState(
+        val totalBalance = accounts.sumOf { it.balance }
+        val uiState = AccountsUiState(
             isLoading = false,
-            totalBalance = BigDecimal("2274951.25"),
-            accounts = dummyAccounts
+            totalBalance = totalBalance,
+            accounts = accounts
         )
 
         AccountsContent(
-            uiState = dummyState,
+            uiState = uiState,
             onEvent = { },
             onNavigateBack = { },
         )

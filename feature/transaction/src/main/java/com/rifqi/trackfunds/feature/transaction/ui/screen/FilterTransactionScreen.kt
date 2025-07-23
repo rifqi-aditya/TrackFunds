@@ -31,17 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.ChipData
 import com.rifqi.trackfunds.feature.transaction.ui.components.FilterGroup
 import com.rifqi.trackfunds.feature.transaction.ui.event.FilterEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.FilterTransactionUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.FilterTransactionViewModel
-import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -197,43 +194,6 @@ fun FilterScreenContent(
     }
 }
 
-// --- DATA DUMMY UNTUK PREVIEW ---
-private val previewCategories = listOf(
-    CategoryItem(
-        id = "1",
-        name = "Makan & Minum",
-        iconIdentifier = "restaurant",
-        type = TransactionType.EXPENSE
-    ),
-    CategoryItem(
-        id = "2",
-        name = "Transportasi",
-        iconIdentifier = "commute",
-        type = TransactionType.EXPENSE
-    ),
-    CategoryItem(
-        id = "3",
-        name = "Belanja",
-        iconIdentifier = "shopping_bag",
-        type = TransactionType.EXPENSE
-    ),
-    CategoryItem(id = "4", name = "Gaji", iconIdentifier = "salary", type = TransactionType.INCOME)
-)
-
-private val previewAccounts = listOf(
-    AccountItem(
-        id = "acc1",
-        name = "KAS",
-        iconIdentifier = "wallet_account",
-        balance = BigDecimal.ZERO
-    ),
-    AccountItem(
-        id = "acc2",
-        name = "BNI Mobile",
-        iconIdentifier = "bank_account",
-        balance = BigDecimal.ZERO
-    )
-)
 
 // --- FUNGSI PREVIEW ---
 @Preview(showBackground = true, name = "Filter Screen")
@@ -243,9 +203,14 @@ private fun FilterScreenPreview() {
         FilterScreenContent(
             uiState = FilterTransactionUiState(
                 isLoading = false,
-                allCategories = previewCategories,
-                allAccounts = previewAccounts,
-                // Simulasikan kategori "Makan & Minum" dan akun "KAS" sudah dipilih
+                allCategories = listOf(
+                    DummyData.dummyCategory1,
+                    DummyData.dummyCategory2
+                ),
+                allAccounts = listOf(
+                    DummyData.dummyAccount1,
+                    DummyData.dummyAccount2
+                ),
                 selectedCategoryIds = setOf("1"),
                 selectedAccountIds = setOf("acc1")
             ),

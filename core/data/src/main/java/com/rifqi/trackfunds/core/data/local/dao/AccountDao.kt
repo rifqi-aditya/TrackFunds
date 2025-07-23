@@ -12,53 +12,67 @@ import kotlinx.coroutines.flow.Flow
 interface AccountDao {
 
     /**
-     * Mengambil semua akun dari database, diurutkan berdasarkan nama.
-     * Mengembalikan Flow agar UI bisa bereaksi terhadap perubahan data.
+     * Fetches all accounts for a specific user from the database, ordered by name.
+     * @param userUid The ID of the currently logged-in user.
+     * @return A Flow that emits a list of accounts, reacting to data changes.
      */
-    @Query("SELECT * FROM accounts ORDER BY name ASC")
-    fun getAllAccounts(): Flow<List<AccountEntity>>
+    @Query("SELECT * FROM accounts WHERE user_uid = :userUid ORDER BY name ASC")
+    fun getAccountsForUser(userUid: String): Flow<List<AccountEntity>> // Renamed for clarity
 
     /**
-     * Mengambil satu akun spesifik berdasarkan ID-nya.
-     * Dibuat 'suspend' karena merupakan operasi database satu kali.
-     * Dibutuhkan untuk mengambil detail akun sebelum saldonya diupdate.
-     * @return AccountEntity atau null jika tidak ditemukan.
+     * Fetches a specific account by its ID for a specific user.
+     * @param accountId The ID of the account to fetch.
+     * @param userUid The ID of the owner user.
+     * @return The AccountEntity or null if not found.
      */
-    @Query("SELECT * FROM accounts WHERE id = :accountId")
-    suspend fun getAccountById(accountId: String): AccountEntity?
+    @Query("SELECT * FROM accounts WHERE id = :accountId AND user_uid = :userUid")
+    suspend fun getAccountByIdForUser(accountId: String, userUid: String): AccountEntity? // Renamed for clarity
 
     /**
-     * Memasukkan satu akun. Jika sudah ada, akan diganti.
+     * Inserts a single account. If it already exists, it will be replaced.
+     * The AccountEntity object must have the userUid populated.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAccount(account: AccountEntity)
 
     /**
-     * Memasukkan daftar akun (untuk pre-populate).
+     * Inserts a list of accounts (e.g., for pre-populating).
+     * All entities in the list must have the userUid populated.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(accounts: List<AccountEntity>)
 
     /**
-     * Memperbarui data akun yang sudah ada di database.
-     * Penting untuk menyimpan perubahan saldo.
+     * Updates an existing account in the database.
+     * The update is based on the primary key of the entity.
      */
     @Update
     suspend fun updateAccount(account: AccountEntity)
 
     /**
-     * Mengambil jumlah total akun di database.
-     * Berguna untuk logika pre-populate di AppDatabase.
+     * Gets the total number of accounts for a specific user.
+     * @param userUid The ID of the user whose accounts are to be counted.
      */
-    @Query("SELECT COUNT(id) FROM accounts")
-    suspend fun getAccountCount(): Int
+    // CHANGED: Added userUid to only count accounts for the current user.
+    @Query("SELECT COUNT(id) FROM accounts WHERE user_uid = :userUid")
+    suspend fun getAccountCountForUser(userUid: String): Int
 
     /**
-     * (Opsional untuk masa depan) Menghapus akun berdasarkan ID.
-     */
-    @Query("DELETE FROM accounts WHERE id = :accountId")
-    suspend fun deleteAccountById(accountId: String)
 
-    @Query("SELECT * FROM accounts WHERE id IN (:ids)")
-    suspend fun getAccountsByIds(ids: List<String>): List<AccountEntity>
+     * Deletes an account by its ID for a specific user, ensuring data integrity.
+     * @param accountId The ID of the account to delete.
+     * @param userUid The ID of the owner user.
+     */
+    // CHANGED: Added userUid to prevent deleting another user's account.
+    @Query("DELETE FROM accounts WHERE id = :accountId AND user_uid = :userUid")
+    suspend fun deleteAccountByIdForUser(accountId: String, userUid: String)
+
+    /**
+     * Fetches a list of accounts by their IDs for a specific user.
+     * @param ids A list of account IDs.
+     * @param userUid The ID of the owner user.
+     */
+    // CHANGED: Added userUid to only fetch accounts for the current user.
+    @Query("SELECT * FROM accounts WHERE id IN (:ids) AND user_uid = :userUid")
+    suspend fun getAccountsByIdsForUser(ids: List<String>, userUid: String): List<AccountEntity>
 }

@@ -23,7 +23,6 @@ import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import java.util.UUID
 
 @Database(
@@ -264,23 +263,6 @@ abstract class AppDatabase : RoomDatabase() {
                 )
             )
             categoryDao.insertAllCategories(initialCategories)
-
-            // --- MEMBUAT AKUN DEFAULT ---
-            val initialAccounts = listOf(
-                AccountEntity(
-                    id = UUID.randomUUID().toString(),
-                    name = "Cash Wallet",
-                    iconIdentifier = "wallet_account",
-                    balance = BigDecimal("500000")
-                ),
-                AccountEntity(
-                    id = UUID.randomUUID().toString(),
-                    name = "Main Bank Account",
-                    iconIdentifier = "bank_account",
-                    balance = BigDecimal("10000000")
-                ),
-            )
-            accountDao.insertAll(initialAccounts)
         }
     }
 }

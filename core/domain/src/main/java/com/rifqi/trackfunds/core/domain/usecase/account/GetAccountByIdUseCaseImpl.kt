@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetAccountByIdUseCaseImpl @Inject constructor(
     private val repository: AccountRepository
 ) : GetAccountByIdUseCase {
-    override suspend operator fun invoke(accountId: String): AccountItem? {
+    override suspend operator fun invoke(accountId: String): Result<AccountItem> {
         return repository.getAccountById(accountId)
     }
 }

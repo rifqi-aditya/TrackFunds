@@ -11,7 +11,9 @@ import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
+import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.math.BigDecimal
 import java.time.ZoneOffset
@@ -22,7 +24,8 @@ import javax.inject.Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val transactionDao: TransactionDao,
     private val accountDao: AccountDao,
-    private val savingsGoalDao: SavingsGoalDao
+    private val savingsGoalDao: SavingsGoalDao,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : TransactionRepository {
 
     override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionItem>> {
@@ -99,8 +102,11 @@ class TransactionRepositoryImpl @Inject constructor(
     @Transaction
     override suspend fun insertTransaction(transaction: TransactionItem) {
         transactionDao.insertTransaction(transaction.toEntity())
+        val userUid = userPreferencesRepository.userUidFlow.first() ?: return
 
-        val account = accountDao.getAccountById(transaction.account.id) ?: return
+        val account =
+            accountDao.getAccountByIdForUser(transaction.account.id, userUid)
+                ?: return
         val newBalance = if (transaction.type == TransactionType.INCOME) {
             account.balance.add(transaction.amount)
         } else {
@@ -125,7 +131,10 @@ class TransactionRepositoryImpl @Inject constructor(
 
         if (transaction.account.id == oldAccountId) {
             // --- KASUS 1: AKUN TETAP SAMA ---
-            val account = accountDao.getAccountById(transaction.account.id) ?: return
+            val account = accountDao.getAccountByIdForUser(
+                transaction.account.id,
+                "transaction.account.userUid"
+            ) ?: return
 
             // Hitung selisih perubahan
             val oldEffect =
@@ -142,7 +151,8 @@ class TransactionRepositoryImpl @Inject constructor(
         } else {
             // --- KASUS 2: AKUN BERUBAH ---
             // 1. Kembalikan saldo di AKUN LAMA
-            val oldAccount = accountDao.getAccountById(oldAccountId)
+            val oldAccount =
+                accountDao.getAccountByIdForUser(oldAccountId, "transaction.account.userUid")
             if (oldAccount != null) {
                 val revertedBalance =
                     if (transaction.type == TransactionType.INCOME) { // Gunakan tipe yang sama karena tidak berubah
@@ -154,7 +164,10 @@ class TransactionRepositoryImpl @Inject constructor(
             }
 
             // 2. Terapkan saldo di AKUN BARU
-            val newAccount = accountDao.getAccountById(transaction.account.id)
+            val newAccount = accountDao.getAccountByIdForUser(
+                transaction.account.id,
+                "transaction.account.userUid"
+            )
             if (newAccount != null) {
                 val newBalance = if (transaction.type == TransactionType.INCOME) {
                     newAccount.balance.add(transaction.amount)
@@ -173,7 +186,9 @@ class TransactionRepositoryImpl @Inject constructor(
     override suspend fun deleteTransaction(transaction: TransactionItem) {
         transactionDao.deleteTransactionById(transaction.id)
 
-        val account = accountDao.getAccountById(transaction.account.id) ?: return
+        val account =
+            accountDao.getAccountByIdForUser(transaction.account.id, "transaction.account.userUid")
+                ?: return
         val revertedBalance = if (transaction.type == TransactionType.INCOME) {
             account.balance.subtract(transaction.amount)
         } else {
@@ -200,13 +215,14 @@ class TransactionRepositoryImpl @Inject constructor(
         transactionDao.insertTransaction(income.toEntity())
 
         // 3. Kurangi saldo dari akun asal
-        val fromAccount = accountDao.getAccountById(expense.account.id)
-            ?: throw Exception("Source account for transfer not found")
+        val fromAccount =
+            accountDao.getAccountByIdForUser(expense.account.id, "expense.account.userUid")
+                ?: throw Exception("Source account for transfer not found")
         val newFromBalance = fromAccount.balance.subtract(expense.amount)
         accountDao.updateAccount(fromAccount.copy(balance = newFromBalance))
 
         // 4. Tambah saldo ke akun tujuan
-        val toAccount = accountDao.getAccountById(income.account.id)
+        val toAccount = accountDao.getAccountByIdForUser(income.account.id, "income.account.userUid")
             ?: throw Exception("Destination account for transfer not found")
         val newToBalance = toAccount.balance.add(income.amount)
         accountDao.updateAccount(toAccount.copy(balance = newToBalance))

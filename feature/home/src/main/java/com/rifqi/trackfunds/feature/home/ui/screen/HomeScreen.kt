@@ -19,13 +19,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -35,11 +31,10 @@ import com.rifqi.trackfunds.feature.home.ui.components.InsightCard
 import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionRow
 import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
+import com.rifqi.trackfunds.feature.home.ui.preview.HomeUiStatePreviewParameterProvider
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.math.BigDecimal
-import java.time.LocalDateTime
 
 
 /**
@@ -152,83 +147,15 @@ fun HomeScreenContent(
     }
 }
 
-private val previewDummyAccount1 =
-    AccountItem("acc1", "Dompet Digital", "wallet_account", BigDecimal("1500000"))
-private val previewDummyAccount2 =
-    AccountItem("acc2", "Rekening Utama", "bank_account", BigDecimal("10000000"))
 
-private val previewDummyCategory1 =
-    CategoryItem("cat1", "Makan & Minum", "restaurant", TransactionType.EXPENSE)
-private val previewDummyCategory2 = CategoryItem("cat2", "Gaji", "salary", TransactionType.INCOME)
-
-private val previewTransactions = listOf(
-    // Transaksi Pengeluaran
-    TransactionItem(
-        id = "1",
-        amount = BigDecimal("50000"),
-        type = TransactionType.EXPENSE,
-        date = LocalDateTime.now(),
-        description = "Kopi Pagi",
-        category = previewDummyCategory1,
-        account = previewDummyAccount1
-    ),
-    // Transaksi Pemasukan
-    TransactionItem(
-        id = "2",
-        amount = BigDecimal("7500000"),
-        type = TransactionType.INCOME,
-        date = LocalDateTime.now().minusDays(1),
-        description = "Gaji Bulanan",
-        category = previewDummyCategory2,
-        account = previewDummyAccount2
-    )
-)
-
-private val previewBudgets = listOf(
-    BudgetItem(
-        budgetId = "b1",
-        categoryName = "Makan & Minum",
-        budgetAmount = BigDecimal("2000000"),
-        spentAmount = BigDecimal("1250000"),
-        categoryId = previewDummyCategory1.name,
-        categoryIconIdentifier = previewDummyCategory1.iconIdentifier,
-        period = ""
-    ),
-    BudgetItem(
-        budgetId = "b2",
-        categoryName = "Transportasi",
-        budgetAmount = BigDecimal("700000"),
-        spentAmount = BigDecimal("1550000"),
-        categoryId = previewDummyCategory2.name,
-        categoryIconIdentifier = previewDummyCategory2.iconIdentifier,
-        period = ""
-    )
-)
-
-private val previewLoadedState = HomeUiState(
-    isLoading = false,
-    recentTransactions = previewTransactions,
-    topBudgets = previewBudgets
-)
-
-// --- FUNGSI PREVIEW ---
-@Preview(showBackground = true, name = "Home Screen - Loaded")
+@Preview(showBackground = true, name = "Home Screen States")
 @Composable
-private fun HomeScreenContentLoadedPreview() {
+private fun HomeScreenContentPreview(
+    @PreviewParameter(HomeUiStatePreviewParameterProvider::class) uiState: HomeUiState
+) {
     TrackFundsTheme {
         HomeScreenContent(
-            uiState = previewLoadedState,
-            onEvent = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Home Screen - Loading")
-@Composable
-private fun HomeScreenContentLoadingPreview() {
-    TrackFundsTheme {
-        HomeScreenContent(
-            uiState = HomeUiState(isLoading = true),
+            uiState = uiState,
             onEvent = {}
         )
     }

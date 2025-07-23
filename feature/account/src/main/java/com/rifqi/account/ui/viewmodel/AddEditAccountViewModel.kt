@@ -75,22 +75,22 @@ class AddEditAccountViewModel @Inject constructor(
 
     private fun loadAccountData(id: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val account = getAccountByIdUseCase(id)
-            if (account != null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isEditMode = true,
-                        screenTitle = "Edit Account",
-                        name = account.name,
-                        initialBalance = account.balance.toPlainString(),
-                        iconIdentifier = account.iconIdentifier ?: "",
-                    )
+            getAccountByIdUseCase(id)
+                .onSuccess { account ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isEditMode = true,
+                            screenTitle = "Edit Account",
+                            name = account.name,
+                            initialBalance = account.balance.toPlainString(),
+                            iconIdentifier = account.iconIdentifier ?: "",
+                        )
+                    }
                 }
-            } else {
-                _uiState.update { it.copy(isLoading = false, error = "Akun tidak ditemukan") }
-            }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, error = error.message) }
+                }
         }
     }
 

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -85,12 +86,17 @@ fun AuthContent(
         ) {
             Spacer(Modifier.height(80.dp))
 
-            Row() {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo_gantenk__1_),
+                    painter = painterResource(id = R.drawable.tf_logo__1_),
                     contentDescription = "Logo",
-                    modifier = Modifier.height(48.dp)
+                    modifier = Modifier.height(36.dp)
                 )
+                Spacer(Modifier.width(8.dp))
                 Text(
                     text = "TrackFunds", // Ganti dengan logo Anda
                     style = MaterialTheme.typography.displaySmall,

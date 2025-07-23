@@ -25,17 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.AccountItem
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
+import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AccountSelectionMode
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransferUiState
 import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransferViewModel
-import java.math.BigDecimal
 
 @Composable
 fun TransferScreen(
@@ -138,20 +137,6 @@ fun TransferContent(
     }
 }
 
-private val previewFromAccount = AccountItem(
-    id = "acc1",
-    name = "BCA Mobile",
-    iconIdentifier = "ic_bank_bca", // ganti dengan nama ikon Anda
-    balance = BigDecimal("5000000")
-)
-
-private val previewToAccount = AccountItem(
-    id = "acc2",
-    name = "GoPay",
-    iconIdentifier = "ic_gopay", // ganti dengan nama ikon Anda
-    balance = BigDecimal("500000")
-)
-
 // --- FUNGSI-FUNGSI PREVIEW ---
 
 @Preview(name = "Transfer Content - Default", showBackground = true)
@@ -177,8 +162,8 @@ private fun TransferContentFilledPreview() {
     TrackFundsTheme {
         TransferContent(
             uiState = TransferUiState(
-                fromAccount = previewFromAccount,
-                toAccount = previewToAccount,
+                fromAccount = DummyData.dummyAccount1,
+                toAccount = DummyData.dummyAccount2,
                 amount = "100000",
                 description = "Bayar patungan"
             ),
@@ -194,8 +179,8 @@ private fun TransferContentLoadingPreview() {
     TrackFundsTheme {
         TransferContent(
             uiState = TransferUiState(
-                fromAccount = previewFromAccount,
-                toAccount = previewToAccount,
+                fromAccount = DummyData.dummyAccount1,
+                toAccount = DummyData.dummyAccount2,
                 amount = "100000",
                 isLoading = true // Mensimulasikan kondisi loading
             ),
