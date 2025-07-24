@@ -4,6 +4,9 @@ import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
 import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Gets a continuous stream of filtered savings goals.
+ */
 interface GetFilteredSavingsGoalsUseCase {
     operator fun invoke(filter: SavingsFilter): Flow<List<SavingsGoalItem>>
 }

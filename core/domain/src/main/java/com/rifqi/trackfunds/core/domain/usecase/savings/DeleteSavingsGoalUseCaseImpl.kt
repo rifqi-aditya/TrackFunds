@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteSavingsGoalUseCaseImpl @Inject constructor(
     private val repository: SavingsRepository
 ) : DeleteSavingsGoalUseCase {
-    override suspend operator fun invoke(goalId: String) {
-        repository.deleteGoal(goalId)
+    override suspend operator fun invoke(goalId: String): Result<Unit> {
+        return repository.deleteGoal(goalId)
     }
 }

@@ -15,9 +15,10 @@ fun SavingsGoalEntity.toDomain(): SavingsGoalItem {
     )
 }
 
-fun SavingsGoalItem.toEntity(): SavingsGoalEntity {
+fun SavingsGoalItem.toEntity(userUid: String): SavingsGoalEntity {
     return SavingsGoalEntity(
         id = this.id,
+        userUid = userUid,
         name = this.name,
         targetAmount = this.targetAmount,
         currentAmount = this.currentAmount,

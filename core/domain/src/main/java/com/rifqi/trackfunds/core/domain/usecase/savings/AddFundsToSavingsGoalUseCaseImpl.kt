@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddFundsToSavingsGoalUseCaseImpl @Inject constructor(
     private val repository: SavingsRepository
 ) : AddFundsToSavingsGoalUseCase {
-    override suspend operator fun invoke(goalId: String, amount: BigDecimal) {
-        repository.addFundsToGoal(goalId, amount)
+    override suspend operator fun invoke(goalId: String, amount: BigDecimal): Result<Unit> {
+        return repository.addFundsToGoal(goalId, amount)
     }
 }

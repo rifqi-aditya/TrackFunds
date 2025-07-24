@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.IconPicker
@@ -59,9 +60,15 @@ fun AddEditSavingsGoalScreen(
     val sheetState = rememberModalBottomSheetState()
 
     // Navigasi kembali setelah berhasil menyimpan
-    LaunchedEffect(uiState.isGoalSaved) {
-        if (uiState.isGoalSaved) {
-            onNavigateBack()
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is SavingsRoutes.Savings -> {
+                    onNavigateBack()
+                }
+
+                else -> Unit
+            }
         }
     }
 

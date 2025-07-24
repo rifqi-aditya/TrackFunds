@@ -5,7 +5,6 @@ import java.time.LocalDate
 data class AddEditSavingsGoalState(
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isGoalSaved: Boolean = false,
     val showIconPicker: Boolean = false,
     val showDatePicker: Boolean = false,
 

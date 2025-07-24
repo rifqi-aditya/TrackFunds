@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.core.domain.usecase.validator
+package com.rifqi.trackfunds.core.domain.validator.auth
 
 import com.rifqi.trackfunds.core.domain.model.ValidationResult
 import javax.inject.Inject

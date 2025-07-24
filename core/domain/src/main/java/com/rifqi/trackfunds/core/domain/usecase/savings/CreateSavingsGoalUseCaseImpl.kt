@@ -7,7 +7,7 @@ import javax.inject.Inject
 class CreateSavingsGoalUseCaseImpl @Inject constructor(
     private val repository: SavingsRepository
 ) : CreateSavingsGoalUseCase {
-    override suspend operator fun invoke(goal: SavingsGoalItem) {
-        repository.createGoal(goal)
+    override suspend operator fun invoke(goal: SavingsGoalItem): Result<Unit> {
+        return repository.createGoal(goal)
     }
 }

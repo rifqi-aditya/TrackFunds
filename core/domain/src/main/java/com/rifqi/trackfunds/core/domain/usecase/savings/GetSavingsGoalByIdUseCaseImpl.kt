@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetSavingsGoalByIdUseCaseImpl @Inject constructor(
     private val repository: SavingsRepository
 ) : GetSavingsGoalByIdUseCase {
-    override suspend operator fun invoke(goalId: String): Flow<SavingsGoalItem?> {
+    override operator fun invoke(goalId: String): Flow<SavingsGoalItem?> {
         return repository.getGoalById(goalId)
     }
 }

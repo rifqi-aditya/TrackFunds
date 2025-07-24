@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.model.ValidationResult
 import com.rifqi.trackfunds.core.domain.usecase.auth.LoginUserUseCase
 import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCase
-import com.rifqi.trackfunds.core.domain.usecase.validator.ValidateConfirmPassword
-import com.rifqi.trackfunds.core.domain.usecase.validator.ValidateEmail
-import com.rifqi.trackfunds.core.domain.usecase.validator.ValidateFullName
-import com.rifqi.trackfunds.core.domain.usecase.validator.ValidatePassword
+import com.rifqi.trackfunds.core.domain.validator.auth.ValidateConfirmPassword
+import com.rifqi.trackfunds.core.domain.validator.auth.ValidateEmail
+import com.rifqi.trackfunds.core.domain.validator.auth.ValidateFullName
+import com.rifqi.trackfunds.core.domain.validator.auth.ValidatePassword
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.feature.auth.event.AuthEvent
