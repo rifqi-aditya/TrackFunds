@@ -1,12 +1,15 @@
 package com.rifqi.trackfunds.core.data.mapper
 
+/**
+ * This file contains mapper functions for converting between [CategoryEntity] and [CategoryItem] objects.
+ */
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 
-// Mapper dari CategoryEntity (data layer) ke CategoryItem (domain layer)
 fun CategoryEntity.toDomain(): CategoryItem {
     return CategoryItem(
         id = this.id,
+        userUid = this.userUid,
         name = this.name,
         iconIdentifier = this.iconIdentifier,
         type = this.type,
@@ -14,13 +17,19 @@ fun CategoryEntity.toDomain(): CategoryItem {
     )
 }
 
-// Mapper dari CategoryItem (domain) ke CategoryEntity (data)
-// Mungkin dibutuhkan jika Anda ingin menyimpan perubahan dari domain ke database
-fun CategoryItem.toEntity(): CategoryEntity {
+/**
+ * Converts a [CategoryItem] to a [CategoryEntity].
+ *
+ * @param userUid The UID of the user who owns this category.
+ * @return The corresponding [CategoryEntity].
+ */
+fun CategoryItem.toEntity(userUid: String): CategoryEntity {
     return CategoryEntity(
         id = this.id,
+        userUid = userUid,
         name = this.name,
         iconIdentifier = this.iconIdentifier,
-        type = this.type
+        type = this.type,
+        standardKey = this.standardKey
     )
 }

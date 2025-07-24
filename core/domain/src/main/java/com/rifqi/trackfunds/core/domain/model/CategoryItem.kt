@@ -11,5 +11,6 @@ data class CategoryItem(
     val name: String,
     val iconIdentifier: String,
     val type: TransactionType,
-    val standardKey: String? = null
+    val standardKey: String? = null,
+    val userUid: String? = null
 )

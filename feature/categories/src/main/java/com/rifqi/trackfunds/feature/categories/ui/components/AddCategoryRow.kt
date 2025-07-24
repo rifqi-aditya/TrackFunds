@@ -28,8 +28,8 @@ fun AddCategoryRow(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Default.AddCircle, "Tambah Kategori")
+        Icon(Icons.Default.AddCircle, "Add Category")
         Spacer(modifier = Modifier.width(16.dp))
-        Text("Tambah Kategori Baru", style = MaterialTheme.typography.bodyLarge)
+        Text("Add New Category", style = MaterialTheme.typography.bodyLarge)
     }
 }

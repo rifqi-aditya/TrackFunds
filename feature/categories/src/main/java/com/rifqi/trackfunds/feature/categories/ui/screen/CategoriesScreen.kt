@@ -3,7 +3,9 @@ package com.rifqi.trackfunds.feature.categories.ui.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -84,39 +86,57 @@ fun CategoryListContent(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text("Income") }
+                    text = { Text("Expense") }
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text("Expense") }
+                    text = { Text("Income") }
                 )
             }
             HorizontalPager(state = pagerState) { page ->
-                val categories =
-                    if (page == 0) uiState.expenseCategories else uiState.incomeCategories
+                val (userCategories, defaultCategories) = if (page == 0) {
+                    uiState.userExpenseCategories to uiState.defaultExpenseCategories
+                } else {
+                    uiState.userIncomeCategories to uiState.defaultIncomeCategories
+                }
+
                 val type = if (page == 0) TransactionType.EXPENSE else TransactionType.INCOME
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Text(
                             "Your Category",
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 16.dp,
+                                bottom = 8.dp
+                            )
                         )
                     }
                     item {
                         AddCategoryRow(onClick = { onEvent(CategoryListEvent.AddCategoryClicked(type)) })
                     }
+                    items(userCategories) { category ->
+                        CategoryRow(
+                            category = category,
+                            isEditable = true,
+                            onClick = { onEvent(CategoryListEvent.CategoryClicked(category.id)) }
+                        )
+                    }
                     item {
+                        Spacer(Modifier.height(16.dp)) // Beri jarak
                         Text(
                             "General Category",
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
-                    items(categories) { category ->
+                    items(defaultCategories) { category ->
                         CategoryRow(
                             category = category,
-                            onClick = { onEvent(CategoryListEvent.CategoryClicked(category.id)) }
+                            isEditable = false,
+                            onClick = { /* Biarkan kosong karena tidak bisa diklik */ }
                         )
                     }
                 }

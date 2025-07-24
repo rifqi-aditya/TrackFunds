@@ -7,8 +7,8 @@ import javax.inject.Inject
 class GetCategoryUseCaseImpl @Inject constructor(
     private val repository: CategoryRepository
 ) : GetCategoryUseCase {
-
-    override suspend operator fun invoke(categoryId: String): CategoryItem? {
+    override suspend operator fun invoke(categoryId: String): Result<CategoryItem> {
+        // DIUBAH: Mengembalikan Result dari repository
         return repository.getCategoryById(categoryId)
     }
 }

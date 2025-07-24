@@ -32,6 +32,7 @@ class ScanRepositoryImpl @Inject constructor(
 
         val categories = categoryDao.getFilteredCategories(
             type = null,
+            userUid = "",
             isUnbudgeted = null,
             budgetPeriod = null
         ).first()

@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
@@ -26,12 +27,14 @@ import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 fun CategoryRow(
     category: CategoryItem,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEditable: Boolean
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = isEditable, onClick = onClick)
+            .alpha(if (isEditable) 1f else 0.6f)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -47,6 +50,9 @@ fun CategoryRow(
 
         Spacer(modifier = Modifier.width(16.dp))
         Text(category.name, modifier = Modifier.weight(1f))
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Edit")
+
+        if (isEditable) {
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Edit")
+        }
     }
 }

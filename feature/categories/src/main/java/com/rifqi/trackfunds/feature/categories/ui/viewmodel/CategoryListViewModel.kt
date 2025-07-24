@@ -40,20 +40,23 @@ class CategoryListViewModel @Inject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            // Buat dua filter terpisah
             val expenseFilter = CategoryFilter(type = TransactionType.EXPENSE)
             val incomeFilter = CategoryFilter(type = TransactionType.INCOME)
 
-            // Ambil data untuk keduanya secara bersamaan
             combine(
                 getFilteredCategoriesUseCase(expenseFilter),
                 getFilteredCategoriesUseCase(incomeFilter)
             ) { expenseList, incomeList ->
+                val (defaultExpenses, userExpenses) = expenseList.partition { it.userUid == null }
+                val (defaultIncomes, userIncomes) = incomeList.partition { it.userUid == null }
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        expenseCategories = expenseList,
-                        incomeCategories = incomeList
+                        defaultExpenseCategories = defaultExpenses,
+                        userExpenseCategories = userExpenses,
+                        defaultIncomeCategories = defaultIncomes,
+                        userIncomeCategories = userIncomes
                     )
                 }
             }

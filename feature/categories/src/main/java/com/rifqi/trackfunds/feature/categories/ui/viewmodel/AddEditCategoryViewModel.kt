@@ -8,10 +8,14 @@ import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.category.AddCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.UpdateCategoryUseCase
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.feature.categories.ui.event.AddEditCategoryEvent
 import com.rifqi.trackfunds.feature.categories.ui.state.AddEditCategoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,6 +33,9 @@ class AddEditCategoryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AddEditCategoryUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _navigationEvent = MutableSharedFlow<AppScreen>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
+
     // Ambil categoryId dari argumen navigasi
     private val categoryId: String? = savedStateHandle["categoryId"]
 
@@ -44,21 +51,21 @@ class AddEditCategoryViewModel @Inject constructor(
     private fun loadCategoryForEditing(id: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val category = getCategoryUseCase(id)
-            if (category != null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        name = category.name,
-                        iconIdentifier = category.iconIdentifier,
-                        type = category.type,
-                        screenTitle = "Edit Kategori"
-                    )
+            getCategoryUseCase(id)
+                .onSuccess { category ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            name = category.name,
+                            iconIdentifier = category.iconIdentifier,
+                            type = category.type,
+                            screenTitle = "Edit Kategori"
+                        )
+                    }
                 }
-            } else {
-                // Handle error jika kategori tidak ditemukan
-                _uiState.update { it.copy(isLoading = false, error = "Kategori tidak ditemukan.") }
-            }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false, error = error.message!!) }
+                }
         }
     }
 
@@ -89,29 +96,29 @@ class AddEditCategoryViewModel @Inject constructor(
 
     private fun saveCategory() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             val currentState = _uiState.value
-            // Validasi sederhana
-            if (currentState.name.isBlank() || currentState.iconIdentifier.isBlank()) {
-                _uiState.update { it.copy(error = "Nama dan ikon tidak boleh kosong.") }
-                return@launch
-            }
 
             val categoryToSave = CategoryItem(
-                id = categoryId ?: UUID.randomUUID()
-                    .toString(), // Gunakan ID yang ada atau buat baru
+                id = categoryId ?: UUID.randomUUID().toString(),
                 name = currentState.name,
                 iconIdentifier = currentState.iconIdentifier,
                 type = currentState.type
             )
 
-            if (categoryId != null) {
+            val result = if (categoryId != null) {
                 updateCategoryUseCase(categoryToSave)
             } else {
                 addCategoryUseCase(categoryToSave)
             }
 
-            // Set flag untuk memberi tahu UI bahwa penyimpanan berhasil dan bisa navigasi kembali
-            _uiState.update { it.copy(isCategorySaved = true) }
+            result
+                .onSuccess {
+                    _navigationEvent.emit(SharedRoutes.Categories)
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(error = error.message!!, isLoading = false) }
+                }
         }
     }
 }

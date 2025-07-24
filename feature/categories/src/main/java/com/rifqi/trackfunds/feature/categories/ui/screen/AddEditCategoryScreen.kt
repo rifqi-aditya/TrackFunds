@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.core.ui.components.IconPicker
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -36,6 +37,7 @@ import com.rifqi.trackfunds.feature.categories.ui.event.AddEditCategoryEvent
 import com.rifqi.trackfunds.feature.categories.ui.model.CategoryIcons
 import com.rifqi.trackfunds.feature.categories.ui.state.AddEditCategoryUiState
 import com.rifqi.trackfunds.feature.categories.ui.viewmodel.AddEditCategoryViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddEditCategoryScreen(
@@ -44,9 +46,11 @@ fun AddEditCategoryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isCategorySaved) {
-        if (uiState.isCategorySaved) {
-            onNavigateBack()
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { screen ->
+            if (screen is SharedRoutes.Categories) {
+                onNavigateBack()
+            }
         }
     }
 
@@ -91,7 +95,7 @@ fun AddEditCategoryContent(
         ) {
             // Ikon yang dipilih
             DisplayIconFromResource(
-                identifier = uiState.iconIdentifier.ifBlank { "help" }, // Tampilkan ikon 'help' jika belum ada yg dipilih
+                identifier = uiState.iconIdentifier.ifBlank { "help" },
                 contentDescription = "Ikon Kategori",
                 modifier = Modifier
                     .size(80.dp)
