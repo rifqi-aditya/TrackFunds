@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -25,11 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.home.ui.components.BudgetSummaryRow
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.components.HomeHeader
 import com.rifqi.trackfunds.feature.home.ui.components.InsightCard
-import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionRow
-import com.rifqi.trackfunds.feature.home.ui.components.SummarySection
+import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionsCard
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.preview.HomeUiStatePreviewParameterProvider
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
@@ -92,15 +94,30 @@ fun HomeScreenContent(
                         .fillMaxWidth()
                 ) {
                     Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
-
                     HomeHeader(
                         userName = "Rifqi Aditya",
                         onProfileClick = { onEvent(HomeEvent.ProfileClicked) },
                         onNotificationsClick = {},
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Column() {
+                        Text(
+                            "Balance",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        )
+                        Text(
+                            formatCurrency(uiState.totalBalance),
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = TrackFundsTheme.extendedColors.accentGreen
+                            )
+                        )
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     InsightCard(
-                        totalExpenseThisMonth = uiState.totalExpenseThisMonth,
                         totalBalance = uiState.totalBalance,
                         totalSavings = uiState.totalSavings,
                         totalAccounts = uiState.totalAccounts,
@@ -113,34 +130,26 @@ fun HomeScreenContent(
 
             item {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    SummarySection(
-                        title = "Recent transactions",
-                        items = uiState.recentTransactions,
-                        onViewAllClick = {
-                            onEvent(HomeEvent.AllTransactionsClicked)
-                        },
-                        onItemClick = { transactionItem ->
-                            onEvent(HomeEvent.TransactionClicked(transactionItem.id))
-                        },
-                        itemContent = { transactionItem ->
-                            RecentTransactionRow(
-                                item = transactionItem,
-                            )
-                        },
-                    )
-                    SummarySection(
-                        title = "Remaining budgets",
-                        items = uiState.topBudgets,
-                        onViewAllClick = {
-                            onEvent(HomeEvent.AllBudgetsClicked)
-                        },
-                        itemContent = { topBudgetItem ->
-                            BudgetSummaryRow(
-                                item = topBudgetItem,
-                            )
+                    RecentTransactionsCard(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                        onViewAllClick = { onEvent(HomeEvent.AllTransactionsClicked) },
+                        onTransactionClick = { transactionId ->
+                            onEvent(HomeEvent.TransactionClicked(transactionId))
                         }
                     )
-
+//                    SummarySection(
+//                        title = "Remaining budgets",
+//                        items = uiState.topBudgets,
+//                        onViewAllClick = {
+//                            onEvent(HomeEvent.AllBudgetsClicked)
+//                        },
+//                        itemContent = { topBudgetItem ->
+//                            BudgetSummaryRow(
+//                                item = topBudgetItem,
+//                            )
+//                        }
+//                    )
                 }
             }
         }

@@ -2,7 +2,6 @@ package com.rifqi.trackfunds.feature.home.ui.state
 
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.TransactionItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.math.BigDecimal
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -28,28 +27,19 @@ data class HomeUiState(
     // Data Header
     val userName: String = "User",
 
+    val selectedTabIndex: Int = 0,
+
     // Data Balance Card
     val currentMonth: String = YearMonth.now().format(DateTimeFormatter.ofPattern("MMMM")),
-    val totalExpenseThisMonth: BigDecimal = BigDecimal.ZERO,
     val totalBalance: BigDecimal = BigDecimal.ZERO,
     val totalSavings: BigDecimal = BigDecimal.ZERO,
     val totalAccounts: Int = 0,
 
-    val recentTransactions: List<TransactionItem> = emptyList(),
-    val topBudgets: List<BudgetItem> = emptyList(),
-)
+    val recentSavingsTransactions: List<TransactionItem> = emptyList(),
+    val recentExpenseTransactions: List<TransactionItem> = emptyList(),
+    val recentIncomeTransactions: List<TransactionItem> = emptyList(),
 
-/**
- * Represents a summarized view of transactions for a single category.
- * Used for the "Expenses by Category" and "Income by Category" sections.
- */
-data class HomeCategorySummaryItem(
-    val categoryId: String,
-    val categoryName: String,
-    val categoryIconIdentifier: String?,
-    val transactionType: TransactionType,
-    val totalAmount: BigDecimal,
-    val budgetAmount: BigDecimal? = null // Tetap ada untuk fitur budget di Home
+    val topBudgets: List<BudgetItem> = emptyList(),
 )
 
 

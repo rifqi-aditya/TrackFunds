@@ -11,13 +11,11 @@ class HomeUiStatePreviewParameterProvider : PreviewParameterProvider<HomeUiState
         HomeUiState(
             isLoading = false,
             totalBalance = DummyData.dummyAccounts.sumOf { it.balance },
-            recentTransactions = DummyData.dummyTransactions,
             topBudgets = DummyData.dummyBudgets
         ),
         HomeUiState(
             isLoading = false,
             totalBalance = BigDecimal.ZERO,
-            recentTransactions = emptyList(),
             topBudgets = emptyList()
         )
     )

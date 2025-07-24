@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @Composable
 fun BottomNavItem(
@@ -34,7 +35,7 @@ fun BottomNavItem(
         verticalArrangement = Arrangement.Center
     ) {
         val color =
-            if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+            if (isSelected) TrackFundsTheme.extendedColors.accentGreen else MaterialTheme.colorScheme.onSurfaceVariant
         Icon(
             // v-- dan di sini
             imageVector = icon,

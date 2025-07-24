@@ -15,7 +15,7 @@ import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
 import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
-import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes.TransactionDetail
 import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
@@ -75,8 +75,12 @@ class HomeViewModel @Inject constructor(
                 HomeEvent.ProfileClicked -> _navigationEvent.emit(ProfileGraph)
 
                 is HomeEvent.TransactionClicked -> _navigationEvent.emit(
-                    TransactionRoutes.TransactionDetail(event.transactionId)
+                    TransactionDetail(event.transactionId)
                 )
+
+                is HomeEvent.TabSelected -> {
+                    _uiState.update { it.copy(selectedTabIndex = event.index) }
+                }
             }
         }
     }
@@ -97,15 +101,21 @@ class HomeViewModel @Inject constructor(
             combine(
                 getAccountsUseCase(),
                 getFilteredSavingsGoalsUseCase(SavingsFilter()),
-                getFilteredTransactionsUseCase(monthlyFilter),
+                getFilteredTransactionsUseCase(TransactionFilter()),
                 getTopBudgetsUseCase(YearMonth.from(startDate))
-            ) { allAccounts, allSavings, monthlyTransactions, topBudgets ->
+            ) { allAccounts, allSavings, recentTransaction, topBudgets ->
 
                 val totalBalance = allAccounts.sumOf { it.balance }
                 val totalSavings = allSavings.sumOf { it.currentAmount }
-                val totalExpenseThisMonth = monthlyTransactions
+                val recentExpenses = recentTransaction
                     .filter { it.type == TransactionType.EXPENSE }
-                    .sumOf { it.amount }
+                    .take(3)
+                val recentIncomes = recentTransaction
+                    .filter { it.type == TransactionType.INCOME }
+                    .take(3)
+                val recentSavings = recentTransaction
+                    .filter { it.type == TransactionType.SAVINGS }
+                    .take(3)
 
                 _uiState.update {
                     it.copy(
@@ -113,8 +123,9 @@ class HomeViewModel @Inject constructor(
                         totalBalance = totalBalance,
                         totalSavings = totalSavings,
                         totalAccounts = allAccounts.size,
-                        totalExpenseThisMonth = totalExpenseThisMonth,
-                        recentTransactions = monthlyTransactions.take(3),
+                        recentSavingsTransactions = recentSavings,
+                        recentExpenseTransactions = recentExpenses,
+                        recentIncomeTransactions = recentIncomes,
                         topBudgets = topBudgets
                     )
                 }

@@ -10,4 +10,6 @@ sealed interface HomeEvent {
     data object SavingsClicked : HomeEvent
     data object AccountsClicked : HomeEvent
     data class TransactionClicked(val transactionId: String) : HomeEvent
+
+    data class TabSelected(val index: Int) : HomeEvent
 }

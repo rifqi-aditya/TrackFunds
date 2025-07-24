@@ -6,9 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -30,7 +28,6 @@ import java.math.BigDecimal
 
 @Composable
 fun InsightCard(
-    totalExpenseThisMonth: BigDecimal,
     totalBalance: BigDecimal,
     totalSavings: BigDecimal,
     totalAccounts: Int,
@@ -41,54 +38,35 @@ fun InsightCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
     ) {
-        // Gambar pola di lapisan bawah
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "This Month's Spending's",
-                style = MaterialTheme.typography.titleMedium,
+        Row(modifier = Modifier.padding(16.dp)) {
+            InfoItem(
+                label = "Total Balance",
+                value = formatCurrency(totalBalance),
+                iconIdentifier = "money",
+                onClick = onBalanceClick,
+                modifier = Modifier.weight(1f)
             )
-            Text(
-                formatCurrency(totalExpenseThisMonth),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
+            InfoItem(
+                label = "Savings",
+                value = formatCurrency(totalSavings),
+                iconIdentifier = "savings",
+                onClick = onSavingsClick,
+                modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                InfoItem(
-                    label = "Total Balance",
-                    value = formatCurrency(totalBalance),
-                    iconIdentifier = "money",
-                    onClick = onBalanceClick,
-                    modifier = Modifier.weight(1f)
-                )
-                InfoItem(
-                    label = "Savings",
-                    value = formatCurrency(totalSavings),
-                    iconIdentifier = "savings",
-                    onClick = onSavingsClick,
-                    modifier = Modifier.weight(1f)
-                )
-                InfoItem(
-                    label = "Accounts",
-                    value = "$totalAccounts Account",
-                    iconIdentifier = "wallet_account",
-                    onClick = onAccountsClick,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            InfoItem(
+                label = "Accounts",
+                value = "$totalAccounts Account",
+                iconIdentifier = "wallet_account",
+                onClick = onAccountsClick,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
-
 }
 
 @Composable
@@ -130,7 +108,6 @@ private fun InfoItem(
 private fun BalanceCardNewPreview() {
     TrackFundsTheme {
         InsightCard(
-            totalExpenseThisMonth = BigDecimal("2350000"),
             totalBalance = BigDecimal("12500000"),
             totalSavings = BigDecimal("5000000"),
             totalAccounts = 4,
