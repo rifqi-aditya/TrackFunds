@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,7 +35,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
+import com.rifqi.trackfunds.core.ui.components.SelectionList
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
+import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
+import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
@@ -48,30 +53,64 @@ import java.time.YearMonth
  * - Menerima ViewModel dari NavGraph.
  * - Menangani event navigasi dan dialog.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditBudgetScreen(
-    // Anda tidak lagi membutuhkan NavBackStackEntry karena logika sudah pindah ke ViewModel
     viewModel: AddEditBudgetViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToSelectCategory: (period: String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val categoriesForSelection by viewModel.categoriesForSelection.collectAsState()
 
-    // Efek untuk memicu navigasi ke halaman pilih kategori
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collectLatest { periodString ->
             onNavigateToSelectCategory(periodString)
         }
     }
 
-    // Efek untuk navigasi kembali setelah budget disimpan atau dihapus
     LaunchedEffect(uiState.isBudgetSaved) {
         if (uiState.isBudgetSaved) {
             onNavigateBack()
         }
     }
 
-    // Tampilkan dialog konfirmasi hapus jika state-nya true
+    if (uiState.showPeriodPicker) {
+        MonthYearPickerDialog(
+            showDialog = true,
+            initialYearMonth = uiState.period,
+            onDismiss = { viewModel.onEvent(AddEditBudgetEvent.DismissPeriodPicker) },
+            onConfirm = { selectedYearMonth ->
+                viewModel.onEvent(AddEditBudgetEvent.PeriodSelected(selectedYearMonth))
+            }
+        )
+    }
+
+    if (uiState.showCategorySheet) {
+        ModalBottomSheet(onDismissRequest = { viewModel.onEvent(AddEditBudgetEvent.DismissCategorySheet) }) {
+            SelectionList(
+                title = "Pilih Kategori",
+                items = categoriesForSelection,
+                itemBuilder = { category ->
+                    com.rifqi.trackfunds.core.ui.components.SelectionItem(
+                        category.id,
+                        category.name,
+                        category.iconIdentifier
+                    )
+                },
+                onItemSelected = { category ->
+                    viewModel.onEvent(AddEditBudgetEvent.CategorySelected(category))
+                },
+                isSearchable = true,
+                searchQuery = uiState.categorySearchQuery,
+                onSearchQueryChanged = { query ->
+                    viewModel.onEvent(AddEditBudgetEvent.CategorySearchChanged(query))
+                },
+            )
+        }
+    }
+
+// Tampilkan dialog konfirmasi hapus jika state-nya true
     if (uiState.showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(AddEditBudgetEvent.DismissDeleteDialog) },
@@ -93,7 +132,7 @@ fun AddEditBudgetScreen(
         )
     }
 
-    // Panggil UI murni (stateless)
+// Panggil UI murni (stateless)
     AddEditBudgetContent(
         uiState = uiState,
         isEditMode = viewModel.isEditMode,
@@ -154,6 +193,13 @@ fun AddEditBudgetContent(
             AmountInputField(
                 value = uiState.amount,
                 onValueChange = { onEvent(AddEditBudgetEvent.AmountChanged(it)) }
+            )
+
+            DatePickerField(
+                label = "Choose Month",
+                value = uiState.period,
+                onClick = { onEvent(AddEditBudgetEvent.PeriodSelectorClicked) },
+                mode = DatePickerMode.MONTH_YEAR_ONLY
             )
 
             Spacer(modifier = Modifier.weight(1f))

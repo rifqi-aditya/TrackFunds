@@ -17,8 +17,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -98,33 +99,28 @@ fun BudgetListContent(
                 AppTopAppBar(
                     title = "Budgets",
                     actions = {
-                        Column(
-                            modifier = Modifier
-                                .padding(end = 16.dp)
-                                .clickable(
-                                    onClick = { onEvent(BudgetEvent.ChangePeriodClicked) },
-                                )
+                        Row(
+                            modifier = Modifier.clickable(
+                                onClick = { onEvent(BudgetEvent.ChangePeriodClicked) },
+                            ),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    uiState.currentPeriodDisplay,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier
-                                        .padding(end = 8.dp)
-                                )
-                                DisplayIconFromResource(
-                                    identifier = "arrow_down",
-                                    contentDescription = "Change Period",
-                                    modifier = Modifier
-                                        .size(14.dp),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
+                            Text(
+                                uiState.currentPeriodDisplay,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TrackFundsTheme.extendedColors.accentGreen,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                            )
+                            DisplayIconFromResource(
+                                identifier = "arrow_down",
+                                contentDescription = "Change Period",
+                                modifier = Modifier
+                                    .size(14.dp),
+                                tint = TrackFundsTheme.extendedColors.accentGreen
+                            )
                         }
-                    },
+                    }
                 )
             }
         ) { paddingValues ->
@@ -198,12 +194,27 @@ fun BudgetListContent(
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        Text("No budgets set for this period. Tap '+' to add one.")
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("No budgets set for this period.")
+                            Spacer(Modifier.height(8.dp))
+                            Button(onClick = { onEvent(BudgetEvent.AddBudgetClicked) }) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(
+                                        ButtonDefaults.IconSize
+                                    )
+                                )
+                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                                Text("Add Your First Budget")
+                            }
+                        }
                     }
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         items(
                             items = uiState.budgets,
@@ -217,29 +228,29 @@ fun BudgetListContent(
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
                         }
+                        item {
+                            Button(
+                                onClick = { onEvent(BudgetEvent.AddBudgetClicked) },
+                                modifier = Modifier
+                                    .padding(16.dp),
+                                shape = MaterialTheme.shapes.large,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = TrackFundsTheme.extendedColors.accentGreen,
+                                    contentColor = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                                )
+                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                                Text("Add New Budget")
+                            }
+                        }
                     }
                 }
-
             }
-        }
-        FloatingActionButton(
-            onClick = { onEvent(BudgetEvent.AddBudgetClicked) },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp),
-            containerColor = MaterialTheme.colorScheme.primary,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Budget")
-                Text(
-                    "Add Budget",
-                )
-            }
-
         }
     }
 }
@@ -261,7 +272,7 @@ private val previewBudgetItems = listOf(
         "food_and_drink",
         BigDecimal("1000000"),
         BigDecimal("750000"),
-        "2025-06"
+        YearMonth.now()
     ),
     BudgetItem(
         "2",
@@ -270,7 +281,7 @@ private val previewBudgetItems = listOf(
         "transportation",
         BigDecimal("400000"),
         BigDecimal("450000"),
-        "2025-06"
+        YearMonth.now()
     ),
     BudgetItem(
         "3",
@@ -279,7 +290,7 @@ private val previewBudgetItems = listOf(
         "shopping",
         BigDecimal("1200000"),
         BigDecimal("500000"),
-        "2025-06"
+        YearMonth.now()
     )
 )
 
@@ -292,7 +303,7 @@ private val previewUiStateLoaded = BudgetUiState(
     currentPeriod = YearMonth.now()
 )
 
-@OptIn(ExperimentalFoundationApi::class) // Tambahkan ini untuk PagerState
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(name = "Budget Screen - Loaded", showBackground = true)
 @Composable
 private fun BudgetListContentLoadedPreview() {

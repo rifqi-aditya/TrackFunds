@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.math.BigDecimal
+import java.time.LocalDate
 
 @Entity(
     tableName = "budgets",
@@ -39,5 +40,5 @@ data class BudgetEntity(
     val categoryId: String,
 
     val amount: BigDecimal,
-    val period: String
+    val period: LocalDate
 )

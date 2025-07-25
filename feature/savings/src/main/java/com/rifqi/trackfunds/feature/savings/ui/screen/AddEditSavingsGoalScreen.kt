@@ -40,6 +40,7 @@ import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.IconPicker
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
+import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -219,7 +220,8 @@ fun AddEditSavingsGoalContent(
             DatePickerField(
                 label = "Target Date (Optional)",
                 value = uiState.targetDate,
-                onClick = { onEvent(AddEditSavingsEvent.DateSelectorClicked) }
+                onClick = { onEvent(AddEditSavingsEvent.DateSelectorClicked) },
+                mode = DatePickerMode.FULL_DATE
             )
         }
     }

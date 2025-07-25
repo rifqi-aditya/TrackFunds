@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.components.bottomsheets
+package com.rifqi.trackfunds.core.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
-import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
 
 data class SelectionItem(
     val id: String,

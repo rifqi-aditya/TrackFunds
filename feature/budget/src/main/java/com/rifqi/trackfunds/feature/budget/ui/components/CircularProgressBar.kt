@@ -2,7 +2,6 @@ package com.rifqi.trackfunds.feature.budget.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,10 +24,10 @@ fun CircularProgressBar(
     val progressColor = when {
         progress >= 0.8f -> TrackFundsTheme.extendedColors.chartConditionWarning
         progress > 0.6f -> TrackFundsTheme.extendedColors.chartConditionGood
-        else -> TrackFundsTheme.extendedColors.chartConditionNeutral
+        else -> TrackFundsTheme.extendedColors.accentGreen
     }
 
-    val trackColor = MaterialTheme.colorScheme.surfaceVariant
+    val trackColor = TrackFundsTheme.extendedColors.accentGreen.copy(alpha = 0.1f)
 
     // FIX 2: Lakukan konversi Dp ke Px di sini, di dalam lingkup Composable
     val strokePx = with(LocalDensity.current) { strokeWidth.toPx() }

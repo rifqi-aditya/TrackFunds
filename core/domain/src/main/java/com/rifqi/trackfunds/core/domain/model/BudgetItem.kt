@@ -2,6 +2,7 @@ package com.rifqi.trackfunds.core.domain.model
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.YearMonth
 
 data class BudgetItem(
     val budgetId: String,
@@ -10,7 +11,7 @@ data class BudgetItem(
     val categoryIconIdentifier: String?,
     val budgetAmount: BigDecimal,
     val spentAmount: BigDecimal,
-    val period: String
+    val period: YearMonth
 ) {
     val remainingAmount: BigDecimal
         get() = budgetAmount.subtract(spentAmount)

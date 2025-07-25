@@ -6,32 +6,32 @@ import com.rifqi.trackfunds.core.data.mapper.toEntity
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.repository.BudgetRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class BudgetRepositoryImpl @Inject constructor(
     private val budgetDao: BudgetDao,
-    private val userPreferencesRepository: UserPreferencesRepository // Inject UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : BudgetRepository {
 
     override fun getBudgetsForPeriod(period: YearMonth): Flow<List<BudgetItem>> {
-        val periodString = period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        val startOfMonth = period.atDay(1)
+        val endOfMonth = period.atEndOfMonth().atTime(23, 59, 59)
 
-        // Dibuat reaktif terhadap perubahan user
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(emptyList())
             } else {
-                // Panggil DAO dengan userUid
-                budgetDao.getBudgetsWithDetails(periodString, userUid).map { dtoList ->
+                budgetDao.getBudgetsWithDetails(startOfMonth, endOfMonth, userUid).map { dtoList ->
                     dtoList.map { it.toDomain() }
                 }
             }
@@ -39,13 +39,13 @@ class BudgetRepositoryImpl @Inject constructor(
     }
 
     override fun getTopBudgets(period: YearMonth, limit: Int): Flow<List<BudgetItem>> {
-        val periodString = period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
-
+        val startOfMonth = period.atDay(1)
+        val endOfMonth = period.atEndOfMonth().atTime(23, 59, 59)
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(emptyList())
             } else {
-                budgetDao.getTopBudgetsWithDetails(periodString, limit, userUid).map { entities ->
+                budgetDao.getTopBudgetsWithDetails(startOfMonth, endOfMonth, 3, userUid).map { entities ->
                     entities.map { it.toDomain() }
                 }
             }

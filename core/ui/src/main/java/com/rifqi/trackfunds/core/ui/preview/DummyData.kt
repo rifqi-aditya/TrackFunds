@@ -7,6 +7,7 @@ import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.time.YearMonth
 
 /**
  * Object terpusat yang berisi semua data sampel untuk digunakan di seluruh aplikasi.
@@ -52,7 +53,7 @@ object DummyData {
             dummyCategory1.iconIdentifier,
             BigDecimal("2000000"),
             BigDecimal("1250000"),
-            "07-2025"
+            YearMonth.now()
         ),
         BudgetItem(
             "b2",
@@ -61,7 +62,7 @@ object DummyData {
             dummyCategory2.iconIdentifier,
             BigDecimal("2000000"),
             BigDecimal("1250000"),
-            "08-2025"
+            YearMonth.now()
         )
     )
 }

@@ -42,7 +42,8 @@ fun GradientHorizontalProgressBar(
     // Alat untuk mengukur ukuran teks agar bisa diposisikan di tengah
     val textMeasurer = rememberTextMeasurer()
     val percentageText = "${(progress * 100).toInt()}%"
-    val textStyle = MaterialTheme.typography.labelSmall.copy(color = Color.White)
+    val textStyle =
+        MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurface)
 
     // FIX: Gunakan Canvas untuk menggambar semuanya, ini memberi kita kontrol penuh
     Canvas(

@@ -63,9 +63,8 @@ fun BudgetRingChart(
             )
             Text(
                 text = statusText,
-                style = MaterialTheme.typography.titleMedium.copy(
+                style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = statusColor
                 )
             )
         }

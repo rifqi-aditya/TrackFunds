@@ -21,6 +21,7 @@ import com.rifqi.trackfunds.core.ui.components.GradientHorizontalProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
+import java.time.YearMonth
 
 @Composable
 fun BudgetSummaryRow(
@@ -72,7 +73,7 @@ fun BudgetSummaryRow(
 private val previewBudgetSafe = BudgetItem(
     budgetId = "1", categoryId = "c1", categoryName = "Belanja",
     categoryIconIdentifier = "shopping", budgetAmount = BigDecimal("2000000"),
-    spentAmount = BigDecimal("400000"), period = "2025-06"
+    spentAmount = BigDecimal("400000"), period = YearMonth.now()
 )
 
 // --- FUNGSI PREVIEW ---

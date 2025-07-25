@@ -1,7 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
@@ -24,10 +23,6 @@ fun BudgetMonthOverviewCard(modifier: Modifier = Modifier, title: String, amount
     Card(
         modifier = Modifier.defaultMinSize(minWidth = 150.dp),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            0.5.dp,
-            MaterialTheme.colorScheme.outlineVariant
-        ),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(

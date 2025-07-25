@@ -35,6 +35,7 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
+import java.time.YearMonth
 
 @Composable
 fun BudgetCardItem(
@@ -52,7 +53,7 @@ fun BudgetCardItem(
         )
 
         else -> Brush.horizontalGradient(
-            colors = listOf(Color(0xFF4AB8B3), Color(0xFF358AC8))
+            colors = listOf(Color(0xFFB4F077), Color(0xFF6ABD2B))
         )
     }
 
@@ -62,9 +63,6 @@ fun BudgetCardItem(
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = CardDefaults.outlinedCardBorder(
-            enabled = true
-        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -148,7 +146,7 @@ private val previewBudgetNormal = BudgetItem(
     categoryIconIdentifier = "restaurant",
     budgetAmount = BigDecimal("1000000"),
     spentAmount = BigDecimal("750000"),
-    period = "June 2025"
+    period = YearMonth.now()
 )
 
 private val previewBudgetOverspent = BudgetItem(
@@ -156,7 +154,7 @@ private val previewBudgetOverspent = BudgetItem(
     categoryIconIdentifier = "commute",
     budgetAmount = BigDecimal("400000"),
     spentAmount = BigDecimal("450000"),
-    period = "June 2025"
+    period = YearMonth.now()
 )
 
 // --- FUNGSI PREVIEW ---

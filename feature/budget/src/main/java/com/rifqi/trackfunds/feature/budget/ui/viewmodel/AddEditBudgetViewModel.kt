@@ -9,32 +9,40 @@ import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
+import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditBudgetViewModel @Inject constructor(
     private val getBudgetByIdUseCase: GetBudgetByIdUseCase,
+    private val getFilteredCategoriesUseCase: GetFilteredCategoriesUseCase,
     private val addBudgetUseCase: AddBudgetUseCase,
     private val updateBudgetUseCase: UpdateBudgetUseCase,
     private val deleteBudgetUseCase: DeleteBudgetUseCase,
@@ -54,6 +62,28 @@ class AddEditBudgetViewModel @Inject constructor(
 
     private val _navigationEvent = MutableSharedFlow<String>()
     val navigationEvent = _navigationEvent.asSharedFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val categoriesForSelection: StateFlow<List<CategoryItem>> =
+        _uiState.map { it.categorySearchQuery }
+            .distinctUntilChanged()
+            .flatMapLatest { query ->
+                getFilteredCategoriesUseCase(CategoryFilter(type = TransactionType.EXPENSE))
+                    .map { categories ->
+                        if (query.isBlank()) {
+                            categories
+                        } else {
+                            categories.filter {
+                                it.name.contains(query, ignoreCase = true)
+                            }
+                        }
+                    }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
 
     init {
         if (isEditMode) {
@@ -112,10 +142,8 @@ class AddEditBudgetViewModel @Inject constructor(
 
             AddEditBudgetEvent.SaveBudgetClicked -> saveBudget()
             AddEditBudgetEvent.CategorySelectorClicked -> {
-                viewModelScope.launch {
-                    val periodString =
-                        _uiState.value.period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
-                    _navigationEvent.emit(periodString)
+                _uiState.update {
+                    it.copy(showCategorySheet = true)
                 }
             }
 
@@ -125,6 +153,39 @@ class AddEditBudgetViewModel @Inject constructor(
                 it.copy(
                     showDeleteConfirmDialog = false
                 )
+            }
+
+            AddEditBudgetEvent.ShowCategorySheet -> {
+                _uiState.update { it.copy(showCategorySheet = true) }
+            }
+
+            AddEditBudgetEvent.DismissCategorySheet -> _uiState.update {
+                it.copy(showCategorySheet = false)
+            }
+
+            is AddEditBudgetEvent.CategorySearchChanged -> {
+                _uiState.update { it.copy(categorySearchQuery = event.query) }
+            }
+
+            AddEditBudgetEvent.DismissPeriodPicker -> {
+                _uiState.update {
+                    it.copy(showPeriodPicker = false)
+                }
+            }
+
+            is AddEditBudgetEvent.PeriodSelected -> {
+                _uiState.update {
+                    it.copy(
+                        period = event.period,
+                        showPeriodPicker = false
+                    )
+                }
+            }
+
+            AddEditBudgetEvent.PeriodSelectorClicked -> {
+                _uiState.update {
+                    it.copy(showPeriodPicker = true)
+                }
             }
         }
     }
@@ -143,7 +204,7 @@ class AddEditBudgetViewModel @Inject constructor(
                         categoryIconIdentifier = state.selectedCategory.iconIdentifier,
                         budgetAmount = BigDecimal(state.amount),
                         spentAmount = if (isEditMode) state.initialSpentAmount else BigDecimal.ZERO, // FIX: Gunakan spent amount yang tersimpan
-                        period = state.period.format(DateTimeFormatter.ofPattern("yyyy-MM"))
+                        period = state.period
                     )
 
                     if (isEditMode) {

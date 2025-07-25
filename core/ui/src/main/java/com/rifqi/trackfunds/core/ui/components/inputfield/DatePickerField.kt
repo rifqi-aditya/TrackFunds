@@ -24,18 +24,41 @@ import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.temporal.Temporal
+
+enum class DatePickerMode {
+    FULL_DATE,
+    MONTH_YEAR_ONLY
+}
 
 @Composable
 fun DatePickerField(
     label: String,
-    value: LocalDate?,
+    value: Temporal?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    mode: DatePickerMode,
     isError: Boolean = false,
+    errorMessage: String? = null
 ) {
-    val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-    val displayValue = value?.format(formatter) ?: "Pilih Tanggal"
+    val (formatter, placeholder) = when (mode) {
+        DatePickerMode.FULL_DATE -> {
+            DateTimeFormatter.ofPattern("dd MMMM yyyy") to "Choose Date"
+        }
+
+        DatePickerMode.MONTH_YEAR_ONLY -> {
+            DateTimeFormatter.ofPattern("MMMM yyyy") to "Choose Month/Year"
+        }
+    }
+
+    val displayValue = when (value) {
+        is LocalDate -> value.format(formatter)
+        is YearMonth -> value.format(formatter)
+        else -> placeholder
+    }
+
     val borderColor = if (isError) {
         MaterialTheme.colorScheme.error
     } else {
@@ -87,32 +110,43 @@ fun DatePickerField(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, name = "DatePickerField - Not Selected")
-@Composable
-private fun DatePickerFieldNotSelectedPreview() {
-    TrackFundsTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            DatePickerField(
-                label = "Target Tanggal",
-                value = null, // Kondisi belum ada tanggal dipilih
-                onClick = {}
+        if (isError && errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
         }
     }
 }
 
-@Preview(showBackground = true, name = "DatePickerField - Selected")
+@Preview(showBackground = true, name = "DatePickerField - Month/Year Selected") // Nama diubah
 @Composable
-private fun DatePickerFieldSelectedPreview() {
+private fun DatePickerFieldSelectedMonthYearPreview() { // Nama diubah
     TrackFundsTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             DatePickerField(
-                label = "Target Tanggal",
-                value = LocalDate.now(), // Kondisi sudah ada tanggal dipilih
-                onClick = {}
+                label = "Periode Budget",
+                value = YearMonth.now(), // DIUBAH: Gunakan YearMonth untuk mode ini
+                onClick = {},
+                mode = DatePickerMode.MONTH_YEAR_ONLY,
+            )
+        }
+    }
+}
+
+// Preview untuk FULL_DATE tetap menggunakan LocalDate
+@Preview(showBackground = true, name = "DatePickerField - Full Date Selected")
+@Composable
+private fun DatePickerFieldSelectedFullDatePreview() {
+    TrackFundsTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DatePickerField(
+                label = "Tanggal Transaksi",
+                value = LocalDate.now(),
+                onClick = {},
+                mode = DatePickerMode.FULL_DATE,
             )
         }
     }

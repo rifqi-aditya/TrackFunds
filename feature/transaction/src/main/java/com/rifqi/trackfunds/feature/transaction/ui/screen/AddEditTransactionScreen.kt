@@ -39,15 +39,16 @@ import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
+import com.rifqi.trackfunds.core.ui.components.SelectionItem
+import com.rifqi.trackfunds.core.ui.components.SelectionList
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
+import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
-import com.rifqi.trackfunds.feature.transaction.ui.components.bottomsheets.SelectionItem
-import com.rifqi.trackfunds.feature.transaction.ui.components.bottomsheets.SelectionList
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.AccountSelected
 import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.CategorySearchChanged
@@ -308,6 +309,7 @@ private fun StandardFormContent(
         label = "Date",
         value = uiState.selectedDate,
         onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) },
+        mode = DatePickerMode.FULL_DATE
     )
 
     GeneralTextInputField(
@@ -359,6 +361,7 @@ private fun SavingsFormContent(
         label = "Date",
         value = uiState.selectedDate,
         onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) },
+        mode = DatePickerMode.FULL_DATE
     )
 
     GeneralTextInputField(

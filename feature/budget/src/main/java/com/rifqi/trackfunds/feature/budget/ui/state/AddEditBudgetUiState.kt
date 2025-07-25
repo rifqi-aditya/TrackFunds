@@ -12,5 +12,9 @@ data class AddEditBudgetUiState(
     val isBudgetSaved: Boolean = false,
     val error: String? = null,
     val showDeleteConfirmDialog: Boolean = false,
-    val initialSpentAmount: BigDecimal = BigDecimal.ZERO
+    val initialSpentAmount: BigDecimal = BigDecimal.ZERO,
+
+    val showCategorySheet: Boolean = false,
+    val showPeriodPicker: Boolean = false,
+    val categorySearchQuery: String = ""
 )

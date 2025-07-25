@@ -129,7 +129,7 @@ fun TrackFundsMainContent(
                         modifier = Modifier
                             .padding(8.dp)
                             .size(24.dp),
-                        tint = TrackFundsTheme.extendedColors.onAccentGreen
+                        tint = MaterialTheme.colorScheme.inverseOnSurface
                     )
                 }
             }

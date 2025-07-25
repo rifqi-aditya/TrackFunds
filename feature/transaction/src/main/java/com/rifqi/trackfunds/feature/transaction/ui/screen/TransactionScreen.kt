@@ -46,7 +46,7 @@ import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.feature.transaction.ui.components.CompactOutlinedTextField
+import com.rifqi.trackfunds.core.ui.components.CompactOutlinedTextField
 import com.rifqi.trackfunds.feature.transaction.ui.components.SummaryCard
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionListEvent
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip

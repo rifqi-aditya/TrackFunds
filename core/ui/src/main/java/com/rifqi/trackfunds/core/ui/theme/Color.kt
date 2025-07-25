@@ -235,7 +235,7 @@ val ChartCategory4 = Color(0xFFB97B5B)
 val ChartCategory5 = Color(0xFF8F85A5)
 val ChartCategory6 = Color(0xFFA9B4B7)
 
-val AccentGreenDark = Color(0xFFB4F077)
-val AccentGreenLight = Color(0xFF6ABD2B)
+val AccentGreenDark = Color(0xFF56DFCF)
+val AccentGreenLight = Color(0xFF0ABAB5)
 
 val OnAccentGreen = Color.Black
