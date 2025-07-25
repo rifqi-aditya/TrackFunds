@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.screen
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,10 +30,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.components.SelectionList
@@ -43,51 +43,81 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
 import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
+import com.rifqi.trackfunds.feature.budget.ui.preview.AddEditBudgetUiStatePreviewParameterProvider
+import com.rifqi.trackfunds.feature.budget.ui.sideeffect.AddEditBudgetSideEffect
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
 import com.rifqi.trackfunds.feature.budget.ui.viewmodel.AddEditBudgetViewModel
-import kotlinx.coroutines.flow.collectLatest
 import java.time.YearMonth
 
 /**
- * Stateful Composable (Container)
- * - Menerima ViewModel dari NavGraph.
- * - Menangani event navigasi dan dialog.
+ * A screen responsible for adding or editing a budget.
+ *
+ * @param viewModel The ViewModel that manages the business logic and state of this screen.
+ * @param onNavigateBack Callback to navigate back to the previous screen.
+ * @param onNavigateToEditMode Callback to navigate to edit mode with a specific budget ID and period.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditBudgetScreen(
     viewModel: AddEditBudgetViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToSelectCategory: (period: String) -> Unit
+    onNavigateToEditMode: (budgetId: String, period: YearMonth) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val categoriesForSelection by viewModel.categoriesForSelection.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collectLatest { periodString ->
-            onNavigateToSelectCategory(periodString)
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is AddEditBudgetSideEffect.NavigateBack -> onNavigateBack()
+                is AddEditBudgetSideEffect.NavigateToEditMode -> {
+                    onNavigateToEditMode(effect.budgetId, effect.period)
+                }
+            }
         }
     }
 
-    LaunchedEffect(uiState.isBudgetSaved) {
-        if (uiState.isBudgetSaved) {
-            onNavigateBack()
-        }
-    }
+    AddEditBudgetContent(
+        uiState = uiState,
+        isEditMode = viewModel.isEditMode,
+        onEvent = viewModel::onEvent,
+        onNavigateBack = onNavigateBack,
+    )
 
+    AddEditBudgetOverlays(
+        uiState = uiState,
+        categoriesForSelection = categoriesForSelection,
+        onEvent = viewModel::onEvent
+    )
+}
+
+
+/**
+ * Composable that displays overlays like dialogs and bottom sheets for the Add/Edit Budget screen.
+ *
+ * @param uiState The current state of the Add/Edit Budget screen.
+ * @param categoriesForSelection The list of categories available for selection.
+ * @param onEvent Callback to handle events triggered by user interactions.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddEditBudgetOverlays(
+    uiState: AddEditBudgetUiState,
+    categoriesForSelection: List<CategoryItem>,
+    onEvent: (AddEditBudgetEvent) -> Unit
+) {
     if (uiState.showPeriodPicker) {
         MonthYearPickerDialog(
             showDialog = true,
             initialYearMonth = uiState.period,
-            onDismiss = { viewModel.onEvent(AddEditBudgetEvent.DismissPeriodPicker) },
+            onDismiss = { onEvent(AddEditBudgetEvent.DismissPeriodPicker) },
             onConfirm = { selectedYearMonth ->
-                viewModel.onEvent(AddEditBudgetEvent.PeriodSelected(selectedYearMonth))
+                onEvent(AddEditBudgetEvent.PeriodSelected(selectedYearMonth))
             }
         )
     }
 
     if (uiState.showCategorySheet) {
-        ModalBottomSheet(onDismissRequest = { viewModel.onEvent(AddEditBudgetEvent.DismissCategorySheet) }) {
+        ModalBottomSheet(onDismissRequest = { onEvent(AddEditBudgetEvent.DismissCategorySheet) }) {
             SelectionList(
                 title = "Pilih Kategori",
                 items = categoriesForSelection,
@@ -99,51 +129,45 @@ fun AddEditBudgetScreen(
                     )
                 },
                 onItemSelected = { category ->
-                    viewModel.onEvent(AddEditBudgetEvent.CategorySelected(category))
+                    onEvent(AddEditBudgetEvent.CategorySelected(category))
                 },
                 isSearchable = true,
                 searchQuery = uiState.categorySearchQuery,
                 onSearchQueryChanged = { query ->
-                    viewModel.onEvent(AddEditBudgetEvent.CategorySearchChanged(query))
+                    onEvent(AddEditBudgetEvent.CategorySearchChanged(query))
                 },
             )
         }
     }
 
-// Tampilkan dialog konfirmasi hapus jika state-nya true
     if (uiState.showDeleteConfirmDialog) {
         AlertDialog(
-            onDismissRequest = { viewModel.onEvent(AddEditBudgetEvent.DismissDeleteDialog) },
+            onDismissRequest = { onEvent(AddEditBudgetEvent.DismissDeleteDialog) },
             title = { Text("Delete Budget") },
             text = { Text("Are you sure you want to delete this budget for this period?") },
             confirmButton = {
                 Button(
-                    onClick = { viewModel.onEvent(AddEditBudgetEvent.ConfirmDeleteClicked) },
+                    onClick = { onEvent(AddEditBudgetEvent.ConfirmDeleteClicked) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) { Text("Delete") }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.onEvent(AddEditBudgetEvent.DismissDeleteDialog) }) {
-                    Text(
-                        "Cancel"
-                    )
+                TextButton(onClick = { onEvent(AddEditBudgetEvent.DismissDeleteDialog) }) {
+                    Text("Cancel")
                 }
             }
         )
     }
-
-// Panggil UI murni (stateless)
-    AddEditBudgetContent(
-        uiState = uiState,
-        isEditMode = viewModel.isEditMode,
-        onEvent = viewModel::onEvent,
-        onNavigateBack = onNavigateBack,
-    )
 }
 
+
 /**
- * Stateless Composable (Presentational)
- * - Hanya menerima state dan lambda event. Sangat mudah di-preview.
+ * Composable that displays the main content of the Add/Edit Budget screen.
+ *
+ * @param uiState The current state of the Add/Edit Budget screen.
+ * @param isEditMode Boolean flag indicating if the screen is in edit mode.
+ * @param onEvent Callback to handle events triggered by user interactions.
+ * @param onNavigateBack Callback to navigate back to the previous screen.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -210,6 +234,7 @@ fun AddEditBudgetContent(
                 enabled = !uiState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(56.dp)
                     .padding(bottom = 16.dp)
             ) {
                 if (uiState.isLoading) CircularProgressIndicator() else Text(if (isEditMode) "Save Changes" else "Save Budget")
@@ -218,80 +243,15 @@ fun AddEditBudgetContent(
     }
 }
 
-// --- DUMMY DATA UNTUK KEPERLUAN PREVIEW ---
-
-private val previewBudgetCategory = CategoryItem(
-    id = "cat_food",
-    name = "Food & Drink",
-    iconIdentifier = "restaurant",
-    type = TransactionType.EXPENSE
-)
-
-// --- FUNGSI-FUNGSI PREVIEW ---
-
-@Preview(showBackground = true, name = "Add Budget - Empty State")
+@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-private fun AddBudgetContentEmptyPreview() {
+private fun AddEditBudgetContentPreview(
+    @PreviewParameter(AddEditBudgetUiStatePreviewParameterProvider::class) uiState: AddEditBudgetUiState
+) {
     TrackFundsTheme {
         AddEditBudgetContent(
-            uiState = AddEditBudgetUiState(period = YearMonth.now()),
-            isEditMode = false,
-            onEvent = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Add Budget - Filled State")
-@Composable
-private fun AddBudgetContentFilledPreview() {
-    TrackFundsTheme {
-        AddEditBudgetContent(
-            uiState = AddEditBudgetUiState(
-                period = YearMonth.now(),
-                selectedCategory = previewBudgetCategory,
-                amount = "750000"
-            ),
-            isEditMode = false,
-            onEvent = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Edit Budget Mode")
-@Preview(
-    showBackground = true,
-    name = "Edit Budget Mode (Dark)",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun EditBudgetContentPreview() {
-    TrackFundsTheme {
-        AddEditBudgetContent(
-            uiState = AddEditBudgetUiState(
-                period = YearMonth.now(),
-                selectedCategory = previewBudgetCategory,
-                amount = "1200000"
-            ),
-            isEditMode = true, // <-- Mensimulasikan mode edit
-            onEvent = {},
-            onNavigateBack = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Add Budget - Loading State")
-@Composable
-private fun AddBudgetContentLoadingPreview() {
-    TrackFundsTheme {
-        AddEditBudgetContent(
-            uiState = AddEditBudgetUiState(
-                period = YearMonth.now(),
-                selectedCategory = previewBudgetCategory,
-                amount = "1200000",
-                isLoading = true // <-- Mensimulasikan kondisi loading
-            ),
+            uiState = uiState,
             isEditMode = false,
             onEvent = {},
             onNavigateBack = {}

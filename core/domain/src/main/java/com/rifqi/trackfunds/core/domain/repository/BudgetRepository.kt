@@ -26,4 +26,6 @@ interface BudgetRepository {
 
     /** Deletes a budget by its ID for the currently logged-in user. */
     suspend fun deleteBudget(budgetId: String): Result<Unit>
+
+    suspend fun findBudget(categoryId: String, period: YearMonth): String?
 }

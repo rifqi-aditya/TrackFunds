@@ -40,7 +40,11 @@ interface BudgetDao {
         GROUP BY b.id, c.id
     """
     )
-    fun getBudgetsWithDetails(startOfMonth: LocalDate, endOfMonth: LocalDateTime, userUid: String): Flow<List<BudgetWithDetailsDto>>
+    fun getBudgetsWithDetails(
+        startOfMonth: LocalDate,
+        endOfMonth: LocalDateTime,
+        userUid: String
+    ): Flow<List<BudgetWithDetailsDto>>
 
     /**
      * Fetches a single budget with details by its ID for a specific user.
@@ -87,7 +91,16 @@ interface BudgetDao {
         LIMIT :limit
     """
     )
-    fun getTopBudgetsWithDetails(startOfMonth: LocalDate, endOfMonth: LocalDateTime, limit: Int, userUid: String): Flow<List<BudgetWithDetailsDto>>
+    fun getTopBudgetsWithDetails(
+        startOfMonth: LocalDate,
+        endOfMonth: LocalDateTime,
+        limit: Int,
+        userUid: String
+    ): Flow<List<BudgetWithDetailsDto>>
+
+
+    @Query("SELECT id FROM budgets WHERE user_uid = :userUid AND category_id = :categoryId AND period = :period LIMIT 1")
+    suspend fun findBudgetId(userUid: String, categoryId: String, period: LocalDate): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBudget(budget: BudgetEntity)

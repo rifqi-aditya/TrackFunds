@@ -45,9 +45,10 @@ class BudgetRepositoryImpl @Inject constructor(
             if (userUid == null) {
                 flowOf(emptyList())
             } else {
-                budgetDao.getTopBudgetsWithDetails(startOfMonth, endOfMonth, 3, userUid).map { entities ->
-                    entities.map { it.toDomain() }
-                }
+                budgetDao.getTopBudgetsWithDetails(startOfMonth, endOfMonth, 3, userUid)
+                    .map { entities ->
+                        entities.map { it.toDomain() }
+                    }
             }
         }
     }
@@ -64,6 +65,12 @@ class BudgetRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun findBudget(categoryId: String, period: YearMonth): String? {
+        val userUid = userPreferencesRepository.userUidFlow.first() ?: return null
+        val periodDate = period.atDay(1)
+        return budgetDao.findBudgetId(userUid, categoryId, periodDate)
     }
 
     override suspend fun addBudget(budgetItem: BudgetItem): Result<Unit> {

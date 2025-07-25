@@ -25,8 +25,7 @@ import java.time.LocalDate
         )
     ],
     indices = [
-        Index(value = ["user_uid"]),
-        Index(value = ["category_id"])
+        Index(value = ["user_uid", "category_id", "period"], unique = true)
     ]
 )
 data class BudgetEntity(

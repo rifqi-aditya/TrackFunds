@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
-import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.feature.budget.ui.screen.AddEditBudgetScreen
 import com.rifqi.trackfunds.feature.budget.ui.screen.BudgetScreen
 
@@ -27,11 +26,25 @@ fun NavGraphBuilder.budgetNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable<BudgetRoutes.AddEditBudget> {
+        composable<BudgetRoutes.AddEditBudget> { backStackEntry ->
             AddEditBudgetScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToSelectCategory = { period ->
-                    navController.navigate(SharedRoutes.SelectCategory(period))
+                onNavigateToEditMode = { budgetId, period ->
+
+                    val currentRoute = backStackEntry.destination.route
+
+                    navController.navigate(
+                        BudgetRoutes.AddEditBudget(
+                            budgetId = budgetId,
+                            period = period.toString()
+                        )
+                    ) {
+                        if (currentRoute != null) {
+                            popUpTo(currentRoute) {
+                                inclusive = true
+                            }
+                        }
+                    }
                 }
             )
         }

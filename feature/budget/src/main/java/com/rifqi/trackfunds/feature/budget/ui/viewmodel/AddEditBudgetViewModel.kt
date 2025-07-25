@@ -1,22 +1,22 @@
 package com.rifqi.trackfunds.feature.budget.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.domain.model.BudgetItem
 import com.rifqi.trackfunds.core.domain.model.CategoryItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.CheckExistingBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.feature.budget.ui.event.AddEditBudgetEvent
+import com.rifqi.trackfunds.feature.budget.ui.sideeffect.AddEditBudgetSideEffect
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,9 +28,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -44,24 +42,22 @@ class AddEditBudgetViewModel @Inject constructor(
     private val getBudgetByIdUseCase: GetBudgetByIdUseCase,
     private val getFilteredCategoriesUseCase: GetFilteredCategoriesUseCase,
     private val addBudgetUseCase: AddBudgetUseCase,
+    private val checkExistingBudgetUseCase: CheckExistingBudgetUseCase,
     private val updateBudgetUseCase: UpdateBudgetUseCase,
     private val deleteBudgetUseCase: DeleteBudgetUseCase,
-    private val resultManager: NavigationResultManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val args: BudgetRoutes.AddEditBudget = savedStateHandle.toRoute()
     private val editingBudgetId: String? = args.budgetId
-
     val isEditMode: Boolean = editingBudgetId != null
 
-    private val _uiState = MutableStateFlow(
-        AddEditBudgetUiState(period = YearMonth.parse(args.period))
-    )
+    private val _uiState =
+        MutableStateFlow(AddEditBudgetUiState(period = YearMonth.parse(args.period)))
     val uiState: StateFlow<AddEditBudgetUiState> = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<String>()
-    val navigationEvent = _navigationEvent.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<AddEditBudgetSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val categoriesForSelection: StateFlow<List<CategoryItem>> =
@@ -89,7 +85,119 @@ class AddEditBudgetViewModel @Inject constructor(
         if (isEditMode) {
             loadBudgetForEdit(editingBudgetId!!)
         }
-        observeNavigationResult()
+    }
+
+    // --- Event Dispatcher ---
+    fun onEvent(event: AddEditBudgetEvent) {
+        when (event) {
+            is AddEditBudgetEvent.AmountChanged -> handleAmountChanged(event.amount)
+            is AddEditBudgetEvent.CategorySelected -> handleCategorySelected(event.category)
+            is AddEditBudgetEvent.CategorySearchChanged -> _uiState.update {
+                it.copy(
+                    categorySearchQuery = event.query
+                )
+            }
+
+            is AddEditBudgetEvent.PeriodSelected -> _uiState.update {
+                it.copy(
+                    period = event.period,
+                    showPeriodPicker = false
+                )
+            }
+
+            AddEditBudgetEvent.SaveBudgetClicked -> handleSaveBudget()
+            AddEditBudgetEvent.ConfirmDeleteClicked -> handleDeleteBudget()
+            AddEditBudgetEvent.CategorySelectorClicked -> _uiState.update {
+                it.copy(
+                    showCategorySheet = true
+                )
+            }
+
+            AddEditBudgetEvent.DismissCategorySheet -> _uiState.update { it.copy(showCategorySheet = false) }
+            AddEditBudgetEvent.DeleteClicked -> _uiState.update { it.copy(showDeleteConfirmDialog = true) }
+            AddEditBudgetEvent.DismissDeleteDialog -> _uiState.update {
+                it.copy(
+                    showDeleteConfirmDialog = false
+                )
+            }
+
+            AddEditBudgetEvent.PeriodSelectorClicked -> _uiState.update { it.copy(showPeriodPicker = true) }
+            AddEditBudgetEvent.DismissPeriodPicker -> _uiState.update { it.copy(showPeriodPicker = false) }
+            AddEditBudgetEvent.ShowCategorySheet -> _uiState.update {
+                it.copy(showCategorySheet = true)
+            }
+        }
+    }
+
+    // --- Private Event Handlers ---
+
+    private fun handleAmountChanged(amount: String) {
+        if (amount.all { it.isDigit() }) {
+            _uiState.update { it.copy(amount = amount, error = null) }
+        }
+    }
+
+    private fun handleCategorySelected(category: CategoryItem) {
+        _uiState.update {
+            it.copy(
+                selectedCategory = category,
+                showCategorySheet = false,
+                error = null
+            )
+        }
+        checkIfBudgetExists(category.id)
+    }
+
+    private fun handleSaveBudget() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            val state = _uiState.value
+
+            val budgetToSave = BudgetItem(
+                budgetId = editingBudgetId ?: UUID.randomUUID().toString(),
+                categoryId = state.selectedCategory?.id ?: "",
+                categoryName = state.selectedCategory?.name ?: "",
+                categoryIconIdentifier = state.selectedCategory?.iconIdentifier ?: "",
+                budgetAmount = state.amount.toBigDecimalOrNull() ?: BigDecimal.ZERO,
+                spentAmount = if (isEditMode) state.initialSpentAmount else BigDecimal.ZERO,
+                period = state.period
+            )
+
+            val result = if (isEditMode) {
+                updateBudgetUseCase(budgetToSave)
+            } else {
+                addBudgetUseCase(budgetToSave)
+            }
+
+            result
+                .onSuccess { _sideEffect.emit(AddEditBudgetSideEffect.NavigateBack) }
+                .onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = error.message
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun handleDeleteBudget() {
+        if (isEditMode) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
+                deleteBudgetUseCase(editingBudgetId!!)
+                    .onSuccess { _sideEffect.emit(AddEditBudgetSideEffect.NavigateBack) }
+                    .onFailure { error ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = error.message
+                            )
+                        }
+                    }
+            }
+        }
     }
 
     private fun loadBudgetForEdit(id: String) {
@@ -121,116 +229,16 @@ class AddEditBudgetViewModel @Inject constructor(
         }
     }
 
-    private fun observeNavigationResult() {
-        resultManager.result.onEach { result ->
-            if (result is CategoryItem) {
-                onEvent(AddEditBudgetEvent.CategorySelected(result))
-                resultManager.setResult(null)
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    fun onEvent(event: AddEditBudgetEvent) {
-        when (event) {
-            is AddEditBudgetEvent.AmountChanged -> if (event.amount.all { it.isDigit() }) {
-                _uiState.update { it.copy(amount = event.amount) }
-            }
-
-            is AddEditBudgetEvent.CategorySelected -> {
-                _uiState.update { it.copy(selectedCategory = event.category) }
-            }
-
-            AddEditBudgetEvent.SaveBudgetClicked -> saveBudget()
-            AddEditBudgetEvent.CategorySelectorClicked -> {
-                _uiState.update {
-                    it.copy(showCategorySheet = true)
-                }
-            }
-
-            AddEditBudgetEvent.DeleteClicked -> _uiState.update { it.copy(showDeleteConfirmDialog = true) }
-            AddEditBudgetEvent.ConfirmDeleteClicked -> deleteBudget()
-            AddEditBudgetEvent.DismissDeleteDialog -> _uiState.update {
-                it.copy(
-                    showDeleteConfirmDialog = false
-                )
-            }
-
-            AddEditBudgetEvent.ShowCategorySheet -> {
-                _uiState.update { it.copy(showCategorySheet = true) }
-            }
-
-            AddEditBudgetEvent.DismissCategorySheet -> _uiState.update {
-                it.copy(showCategorySheet = false)
-            }
-
-            is AddEditBudgetEvent.CategorySearchChanged -> {
-                _uiState.update { it.copy(categorySearchQuery = event.query) }
-            }
-
-            AddEditBudgetEvent.DismissPeriodPicker -> {
-                _uiState.update {
-                    it.copy(showPeriodPicker = false)
-                }
-            }
-
-            is AddEditBudgetEvent.PeriodSelected -> {
-                _uiState.update {
-                    it.copy(
-                        period = event.period,
-                        showPeriodPicker = false
-                    )
-                }
-            }
-
-            AddEditBudgetEvent.PeriodSelectorClicked -> {
-                _uiState.update {
-                    it.copy(showPeriodPicker = true)
-                }
-            }
-        }
-    }
-
-    private fun saveBudget() {
+    private fun checkIfBudgetExists(categoryId: String) {
         viewModelScope.launch {
-            val state = _uiState.value
-            if (state.selectedCategory != null && state.amount.isNotBlank()) {
-                _uiState.update { it.copy(isLoading = true) }
-                try {
-                    val budgetToSave = BudgetItem(
-                        budgetId = editingBudgetId ?: UUID.randomUUID()
-                            .toString(),
-                        categoryId = state.selectedCategory.id,
-                        categoryName = state.selectedCategory.name,
-                        categoryIconIdentifier = state.selectedCategory.iconIdentifier,
-                        budgetAmount = BigDecimal(state.amount),
-                        spentAmount = if (isEditMode) state.initialSpentAmount else BigDecimal.ZERO, // FIX: Gunakan spent amount yang tersimpan
-                        period = state.period
+            val existingBudgetId = checkExistingBudgetUseCase(categoryId, _uiState.value.period)
+            if (existingBudgetId != null) {
+                _sideEffect.emit(
+                    AddEditBudgetSideEffect.NavigateToEditMode(
+                        budgetId = existingBudgetId,
+                        period = _uiState.value.period
                     )
-
-                    if (isEditMode) {
-                        updateBudgetUseCase(budgetToSave)
-                    } else {
-                        addBudgetUseCase(budgetToSave)
-                    }
-                    _uiState.update { it.copy(isBudgetSaved = true) }
-                } catch (e: Exception) {
-                    Log.e("AddEditBudgetViewModel", "Error saving budget: ${e.message}")
-                    _uiState.update { it.copy(isLoading = false, error = e.message) }
-                }
-            }
-        }
-    }
-
-    private fun deleteBudget() {
-        if (isEditMode) {
-            viewModelScope.launch {
-                _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
-                try {
-                    deleteBudgetUseCase(editingBudgetId!!)
-                    _uiState.update { it.copy(isBudgetSaved = true) }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(isLoading = false, error = e.message) }
-                }
+                )
             }
         }
     }

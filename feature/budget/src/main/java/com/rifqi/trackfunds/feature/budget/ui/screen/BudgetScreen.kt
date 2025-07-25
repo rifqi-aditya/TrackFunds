@@ -303,7 +303,7 @@ private val previewUiStateLoaded = BudgetUiState(
     currentPeriod = YearMonth.now()
 )
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class) // Tambahkan ini untuk PagerState
 @Preview(name = "Budget Screen - Loaded", showBackground = true)
 @Composable
 private fun BudgetListContentLoadedPreview() {

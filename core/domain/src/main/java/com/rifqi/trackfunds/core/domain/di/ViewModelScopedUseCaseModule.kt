@@ -14,6 +14,8 @@ import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCase
 import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.budget.CheckExistingBudgetUseCase
+import com.rifqi.trackfunds.core.domain.usecase.budget.CheckExistingBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCase
 import com.rifqi.trackfunds.core.domain.usecase.budget.DeleteBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.budget.UpdateBudgetUseCase
@@ -121,6 +123,10 @@ abstract class ViewModelScopedUseCaseModule {
     @Binds
     @ViewModelScoped
     abstract fun bindDeleteBudgetUseCase(impl: DeleteBudgetUseCaseImpl): DeleteBudgetUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bingCheckExistingBudgetUseCase(impl: CheckExistingBudgetUseCaseImpl): CheckExistingBudgetUseCase
 
     // --- Scan Use Case ---
     @Binds
