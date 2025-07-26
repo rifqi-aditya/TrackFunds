@@ -7,18 +7,25 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,106 +39,158 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.rifqi.trackfunds.feature.scan.ui.components.CameraPreview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.rifqi.trackfunds.feature.scan.ui.event.CameraEvent
+import com.rifqi.trackfunds.feature.scan.ui.sideeffect.CameraSideEffect
+import com.rifqi.trackfunds.feature.scan.ui.viewmodel.CameraViewModel
 import java.io.File
-import java.util.concurrent.Executor
 
+
+// --- Stateful Composable ---
 @Composable
 fun CameraScanScreen(
     onNavigateBack: () -> Unit,
-    onPhotoTaken: (Uri) -> Unit
+    viewModel: CameraViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     var hasCameraPermission by remember { mutableStateOf(false) }
-
-    // Launcher untuk meminta izin kamera
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted ->
-            hasCameraPermission = granted
-        }
+        onResult = { granted -> hasCameraPermission = granted }
     )
 
-    // Minta izin saat pertama kali layar dibuka
     LaunchedEffect(Unit) {
         permissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                CameraSideEffect.NavigateBack -> onNavigateBack()
+            }
+        }
+    }
+
+    // 1. Controller dibuat dan dimiliki di sini (Stateful Composable)
+    val context = LocalContext.current
+    val cameraController = remember { LifecycleCameraController(context) }
+
+    CameraScanContent(
+        hasPermission = hasCameraPermission,
+        controller = cameraController, // Teruskan controller ke bawah
+        onNavigateBack = onNavigateBack,
+        onTakePhoto = {
+            // Logika takePhoto sekarang memanggil ViewModel
+            takePhoto(
+                context = context,
+                controller = cameraController,
+                onPhotoTaken = { uri ->
+                    viewModel.onEvent(CameraEvent.PhotoTaken(uri))
+                }
+            )
+        },
+        onGrantPermissionClick = {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    )
+}
+
+// --- Stateless Composable ---
+@Composable
+private fun CameraScanContent(
+    hasPermission: Boolean,
+    controller: LifecycleCameraController, // 2. Controller diterima sebagai parameter
+    onNavigateBack: () -> Unit,
+    onTakePhoto: () -> Unit,
+    onGrantPermissionClick: () -> Unit
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     Box(modifier = Modifier.fillMaxSize()) {
-        if (hasCameraPermission) {
-            // Jika izin diberikan, tampilkan UI Kamera
-            val imageCapture = remember { ImageCapture.Builder().build() }
-
-            CameraPreview(imageCapture = imageCapture, modifier = Modifier.fillMaxSize())
-
-            // Tombol Shutter untuk mengambil foto
-            FloatingActionButton(
-                onClick = {
-                    takePhoto(
-                        context = context,
-                        imageCapture = imageCapture,
-                        onPhotoTaken = onPhotoTaken // Teruskan callback ke fungsi helper
-                    )
+        if (hasPermission) {
+            AndroidView(
+                factory = { ctx ->
+                    PreviewView(ctx).apply {
+                        this.controller = controller
+                        controller.bindToLifecycle(lifecycleOwner)
+                    }
                 },
+                modifier = Modifier.fillMaxSize()
+            )
+            IconButton(
+                onClick = onTakePhoto,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(32.dp)
+                    .padding(bottom = 32.dp)
             ) {
-                Icon(Icons.Default.Camera, contentDescription = "Take Photo")
+                Icon(
+                    imageVector = Icons.Default.Camera,
+                    contentDescription = "Take Photo",
+                    tint = Color.White,
+                    modifier = Modifier.size(80.dp)
+                )
             }
         } else {
             // Tampilan jika izin ditolak
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "Camera permission is required to use this feature.",
-                    textAlign = TextAlign.Center
+                    "Camera permission is required to scan receipts.",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium
                 )
-                Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = onGrantPermissionClick) {
                     Text("Grant Permission")
                 }
             }
         }
 
-        // Tombol kembali di pojok atas
+        // Tombol Kembali
         IconButton(
             onClick = onNavigateBack,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = Color.White)
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowBack,
+                "Back",
+                tint = Color.White,
+                modifier = Modifier
+                    .background(Color.Black.copy(alpha = 0.3f), CircleShape)
+                    .padding(8.dp)
+            )
         }
     }
 }
 
-// Fungsi helper untuk mengambil dan menyimpan foto menggunakan CameraX
+// Fungsi helper yang lebih sederhana
 private fun takePhoto(
     context: Context,
-    imageCapture: ImageCapture,
-    onPhotoTaken: (Uri) -> Unit,
-    executor: Executor = ContextCompat.getMainExecutor(context)
+    controller: LifecycleCameraController,
+    onPhotoTaken: (Uri) -> Unit
 ) {
-    val photoFile = File(
-        context.cacheDir,
-        "receipt_${System.currentTimeMillis()}.jpg"
-    )
-    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+    val file = File.createTempFile("receipt_", ".jpg", context.cacheDir)
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
 
-    imageCapture.takePicture(
+    controller.takePicture(
         outputOptions,
-        executor,
+        ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val savedUri = outputFileResults.savedUri ?: Uri.fromFile(photoFile)
-                onPhotoTaken(savedUri)
+            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                output.savedUri?.let(onPhotoTaken)
             }
 
             override fun onError(exception: ImageCaptureException) {
+                // Handle error, misalnya dengan menampilkan Snackbar
                 println("Error taking photo: ${exception.message}")
             }
         }

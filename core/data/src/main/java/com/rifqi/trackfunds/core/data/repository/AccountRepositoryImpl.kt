@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.data.repository
 import com.rifqi.trackfunds.core.data.local.dao.AccountDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +22,7 @@ class AccountRepositoryImpl @Inject constructor(
 ) : AccountRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getAllAccounts(): Flow<List<AccountItem>> {
+    override fun getAllAccounts(): Flow<List<AccountModel>> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { uid ->
             if (uid == null) {
                 flowOf(emptyList())
@@ -34,7 +34,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAccountById(accountId: String): Result<AccountItem> {
+    override suspend fun getAccountById(accountId: String): Result<AccountModel> {
         return try {
             val uid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
@@ -51,12 +51,12 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAccountsByIds(ids: List<String>): List<AccountItem> {
+    override suspend fun getAccountsByIds(ids: List<String>): List<AccountModel> {
         val uid = userPreferencesRepository.userUidFlow.first() ?: return emptyList()
         return accountDao.getAccountsByIds(ids, uid).map { it.toDomain() }
     }
 
-    override suspend fun addAccount(account: AccountItem): Result<Unit> {
+    override suspend fun addAccount(account: AccountModel): Result<Unit> {
         return try {
             val uid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
@@ -68,7 +68,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateAccount(account: AccountItem): Result<Unit> {
+    override suspend fun updateAccount(account: AccountModel): Result<Unit> {
         return try {
             val uid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))

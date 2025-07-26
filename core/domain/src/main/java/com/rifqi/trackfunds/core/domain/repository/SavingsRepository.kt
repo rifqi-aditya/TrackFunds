@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.repository
 
 import android.net.Uri
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
 import kotlinx.coroutines.flow.Flow
 import java.math.BigDecimal
@@ -11,16 +11,16 @@ import java.math.BigDecimal
  */
 interface SavingsRepository {
     /** Fetches a stream of active savings goals for the current user. */
-    fun getActiveGoals(): Flow<List<SavingsGoalItem>>
+    fun getActiveGoals(): Flow<List<SavingsGoalModel>>
 
     /** Fetches a stream of filtered savings goals for the current user. */
-    fun getFilteredGoals(filter: SavingsFilter): Flow<List<SavingsGoalItem>>
+    fun getFilteredGoals(filter: SavingsFilter): Flow<List<SavingsGoalModel>>
 
     /** Fetches a single savings goal by its ID for the current user. */
-    fun getGoalById(goalId: String): Flow<SavingsGoalItem?>
+    fun getGoalById(goalId: String): Flow<SavingsGoalModel?>
 
     /** Creates a new savings goal for the current user. */
-    suspend fun createGoal(goal: SavingsGoalItem): Result<Unit>
+    suspend fun createGoal(goal: SavingsGoalModel): Result<Unit>
 
     /** Adds funds to a specific savings goal for the current user. */
     suspend fun addFundsToGoal(goalId: String, amount: BigDecimal): Result<Unit>

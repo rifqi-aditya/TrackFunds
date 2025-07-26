@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
 import java.time.LocalDate
 
 enum class AccountSelectionMode {
@@ -12,8 +12,8 @@ data class TransferUiState(
     val error: String? = null,
     val isTransferSuccessful: Boolean = false,
 
-    val fromAccount: AccountItem? = null,
-    val toAccount: AccountItem? = null,
+    val fromAccount: AccountModel? = null,
+    val toAccount: AccountModel? = null,
     val amount: String = "",
     val description: String = "",
     val date: LocalDate = LocalDate.now(),

@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
@@ -195,7 +195,7 @@ private fun calculatePagerHeight(
 
 @Composable
 private fun TransactionList(
-    transactions: List<TransactionItem>,
+    transactions: List<TransactionModel>,
     onItemClick: (String) -> Unit
 ) {
     if (transactions.isEmpty()) {

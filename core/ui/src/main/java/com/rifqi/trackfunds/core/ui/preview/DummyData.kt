@@ -1,9 +1,9 @@
 package com.rifqi.trackfunds.core.ui.preview
 
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -15,17 +15,17 @@ import java.time.YearMonth
  */
 object DummyData {
     val dummyAccount1 =
-        AccountItem("acc1", "Dompet Digital", "wallet_account", BigDecimal("1500000"))
+        AccountModel("acc1", "Dompet Digital", "wallet_account", BigDecimal("1500000"))
     val dummyAccount2 =
-        AccountItem("acc2", "Rekening Utama", "bank_account", BigDecimal("10000000"))
+        AccountModel("acc2", "Rekening Utama", "bank_account", BigDecimal("10000000"))
     val dummyAccounts = listOf(dummyAccount1, dummyAccount2)
 
     val dummyCategory1 =
-        CategoryItem("cat1", "Makan & Minum", "restaurant", TransactionType.EXPENSE)
-    val dummyCategory2 = CategoryItem("cat2", "Gaji", "salary", TransactionType.INCOME)
+        CategoryModel("cat1", "Makan & Minum", "restaurant", TransactionType.EXPENSE)
+    val dummyCategory2 = CategoryModel("cat2", "Gaji", "salary", TransactionType.INCOME)
 
     val dummyTransactions = listOf(
-        TransactionItem(
+        TransactionModel(
             "1",
             BigDecimal("50000"),
             TransactionType.EXPENSE,
@@ -34,7 +34,7 @@ object DummyData {
             dummyCategory1,
             dummyAccount1
         ),
-        TransactionItem(
+        TransactionModel(
             "2",
             BigDecimal("7500000"),
             TransactionType.INCOME,
@@ -46,7 +46,7 @@ object DummyData {
     )
 
     val dummyBudgets = listOf(
-        BudgetItem(
+        BudgetModel(
             "b1",
             "Makan & Minum",
             dummyCategory1.name,
@@ -55,7 +55,7 @@ object DummyData {
             BigDecimal("1250000"),
             YearMonth.now()
         ),
-        BudgetItem(
+        BudgetModel(
             "b2",
             "Transportasi",
             dummyCategory2.name,

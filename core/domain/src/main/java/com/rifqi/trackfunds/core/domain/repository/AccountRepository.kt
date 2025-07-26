@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.repository
 
-import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -9,19 +9,19 @@ import kotlinx.coroutines.flow.Flow
  */
 interface AccountRepository {
     /** Fetches all accounts for the currently logged-in user. */
-    fun getAllAccounts(): Flow<List<AccountItem>>
+    fun getAllAccounts(): Flow<List<AccountModel>>
 
     /** Fetches a single account by its ID for the currently logged-in user. */
-    suspend fun getAccountById(accountId: String): Result<AccountItem>
+    suspend fun getAccountById(accountId: String): Result<AccountModel>
 
     /** Fetches a list of accounts by their IDs for the currently logged-in user. */
-    suspend fun getAccountsByIds(ids: List<String>): List<AccountItem>
+    suspend fun getAccountsByIds(ids: List<String>): List<AccountModel>
 
     /** Adds a new account for the currently logged-in user. */
-    suspend fun addAccount(account: AccountItem): Result<Unit>
+    suspend fun addAccount(account: AccountModel): Result<Unit>
 
     /** Updates an existing account for the currently logged-in user. */
-    suspend fun updateAccount(account: AccountItem): Result<Unit>
+    suspend fun updateAccount(account: AccountModel): Result<Unit>
 
     /** Deletes an account by its ID for the currently logged-in user. */
     suspend fun deleteAccount(accountId: String): Result<Unit>

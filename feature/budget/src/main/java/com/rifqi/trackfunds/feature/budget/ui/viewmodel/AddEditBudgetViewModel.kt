@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.budget.AddBudgetUseCase
@@ -60,7 +60,7 @@ class AddEditBudgetViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val categoriesForSelection: StateFlow<List<CategoryItem>> =
+    val categoriesForSelection: StateFlow<List<CategoryModel>> =
         _uiState.map { it.categorySearchQuery }
             .distinctUntilChanged()
             .flatMapLatest { query ->
@@ -137,7 +137,7 @@ class AddEditBudgetViewModel @Inject constructor(
         }
     }
 
-    private fun handleCategorySelected(category: CategoryItem) {
+    private fun handleCategorySelected(category: CategoryModel) {
         _uiState.update {
             it.copy(
                 selectedCategory = category,
@@ -153,7 +153,7 @@ class AddEditBudgetViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             val state = _uiState.value
 
-            val budgetToSave = BudgetItem(
+            val budgetToSave = BudgetModel(
                 budgetId = editingBudgetId ?: UUID.randomUUID().toString(),
                 categoryId = state.selectedCategory?.id ?: "",
                 categoryName = state.selectedCategory?.name ?: "",
@@ -211,7 +211,7 @@ class AddEditBudgetViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            selectedCategory = CategoryItem(
+                            selectedCategory = CategoryModel(
                                 id = budget.categoryId,
                                 name = budget.categoryName,
                                 iconIdentifier = budget.categoryIconIdentifier.toString(),

@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.validator.savings
 
-import com.rifqi.trackfunds.core.domain.model.ValidationResult
+import com.rifqi.trackfunds.core.domain.validator.ValidationResult
 import java.math.BigDecimal
 import javax.inject.Inject
 

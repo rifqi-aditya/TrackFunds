@@ -5,7 +5,7 @@ import android.net.Uri
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
 import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
@@ -30,14 +30,14 @@ class SavingsRepositoryImpl @Inject constructor(
 ) : SavingsRepository {
 
 
-    override fun getActiveGoals(): Flow<List<SavingsGoalItem>> {
+    override fun getActiveGoals(): Flow<List<SavingsGoalModel>> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { uid ->
             if (uid == null) flowOf(emptyList()) else savingsGoalDao.getActiveGoals(uid)
                 .map { entityList -> entityList.map { it.toDomain() } }
         }
     }
 
-    override fun getFilteredGoals(filter: SavingsFilter): Flow<List<SavingsGoalItem>> {
+    override fun getFilteredGoals(filter: SavingsFilter): Flow<List<SavingsGoalModel>> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { uid ->
             if (uid == null) flowOf(emptyList()) else savingsGoalDao.getFilteredGoals(
                 uid,
@@ -47,14 +47,14 @@ class SavingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getGoalById(goalId: String): Flow<SavingsGoalItem?> {
+    override fun getGoalById(goalId: String): Flow<SavingsGoalModel?> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { uid ->
             if (uid == null) flowOf(null) else savingsGoalDao.getGoalById(goalId, uid)
                 .map { entity -> entity?.toDomain() }
         }
     }
 
-    override suspend fun createGoal(goal: SavingsGoalItem): Result<Unit> {
+    override suspend fun createGoal(goal: SavingsGoalModel): Result<Unit> {
         return try {
             val uid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))

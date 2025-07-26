@@ -1,10 +1,10 @@
 package com.rifqi.trackfunds.core.domain.usecase.category
 
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 
 /**
  * Gets a single default category by its standard key.
  */
 interface GetCategoryByStandardKeyUseCase {
-    suspend operator fun invoke(key: String): CategoryItem?
+    suspend operator fun invoke(key: String): CategoryModel?
 }

@@ -1,10 +1,10 @@
 package com.rifqi.trackfunds.feature.transaction.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 
 data class TransactionDetailUiState(
     val isLoading: Boolean = true,
-    val transaction: TransactionItem? = null,
+    val transaction: TransactionModel? = null,
     val error: String? = null,
     val showDeleteConfirmDialog: Boolean = false
 )

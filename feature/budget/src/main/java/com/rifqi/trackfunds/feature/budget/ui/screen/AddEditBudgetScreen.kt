@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.components.SelectionList
@@ -102,7 +102,7 @@ fun AddEditBudgetScreen(
 @Composable
 private fun AddEditBudgetOverlays(
     uiState: AddEditBudgetUiState,
-    categoriesForSelection: List<CategoryItem>,
+    categoriesForSelection: List<CategoryModel>,
     onEvent: (AddEditBudgetEvent) -> Unit
 ) {
     if (uiState.showPeriodPicker) {

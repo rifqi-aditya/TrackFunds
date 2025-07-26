@@ -44,7 +44,7 @@ class SavingsViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            savingsGoalItems = goals,
+                            savingsGoalModels = goals,
                             totalSavings = totalSavings
                         )
                     }

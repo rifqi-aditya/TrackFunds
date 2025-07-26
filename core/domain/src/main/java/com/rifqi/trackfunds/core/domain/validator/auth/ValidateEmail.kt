@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.validator.auth
 
 import android.util.Patterns
-import com.rifqi.trackfunds.core.domain.model.ValidationResult
+import com.rifqi.trackfunds.core.domain.validator.ValidationResult
 import javax.inject.Inject
 
 /**

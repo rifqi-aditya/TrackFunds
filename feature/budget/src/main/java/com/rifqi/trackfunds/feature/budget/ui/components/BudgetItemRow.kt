@@ -21,13 +21,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 
 @Composable
 fun BudgetItemRow(
-    item: BudgetItem,
+    item: BudgetModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

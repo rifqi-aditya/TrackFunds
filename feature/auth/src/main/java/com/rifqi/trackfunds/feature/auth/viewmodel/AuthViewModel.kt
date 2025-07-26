@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.feature.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.ValidationResult
+import com.rifqi.trackfunds.core.domain.validator.ValidationResult
 import com.rifqi.trackfunds.core.domain.usecase.auth.LoginUserUseCase
 import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCase
 import com.rifqi.trackfunds.core.domain.validator.auth.ValidateConfirmPassword

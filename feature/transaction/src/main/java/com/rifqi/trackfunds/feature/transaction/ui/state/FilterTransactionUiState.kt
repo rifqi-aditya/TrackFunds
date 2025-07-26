@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.transaction.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import java.time.LocalDate
 
@@ -10,8 +10,8 @@ import java.time.LocalDate
  */
 data class FilterTransactionUiState(
     val isLoading: Boolean = true,
-    val allCategories: List<CategoryItem> = emptyList(),
-    val allAccounts: List<AccountItem> = emptyList(),
+    val allCategories: List<CategoryModel> = emptyList(),
+    val allAccounts: List<AccountModel> = emptyList(),
 
     // Menyimpan pilihan filter sementara saat pengguna memilih
     val selectedCategoryIds: Set<String> = emptySet(),

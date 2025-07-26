@@ -1,10 +1,10 @@
 package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 
-fun SavingsGoalEntity.toDomain(): SavingsGoalItem {
-    return SavingsGoalItem(
+fun SavingsGoalEntity.toDomain(): SavingsGoalModel {
+    return SavingsGoalModel(
         id = this.id,
         name = this.name,
         targetAmount = this.targetAmount,
@@ -15,7 +15,7 @@ fun SavingsGoalEntity.toDomain(): SavingsGoalItem {
     )
 }
 
-fun SavingsGoalItem.toEntity(userUid: String): SavingsGoalEntity {
+fun SavingsGoalModel.toEntity(userUid: String): SavingsGoalEntity {
     return SavingsGoalEntity(
         id = this.id,
         userUid = userUid,

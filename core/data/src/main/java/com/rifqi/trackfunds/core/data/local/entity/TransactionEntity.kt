@@ -38,11 +38,7 @@ import java.time.LocalDateTime
         )
     ],
     indices = [
-        Index(value = ["user_uid"]),
-        Index(value = ["category_id"]),
-        Index(value = ["account_id"]),
-        Index(value = ["transfer_pair_id"]),
-        Index(value = ["savings_goal_id"])
+        Index(value = ["user_uid", "category_id", "account_id", "transfer_pair_id", "savings_goal_id"])
     ]
 )
 data class TransactionEntity(
@@ -57,6 +53,12 @@ data class TransactionEntity(
     val type: TransactionType,
     val date: LocalDateTime,
 
+    @ColumnInfo(name = "payment_method")
+    val paymentMethod: String? = null,
+
+    @ColumnInfo(name = "receipt_image_url")
+    val receiptImageUrl: String? = null,
+
     @ColumnInfo(name = "category_id")
     val categoryId: String?,
 
@@ -67,5 +69,5 @@ data class TransactionEntity(
     val transferPairId: String? = null,
 
     @ColumnInfo(name = "savings_goal_id")
-    val savingsGoalId: String? = null
+    val savingsGoalId: String? = null,
 )

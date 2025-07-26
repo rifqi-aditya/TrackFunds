@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -33,7 +33,7 @@ import java.math.BigDecimal
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountCard(
-    account: AccountItem,
+    account: AccountModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,7 +87,7 @@ fun AccountCard(
 @Preview(showBackground = true)
 @Composable
 private fun AccountCardPreview() {
-    val dummyAccount = AccountItem(
+    val dummyAccount = AccountModel(
         id = "1",
         name = "Rekening Utama",
         balance = BigDecimal("12500000"),

@@ -6,7 +6,7 @@ import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-data class TransactionDetailDto(
+data class TransactionDto(
     @Embedded
     val transaction: TransactionEntity,
 

@@ -8,7 +8,11 @@ import javax.inject.Inject
 class ScanReceiptUseCaseImpl @Inject constructor(
     private val repository: ScanRepository
 ) : ScanReceiptUseCase {
-    override suspend operator fun invoke(imageUri: Uri): ScanResult {
-        return repository.scanReceipt(imageUri)
+    override suspend operator fun invoke(imageUri: Uri): Result<ScanResult> {
+        val ocrResult = repository.extractTextFromImage(imageUri)
+
+        return ocrResult.map { ocrText ->
+            repository.analyzeReceiptText(ocrText).getOrThrow()
+        }
     }
 }

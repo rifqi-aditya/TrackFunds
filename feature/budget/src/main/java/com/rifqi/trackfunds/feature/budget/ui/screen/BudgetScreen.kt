@@ -34,8 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
@@ -259,13 +259,13 @@ fun BudgetListContent(
 // --- DUMMY DATA UNTUK KEPERLUAN PREVIEW ---
 
 private val previewCategoriesForFilter = listOf(
-    CategoryItem("c1", "Food & Drink", "restaurant", TransactionType.EXPENSE),
-    CategoryItem("c2", "Transportation", "commute", TransactionType.EXPENSE),
-    CategoryItem("c3", "Shopping", "shopping_bag", TransactionType.EXPENSE)
+    CategoryModel("c1", "Food & Drink", "restaurant", TransactionType.EXPENSE),
+    CategoryModel("c2", "Transportation", "commute", TransactionType.EXPENSE),
+    CategoryModel("c3", "Shopping", "shopping_bag", TransactionType.EXPENSE)
 )
 
-private val previewBudgetItems = listOf(
-    BudgetItem(
+private val previewBudgetModels = listOf(
+    BudgetModel(
         "1",
         "c1",
         "Food & Drink",
@@ -274,7 +274,7 @@ private val previewBudgetItems = listOf(
         BigDecimal("750000"),
         YearMonth.now()
     ),
-    BudgetItem(
+    BudgetModel(
         "2",
         "c2",
         "Transportation",
@@ -283,7 +283,7 @@ private val previewBudgetItems = listOf(
         BigDecimal("450000"),
         YearMonth.now()
     ),
-    BudgetItem(
+    BudgetModel(
         "3",
         "c3",
         "Shopping",
@@ -296,7 +296,7 @@ private val previewBudgetItems = listOf(
 
 private val previewUiStateLoaded = BudgetUiState(
     isLoading = false,
-    budgets = previewBudgetItems,
+    budgets = previewBudgetModels,
     categoriesWithBudget = previewCategoriesForFilter,
     totalBudgeted = BigDecimal("2600000"),
     totalSpent = BigDecimal("1700000"),

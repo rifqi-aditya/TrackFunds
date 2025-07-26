@@ -16,6 +16,7 @@ import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
 import com.rifqi.trackfunds.core.data.local.entity.BudgetEntity
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
+import com.rifqi.trackfunds.core.data.local.entity.LineItemEntity
 import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
@@ -32,6 +33,7 @@ import java.util.UUID
         AccountEntity::class,
         SavingsGoalEntity::class,
         TransactionEntity::class,
+        LineItemEntity::class,
         BudgetEntity::class,
     ],
     version = 1,

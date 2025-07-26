@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
@@ -15,7 +15,7 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
     private val transactionRunner: AppTransactionRunner
 ) : DeleteTransactionUseCase {
 
-    override suspend operator fun invoke(transaction: TransactionItem): Result<Unit> {
+    override suspend operator fun invoke(transaction: TransactionModel): Result<Unit> {
         return try {
             // Bungkus semua operasi dalam satu transaksi atomik
             transactionRunner {
@@ -34,7 +34,7 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
                     .getOrThrow()
 
                 // 4. Update tujuan tabungan jika ada
-                transaction.savingsGoalItem?.let {
+                transaction.savingsGoalModel?.let {
                     if (transaction.type == TransactionType.EXPENSE) {
                         savingsRepository.addFundsToGoal(it.id, transaction.amount.negate())
                             .getOrThrow()

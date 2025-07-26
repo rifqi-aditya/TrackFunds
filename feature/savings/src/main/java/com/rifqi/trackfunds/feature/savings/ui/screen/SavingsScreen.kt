@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -88,7 +88,7 @@ fun SavingsContent(
             }
 
             // Panggil SavingsGoalRow untuk setiap item
-            items(uiState.savingsGoalItems, key = { it.id }) { goal ->
+            items(uiState.savingsGoalModels, key = { it.id }) { goal ->
                 SavingsGoalRow(
                     goal = goal,
                     onClick = { onEvent(SavingsEvent.GoalClicked(goal.id)) }
@@ -99,8 +99,8 @@ fun SavingsContent(
 }
 
 // --- DUMMY DATA UNTUK PREVIEW ---
-private val previewSavingsGoalItems = listOf(
-    SavingsGoalItem(
+private val previewSavingsGoalModels = listOf(
+    SavingsGoalModel(
         id = "1",
         name = "Liburan ke Jepang",
         targetAmount = BigDecimal("20000000"),
@@ -109,7 +109,7 @@ private val previewSavingsGoalItems = listOf(
         iconIdentifier = "travel",
         isAchieved = false
     ),
-    SavingsGoalItem(
+    SavingsGoalModel(
         id = "2",
         name = "Dana Darurat",
         targetAmount = BigDecimal("10000000"),
@@ -118,7 +118,7 @@ private val previewSavingsGoalItems = listOf(
         iconIdentifier = "insurance",
         isAchieved = false
     ),
-    SavingsGoalItem(
+    SavingsGoalModel(
         id = "3",
         name = "DP Rumah",
         targetAmount = BigDecimal("150000000"),
@@ -144,7 +144,7 @@ private fun SavingsContentLoadedPreview() {
             uiState = SavingsUiState(
                 isLoading = false,
                 totalSavings = BigDecimal("182000000"),
-                savingsGoalItems = previewSavingsGoalItems
+                savingsGoalModels = previewSavingsGoalModels
             ),
             onEvent = {},
             onNavigateBack = {}
@@ -160,7 +160,7 @@ private fun SavingsContentEmptyPreview() {
             uiState = SavingsUiState(
                 isLoading = false,
                 totalSavings = BigDecimal.ZERO,
-                savingsGoalItems = emptyList() // Daftar kosong
+                savingsGoalModels = emptyList() // Daftar kosong
             ),
             onEvent = {},
             onNavigateBack = {}

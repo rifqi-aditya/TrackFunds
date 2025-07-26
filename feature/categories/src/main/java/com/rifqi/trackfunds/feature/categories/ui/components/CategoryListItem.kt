@@ -15,13 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 
 @Composable
 fun CategoryListItem(
-    category: CategoryItem,
+    category: CategoryModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

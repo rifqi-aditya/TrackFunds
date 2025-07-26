@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.domain.model
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-data class SavingsGoalItem(
+data class SavingsGoalModel(
     val id: String,
     val name: String,
     val targetAmount: BigDecimal,

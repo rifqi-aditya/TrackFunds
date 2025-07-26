@@ -1,22 +1,20 @@
 package com.rifqi.trackfunds.core.data.mapper
 
-import com.rifqi.trackfunds.core.data.local.dto.CategoryTransactionSummaryDto
-import com.rifqi.trackfunds.core.data.local.dto.TransactionDetailDto
+import com.rifqi.trackfunds.core.data.local.dto.TransactionDto
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.CategorySummaryItem
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import java.math.BigDecimal
 
 /**
- * Maps a [TransactionDetailDto] (a flat object from the database query)
- * to a nested [TransactionItem] domain model.
+ * Maps a [TransactionDto] (a flat object from the database query)
+ * to a nested [TransactionModel] domain model.
  * It safely handles cases where a transaction might not have a category or a savings goal.
  */
-fun TransactionDetailDto.toDomain(): TransactionItem {
-    return TransactionItem(
+fun TransactionDto.toDomain(): TransactionModel {
+    return TransactionModel(
         id = this.transaction.id,
         description = this.transaction.description,
         amount = this.transaction.amount,
@@ -25,7 +23,7 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
         transferPairId = this.transaction.transferPairId,
 
         category = this.category?.let { categoryInfo ->
-            CategoryItem(
+            CategoryModel(
                 id = this.transaction.categoryId ?: "",
                 name = categoryInfo.name ?: "",
                 iconIdentifier = categoryInfo.categoryIconIdentifier ?: "",
@@ -33,8 +31,8 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
             )
         },
 
-        savingsGoalItem = this.savingsGoal?.let { savingsInfo ->
-            SavingsGoalItem(
+        savingsGoalModel = this.savingsGoal?.let { savingsInfo ->
+            SavingsGoalModel(
                 id = this.transaction.savingsGoalId ?: "",
                 name = savingsInfo.name ?: "",
                 iconIdentifier = savingsInfo.iconIdentifier ?: "",
@@ -45,7 +43,7 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
             )
         },
 
-        account = AccountItem(
+        account = AccountModel(
             id = this.transaction.accountId,
             name = this.account.name,
             iconIdentifier = this.account.accountIconIdentifier,
@@ -58,7 +56,7 @@ fun TransactionDetailDto.toDomain(): TransactionItem {
  * Maps a TransactionItem (domain model) to a TransactionEntity (Room entity).
  * Required when saving or updating a transaction.
  */
-fun TransactionItem.toEntity(userUid: String): TransactionEntity {
+fun TransactionModel.toEntity(userUid: String): TransactionEntity {
     return TransactionEntity(
         id = this.id,
         userUid = userUid,
@@ -68,18 +66,7 @@ fun TransactionItem.toEntity(userUid: String): TransactionEntity {
         date = this.date,
         categoryId = this.category?.id,
         accountId = this.account.id,
-        savingsGoalId = this.savingsGoalItem?.id,
+        savingsGoalId = this.savingsGoalModel?.id,
         transferPairId = this.transferPairId
-    )
-}
-
-
-fun CategoryTransactionSummaryDto.toDomain(): CategorySummaryItem {
-    return CategorySummaryItem(
-        categoryId = this.categoryId,
-        categoryName = this.categoryName,
-        categoryIconIdentifier = this.categoryIconIdentifier,
-        transactionType = this.transactionType,
-        totalAmount = this.totalAmount,
     )
 }

@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.budget.ui.preview
 
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
 import java.time.YearMonth
@@ -12,7 +12,7 @@ class AddEditBudgetUiStatePreviewParameterProvider : CollectionPreviewParameterP
         AddEditBudgetUiState(
             period = YearMonth.now(),
             amount = "1000000",
-            selectedCategory = CategoryItem(
+            selectedCategory = CategoryModel(
                 id = "1",
                 name = "Makanan & Minuman",
                 iconIdentifier = "ic_food", // Ganti dengan nama resource ikon yang valid
@@ -28,7 +28,7 @@ class AddEditBudgetUiStatePreviewParameterProvider : CollectionPreviewParameterP
         AddEditBudgetUiState(
             period = YearMonth.now().minusMonths(1),
             amount = "750000",
-            selectedCategory = CategoryItem(
+            selectedCategory = CategoryModel(
                 id = "2",
                 name = "Transportasi",
                 iconIdentifier = "ic_transportation", // Ganti dengan nama resource ikon yang valid
@@ -44,7 +44,7 @@ class AddEditBudgetUiStatePreviewParameterProvider : CollectionPreviewParameterP
         AddEditBudgetUiState(
             period = YearMonth.now(),
             amount = "500000",
-            selectedCategory = CategoryItem(
+            selectedCategory = CategoryModel(
                 id = "3",
                 name = "Belanja",
                 iconIdentifier = "ic_shopping", // Ganti dengan nama resource ikon yang valid

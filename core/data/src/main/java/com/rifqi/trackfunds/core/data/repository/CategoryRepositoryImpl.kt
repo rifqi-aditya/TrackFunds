@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.data.repository
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
@@ -23,7 +23,7 @@ class CategoryRepositoryImpl @Inject constructor(
 ) : CategoryRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getFilteredCategories(filter: CategoryFilter): Flow<List<CategoryItem>> {
+    override fun getFilteredCategories(filter: CategoryFilter): Flow<List<CategoryModel>> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) return@flatMapLatest flowOf(emptyList())
 
@@ -38,7 +38,7 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategoryById(categoryId: String): Result<CategoryItem> {
+    override suspend fun getCategoryById(categoryId: String): Result<CategoryModel> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
@@ -52,17 +52,17 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategoriesByIds(ids: List<String>): List<CategoryItem> {
+    override suspend fun getCategoriesByIds(ids: List<String>): List<CategoryModel> {
         val userUid = userPreferencesRepository.userUidFlow.first() ?: return emptyList()
         return categoryDao.getCategoriesByIds(ids, userUid).map { it.toDomain() }
     }
 
-    override suspend fun getCategoryByStandardKey(key: String): CategoryItem? {
+    override suspend fun getCategoryByStandardKey(key: String): CategoryModel? {
         // Fungsi ini tidak butuh userUid karena hanya mencari kategori default
         return categoryDao.getCategoryByStandardKey(key)?.toDomain()
     }
 
-    override suspend fun insertCategory(category: CategoryItem): Result<Unit> {
+    override suspend fun insertCategory(category: CategoryModel): Result<Unit> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
@@ -73,7 +73,7 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateCategory(category: CategoryItem): Result<Unit> {
+    override suspend fun updateCategory(category: CategoryModel): Result<Unit> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))

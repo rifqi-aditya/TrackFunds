@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 import com.rifqi.trackfunds.core.ui.components.DynamicProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -35,7 +35,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun SavingsGoalRow(
-    goal: SavingsGoalItem,
+    goal: SavingsGoalModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -114,7 +114,7 @@ fun SavingsGoalRow(
     }
 }
 
-private val previewGoalInProgress = SavingsGoalItem(
+private val previewGoalInProgress = SavingsGoalModel(
     id = "1",
     name = "Liburan ke Jepang",
     targetAmount = BigDecimal("20000000"),
@@ -124,7 +124,7 @@ private val previewGoalInProgress = SavingsGoalItem(
     isAchieved = false
 )
 
-private val previewGoalAchieved = SavingsGoalItem(
+private val previewGoalAchieved = SavingsGoalModel(
     id = "2",
     name = "DP Rumah",
     targetAmount = BigDecimal("150000000"),

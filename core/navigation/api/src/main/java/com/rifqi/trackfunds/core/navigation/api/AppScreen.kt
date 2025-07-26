@@ -155,7 +155,7 @@ sealed interface SavingsRoutes : AppScreen {
 @Serializable
 sealed interface ScanRoutes : AppScreen {
     @Serializable
-    data object ScanOption : ScanRoutes
+    data object ScanReceipt : ScanRoutes
 
     @Serializable
     data object CameraScan : ScanRoutes

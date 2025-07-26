@@ -6,7 +6,7 @@ enum class TransactionType {
     EXPENSE, INCOME, SAVINGS
 }
 
-data class CategoryItem(
+data class CategoryModel(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
     val iconIdentifier: String,

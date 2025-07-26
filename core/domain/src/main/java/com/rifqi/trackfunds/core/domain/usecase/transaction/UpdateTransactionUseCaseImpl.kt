@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
@@ -15,7 +15,7 @@ class UpdateTransactionUseCaseImpl @Inject constructor(
 ) : UpdateTransactionUseCase {
 
     override suspend operator fun invoke(
-        transaction: TransactionItem,
+        transaction: TransactionModel,
         oldAmount: BigDecimal,
         oldAccountId: String
     ): Result<Unit> {

@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.repository
 
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
 import kotlinx.coroutines.flow.Flow
 import java.time.YearMonth
 
@@ -10,19 +10,19 @@ import java.time.YearMonth
  */
 interface BudgetRepository {
     /** Fetches all budgets for a specific period for the currently logged-in user. */
-    fun getBudgetsForPeriod(period: YearMonth): Flow<List<BudgetItem>>
+    fun getBudgetsForPeriod(period: YearMonth): Flow<List<BudgetModel>>
 
     /** Fetches the top N budgets for a specific period for the currently logged-in user. */
-    fun getTopBudgets(period: YearMonth, limit: Int): Flow<List<BudgetItem>>
+    fun getTopBudgets(period: YearMonth, limit: Int): Flow<List<BudgetModel>>
 
     /** Fetches a single budget by its ID for the currently logged-in user. */
-    suspend fun getBudgetById(budgetId: String): Result<BudgetItem>
+    suspend fun getBudgetById(budgetId: String): Result<BudgetModel>
 
     /** Adds a new budget for the currently logged-in user. */
-    suspend fun addBudget(budgetItem: BudgetItem): Result<Unit>
+    suspend fun addBudget(budgetModel: BudgetModel): Result<Unit>
 
     /** Updates an existing budget for the currently logged-in user. */
-    suspend fun updateBudget(budget: BudgetItem): Result<Unit>
+    suspend fun updateBudget(budget: BudgetModel): Result<Unit>
 
     /** Deletes a budget by its ID for the currently logged-in user. */
     suspend fun deleteBudget(budgetId: String): Result<Unit>

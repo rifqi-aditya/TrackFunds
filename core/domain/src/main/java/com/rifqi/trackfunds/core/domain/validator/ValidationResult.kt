@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.core.domain.model
+package com.rifqi.trackfunds.core.domain.validator
 
 /**
  * Represents the outcome of a validation attempt.

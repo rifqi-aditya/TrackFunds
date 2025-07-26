@@ -10,8 +10,10 @@ import androidx.room.Update
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rifqi.trackfunds.core.data.local.dto.CashFlowDto
 import com.rifqi.trackfunds.core.data.local.dto.CategorySpendingDto
-import com.rifqi.trackfunds.core.data.local.dto.TransactionDetailDto
+import com.rifqi.trackfunds.core.data.local.dto.TransactionDto
+import com.rifqi.trackfunds.core.data.local.entity.LineItemEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
+import com.rifqi.trackfunds.core.data.model.TransactionWithLineItems
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
@@ -73,7 +75,7 @@ interface TransactionDao {
     fun getTransactionWithDetailsById(
         transactionId: String,
         userUid: String
-    ): Flow<TransactionDetailDto?>
+    ): Flow<TransactionDto?>
 
     /**
      * The main query function that retrieves a list of transactions based on dynamic filters.
@@ -81,7 +83,7 @@ interface TransactionDao {
      */
     @Transaction
     @RawQuery(observedEntities = [TransactionEntity::class])
-    fun getFilteredTransactionDetailsRaw(query: SimpleSQLiteQuery): Flow<List<TransactionDetailDto>>
+    fun getFilteredTransactionDetailsRaw(query: SimpleSQLiteQuery): Flow<List<TransactionDto>>
 
     // =================================================================
     // AGGREGATION / REPORTING OPERATIONS
@@ -151,4 +153,23 @@ interface TransactionDao {
      */
     @Query("DELETE FROM transactions WHERE id = :transactionId AND user_uid = :userUid")
     suspend fun deleteTransactionById(transactionId: String, userUid: String)
+
+
+    /**
+     * Inserts a list of line items for a transaction.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLineItems(lineItems: List<LineItemEntity>)
+
+    /**
+     * Fetches a single transaction along with all of its associated line items.
+     * The @Transaction annotation ensures that this is performed atomically.
+     */
+    @Transaction
+    @Query("SELECT * FROM transactions WHERE id = :transactionId AND user_uid = :userUid")
+    fun getTransactionWithLineItems(
+        transactionId: String,
+        userUid: String
+    ): Flow<TransactionWithLineItems?>
+
 }

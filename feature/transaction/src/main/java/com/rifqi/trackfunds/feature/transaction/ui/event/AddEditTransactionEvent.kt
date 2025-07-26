@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.feature.transaction.ui.event
 
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import java.time.LocalDate
 
@@ -23,9 +23,9 @@ sealed interface AddEditTransactionEvent {
     data object DateSelectorClicked : AddEditTransactionEvent
 
     // Events for handling selection results
-    data class AccountSelected(val account: AccountItem) : AddEditTransactionEvent
-    data class CategorySelected(val category: CategoryItem) : AddEditTransactionEvent
-    data class SavingsGoalSelected(val goal: SavingsGoalItem) : AddEditTransactionEvent
+    data class AccountSelected(val account: AccountModel) : AddEditTransactionEvent
+    data class CategorySelected(val category: CategoryModel) : AddEditTransactionEvent
+    data class SavingsGoalSelected(val goal: SavingsGoalModel) : AddEditTransactionEvent
 
     // Events for dismissing selection UI
     data object DismissSheet : AddEditTransactionEvent

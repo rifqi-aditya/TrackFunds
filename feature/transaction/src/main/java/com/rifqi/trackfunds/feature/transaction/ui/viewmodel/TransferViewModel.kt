@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
@@ -40,7 +40,7 @@ class TransferViewModel @Inject constructor(
 
     private fun observeNavigationResult() {
         resultManager.result.onEach { result ->
-            if (result is AccountItem) {
+            if (result is AccountModel) {
                 when (_uiState.value.accountSelectionMode) {
                     AccountSelectionMode.FROM -> {
                         onEvent(TransferEvent.FromAccountSelected(result))
@@ -121,7 +121,7 @@ class TransferViewModel @Inject constructor(
             val date = state.date.atTime(LocalTime.now())
             val amount = BigDecimal(state.amount)
 
-            val expense = TransactionItem(
+            val expense = TransactionModel(
                 description = "Transfer to ${state.toAccount.name}${if (state.description.isNotBlank()) ": ${state.description}" else ""}",
                 amount = amount,
                 type = TransactionType.EXPENSE,
@@ -129,7 +129,7 @@ class TransferViewModel @Inject constructor(
                 account = state.fromAccount,
                 transferPairId = transferId
             )
-            val income = TransactionItem(
+            val income = TransactionModel(
                 description = "Transfer from ${state.fromAccount.name}${if (state.description.isNotBlank()) ": ${state.description}" else ""}",
                 amount = amount,
                 type = TransactionType.INCOME,

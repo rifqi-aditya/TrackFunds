@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
 import com.rifqi.trackfunds.core.ui.components.GradientHorizontalProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -39,7 +39,7 @@ import java.time.YearMonth
 
 @Composable
 fun BudgetCardItem(
-    item: BudgetItem,
+    item: BudgetModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -141,7 +141,7 @@ private fun RowScope.AmountDisplay(
 }
 
 // --- DUMMY DATA UNTUK PREVIEW ---
-private val previewBudgetNormal = BudgetItem(
+private val previewBudgetNormal = BudgetModel(
     budgetId = "1", categoryId = "c1", categoryName = "Food & Drink",
     categoryIconIdentifier = "restaurant",
     budgetAmount = BigDecimal("1000000"),
@@ -149,7 +149,7 @@ private val previewBudgetNormal = BudgetItem(
     period = YearMonth.now()
 )
 
-private val previewBudgetOverspent = BudgetItem(
+private val previewBudgetOverspent = BudgetModel(
     budgetId = "2", categoryId = "c2", categoryName = "Transportation",
     categoryIconIdentifier = "commute",
     budgetAmount = BigDecimal("400000"),

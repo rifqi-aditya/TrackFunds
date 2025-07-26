@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.feature.categories.ui.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.usecase.category.AddCategoryUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryUseCase
@@ -99,7 +99,7 @@ class AddEditCategoryViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             val currentState = _uiState.value
 
-            val categoryToSave = CategoryItem(
+            val categoryToSave = CategoryModel(
                 id = categoryId ?: UUID.randomUUID().toString(),
                 name = currentState.name,
                 iconIdentifier = currentState.iconIdentifier,

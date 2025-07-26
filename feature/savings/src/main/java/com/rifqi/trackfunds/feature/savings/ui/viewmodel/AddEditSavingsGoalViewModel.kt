@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.feature.savings.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalItem
+import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
 import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.validator.savings.ValidateIcon
 import com.rifqi.trackfunds.core.domain.validator.savings.ValidateSavingsGoalName
@@ -108,7 +108,7 @@ class AddEditSavingsGoalViewModel @Inject constructor(
             val currentState = _uiState.value
             val targetAmount = currentState.targetAmount.toBigDecimalOrNull() ?: BigDecimal.ZERO
 
-            val newGoal = SavingsGoalItem(
+            val newGoal = SavingsGoalModel(
                 id = UUID.randomUUID()
                     .toString(),
                 name = currentState.goalName,

@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import java.math.BigDecimal
 import java.time.YearMonth
 
@@ -21,7 +21,7 @@ import java.time.YearMonth
  */
 data class AddEditBudgetUiState(
     val isLoading: Boolean = false,
-    val selectedCategory: CategoryItem? = null,
+    val selectedCategory: CategoryModel? = null,
     val amount: String = "",
     val period: YearMonth,
     val isBudgetSaved: Boolean = false,

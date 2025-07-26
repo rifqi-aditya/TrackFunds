@@ -3,7 +3,6 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
@@ -57,7 +56,6 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        compose = true
         buildConfig = true
     }
 }
@@ -77,27 +75,29 @@ dependencies {
 
     // Network (Retrofit & OkHttp)
     implementation(libs.retrofit.core)
-    implementation(libs.retrofit.converter.kotlinx.serialization) // Untuk parsing JSON
-    implementation(libs.okhttp.logging.interceptor) // Untuk debugging network call di Logcat
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.okhttp.logging.interceptor)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.runtime)
 
     // Android Utilities
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.serialization.json)
 
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
-    implementation("com.google.firebase:firebase-appcheck-playintegrity")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage")
+    implementation(libs.firebase.auth)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+
+    implementation(libs.generativeai)
+
+    // Google ML Kit Text Recognition
+    implementation(libs.text.recognition)
 
     // Testing
     testImplementation(libs.junit)

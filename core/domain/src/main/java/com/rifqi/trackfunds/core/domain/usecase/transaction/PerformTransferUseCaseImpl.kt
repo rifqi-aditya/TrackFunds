@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
@@ -12,7 +12,7 @@ class PerformTransferUseCaseImpl @Inject constructor(
     private val transactionRunner: AppTransactionRunner // Inject Transaction Runner
 ) : PerformTransferUseCase {
 
-    override suspend operator fun invoke(expense: TransactionItem, income: TransactionItem): Result<Unit> {
+    override suspend operator fun invoke(expense: TransactionModel, income: TransactionModel): Result<Unit> {
         // Gunakan try-catch untuk menangani semua kemungkinan error
         return try {
             // Bungkus semua operasi dalam satu transaksi atomik

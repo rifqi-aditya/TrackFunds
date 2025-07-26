@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
@@ -15,9 +15,8 @@ class AddTransactionUseCaseImpl @Inject constructor(
     private val transactionRunner: AppTransactionRunner
 ) : AddTransactionUseCase {
 
-    override suspend operator fun invoke(transaction: TransactionItem): Result<Unit> {
+    override suspend operator fun invoke(transaction: TransactionModel): Result<Unit> {
         return try {
-            // Bungkus semua operasi di dalam transactionRunner
             transactionRunner {
                 // 1. Dapatkan akun yang bersangkutan
                 val account = accountRepository.getAccountById(transaction.account.id).getOrThrow()
@@ -31,9 +30,15 @@ class AddTransactionUseCaseImpl @Inject constructor(
 
                 // 3. Lakukan semua operasi database
                 transactionRepository.insertTransaction(transaction)
+                if (transaction.receiptItemModels.isNotEmpty()) {
+                    transactionRepository.insertLineItems(
+                        transaction.receiptItemModels,
+                        transaction.id
+                    )
+                }
                 accountRepository.updateAccount(account.copy(balance = newBalance))
 
-                transaction.savingsGoalItem?.let {
+                transaction.savingsGoalModel?.let {
                     if (transaction.type == TransactionType.EXPENSE) {
                         savingsRepository.addFundsToGoal(it.id, transaction.amount)
                     }

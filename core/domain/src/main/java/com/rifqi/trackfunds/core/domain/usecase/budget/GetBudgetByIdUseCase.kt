@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.budget
 
-import com.rifqi.trackfunds.core.domain.model.BudgetItem
+import com.rifqi.trackfunds.core.domain.model.BudgetModel
 
 /**
  * Gets a single budget by its ID for the current user.
@@ -8,7 +8,7 @@ import com.rifqi.trackfunds.core.domain.model.BudgetItem
 interface GetBudgetByIdUseCase {
     /**
      * @param budgetId The ID of the budget to fetch.
-     * @return A [Result] containing the [BudgetItem] on success or an error on failure.
+     * @return A [Result] containing the [BudgetModel] on success or an error on failure.
      */
-    suspend operator fun invoke(budgetId: String): Result<BudgetItem>
+    suspend operator fun invoke(budgetId: String): Result<BudgetModel>
 }

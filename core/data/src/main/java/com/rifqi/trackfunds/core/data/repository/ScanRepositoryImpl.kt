@@ -2,110 +2,165 @@ package com.rifqi.trackfunds.core.data.repository
 
 import android.content.Context
 import android.net.Uri
-import android.util.Base64
+import com.google.ai.client.generativeai.GenerativeModel
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
-import com.rifqi.trackfunds.core.data.mapper.toDomain
-import com.rifqi.trackfunds.core.data.remote.api.GeminiApiService
-import com.rifqi.trackfunds.core.data.remote.dto.Content
-import com.rifqi.trackfunds.core.data.remote.dto.GeminiRequestDto
-import com.rifqi.trackfunds.core.data.remote.dto.GenerationConfig
-import com.rifqi.trackfunds.core.data.remote.dto.InlineData
-import com.rifqi.trackfunds.core.data.remote.dto.Part
-import com.rifqi.trackfunds.core.data.remote.dto.ScanResponseDto
+import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
 import com.rifqi.trackfunds.core.domain.model.ScanResult
 import com.rifqi.trackfunds.core.domain.repository.ScanRepository
+import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import javax.inject.Singleton
 
+
+@Serializable
+private data class GeminiResponseDto(
+    @SerialName("merchant_name")
+    val merchantName: String? = null,
+
+    @SerialName("total_amount")
+    val totalAmount: Double? = null, // Menggunakan Double atau Long/Int
+
+    @SerialName("transaction_date")
+    val transactionDate: String? = null, // Format YYYY-MM-DD
+
+    @SerialName("transaction_time")
+    val transactionTime: String? = null, // Format HH:mm:ss
+
+    @SerialName("category_key")
+    val category: String? = null, // Ini akan berisi "standardKey"
+
+    @SerialName("line_items")
+    val items: List<ReceiptItemDto> = emptyList()
+)
+
+@Serializable
+private data class ReceiptItemDto(
+    val name: String,
+    val quantity: Int = 1,
+    val price: Double
+) {
+    fun toDomain(): ReceiptItemModel {
+        return ReceiptItemModel(
+            name = name,
+            quantity = quantity,
+            price = BigDecimal(price.toString())
+        )
+    }
+}
+
+@Singleton
 class ScanRepositoryImpl @Inject constructor(
-    private val geminiApiService: GeminiApiService,
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val generativeModel: GenerativeModel,
     private val categoryDao: CategoryDao,
     @ApplicationContext private val context: Context
 ) : ScanRepository {
 
-    override suspend fun scanReceipt(imageUri: Uri): ScanResult {
-        val imageBase64 = imageUri.toBase64(context)
-            ?: throw Exception("Gagal mengonversi gambar ke Base64.")
-
-        val categories = categoryDao.getFilteredCategories(
-            type = null,
-            userUid = "",
-            isUnbudgeted = null,
-            budgetPeriod = null
-        ).first()
-
-        val prompt = createGeminiPrompt(categories)
-
-        val request = GeminiRequestDto(
-            contents = listOf(
-                Content(
-                    parts = listOf(
-                        Part(text = prompt),
-                        Part(inlineData = InlineData(mimeType = "image/jpeg", data = imageBase64))
-                    )
-                )
-            ),
-            generationConfig = GenerationConfig(responseMimeType = "application/json")
-        )
-
-        val geminiResponse = geminiApiService.generateContent(
-            apiKey = "AIzaSyD1ANUOVPW7eTch2Lj_-x_FgN1KShJiHhc",
-            request = request
-        )
-
-        val jsonText = geminiResponse.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-            ?: throw Exception("Respons dari Gemini kosong atau tidak valid.")
-
-        val scanResponseDto = Json.decodeFromString<ScanResponseDto>(jsonText)
-
-        return scanResponseDto.toDomain()
+    override suspend fun extractTextFromImage(imageUri: Uri): Result<String> {
+        return try {
+            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            val image = InputImage.fromFilePath(context, imageUri)
+            val visionText = recognizer.process(image).await()
+            if (visionText.text.isBlank()) {
+                Result.failure(Exception("No text could be read from the image."))
+            } else {
+                Result.success(visionText.text)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
-}
 
-private fun Uri.toBase64(context: Context): String? {
-    return context.contentResolver.openInputStream(this)?.use {
-        Base64.encodeToString(it.readBytes(), Base64.NO_WRAP)
+    override suspend fun analyzeReceiptText(ocrText: String): Result<ScanResult> {
+        return try {
+            val userUid = userPreferencesRepository.userUidFlow.first()
+                ?: return Result.failure(Exception("User not logged in."))
+
+            val categories = categoryDao.getFilteredCategories(
+                userUid = userUid,
+                type = null,
+                isUnbudgeted = null,
+                budgetPeriod = null
+            ).first()
+
+            val prompt = createGeminiPrompt(ocrText, categories)
+            val response = generativeModel.generateContent(prompt)
+            val responseText = response.text
+                ?: return Result.failure(Exception("Gemini returned an empty response."))
+
+            val scanResult = parseAndMapResponse(responseText)
+
+            println(scanResult)
+
+            Result.success(scanResult)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
-}
 
-private fun createGeminiPrompt(categories: List<CategoryEntity>): String {
-    val categoryListString = categories.joinToString("\n") { "- ${it.standardKey}: ${it.name}" }
+    /**
+     * Membuat prompt yang akan dikirim ke Gemini.
+     */
+    private fun createGeminiPrompt(ocrText: String, categories: List<CategoryEntity>): String {
+        val categoryListString = categories.joinToString("\n") { "- ${it.standardKey}: ${it.name}" }
+        val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
-    val promptTemplate = """
-        Anda adalah asisten keuangan ahli dengan tugas menganalisis struk dari sebuah gambar untuk aplikasi pencatatan keuangan.
+        return """
+            You are an expert financial assistant analyzing OCR text from a receipt.
+            Your task is to extract information, standardize it, determine the most suitable category from the provided list, and return the output ONLY in a valid JSON object format.
 
-        Tugas Anda:
-        Ekstrak informasi dari gambar, lakukan standardisasi, tentukan kategori yang paling sesuai dari daftar yang saya berikan, dan kembalikan output HANYA dalam format objek JSON yang valid.
+            RULES:
+            1.  Extract: `merchant_name`, `transaction_date`, `transaction_time`, `total_amount`, and `line_items`.
+            2.  `line_items` must be an array of objects, each with `name` (String), `quantity` (Number, default to 1), and `price` (Number). Use an empty array `[]` if no items are detected.
+            3.  Standardize `transaction_date` to YYYY-MM-DD (use $currentDate if missing) and `transaction_time` to HH:MM:SS (use null if missing). Standardize amounts to integers.
+            4.  Analyze the text and select ONE `key` from the category list below that is most relevant. Put it in the `category_key` field. If nothing matches, use `miscellaneous`.
+            5.  Output ONLY the JSON object.
 
-        IKUTI ATURAN INI DENGAN KETAT:
+            ---
+            AVAILABLE CATEGORIES:
+            $categoryListString
+            ---
+            OCR TEXT TO ANALYZE:
+            $ocrText
+            ---
+        """.trimIndent()
+    }
 
-        1.  **Ekstrak Informasi:**
-            * `merchant_name`: Nama toko atau penjual. Jika tidak ada, gunakan `null`.
-            * `transaction_date`: Tanggal transaksi.
-            * `transaction_time`: Waktu transaksi.
-            * `total_amount`: Jumlah total pembayaran.
+    /**
+     * Mem-parsing JSON dari Gemini dan memetakannya ke model domain ScanResult.
+     */
+    private fun parseAndMapResponse(jsonString: String): ScanResult {
+        val cleanedJson = jsonString.removePrefix("```json").removeSuffix("```").trim()
+        val json = Json { ignoreUnknownKeys = true }
+        val dto = json.decodeFromString<GeminiResponseDto>(cleanedJson)
 
-        2.  **Standardisasi:**
-            * Untuk `transaction_date`, ubah ke format **YYYY-MM-DD**. Jika tidak ada, gunakan tanggal hari ini: [TANGGAL HARI INI].
-            * Untuk `transaction_time`, ubah ke format **HH:MM:SS**. Jika tidak ada, gunakan `null`.
-            * Untuk `total_amount`, ubah menjadi **angka (integer)** tanpa titik, koma, atau simbol mata uang. Jika tidak ada, gunakan `0`.
+        // 1. Gabungkan tanggal dan waktu menjadi LocalDateTime
+        val date = dto.transactionDate?.let { LocalDate.parse(it) } ?: LocalDate.now()
+        val time = dto.transactionTime?.let { LocalTime.parse(it) } ?: LocalTime.MIDNIGHT
+        val transactionDateTime = LocalDateTime.of(date, time)
 
-        3.  **Penentuan Kategori (Paling Penting):**
-            * Analisis `merchant_name` dan item-item pada struk.
-            * Pilih **SATU** `key` kategori yang paling relevan dari daftar di bawah ini. Jangan menebak kategori lain. Jika tidak ada yang cocok, gunakan `miscellaneous`.
-
-        4.  **Format Output:**
-            * Berikan output **HANYA** dalam format objek JSON. Jangan tambahkan ```json```, penjelasan, atau teks lain di luar objek JSON.
-            * Jika struk tidak dapat dibaca sama sekali, berikan output ini: `{"error": true, "message": "Struk tidak dapat dibaca"}`
-
-        ---
-        **DAFTAR KATEGORI YANG TERSEDIA SAAT INI:**
-        [DAFTAR_KATEGORI]
-        ---
-    """.trimIndent()
-
-    return promptTemplate.replace("[DAFTAR_KATEGORI]", categoryListString)
+        // 2. Petakan semua data ke ScanResult
+        return ScanResult(
+            merchantName = dto.merchantName,
+            transactionDateTime = transactionDateTime,
+            totalAmount = BigDecimal(dto.totalAmount?.toString() ?: "0"),
+            categoryStandardKey = dto.category,
+            receiptItemModels = dto.items.map { it.toDomain() }
+        )
+    }
 }

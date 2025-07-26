@@ -8,7 +8,7 @@ import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
-import com.rifqi.trackfunds.core.data.local.transaction.RoomTransactionRunner
+import com.rifqi.trackfunds.core.data.local.RoomTransactionRunner
 import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
 import dagger.Module
 import dagger.Provides

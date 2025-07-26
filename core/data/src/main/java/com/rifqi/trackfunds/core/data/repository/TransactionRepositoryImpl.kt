@@ -1,10 +1,13 @@
 package com.rifqi.trackfunds.core.data.repository
 
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.rifqi.trackfunds.core.data.local.dao.AccountDao
+import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
@@ -21,11 +24,13 @@ import javax.inject.Singleton
 @Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val transactionDao: TransactionDao,
+    private val accountDao: AccountDao,
+    private val categoryDao: CategoryDao,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : TransactionRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionItem>> {
+    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionModel>> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) return@flatMapLatest flowOf(emptyList())
 
@@ -97,7 +102,7 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getTransactionById(transactionId: String): Flow<TransactionItem?> {
+    override fun getTransactionById(transactionId: String): Flow<TransactionModel?> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(null)
@@ -108,10 +113,11 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertTransaction(transaction: TransactionItem): Result<Unit> {
+    override suspend fun insertTransaction(transaction: TransactionModel): Result<Unit> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
+
             transactionDao.insertTransaction(transaction.toEntity(userUid))
             Result.success(Unit)
         } catch (e: Exception) {
@@ -119,7 +125,17 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTransaction(transaction: TransactionItem): Result<Unit> {
+    override suspend fun insertLineItems(receiptItemModels: List<ReceiptItemModel>, transactionId: String): Result<Unit> {
+        return try {
+            val lineItemEntities = receiptItemModels.map { it.toEntity(transactionId) }
+            transactionDao.insertLineItems(lineItemEntities)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateTransaction(transaction: TransactionModel): Result<Unit> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))

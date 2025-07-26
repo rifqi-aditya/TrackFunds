@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.account.ui.event.AddEditAccountEvent
 import com.rifqi.account.ui.state.AddEditAccountUiState
-import com.rifqi.trackfunds.core.domain.model.AccountItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
 import com.rifqi.trackfunds.core.domain.usecase.account.AddAccountUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.DeleteAccountUseCase
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountByIdUseCase
@@ -104,7 +104,7 @@ class AddEditAccountViewModel @Inject constructor(
 
             _uiState.update { it.copy(isSaving = true) }
 
-            val account = AccountItem(
+            val account = AccountModel(
                 id = accountId ?: UUID.randomUUID().toString(),
                 name = currentState.name,
                 balance = currentState.initialBalance.toBigDecimalOrNull() ?: BigDecimal.ZERO,

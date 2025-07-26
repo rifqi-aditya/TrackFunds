@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
-import com.rifqi.trackfunds.core.domain.model.AccountItem
-import com.rifqi.trackfunds.core.domain.model.CategoryItem
+import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.CategoryModel
 import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
@@ -69,7 +69,7 @@ class AddEditTransactionViewModel @Inject constructor(
     private val editingTransactionId: String? = args.transactionId
     val isEditMode: Boolean = editingTransactionId != null
 
-    private var originalTransaction: TransactionItem? = null
+    private var originalTransaction: TransactionModel? = null
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
@@ -78,7 +78,7 @@ class AddEditTransactionViewModel @Inject constructor(
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val categoriesForSelection: StateFlow<List<CategoryItem>> =
+    val categoriesForSelection: StateFlow<List<CategoryModel>> =
         _uiState.map { it.selectedTransactionType to it.categorySearchQuery }
             .distinctUntilChanged()
             .flatMapLatest { (type, query) ->
@@ -257,8 +257,8 @@ class AddEditTransactionViewModel @Inject constructor(
     private fun observeNavigationResults() {
         resultManager.result.onEach { resultData ->
             when (resultData) {
-                is AccountItem -> onEvent(AddEditTransactionEvent.AccountSelected(resultData))
-                is CategoryItem -> onEvent(AddEditTransactionEvent.CategorySelected(resultData))
+                is AccountModel -> onEvent(AddEditTransactionEvent.AccountSelected(resultData))
+                is CategoryModel -> onEvent(AddEditTransactionEvent.CategorySelected(resultData))
                 is ScanResult -> handleScanResult(resultData)
             }
             if (resultData != null) resultManager.setResult(null)
@@ -267,20 +267,18 @@ class AddEditTransactionViewModel @Inject constructor(
 
     private fun handleScanResult(scanResult: ScanResult) {
         viewModelScope.launch {
-            var suggestedCategory: CategoryItem? = null
+            var suggestedCategory: CategoryModel? = null
 
-            // 1. Cari kategori lokal berdasarkan 'key' dari backend
-            scanResult.suggestedCategoryKey?.let { key ->
+
+            scanResult.categoryStandardKey?.let { key ->
                 suggestedCategory = getCategoryByStandardKeyUseCase(key)
             }
 
-            // 2. Update state dengan semua data yang didapat dari hasil scan
             _uiState.update {
                 it.copy(
-                    // Isi form secara otomatis
-                    amount = scanResult.amount?.toPlainString() ?: it.amount,
-                    description = scanResult.description ?: it.description,
-                    selectedDate = scanResult.date?.toLocalDate() ?: it.selectedDate,
+                    amount = scanResult.totalAmount.toPlainString() ?: it.amount,
+                    description = scanResult.merchantName ?: it.description,
+                    selectedDate = scanResult.transactionDateTime.toLocalDate() ?: it.selectedDate,
                     selectedCategory = suggestedCategory ?: it.selectedCategory
                 )
             }
@@ -308,10 +306,10 @@ class AddEditTransactionViewModel @Inject constructor(
                     snackbarManager.showMessage("Transaksi berhasil diperbarui")
                 } else {
                     // Cek apakah ini setoran tabungan
-                    if (transactionToSave.savingsGoalItem != null) {
+                    if (transactionToSave.savingsGoalModel != null) {
                         addTransactionUseCase(transactionToSave)
                         addFundsToSavingsGoalUseCase(
-                            goalId = transactionToSave.savingsGoalItem!!.id,
+                            goalId = transactionToSave.savingsGoalModel!!.id,
                             amount = transactionToSave.amount
                         )
                         snackbarManager.showMessage("Setoran berhasil ditambahkan")
@@ -327,7 +325,7 @@ class AddEditTransactionViewModel @Inject constructor(
         }
     }
 
-    private fun deleteTransaction(transactionToDelete: TransactionItem) {
+    private fun deleteTransaction(transactionToDelete: TransactionModel) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
             try {
@@ -358,9 +356,9 @@ class AddEditTransactionViewModel @Inject constructor(
     }
 
     // Fungsi helper untuk membuat objek TransactionItem
-    private fun createTransactionFromState(state: AddEditTransactionUiState): TransactionItem {
+    private fun createTransactionFromState(state: AddEditTransactionUiState): TransactionModel {
         val isSavings = state.selectedTransactionType == TransactionType.SAVINGS
-        return TransactionItem(
+        return TransactionModel(
             id = editingTransactionId ?: UUID.randomUUID().toString(),
             description = state.description,
             amount = state.amount.toBigDecimal(),
@@ -368,7 +366,7 @@ class AddEditTransactionViewModel @Inject constructor(
             date = state.selectedDate.atTime(LocalTime.now()),
             category = if (isSavings) null else state.selectedCategory,
             account = state.selectedAccount!!,
-            savingsGoalItem = if (isSavings) state.selectedSavingsGoal else null
+            savingsGoalModel = if (isSavings) state.selectedSavingsGoal else null
         )
     }
 }

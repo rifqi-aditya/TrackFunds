@@ -4,8 +4,9 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class ScanResult(
-    val amount: BigDecimal?,
-    val date: LocalDateTime?,
-    val description: String?,
-    val suggestedCategoryKey: String?
+    val merchantName: String?,
+    val transactionDateTime: LocalDateTime,
+    val totalAmount: BigDecimal,
+    val categoryStandardKey: String?,
+    val receiptItemModels: List<ReceiptItemModel> = emptyList(),
 )
