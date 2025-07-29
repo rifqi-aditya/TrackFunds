@@ -60,14 +60,14 @@ fun CashflowProfileCard(
 
             val incomeBrush = Brush.verticalGradient(
                 colors = listOf(
-                    TrackFundsTheme.extendedColors.textIncome,
-                    TrackFundsTheme.extendedColors.textIncome.copy(alpha = 0.5f)
+                    TrackFundsTheme.extendedColors.income,
+                    TrackFundsTheme.extendedColors.income.copy(alpha = 0.5f)
                 )
             )
             val expenseBrush = Brush.verticalGradient(
                 colors = listOf(
-                    TrackFundsTheme.extendedColors.textExpense,
-                    TrackFundsTheme.extendedColors.textExpense.copy(alpha = 0.5f)
+                    TrackFundsTheme.extendedColors.expense,
+                    TrackFundsTheme.extendedColors.expense.copy(alpha = 0.5f)
                 )
             )
             val savingsBrush = Brush.verticalGradient(

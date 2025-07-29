@@ -70,7 +70,7 @@ fun GeneralTextInputField(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                 cursorColor = MaterialTheme.colorScheme.primary
             )
         )

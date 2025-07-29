@@ -30,8 +30,8 @@ import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.CreateSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.savings.SaveSavingsIconUseCase
-import com.rifqi.trackfunds.core.domain.usecase.savings.SaveSavingsIconUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.UpdateSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.UpdateSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
 import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
@@ -140,11 +140,11 @@ abstract class ViewModelScopedUseCaseModule {
 
     @Binds
     @ViewModelScoped
-    abstract fun bindAddFundsToSavingsGoalUseCase(impl: AddFundsToSavingsGoalUseCaseImpl): AddFundsToSavingsGoalUseCase
+    abstract fun bindUpdateSavingsGoalUseCase(impl: UpdateSavingsGoalUseCaseImpl): UpdateSavingsGoalUseCase
 
     @Binds
     @ViewModelScoped
-    abstract fun bindSaveSavingsIconUseCase(impl: SaveSavingsIconUseCaseImpl): SaveSavingsIconUseCase
+    abstract fun bindAddFundsToSavingsGoalUseCase(impl: AddFundsToSavingsGoalUseCaseImpl): AddFundsToSavingsGoalUseCase
 
     @Binds
     @ViewModelScoped

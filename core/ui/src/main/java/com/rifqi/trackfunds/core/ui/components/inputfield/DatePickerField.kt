@@ -79,9 +79,9 @@ fun DatePickerField(
                 .border(
                     width = 1.dp,
                     color = borderColor,
-                    shape = MaterialTheme.shapes.large
+                    shape = MaterialTheme.shapes.medium
                 )
-                .clip(MaterialTheme.shapes.large)
+                .clip(MaterialTheme.shapes.medium)
                 .clickable(onClick = onClick)
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.CenterStart

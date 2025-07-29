@@ -68,9 +68,9 @@ fun TransactionRow(
                 },
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (item.type == TransactionType.EXPENSE) {
-                    TrackFundsTheme.extendedColors.textExpense
+                    TrackFundsTheme.extendedColors.expense
                 } else {
-                    TrackFundsTheme.extendedColors.textIncome
+                    TrackFundsTheme.extendedColors.income
                 }
             )
         }

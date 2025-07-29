@@ -306,10 +306,10 @@ class AddEditTransactionViewModel @Inject constructor(
                     snackbarManager.showMessage("Transaksi berhasil diperbarui")
                 } else {
                     // Cek apakah ini setoran tabungan
-                    if (transactionToSave.savingsGoalModel != null) {
+                    if (transactionToSave.savingsGoal != null) {
                         addTransactionUseCase(transactionToSave)
                         addFundsToSavingsGoalUseCase(
-                            goalId = transactionToSave.savingsGoalModel!!.id,
+                            goalId = transactionToSave.savingsGoal!!.id,
                             amount = transactionToSave.amount
                         )
                         snackbarManager.showMessage("Setoran berhasil ditambahkan")
@@ -366,7 +366,7 @@ class AddEditTransactionViewModel @Inject constructor(
             date = state.selectedDate.atTime(LocalTime.now()),
             category = if (isSavings) null else state.selectedCategory,
             account = state.selectedAccount!!,
-            savingsGoalModel = if (isSavings) state.selectedSavingsGoal else null
+            savingsGoal = if (isSavings) state.selectedSavingsGoal else null
         )
     }
 }

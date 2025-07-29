@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 data class TransactionDto(
     @Embedded
@@ -37,11 +37,11 @@ data class TransactionDto(
         @ColumnInfo(name = "icon_identifier")
         val iconIdentifier: String?,
         @ColumnInfo(name = "target_date")
-        val targetDate: LocalDateTime?,
+        val targetDate: LocalDate?,
         @ColumnInfo(name = "target_amount")
         val targetAmount: BigDecimal?,
-        @ColumnInfo(name = "current_amount")
-        val currentAmount: BigDecimal?,
+        @ColumnInfo(name = "saved_amount")
+        val savedAmount: BigDecimal?,
         @ColumnInfo(name = "is_achieved")
         val isAchieved: Boolean?
     )

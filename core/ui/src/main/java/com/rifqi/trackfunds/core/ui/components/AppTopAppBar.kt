@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,8 +60,8 @@ fun AppTopAppBar(
         navigationIcon = {
             if (onNavigateBack != null) {
                 IconButton(onClick = onNavigateBack) {
-                    DisplayIconFromResource(
-                        identifier = "arrow_back",
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowBackIos,
                         contentDescription = "Back",
                         modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurface

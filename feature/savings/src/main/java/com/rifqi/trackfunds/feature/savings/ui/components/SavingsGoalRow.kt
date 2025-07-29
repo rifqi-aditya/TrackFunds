@@ -24,18 +24,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
+import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.ui.components.DynamicProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun SavingsGoalRow(
-    goal: SavingsGoalModel,
+    goal: SavingsGoal,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -99,7 +99,7 @@ fun SavingsGoalRow(
             ) {
                 // Teks "Terkumpul" di kiri
                 Text(
-                    text = "Saved: ${formatCurrency(goal.currentAmount)}",
+                    text = "Saved: ${formatCurrency(goal.savedAmount)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -114,22 +114,22 @@ fun SavingsGoalRow(
     }
 }
 
-private val previewGoalInProgress = SavingsGoalModel(
+private val previewGoalInProgress = SavingsGoal(
     id = "1",
     name = "Liburan ke Jepang",
     targetAmount = BigDecimal("20000000"),
-    currentAmount = BigDecimal("7500000"),
-    targetDate = LocalDateTime.now().plusMonths(12),
+    savedAmount = BigDecimal("7500000"),
+    targetDate = LocalDate.now().plusMonths(12),
     iconIdentifier = "travel",
     isAchieved = false
 )
 
-private val previewGoalAchieved = SavingsGoalModel(
+private val previewGoalAchieved = SavingsGoal(
     id = "2",
     name = "DP Rumah",
     targetAmount = BigDecimal("150000000"),
-    currentAmount = BigDecimal("165000000"),
-    targetDate = LocalDateTime.now().plusYears(3),
+    savedAmount = BigDecimal("165000000"),
+    targetDate = LocalDate.now().plusYears(3),
     iconIdentifier = "housing",
     isAchieved = true
 )

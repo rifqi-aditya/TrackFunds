@@ -3,24 +3,25 @@ package com.rifqi.trackfunds.feature.home.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -29,14 +30,18 @@ import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
+import com.rifqi.trackfunds.feature.home.ui.components.BudgetCard
 import com.rifqi.trackfunds.feature.home.ui.components.HomeHeader
-import com.rifqi.trackfunds.feature.home.ui.components.InsightCard
 import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionsCard
+import com.rifqi.trackfunds.feature.home.ui.components.SavingsGoalCard
+import com.rifqi.trackfunds.feature.home.ui.components.SummaryCard
+import com.rifqi.trackfunds.feature.home.ui.components.TotalBalanceCard
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.preview.HomeUiStatePreviewParameterProvider
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
+import java.math.BigDecimal
 
 
 /**
@@ -86,7 +91,7 @@ fun HomeScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
                 Column(
@@ -99,33 +104,47 @@ fun HomeScreenContent(
                         onProfileClick = { onEvent(HomeEvent.ProfileClicked) },
                         onNotificationsClick = {},
                     )
+                }
+            }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Column() {
-                        Text(
-                            "Balance",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                        )
-                        Text(
-                            formatCurrency(uiState.totalBalance),
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = TrackFundsTheme.extendedColors.accentGreen
-                            )
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    InsightCard(
-                        totalBalance = uiState.totalBalance,
-                        totalSavings = uiState.totalSavings,
-                        totalAccounts = uiState.totalAccounts,
-                        onBalanceClick = { onEvent(HomeEvent.BalanceClicked) },
-                        onSavingsClick = { onEvent(HomeEvent.SavingsClicked) },
-                        onAccountsClick = { onEvent(HomeEvent.AccountsClicked) },
+            item {
+                TotalBalanceCard(
+                    totalBalance = uiState.totalBalance,
+                    onWalletClicked = { },
+                    onInfoClicked = { },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    SummaryCard(
+                        title = "Total Income",
+                        amount = formatCurrency(BigDecimal("1000000")),
+                        icon = Icons.AutoMirrored.Filled.TrendingUp,
+                        iconBackgroundColor = TrackFundsTheme.extendedColors.income,
+                        modifier = Modifier.weight(1f)
+                    )
+                    SummaryCard(
+                        title = "Total Expense",
+                        amount = formatCurrency(BigDecimal("1000000")),
+                        icon = Icons.AutoMirrored.Filled.TrendingDown,
+                        iconBackgroundColor = TrackFundsTheme.extendedColors.expense,
+                        modifier = Modifier.weight(1f)
                     )
                 }
+            }
+
+            item {
+                BudgetCard(
+                    spentAmount = BigDecimal("2600000"),
+                    totalBudget = BigDecimal("5000000"),
+                    onDetailsClick = { onEvent(HomeEvent.AllBudgetsClicked) },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             item {
@@ -138,19 +157,21 @@ fun HomeScreenContent(
                             onEvent(HomeEvent.TransactionClicked(transactionId))
                         }
                     )
-//                    SummarySection(
-//                        title = "Remaining budgets",
-//                        items = uiState.topBudgets,
-//                        onViewAllClick = {
-//                            onEvent(HomeEvent.AllBudgetsClicked)
-//                        },
-//                        itemContent = { topBudgetItem ->
-//                            BudgetSummaryRow(
-//                                item = topBudgetItem,
-//                            )
-//                        }
-//                    )
                 }
+            }
+
+            item {
+                SavingsGoalCard(
+                    goalName = "DP Rumah",
+                    savedAmount = BigDecimal("50000000"),
+                    targetAmount = BigDecimal("100000000"),
+                    icon = Icons.Default.TrendingUp,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {},
+                    onViewAllClick = {
+                        onEvent(HomeEvent.AllSavingsGoalsClicked)
+                    }
+                )
             }
         }
     }

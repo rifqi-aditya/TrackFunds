@@ -4,7 +4,7 @@ import com.rifqi.trackfunds.core.data.local.dto.TransactionDto
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.domain.model.AccountModel
 import com.rifqi.trackfunds.core.domain.model.CategoryModel
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
+import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import java.math.BigDecimal
 
@@ -31,13 +31,13 @@ fun TransactionDto.toDomain(): TransactionModel {
             )
         },
 
-        savingsGoalModel = this.savingsGoal?.let { savingsInfo ->
-            SavingsGoalModel(
+        savingsGoal = this.savingsGoal?.let { savingsInfo ->
+            SavingsGoal(
                 id = this.transaction.savingsGoalId ?: "",
                 name = savingsInfo.name ?: "",
                 iconIdentifier = savingsInfo.iconIdentifier ?: "",
                 targetAmount = savingsInfo.targetAmount ?: BigDecimal.ZERO,
-                currentAmount = savingsInfo.currentAmount ?: BigDecimal.ZERO,
+                savedAmount = savingsInfo.savedAmount ?: BigDecimal.ZERO,
                 targetDate = savingsInfo.targetDate,
                 isAchieved = savingsInfo.isAchieved ?: false
             )
@@ -66,7 +66,7 @@ fun TransactionModel.toEntity(userUid: String): TransactionEntity {
         date = this.date,
         categoryId = this.category?.id,
         accountId = this.account.id,
-        savingsGoalId = this.savingsGoalModel?.id,
+        savingsGoalId = this.savingsGoal?.id,
         transferPairId = this.transferPairId
     )
 }

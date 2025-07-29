@@ -121,7 +121,7 @@ fun TrackFundsMainContent(
                     onClick = onFabClick, // Panggil lambda saat diklik
                     shape = CircleShape,
                     modifier = Modifier.offset(y = (+46).dp), // Offset yang disarankan
-                    containerColor = TrackFundsTheme.extendedColors.accentGreen
+                    containerColor = TrackFundsTheme.extendedColors.accent
                 ) {
                     DisplayIconFromResource(
                         identifier = "plus",

@@ -89,7 +89,7 @@ fun TransactionItem(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = if (transactions.type == TransactionType.EXPENSE
-                ) TrackFundsTheme.extendedColors.textExpense else TrackFundsTheme.extendedColors.textIncome
+                ) TrackFundsTheme.extendedColors.expense else TrackFundsTheme.extendedColors.income
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(

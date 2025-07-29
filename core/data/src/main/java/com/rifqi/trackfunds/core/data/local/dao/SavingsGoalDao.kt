@@ -53,7 +53,7 @@ interface SavingsGoalDao {
     /**
      * Adds funds to a specific savings goal for a specific user.
      */
-    @Query("UPDATE savings_goals SET current_amount = current_amount + :amount WHERE id = :goalId AND user_uid = :userUid")
+    @Query("UPDATE savings_goals SET saved_amount = saved_amount + :amount WHERE id = :goalId AND user_uid = :userUid")
     suspend fun addFundsToGoal(goalId: String, amount: BigDecimal, userUid: String)
 
     /**

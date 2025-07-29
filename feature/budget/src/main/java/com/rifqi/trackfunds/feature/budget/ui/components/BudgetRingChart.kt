@@ -44,10 +44,10 @@ fun BudgetRingChart(
 
     // 2. Tentukan teks status dan warnanya berdasarkan persentase
     val (statusText, statusColor) = when {
-        progress > 1f -> "Over Budget" to TrackFundsTheme.extendedColors.textExpense
+        progress > 1f -> "Over Budget" to TrackFundsTheme.extendedColors.expense
         progress >= 0.9f -> "Nearing Limit" to Color.Yellow
-        progress >= 0.5f -> "On Track" to TrackFundsTheme.extendedColors.textIncome
-        else -> "Safe to Spend" to TrackFundsTheme.extendedColors.textIncome
+        progress >= 0.5f -> "On Track" to TrackFundsTheme.extendedColors.income
+        else -> "Safe to Spend" to TrackFundsTheme.extendedColors.income
     }
 
     Box(

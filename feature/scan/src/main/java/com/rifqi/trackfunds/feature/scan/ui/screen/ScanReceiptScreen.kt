@@ -269,7 +269,7 @@ private fun UploadPhase(onEvent: (ScanReceiptEvent) -> Unit) {
                 .height(56.dp),
             shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(
-                containerColor = TrackFundsTheme.extendedColors.accentGreen,
+                containerColor = TrackFundsTheme.extendedColors.accent,
                 contentColor = MaterialTheme.colorScheme.inverseOnSurface
             ),
         ) {
@@ -286,16 +286,16 @@ private fun UploadPhase(onEvent: (ScanReceiptEvent) -> Unit) {
                 .height(56.dp),
             shape = MaterialTheme.shapes.large,
             border = BorderStroke(
-                1.dp, TrackFundsTheme.extendedColors.accentGreen
+                1.dp, TrackFundsTheme.extendedColors.accent
             )
         ) {
             Icon(
                 Icons.Default.PhotoCamera,
                 contentDescription = null,
-                tint = TrackFundsTheme.extendedColors.accentGreen
+                tint = TrackFundsTheme.extendedColors.accent
             )
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Use Camera", color = TrackFundsTheme.extendedColors.accentGreen)
+            Text("Use Camera", color = TrackFundsTheme.extendedColors.accent)
         }
     }
 }
@@ -343,10 +343,10 @@ fun ImagePreviewPhase(
                     .height(48.dp),
                 shape = MaterialTheme.shapes.large,
                 border = BorderStroke(
-                    1.dp, TrackFundsTheme.extendedColors.accentGreen
+                    1.dp, TrackFundsTheme.extendedColors.accent
                 )
             ) {
-                Text("Retake", color = TrackFundsTheme.extendedColors.accentGreen)
+                Text("Retake", color = TrackFundsTheme.extendedColors.accent)
             }
 
             Button(
@@ -356,7 +356,7 @@ fun ImagePreviewPhase(
                     .height(48.dp),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = TrackFundsTheme.extendedColors.accentGreen,
+                    containerColor = TrackFundsTheme.extendedColors.accent,
                     contentColor = MaterialTheme.colorScheme.inverseOnSurface
                 )
             ) {

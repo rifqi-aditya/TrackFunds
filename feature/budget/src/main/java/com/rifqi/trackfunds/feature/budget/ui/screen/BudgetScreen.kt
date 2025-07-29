@@ -108,7 +108,7 @@ fun BudgetListContent(
                             Text(
                                 uiState.currentPeriodDisplay,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = TrackFundsTheme.extendedColors.accentGreen,
+                                color = TrackFundsTheme.extendedColors.accent,
                                 modifier = Modifier
                                     .padding(end = 8.dp)
                             )
@@ -117,7 +117,7 @@ fun BudgetListContent(
                                 contentDescription = "Change Period",
                                 modifier = Modifier
                                     .size(14.dp),
-                                tint = TrackFundsTheme.extendedColors.accentGreen
+                                tint = TrackFundsTheme.extendedColors.accent
                             )
                         }
                     }
@@ -235,7 +235,7 @@ fun BudgetListContent(
                                     .padding(16.dp),
                                 shape = MaterialTheme.shapes.large,
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = TrackFundsTheme.extendedColors.accentGreen,
+                                    containerColor = TrackFundsTheme.extendedColors.accent,
                                     contentColor = MaterialTheme.colorScheme.inverseOnSurface
                                 )
                             ) {

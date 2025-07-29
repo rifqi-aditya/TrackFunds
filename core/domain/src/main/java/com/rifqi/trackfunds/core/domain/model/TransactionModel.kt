@@ -19,7 +19,7 @@ import java.util.UUID
  * @property description A textual description of the transaction.
  * @property category The category associated with this transaction, if applicable.
  * @property account The account to or from which this transaction was made.
- * @property savingsGoalModel The savings goal this transaction contributes to or deducts from, if applicable.
+ * @property savingsGoal The savings goal this transaction contributes to or deducts from, if applicable.
  * @property transferPairId If this transaction is part of a transfer, this ID links it to the corresponding transaction in the other account.
  * @property paymentMethod The method used for payment (e.g., "Credit Card", "Cash").
  * @property receiptImageUrl The URL of an image of the receipt for this transaction, if available.
@@ -38,7 +38,7 @@ data class TransactionModel(
     val category: CategoryModel? = null,
     val account: AccountModel,
     /** The savings goal this transaction is associated with, if any. */
-    val savingsGoalModel: SavingsGoalModel? = null,
+    val savingsGoal: SavingsGoal? = null,
     /** If this is part of a transfer, this ID links it to the other transaction in the pair. */
     val transferPairId: String? = null,
     val paymentMethod: String? = null,

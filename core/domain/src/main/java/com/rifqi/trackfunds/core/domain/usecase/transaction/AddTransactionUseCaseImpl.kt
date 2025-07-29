@@ -3,19 +3,25 @@ package com.rifqi.trackfunds.core.domain.usecase.transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
-import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
+import com.rifqi.trackfunds.core.domain.repository.SavingsGoalRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
+import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
 import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AddTransactionUseCaseImpl @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val accountRepository: AccountRepository,
-    private val savingsRepository: SavingsRepository,
+    private val savingsGoalRepository: SavingsGoalRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val transactionRunner: AppTransactionRunner
 ) : AddTransactionUseCase {
 
     override suspend operator fun invoke(transaction: TransactionModel): Result<Unit> {
+        val userUid = userPreferencesRepository.userUidFlow.first()
+            ?: return Result.failure(IllegalStateException("User UID is not set."))
+
         return try {
             transactionRunner {
                 // 1. Dapatkan akun yang bersangkutan
@@ -38,9 +44,9 @@ class AddTransactionUseCaseImpl @Inject constructor(
                 }
                 accountRepository.updateAccount(account.copy(balance = newBalance))
 
-                transaction.savingsGoalModel?.let {
-                    if (transaction.type == TransactionType.EXPENSE) {
-                        savingsRepository.addFundsToGoal(it.id, transaction.amount)
+                transaction.savingsGoal?.let {
+                    if (transaction.type == TransactionType.SAVINGS) {
+                        savingsGoalRepository.addFunds(userUid,it.id, transaction.amount)
                     }
                 }
             }

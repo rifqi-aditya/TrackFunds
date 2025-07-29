@@ -79,13 +79,13 @@ fun SummaryCard(
                         label = "Income",
                         amount = totalIncome,
                         iconIdentifier = "income",
-                        amountColor = TrackFundsTheme.extendedColors.textIncome
+                        amountColor = TrackFundsTheme.extendedColors.income
                     )
                     SummaryItem(
                         label = "Expense",
                         amount = totalExpense,
                         iconIdentifier = "expense",
-                        amountColor = TrackFundsTheme.extendedColors.textExpense
+                        amountColor = TrackFundsTheme.extendedColors.expense
                     )
                     SummaryItem(
                         label = "Savings",

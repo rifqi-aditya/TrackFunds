@@ -47,8 +47,8 @@ class TransactionRepositoryImpl @Inject constructor(
                 s.id as savings_goal_id, s.name as savings_goal_name,
                 s.icon_identifier as savings_goal_icon_identifier,
                 s.target_amount as savings_goal_targetAmount,
-                s.current_amount as savings_goal_currentAmount,
-                CASE WHEN s.current_amount >= s.target_amount THEN 1 ELSE 0 END as savings_goal_is_achieved
+                s.saved_amount as savings_goal_savedAmount,
+                CASE WHEN s.saved_amount >= s.target_amount THEN 1 ELSE 0 END as savings_goal_is_achieved
             FROM transactions AS t
             LEFT JOIN categories AS c ON t.category_id = c.id
             INNER JOIN accounts AS a ON t.account_id = a.id

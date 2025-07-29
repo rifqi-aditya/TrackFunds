@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Entity(
     tableName = "savings_goals",
@@ -32,11 +32,11 @@ data class SavingsGoalEntity(
     @ColumnInfo(name = "target_amount")
     val targetAmount: BigDecimal,
 
-    @ColumnInfo(name = "current_amount")
-    val currentAmount: BigDecimal = BigDecimal.ZERO,
+    @ColumnInfo(name = "saved_amount")
+    val savedAmount: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "target_date")
-    val targetDate: LocalDateTime?,
+    val targetDate: LocalDate?,
 
     @ColumnInfo(name = "icon_identifier")
     val iconIdentifier: String,

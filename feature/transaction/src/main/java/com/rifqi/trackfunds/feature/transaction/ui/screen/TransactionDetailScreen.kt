@@ -181,9 +181,9 @@ fun TransactionDetailContent(
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (transaction.type == TransactionType.INCOME) {
-                            TrackFundsTheme.extendedColors.textIncome
+                            TrackFundsTheme.extendedColors.income
                         } else {
-                            TrackFundsTheme.extendedColors.textExpense
+                            TrackFundsTheme.extendedColors.expense
                         }
                     )
 

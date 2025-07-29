@@ -6,8 +6,8 @@ sealed interface HomeEvent {
     data object ProfileClicked : HomeEvent
     data object AllTransactionsClicked : HomeEvent
     data object AllBudgetsClicked : HomeEvent
+    data object AllSavingsGoalsClicked : HomeEvent
     data object BalanceClicked : HomeEvent
-    data object SavingsClicked : HomeEvent
     data object AccountsClicked : HomeEvent
     data class TransactionClicked(val transactionId: String) : HomeEvent
 

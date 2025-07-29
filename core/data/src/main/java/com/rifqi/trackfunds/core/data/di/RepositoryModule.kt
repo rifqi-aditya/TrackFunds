@@ -4,7 +4,7 @@ import com.rifqi.trackfunds.core.data.repository.AccountRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.AuthRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.BudgetRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.CategoryRepositoryImpl
-import com.rifqi.trackfunds.core.data.repository.SavingsRepositoryImpl
+import com.rifqi.trackfunds.core.data.repository.SavingsGoalRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.ScanRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.TransactionRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.UserPreferencesRepositoryImpl
@@ -13,7 +13,7 @@ import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.AuthRepository
 import com.rifqi.trackfunds.core.domain.repository.BudgetRepository
 import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
-import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
+import com.rifqi.trackfunds.core.domain.repository.SavingsGoalRepository
 import com.rifqi.trackfunds.core.domain.repository.ScanRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
@@ -61,8 +61,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSavingsRepository(
-        savingsRepositoryImpl: SavingsRepositoryImpl
-    ): SavingsRepository
+        savingsRepositoryImpl: SavingsGoalRepositoryImpl
+    ): SavingsGoalRepository
 
     @Binds
     @Singleton

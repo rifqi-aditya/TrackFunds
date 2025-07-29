@@ -63,8 +63,8 @@ interface TransactionDao {
             a.name AS account_name, a.icon_identifier AS account_icon_identifier, a.balance AS account_balance,
             s.id AS savings_goal_id, s.name AS savings_goal_name, s.icon_identifier AS savings_goal_icon_identifier,
             s.target_date AS savings_goal_target_date, s.target_amount AS savings_goal_target_amount, 
-            s.current_amount AS savings_goal_current_amount,
-            CASE WHEN s.current_amount >= s.target_amount THEN 1 ELSE 0 END AS savings_goal_is_achieved
+            s.saved_amount AS savings_goal_current_amount,
+            CASE WHEN s.saved_amount >= s.target_amount THEN 1 ELSE 0 END AS savings_goal_is_achieved
         FROM transactions AS t
         LEFT JOIN categories AS c ON t.category_id = c.id
         INNER JOIN accounts AS a ON t.account_id = a.id

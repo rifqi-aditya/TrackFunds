@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.IconPicker
@@ -46,6 +45,7 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.savings.ui.event.AddEditSavingsEvent
 import com.rifqi.trackfunds.feature.savings.ui.model.DefaultSavingsIcons
+import com.rifqi.trackfunds.feature.savings.ui.sideeffect.AddEditGoalSideEffect
 import com.rifqi.trackfunds.feature.savings.ui.state.AddEditSavingsGoalState
 import com.rifqi.trackfunds.feature.savings.ui.viewmodel.AddEditSavingsGoalViewModel
 import java.time.LocalDate
@@ -60,20 +60,21 @@ fun AddEditSavingsGoalScreen(
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState()
 
-    // Navigasi kembali setelah berhasil menyimpan
+
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect { event ->
-            when (event) {
-                is SavingsRoutes.Savings -> {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is AddEditGoalSideEffect.NavigateBack -> {
                     onNavigateBack()
                 }
 
-                else -> Unit
+                is AddEditGoalSideEffect.ShowSnackbar -> {
+
+                }
             }
         }
     }
 
-    // Tampilkan BottomSheet jika state-nya true
     if (uiState.showIconPicker) {
         ModalBottomSheet(
             onDismissRequest = { viewModel.onEvent(AddEditSavingsEvent.IconPickerDismissed) },
@@ -124,7 +125,7 @@ fun AddEditSavingsGoalContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = "Add Savings Goal",
+                title = uiState.pageTitle,
                 onNavigateBack = onNavigateBack,
                 isFullScreen = true
             )
@@ -136,6 +137,7 @@ fun AddEditSavingsGoalContent(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .height(56.dp),
+                shape = MaterialTheme.shapes.medium,
                 enabled = !uiState.isLoading
             ) {
                 if (uiState.isLoading) {
@@ -181,7 +183,7 @@ fun AddEditSavingsGoalContent(
                 } else {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
-                            Icons.Default.AddAPhoto,
+                            Icons.Default.ImageSearch,
                             contentDescription = null,
                             tint = if (uiState.iconError != null) MaterialTheme.colorScheme.error else LocalContentColor.current
                         )

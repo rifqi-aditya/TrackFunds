@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.BudgetModel
-import com.rifqi.trackfunds.core.ui.components.GradientHorizontalProgressBar
+import com.rifqi.trackfunds.core.ui.components.GradientLinearProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
@@ -62,9 +62,8 @@ fun BudgetSummaryRow(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        GradientHorizontalProgressBar(
+        GradientLinearProgressBar(
             progress = item.progress,
-            brush = gradientBrush
         )
     }
 }

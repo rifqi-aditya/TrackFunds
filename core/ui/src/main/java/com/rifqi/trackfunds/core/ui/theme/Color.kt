@@ -218,14 +218,16 @@ val surfaceContainerDarkHighContrast = Color(0xFF313030)
 val surfaceContainerHighDarkHighContrast = Color(0xFF3C3B3B)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF484646)
 
-val TextIncome = Color(0xFF26A69A)
-val TextExpense = Color(0xFFFF0000)
+val IncomeDark = Color(0xFF81C784)
+val IncomeLight = Color(0xFF2E7D32)
+val ExpenseLight = Color(0xFFD32F2F)
+val ExpenseDark = Color(0xFFE57373)
 
 // Warna untuk Chart Kondisional
 val ChartConditionGood = Color(0xFFF9B208)
 val ChartConditionWarning = Color(0xFFFF0000)
-val ChartConditionNeutralLight = Color(0xFF26A69A) // Khusus Light Theme
-val ChartConditionNeutralDark = Color(0xFF26A69A)  // Khusus Dark Theme
+val ChartConditionNeutralLight = Color(0xFF26A69A)
+val ChartConditionNeutralDark = Color(0xFF26A69A)
 
 // Palet Warna untuk Chart Kategori
 val ChartCategory1 = Color(0xFFFADA7A)

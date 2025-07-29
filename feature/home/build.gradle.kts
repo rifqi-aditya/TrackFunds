@@ -64,15 +64,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Navigation Compose (jika modul ini memiliki navigasi internal)
-    // val navigationVersion = "2.7.7"
-    // implementation("androidx.navigation:navigation-compose:$navigationVersion")
-
-    // Coroutines (jika dibutuhkan langsung di modul ini, biasanya di ViewModel)
-    // val coroutinesVersion = "1.8.0"
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
-
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     // Testing
     testImplementation(libs.junit)

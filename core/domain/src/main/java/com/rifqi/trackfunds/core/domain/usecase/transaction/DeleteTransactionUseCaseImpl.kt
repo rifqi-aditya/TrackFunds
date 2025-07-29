@@ -3,19 +3,25 @@ package com.rifqi.trackfunds.core.domain.usecase.transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
-import com.rifqi.trackfunds.core.domain.repository.SavingsRepository
+import com.rifqi.trackfunds.core.domain.repository.SavingsGoalRepository
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
+import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
 import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class DeleteTransactionUseCaseImpl @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val accountRepository: AccountRepository,
-    private val savingsRepository: SavingsRepository,
+    private val savingsGoalRepository: SavingsGoalRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val transactionRunner: AppTransactionRunner
 ) : DeleteTransactionUseCase {
 
     override suspend operator fun invoke(transaction: TransactionModel): Result<Unit> {
+        val userUid = userPreferencesRepository.userUidFlow.first()
+            ?: return Result.failure(IllegalStateException("User UID is not set"))
+
         return try {
             // Bungkus semua operasi dalam satu transaksi atomik
             transactionRunner {
@@ -34,9 +40,9 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
                     .getOrThrow()
 
                 // 4. Update tujuan tabungan jika ada
-                transaction.savingsGoalModel?.let {
+                transaction.savingsGoal?.let {
                     if (transaction.type == TransactionType.EXPENSE) {
-                        savingsRepository.addFundsToGoal(it.id, transaction.amount.negate())
+                        savingsGoalRepository.addFunds(userUid,it.id, transaction.amount.negate())
                             .getOrThrow()
                     }
                 }

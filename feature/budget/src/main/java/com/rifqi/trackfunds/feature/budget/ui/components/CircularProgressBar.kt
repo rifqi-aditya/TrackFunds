@@ -24,10 +24,10 @@ fun CircularProgressBar(
     val progressColor = when {
         progress >= 0.8f -> TrackFundsTheme.extendedColors.chartConditionWarning
         progress > 0.6f -> TrackFundsTheme.extendedColors.chartConditionGood
-        else -> TrackFundsTheme.extendedColors.accentGreen
+        else -> TrackFundsTheme.extendedColors.accent
     }
 
-    val trackColor = TrackFundsTheme.extendedColors.accentGreen.copy(alpha = 0.1f)
+    val trackColor = TrackFundsTheme.extendedColors.accent.copy(alpha = 0.1f)
 
     // FIX 2: Lakukan konversi Dp ke Px di sini, di dalam lingkup Composable
     val strokePx = with(LocalDensity.current) { strokeWidth.toPx() }

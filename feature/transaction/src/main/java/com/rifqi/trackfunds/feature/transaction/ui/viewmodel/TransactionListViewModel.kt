@@ -90,7 +90,7 @@ class TransactionListViewModel @Inject constructor(
                     transactionList.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
                 val totalExpense = transactionList.filter { it.type == TransactionType.EXPENSE }
                     .sumOf { it.amount }
-                val totalSavings = allSavingsGoals.sumOf { it.currentAmount }
+                val totalSavings = allSavingsGoals.sumOf { it.savedAmount }
                 val spendableBalance = totalIncome - (totalExpense + totalSavings)
 
                 // Update state dengan semua data yang sudah dihitung

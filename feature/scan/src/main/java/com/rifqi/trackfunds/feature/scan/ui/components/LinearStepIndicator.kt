@@ -53,7 +53,7 @@ fun LinearStepIndicator(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = if (index == currentStep) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isCompletedOrActive) TrackFundsTheme.extendedColors.accentGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (isCompletedOrActive) TrackFundsTheme.extendedColors.accent else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -64,7 +64,7 @@ fun LinearStepIndicator(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
-            color = TrackFundsTheme.extendedColors.accentGreen
+            color = TrackFundsTheme.extendedColors.accent
         )
     }
 }

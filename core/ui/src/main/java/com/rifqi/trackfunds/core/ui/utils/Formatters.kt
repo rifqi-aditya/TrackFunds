@@ -4,9 +4,8 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.time.LocalDate
-import java.time.YearMonth
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 
 fun formatCurrency(amount: BigDecimal, locale: Locale = Locale("in", "ID")): String {
@@ -21,40 +20,27 @@ fun formatCurrency(amount: BigDecimal, locale: Locale = Locale("in", "ID")): Str
     return currencyFormat.format(amount)
 }
 
-fun getCurrentMonthAndYear(locale: Locale = Locale("in", "ID")): String {
-    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", locale)
-    return YearMonth.now().format(formatter)
+
+/**
+ * Mengubah objek LocalDate menjadi String dengan format "29 Jul 2025".
+ * @param date Objek LocalDate yang akan diformat.
+ * @return String tanggal yang sudah diformat.
+ */
+fun formatLocalDate(date: LocalDate): String {
+    // Tentukan pola format yang diinginkan
+    // dd = hari (01-31), MMM = nama bulan singkat (Jan-Dec), yyyy = tahun
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
+    return date.format(formatter)
 }
 
-fun getCurrentDateRangePair(): Pair<LocalDate, LocalDate> {
-    val today = LocalDate.now()
-    val startDate = today.with(TemporalAdjusters.firstDayOfMonth())
-    val endDate = today.with(TemporalAdjusters.lastDayOfMonth())
-    return Pair(startDate, endDate)
-}
-
-fun formatDateRangeToString(
-    dateRange: Pair<LocalDate, LocalDate>,
-    locale: Locale = Locale("in", "ID")
-): String {
-    val firstDay = dateRange.first
-    val lastDay = dateRange.second
-
-    val dayFormatter = DateTimeFormatter.ofPattern("dd", locale)
-    val monthYearFormatter = DateTimeFormatter.ofPattern("MMM yy", locale)
-
-    // Jika bulan dan tahunnya sama, formatnya bisa lebih singkat
-    if (firstDay.year == lastDay.year && firstDay.month == lastDay.month) {
-        return "${firstDay.format(dayFormatter)} - ${lastDay.format(dayFormatter)} ${
-            lastDay.format(
-                monthYearFormatter
-            )
-        }"
-    }
-    // Jika berbeda (jarang terjadi untuk rentang bulanan, tapi bagus untuk jaga-jaga)
-    return "${firstDay.format(dayFormatter)} ${firstDay.format(monthYearFormatter)} - ${
-        lastDay.format(
-            dayFormatter
-        )
-    } ${lastDay.format(monthYearFormatter)}"
+/**
+ * Mengubah objek LocalDateTime menjadi String dengan format "29 Jul 2025, 21:33".
+ * @param dateTime Objek LocalDateTime yang akan diformat.
+ * @return String tanggal dan waktu yang sudah diformat.
+ */
+fun formatLocalDateTime(dateTime: LocalDateTime): String {
+    // Tentukan pola format yang diinginkan
+    // HH = jam (00-23), mm = menit (00-59)
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+    return dateTime.format(formatter)
 }

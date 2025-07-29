@@ -71,8 +71,8 @@ class HomeViewModel @Inject constructor(
                 HomeEvent.NotificationsClicked -> _navigationEvent.emit(ProfileRoutes.Notifications)
                 HomeEvent.AccountsClicked -> _navigationEvent.emit(AccountsGraph)
                 HomeEvent.BalanceClicked -> _navigationEvent.emit(AccountsGraph)
-                HomeEvent.SavingsClicked -> _navigationEvent.emit(SavingsGraph)
                 HomeEvent.ProfileClicked -> _navigationEvent.emit(ProfileGraph)
+                HomeEvent.AllSavingsGoalsClicked -> _navigationEvent.emit(SavingsGraph)
 
                 is HomeEvent.TransactionClicked -> _navigationEvent.emit(
                     TransactionDetail(event.transactionId)
@@ -106,7 +106,7 @@ class HomeViewModel @Inject constructor(
             ) { allAccounts, allSavings, recentTransaction, topBudgets ->
 
                 val totalBalance = allAccounts.sumOf { it.balance }
-                val totalSavings = allSavings.sumOf { it.currentAmount }
+                val totalSavings = allSavings.sumOf { it.savedAmount }
                 val recentExpenses = recentTransaction
                     .filter { it.type == TransactionType.EXPENSE }
                     .take(3)

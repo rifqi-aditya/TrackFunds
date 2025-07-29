@@ -256,10 +256,10 @@ val unspecified_scheme = ColorFamily(
 
 @Immutable
 data class ExtendedColors(
-    val textIncome: Color,
-    val textExpense: Color,
-    val accentGreen: Color,
-    val onAccentGreen: Color,
+    val income: Color,
+    val expense: Color,
+    val accent: Color,
+    val onAccent: Color,
     val chartConditionGood: Color,
     val chartConditionWarning: Color,
     val chartConditionNeutral: Color,
@@ -273,10 +273,10 @@ data class ExtendedColors(
 
 val LocalExtendedColors = staticCompositionLocalOf {
     ExtendedColors(
-        textIncome = Color.Unspecified,
-        textExpense = Color.Unspecified,
-        accentGreen = Color.Unspecified,
-        onAccentGreen = Color.Unspecified,
+        income = Color.Unspecified,
+        expense = Color.Unspecified,
+        accent = Color.Unspecified,
+        onAccent = Color.Unspecified,
         chartConditionGood = Color.Unspecified,
         chartConditionWarning = Color.Unspecified,
         chartConditionNeutral = Color.Unspecified,
@@ -307,10 +307,10 @@ fun TrackFundsTheme(
 
     val extendedColors = if (darkTheme) {
         ExtendedColors(
-            textIncome = TextIncome,
-            textExpense = TextExpense,
-            accentGreen = AccentGreenDark,
-            onAccentGreen = OnAccentGreen,
+            income = IncomeDark,
+            expense = ExpenseDark,
+            accent = AccentGreenDark,
+            onAccent = OnAccentGreen,
             chartConditionGood = ChartConditionGood,
             chartConditionWarning = ChartConditionWarning,
             chartConditionNeutral = ChartConditionNeutralDark,
@@ -323,10 +323,10 @@ fun TrackFundsTheme(
         )
     } else {
         ExtendedColors(
-            textIncome = TextIncome,
-            textExpense = TextExpense,
-            accentGreen = AccentGreenLight,
-            onAccentGreen = OnAccentGreen,
+            income = IncomeLight,
+            expense = ExpenseLight,
+            accent = AccentGreenLight,
+            onAccent = OnAccentGreen,
             chartConditionGood = ChartConditionGood,
             chartConditionWarning = ChartConditionWarning,
             chartConditionNeutral = ChartConditionNeutralLight,

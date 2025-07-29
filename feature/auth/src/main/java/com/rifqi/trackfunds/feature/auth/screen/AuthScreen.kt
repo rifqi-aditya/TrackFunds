@@ -230,8 +230,8 @@ fun AuthContent(
                         .height(52.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = TrackFundsTheme.extendedColors.accentGreen,
-                        contentColor = TrackFundsTheme.extendedColors.onAccentGreen
+                        containerColor = TrackFundsTheme.extendedColors.accent,
+                        contentColor = TrackFundsTheme.extendedColors.onAccent
                     )
                 ) {
                     Text(

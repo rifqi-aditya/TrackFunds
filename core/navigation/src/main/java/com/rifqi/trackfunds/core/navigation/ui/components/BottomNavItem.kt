@@ -35,7 +35,7 @@ fun BottomNavItem(
         verticalArrangement = Arrangement.Center
     ) {
         val color =
-            if (isSelected) TrackFundsTheme.extendedColors.accentGreen else MaterialTheme.colorScheme.onSurfaceVariant
+            if (isSelected) TrackFundsTheme.extendedColors.accent else MaterialTheme.colorScheme.onSurfaceVariant
         Icon(
             // v-- dan di sini
             imageVector = icon,

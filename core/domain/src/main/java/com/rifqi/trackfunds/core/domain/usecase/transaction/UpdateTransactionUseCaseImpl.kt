@@ -20,7 +20,6 @@ class UpdateTransactionUseCaseImpl @Inject constructor(
         oldAccountId: String
     ): Result<Unit> {
         return try {
-            // Bungkus semua logika dalam satu transaksi atomik
             transactionRunner {
                 if (transaction.account.id == oldAccountId) {
                     // --- KASUS 1: AKUN TETAP SAMA ---

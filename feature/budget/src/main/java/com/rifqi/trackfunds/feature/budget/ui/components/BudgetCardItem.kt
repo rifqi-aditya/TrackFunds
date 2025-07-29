@@ -24,13 +24,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.model.BudgetModel
-import com.rifqi.trackfunds.core.ui.components.GradientHorizontalProgressBar
+import com.rifqi.trackfunds.core.ui.components.GradientLinearProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -43,20 +41,6 @@ fun BudgetCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val gradientBrush = when {
-        item.progress > 0.8f -> Brush.horizontalGradient(
-            colors = listOf(Color(0xFFF44336), Color(0xFFD32F2F))
-        )
-
-        item.progress > 0.6f -> Brush.horizontalGradient(
-            colors = listOf(Color(0xFFFFC107), Color(0xFFFFA000))
-        )
-
-        else -> Brush.horizontalGradient(
-            colors = listOf(Color(0xFFB4F077), Color(0xFF6ABD2B))
-        )
-    }
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -94,7 +78,7 @@ fun BudgetCardItem(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                AmountDisplay(label = "Budgeted", amount = item.budgetAmount ?: BigDecimal.ZERO)
+                AmountDisplay(label = "Budgeted", amount = item.budgetAmount)
                 AmountDisplay(
                     label = "Remaining",
                     amount = item.remainingAmount,
@@ -104,9 +88,8 @@ fun BudgetCardItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            GradientHorizontalProgressBar(
+            GradientLinearProgressBar(
                 progress = item.progress,
-                brush = gradientBrush
             )
         }
     }

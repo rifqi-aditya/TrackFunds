@@ -52,7 +52,7 @@ fun AmountInputField(
             textStyle = MaterialTheme.typography.bodyLarge,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
-            shape = MaterialTheme.shapes.large,
+            shape = MaterialTheme.shapes.medium,
             visualTransformation = CurrencyVisualTransformation(),
             isError = isError,
             colors = OutlinedTextFieldDefaults.colors(

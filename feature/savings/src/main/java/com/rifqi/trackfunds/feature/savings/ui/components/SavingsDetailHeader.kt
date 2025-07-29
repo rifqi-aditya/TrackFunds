@@ -20,18 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
+import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.ui.components.DynamicProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun SavingsDetailHeader(
-    goal: SavingsGoalModel,
+    goal: SavingsGoal,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -82,7 +82,7 @@ fun SavingsDetailHeader(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        formatCurrency(goal.currentAmount),
+                        formatCurrency(goal.savedAmount),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -136,12 +136,12 @@ fun SavingsDetailHeader(
 }
 
 // --- DUMMY DATA UNTUK PREVIEW ---
-private val previewGoal = SavingsGoalModel(
+private val previewGoal = SavingsGoal(
     id = "1",
     name = "Liburan ke Jepang",
     targetAmount = BigDecimal("20000000"),
-    currentAmount = BigDecimal("15000000"), // 75% progress
-    targetDate = LocalDateTime.now(),
+    savedAmount = BigDecimal("15000000"), // 75% progress
+    targetDate = LocalDate.now(),
     iconIdentifier = "travel",
     isAchieved = false
 )

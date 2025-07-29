@@ -1,12 +1,11 @@
 package com.rifqi.trackfunds.core.domain.usecase.savings
 
-import com.rifqi.trackfunds.core.domain.model.SavingsGoalModel
+import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import kotlinx.coroutines.flow.Flow
 
 /**
  * Gets a continuous stream of a single savings goal by its ID.
  */
 interface GetSavingsGoalByIdUseCase {
-    // DIUBAH: Menghapus 'suspend' agar konsisten mengembalikan Flow
-    operator fun invoke(goalId: String): Flow<SavingsGoalModel?>
+    operator fun invoke(goalId: String): Flow<SavingsGoal?>
 }

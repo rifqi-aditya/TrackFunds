@@ -103,7 +103,7 @@ fun AccountsContent(
             FloatingActionButton(
                 onClick = { onEvent(AccountsEvent.AddAccountClicked) },
                 shape = MaterialTheme.shapes.medium,
-                containerColor = TrackFundsTheme.extendedColors.accentGreen
+                containerColor = TrackFundsTheme.extendedColors.accent
             ) {
                 DisplayIconFromResource(
                     identifier = "plus",
@@ -111,7 +111,7 @@ fun AccountsContent(
                     modifier = Modifier
                         .padding(8.dp)
                         .size(24.dp),
-                    tint = TrackFundsTheme.extendedColors.onAccentGreen
+                    tint = TrackFundsTheme.extendedColors.onAccent
                 )
             }
         }

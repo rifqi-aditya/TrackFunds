@@ -64,6 +64,7 @@ fun RecentTransactionsCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -95,7 +96,7 @@ fun RecentTransactionsCard(
                             matchContentSize = true
                         ),
                         width = Dp.Unspecified,
-                        color = TrackFundsTheme.extendedColors.accentGreen
+                        color = TrackFundsTheme.extendedColors.accent
                     )
                 },
                 divider = {}
@@ -110,7 +111,7 @@ fun RecentTransactionsCard(
                             }
                         },
                         text = { Text(text = title) },
-                        selectedContentColor = TrackFundsTheme.extendedColors.accentGreen,
+                        selectedContentColor = TrackFundsTheme.extendedColors.accent,
                         unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
