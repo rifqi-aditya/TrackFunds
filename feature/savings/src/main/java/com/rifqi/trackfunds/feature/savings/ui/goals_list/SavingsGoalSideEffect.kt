@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.sideeffect
+package com.rifqi.trackfunds.feature.savings.ui.goals_list
 
 // Di dalam package ui/event atau package terpisah
 sealed interface SavingsGoalSideEffect {

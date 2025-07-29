@@ -1,13 +1,12 @@
-package com.rifqi.trackfunds.feature.savings.ui.viewmodel
+package com.rifqi.trackfunds.feature.savings.ui.goals_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
-import com.rifqi.trackfunds.feature.savings.ui.event.SavingsGoalEvent
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalEvent
 import com.rifqi.trackfunds.feature.savings.ui.model.toUiModel
-import com.rifqi.trackfunds.feature.savings.ui.sideeffect.SavingsGoalSideEffect
-import com.rifqi.trackfunds.feature.savings.ui.state.SavingsGoalUiState
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

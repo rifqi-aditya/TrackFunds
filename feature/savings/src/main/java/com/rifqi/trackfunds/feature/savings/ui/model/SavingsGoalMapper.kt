@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.feature.savings.ui.model
 import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.core.ui.utils.formatLocalDate
-import com.rifqi.trackfunds.feature.savings.ui.state.AddEditSavingsGoalState
+import com.rifqi.trackfunds.feature.savings.ui.add_edit_goal.AddEditSavingsGoalState
 import java.math.BigDecimal
 import java.util.UUID
 

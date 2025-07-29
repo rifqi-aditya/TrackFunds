@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.screen
+package com.rifqi.trackfunds.feature.savings.ui.add_edit_goal
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -43,11 +43,7 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
-import com.rifqi.trackfunds.feature.savings.ui.event.AddEditSavingsEvent
 import com.rifqi.trackfunds.feature.savings.ui.model.DefaultSavingsIcons
-import com.rifqi.trackfunds.feature.savings.ui.sideeffect.AddEditGoalSideEffect
-import com.rifqi.trackfunds.feature.savings.ui.state.AddEditSavingsGoalState
-import com.rifqi.trackfunds.feature.savings.ui.viewmodel.AddEditSavingsGoalViewModel
 import java.time.LocalDate
 
 

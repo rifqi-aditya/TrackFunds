@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.event
+package com.rifqi.trackfunds.feature.savings.ui.add_edit_goal
 
 import java.time.LocalDate
 

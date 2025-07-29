@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.state
+package com.rifqi.trackfunds.feature.savings.ui.detail
 
 import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.model.TransactionModel

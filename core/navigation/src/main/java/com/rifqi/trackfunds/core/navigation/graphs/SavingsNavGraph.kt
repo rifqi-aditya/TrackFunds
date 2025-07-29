@@ -6,9 +6,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
 import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
-import com.rifqi.trackfunds.feature.savings.ui.screen.AddEditSavingsGoalScreen
-import com.rifqi.trackfunds.feature.savings.ui.screen.SavingsDetailScreen
-import com.rifqi.trackfunds.feature.savings.ui.screen.SavingsGoalScreen
+import com.rifqi.trackfunds.feature.savings.ui.add_edit_goal.AddEditSavingsGoalScreen
+import com.rifqi.trackfunds.feature.savings.ui.detail.SavingsDetailScreen
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalScreen
 
 fun NavGraphBuilder.savingsNavGraph(navController: NavHostController) {
     navigation<SavingsGraph>(

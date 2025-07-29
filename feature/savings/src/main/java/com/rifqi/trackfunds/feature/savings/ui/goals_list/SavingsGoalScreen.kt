@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.screen
+package com.rifqi.trackfunds.feature.savings.ui.goals_list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,11 +29,11 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.savings.ui.components.EmptyState
 import com.rifqi.trackfunds.feature.savings.ui.components.SavingsGoalCard
 import com.rifqi.trackfunds.feature.savings.ui.components.TotalSavingsSummaryCard
-import com.rifqi.trackfunds.feature.savings.ui.event.SavingsGoalEvent
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalEvent
 import com.rifqi.trackfunds.feature.savings.ui.model.SavingsGoalUiModel
-import com.rifqi.trackfunds.feature.savings.ui.sideeffect.SavingsGoalSideEffect
-import com.rifqi.trackfunds.feature.savings.ui.state.SavingsGoalUiState
-import com.rifqi.trackfunds.feature.savings.ui.viewmodel.SavingsGoalViewModel
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalSideEffect
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalUiState
+import com.rifqi.trackfunds.feature.savings.ui.goals_list.SavingsGoalViewModel
 
 
 @Composable

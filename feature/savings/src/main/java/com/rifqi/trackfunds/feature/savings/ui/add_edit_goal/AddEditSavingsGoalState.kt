@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.state
+package com.rifqi.trackfunds.feature.savings.ui.add_edit_goal
 
 import java.math.BigDecimal
 import java.time.LocalDate

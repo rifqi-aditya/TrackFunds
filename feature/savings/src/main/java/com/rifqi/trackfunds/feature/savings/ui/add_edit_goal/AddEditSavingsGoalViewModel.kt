@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.viewmodel
+package com.rifqi.trackfunds.feature.savings.ui.add_edit_goal
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,10 +9,7 @@ import com.rifqi.trackfunds.core.domain.usecase.savings.UpdateSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.validator.savings.ValidateIcon
 import com.rifqi.trackfunds.core.domain.validator.savings.ValidateSavingsGoalName
 import com.rifqi.trackfunds.core.domain.validator.savings.ValidateSavingsTargetAmount
-import com.rifqi.trackfunds.feature.savings.ui.event.AddEditSavingsEvent
 import com.rifqi.trackfunds.feature.savings.ui.model.toDomainModel
-import com.rifqi.trackfunds.feature.savings.ui.sideeffect.AddEditGoalSideEffect
-import com.rifqi.trackfunds.feature.savings.ui.state.AddEditSavingsGoalState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

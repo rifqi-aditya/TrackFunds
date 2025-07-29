@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.screen
+package com.rifqi.trackfunds.feature.savings.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,9 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
 import com.rifqi.trackfunds.feature.savings.ui.components.SavingsDetailHeader
-import com.rifqi.trackfunds.feature.savings.ui.event.SavingsDetailEvent
-import com.rifqi.trackfunds.feature.savings.ui.state.SavingsDetailUiState
-import com.rifqi.trackfunds.feature.savings.ui.viewmodel.SavingsDetailViewModel
+import com.rifqi.trackfunds.feature.savings.ui.detail.SavingsDetailUiState
+import com.rifqi.trackfunds.feature.savings.ui.detail.SavingsDetailViewModel
 
 @Composable
 fun SavingsDetailScreen(

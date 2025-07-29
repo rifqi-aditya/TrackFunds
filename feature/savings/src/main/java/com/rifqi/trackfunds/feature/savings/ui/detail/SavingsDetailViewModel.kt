@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.viewmodel
+package com.rifqi.trackfunds.feature.savings.ui.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -10,8 +10,7 @@ import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCas
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
-import com.rifqi.trackfunds.feature.savings.ui.event.SavingsDetailEvent
-import com.rifqi.trackfunds.feature.savings.ui.state.SavingsDetailUiState
+import com.rifqi.trackfunds.feature.savings.ui.detail.SavingsDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

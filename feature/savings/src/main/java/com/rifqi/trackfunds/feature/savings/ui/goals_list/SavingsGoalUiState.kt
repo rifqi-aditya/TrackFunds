@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.state
+package com.rifqi.trackfunds.feature.savings.ui.goals_list
 
 import com.rifqi.trackfunds.feature.savings.ui.model.SavingsGoalUiModel
 import java.math.BigDecimal

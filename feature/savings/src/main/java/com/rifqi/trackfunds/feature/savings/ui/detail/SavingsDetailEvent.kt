@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.event
+package com.rifqi.trackfunds.feature.savings.ui.detail
 
 sealed interface SavingsDetailEvent {
     data object AddFundsClicked : SavingsDetailEvent

@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.savings.ui.event
+package com.rifqi.trackfunds.feature.savings.ui.goals_list
 
 sealed interface SavingsGoalEvent {
     data object AddGoalClicked : SavingsGoalEvent
