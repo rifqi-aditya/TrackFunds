@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
@@ -66,7 +66,7 @@ class SelectCategoryViewModel @Inject constructor(
         }
     }
 
-    fun onCategorySelected(category: CategoryModel) {
+    fun onCategorySelected(category: Category) {
         resultManager.setResult(category)
     }
 }

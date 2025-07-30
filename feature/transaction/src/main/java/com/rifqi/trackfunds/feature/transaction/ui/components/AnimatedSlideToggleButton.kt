@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 data class ToggleItem<T>(
     val item: T,
@@ -84,7 +85,7 @@ fun <T> AnimatedSlideToggleButton(
                 .padding(vertical = 6.dp, horizontal = 6.dp)
                 .offset(x = indicatorOffset)
                 .clip(RoundedCornerShape(outerCornerRadius - distance))
-                .background(MaterialTheme.colorScheme.onSurface)
+                .background(TrackFundsTheme.extendedColors.accent)
         )
 
         // Teks di atas indikator

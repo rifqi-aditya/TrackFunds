@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.screen
+package com.rifqi.trackfunds.feature.transaction.ui.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -44,9 +44,6 @@ import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.transaction.ui.components.DetailRow
-import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionDetailEvent
-import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionDetailUiState
-import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.TransactionDetailViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
 import java.util.Locale

@@ -28,7 +28,7 @@ class AddEditSavingsGoalViewModel @Inject constructor(
     private val getSavingsGoalByIdUseCase: GetSavingsGoalByIdUseCase,
     private val createSavingsGoalUseCase: CreateSavingsGoalUseCase,
     private val updateSavingsGoalUseCase: UpdateSavingsGoalUseCase,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddEditSavingsGoalState())

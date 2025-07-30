@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.budget
 
-import com.rifqi.trackfunds.core.domain.model.BudgetModel
+import com.rifqi.trackfunds.core.domain.model.Budget
 import kotlinx.coroutines.flow.Flow
 import java.time.YearMonth
 
@@ -12,5 +12,5 @@ interface GetBudgetsUseCase {
      * @param period The month and year to fetch budgets for.
      * @return A [Flow] emitting the list of budgets.
      */
-    operator fun invoke(period: YearMonth): Flow<List<BudgetModel>>
+    operator fun invoke(period: YearMonth): Flow<List<Budget>>
 }

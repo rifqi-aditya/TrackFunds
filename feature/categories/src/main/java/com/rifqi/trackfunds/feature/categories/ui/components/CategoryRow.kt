@@ -20,12 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 @Composable
 fun CategoryRow(
-    category: CategoryModel,
+    category: Category,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEditable: Boolean

@@ -7,7 +7,7 @@ import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
 import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
@@ -30,7 +30,7 @@ class TransactionRepositoryImpl @Inject constructor(
 ) : TransactionRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<TransactionModel>> {
+    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<Transaction>> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) return@flatMapLatest flowOf(emptyList())
 
@@ -102,7 +102,7 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getTransactionById(transactionId: String): Flow<TransactionModel?> {
+    override fun getTransactionById(transactionId: String): Flow<Transaction?> {
         return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(null)
@@ -113,7 +113,7 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertTransaction(transaction: TransactionModel): Result<Unit> {
+    override suspend fun insertTransaction(transaction: Transaction): Result<Unit> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
@@ -135,7 +135,7 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTransaction(transaction: TransactionModel): Result<Unit> {
+    override suspend fun updateTransaction(transaction: Transaction): Result<Unit> {
         return try {
             val userUid = userPreferencesRepository.userUidFlow.first()
                 ?: return Result.failure(Exception("User not logged in."))
@@ -156,5 +156,10 @@ class TransactionRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override fun getTransactionsForGoal(userUid: String, goalId: String): Flow<List<Transaction>> {
+        return transactionDao.getTransactionsForGoal(userUid, goalId)
+            .map { entityList -> entityList.map { it.toDomain() } }
     }
 }

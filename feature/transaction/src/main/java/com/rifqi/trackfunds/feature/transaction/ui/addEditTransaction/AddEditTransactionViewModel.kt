@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.viewmodel
+package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -6,10 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
-import com.rifqi.trackfunds.core.domain.model.AccountModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
@@ -18,15 +17,10 @@ import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUs
 import com.rifqi.trackfunds.core.domain.usecase.savings.AddFundsToSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCase
-import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
-import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
-import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditSheetType
-import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
+import com.rifqi.trackfunds.feature.transaction.ui.model.LineItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -54,7 +48,6 @@ class AddEditTransactionViewModel @Inject constructor(
     private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
     private val addTransactionUseCase: AddTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
-    private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val getAccountsUseCase: GetAccountsUseCase,
     private val getFilteredCategoriesUseCase: GetFilteredCategoriesUseCase,
     private val resultManager: NavigationResultManager,
@@ -69,16 +62,16 @@ class AddEditTransactionViewModel @Inject constructor(
     private val editingTransactionId: String? = args.transactionId
     val isEditMode: Boolean = editingTransactionId != null
 
-    private var originalTransaction: TransactionModel? = null
+    private var originalTransaction: Transaction? = null
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<AppScreen>()
-    val navigationEvent = _navigationEvent.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<AddEditTransactionSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val categoriesForSelection: StateFlow<List<CategoryModel>> =
+    val categoriesForSelection: StateFlow<List<Category>> =
         _uiState.map { it.selectedTransactionType to it.categorySearchQuery }
             .distinctUntilChanged()
             .flatMapLatest { (type, query) ->
@@ -108,7 +101,6 @@ class AddEditTransactionViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            // Muat semua data yang dibutuhkan untuk pilihan form
             val allAccounts = getAccountsUseCase().first()
             val allSavingsGoals = getActiveSavingsGoalsUseCase().first()
 
@@ -234,31 +226,61 @@ class AddEditTransactionViewModel @Inject constructor(
                 }
             }
 
-            AddEditTransactionEvent.DeleteClicked -> {
-                if (isEditMode) {
-                    _uiState.update { it.copy(showDeleteConfirmDialog = true) }
+            AddEditTransactionEvent.SaveClicked -> saveTransaction()
+            is AddEditTransactionEvent.ToggleDetailsSection -> {
+                _uiState.update { it.copy(isDetailsExpanded = !it.isDetailsExpanded) }
+            }
+
+            is AddEditTransactionEvent.AddNewLineItem -> {
+                _uiState.update { currentState ->
+                    val newList = currentState.lineItems + LineItemUiModel() // Tambah item baru
+                    currentState.copy(lineItems = newList)
                 }
             }
 
-            AddEditTransactionEvent.ConfirmDeleteClicked -> {
-                originalTransaction?.let { deleteTransaction(it) }
+            is AddEditTransactionEvent.DeleteLineItem -> {
+                _uiState.update { currentState ->
+                    val newList = currentState.lineItems.toMutableList().apply {
+                        removeAt(event.index) // Hapus item pada indeks tertentu
+                    }
+                    currentState.copy(lineItems = newList)
+                }
             }
 
-            AddEditTransactionEvent.DismissDeleteDialog -> _uiState.update {
-                it.copy(
-                    showDeleteConfirmDialog = false
-                )
+            is AddEditTransactionEvent.OnLineItemChanged -> {
+                _uiState.update { currentState ->
+                    val newList = currentState.lineItems.toMutableList().apply {
+                        this[event.index] = event.item
+                    }
+                    currentState.copy(lineItems = newList)
+                }
             }
 
-            AddEditTransactionEvent.SaveClicked -> saveTransaction()
+            is AddEditTransactionEvent.OnAddReceiptClicked -> {
+                viewModelScope.launch {
+                    _sideEffect.emit(AddEditTransactionSideEffect.LaunchGallery)
+                }
+            }
+
+            is AddEditTransactionEvent.OnReceiptImageSelected -> {
+                // UI telah memilih gambar, sekarang update URI-nya di state
+                _uiState.update { it.copy(receiptImageUri = event.uri) }
+            }
+
+            is AddEditTransactionEvent.OnDeleteLineItem -> {
+                _uiState.update { currentState ->
+                    val newList = currentState.lineItems.toMutableList().apply {
+                        removeAt(event.index)
+                    }
+                    currentState.copy(lineItems = newList)
+                }
+            }
         }
     }
 
     private fun observeNavigationResults() {
         resultManager.result.onEach { resultData ->
             when (resultData) {
-                is AccountModel -> onEvent(AddEditTransactionEvent.AccountSelected(resultData))
-                is CategoryModel -> onEvent(AddEditTransactionEvent.CategorySelected(resultData))
                 is ScanResult -> handleScanResult(resultData)
             }
             if (resultData != null) resultManager.setResult(null)
@@ -267,7 +289,7 @@ class AddEditTransactionViewModel @Inject constructor(
 
     private fun handleScanResult(scanResult: ScanResult) {
         viewModelScope.launch {
-            var suggestedCategory: CategoryModel? = null
+            var suggestedCategory: Category? = null
 
 
             scanResult.categoryStandardKey?.let { key ->
@@ -288,12 +310,9 @@ class AddEditTransactionViewModel @Inject constructor(
     private fun saveTransaction() {
         viewModelScope.launch {
             val currentState = _uiState.value
-            // Lakukan validasi terlebih dahulu
-            if (!validateInput(currentState)) return@launch
 
             _uiState.update { it.copy(isSaving = true) }
 
-            // Buat objek transaksi dari state saat ini
             val transactionToSave = createTransactionFromState(currentState)
 
             try {
@@ -303,7 +322,7 @@ class AddEditTransactionViewModel @Inject constructor(
                         oldAmount = originalTransaction!!.amount,
                         oldAccountId = originalTransaction!!.account.id
                     )
-                    snackbarManager.showMessage("Transaksi berhasil diperbarui")
+                    snackbarManager.showMessage("Transaction successfully updated")
                 } else {
                     // Cek apakah ini setoran tabungan
                     if (transactionToSave.savingsGoal != null) {
@@ -315,50 +334,20 @@ class AddEditTransactionViewModel @Inject constructor(
                         snackbarManager.showMessage("Setoran berhasil ditambahkan")
                     } else {
                         addTransactionUseCase(transactionToSave)
-                        snackbarManager.showMessage("Transaksi berhasil disimpan")
+                        snackbarManager.showMessage("Transaction successfully saved")
                     }
                 }
-                _navigationEvent.emit(HomeRoutes.Home)
+                TODO("Implement navigation to home screen after saving transaction")
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false, error = e.message) }
             }
         }
     }
 
-    private fun deleteTransaction(transactionToDelete: TransactionModel) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
-            try {
-                deleteTransactionUseCase(transactionToDelete)
-                _navigationEvent.emit(HomeRoutes.Home)
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = e.message) }
-            }
-        }
-    }
-
-
-    // Fungsi helper untuk validasi
-    private fun validateInput(state: AddEditTransactionUiState): Boolean {
-        if (state.amount.isBlank() || state.selectedAccount == null) {
-            _uiState.update { it.copy(error = "Nominal dan Akun harus diisi.") }
-            return false
-        }
-        if (state.selectedTransactionType == TransactionType.SAVINGS && state.selectedSavingsGoal == null) {
-            _uiState.update { it.copy(error = "Tujuan Tabungan harus dipilih.") }
-            return false
-        }
-        if (state.selectedTransactionType != TransactionType.SAVINGS && state.selectedCategory == null) {
-            _uiState.update { it.copy(error = "Kategori harus dipilih.") }
-            return false
-        }
-        return true
-    }
-
     // Fungsi helper untuk membuat objek TransactionItem
-    private fun createTransactionFromState(state: AddEditTransactionUiState): TransactionModel {
+    private fun createTransactionFromState(state: AddEditTransactionUiState): Transaction {
         val isSavings = state.selectedTransactionType == TransactionType.SAVINGS
-        return TransactionModel(
+        return Transaction(
             id = editingTransactionId ?: UUID.randomUUID().toString(),
             description = state.description,
             amount = state.amount.toBigDecimal(),

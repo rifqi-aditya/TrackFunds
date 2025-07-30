@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.event
+package com.rifqi.trackfunds.feature.transaction.ui.detail
 
 sealed interface TransactionDetailEvent {
     data object EditClicked : TransactionDetailEvent

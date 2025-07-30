@@ -6,7 +6,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.data.mapper.toDomainModel
-import com.rifqi.trackfunds.core.domain.model.UserModel
+import com.rifqi.trackfunds.core.domain.model.User
 import com.rifqi.trackfunds.core.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -22,18 +22,18 @@ class UserRepositoryImpl @Inject constructor(
     private val storage: FirebaseStorage
 ) : UserRepository {
 
-    override fun getProfile(): Flow<UserModel?> {
+    override fun getProfile(): Flow<User?> {
         val uid = auth.currentUser?.uid ?: return flowOf(null)
         return userDao.getProfile(uid).map { entity ->
             entity?.toDomainModel()
         }
     }
 
-    override suspend fun createOrUpdateProfile(userModel: UserModel, imageUri: Uri?): Result<Unit> {
+    override suspend fun createOrUpdateProfile(user: User, imageUri: Uri?): Result<Unit> {
         val uid = auth.currentUser?.uid ?: return Result.failure(Exception("User not logged in."))
 
         return try {
-            var finalPhotoUrl = userModel.photoUrl
+            var finalPhotoUrl = user.photoUrl
 
             // Logika upload foto ke Firebase Storage tidak berubah
             if (imageUri != null) {
@@ -45,13 +45,13 @@ class UserRepositoryImpl @Inject constructor(
             // Buat entity untuk disimpan ke Room
             val userEntity = UserEntity(
                 uid = uid,
-                email = userModel.email ?: "",
-                username = userModel.username,
-                fullName = userModel.fullName,
+                email = user.email ?: "",
+                username = user.username,
+                fullName = user.fullName,
                 photoUrl = finalPhotoUrl,
-                phoneNumber = userModel.phoneNumber,
-                gender = userModel.gender,
-                birthdate = userModel.birthdate
+                phoneNumber = user.phoneNumber,
+                gender = user.gender,
+                birthdate = user.birthdate
             )
 
             // Simpan ke database lokal

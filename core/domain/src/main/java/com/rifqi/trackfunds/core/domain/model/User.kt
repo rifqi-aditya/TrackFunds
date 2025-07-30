@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.model
 
-data class UserModel(
+data class User(
     val uid: String,
     val fullName: String? = null,
     val email: String? = null,

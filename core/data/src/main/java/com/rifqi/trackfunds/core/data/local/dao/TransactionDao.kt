@@ -63,7 +63,7 @@ interface TransactionDao {
             a.name AS account_name, a.icon_identifier AS account_icon_identifier, a.balance AS account_balance,
             s.id AS savings_goal_id, s.name AS savings_goal_name, s.icon_identifier AS savings_goal_icon_identifier,
             s.target_date AS savings_goal_target_date, s.target_amount AS savings_goal_target_amount, 
-            s.saved_amount AS savings_goal_current_amount,
+            s.saved_amount AS savings_goal_saved_amount,
             CASE WHEN s.saved_amount >= s.target_amount THEN 1 ELSE 0 END AS savings_goal_is_achieved
         FROM transactions AS t
         LEFT JOIN categories AS c ON t.category_id = c.id
@@ -172,4 +172,12 @@ interface TransactionDao {
         userUid: String
     ): Flow<TransactionWithLineItems?>
 
+    @Query(
+        """
+        SELECT * FROM transactions 
+        WHERE user_uid = :userUid AND savings_goal_id = :goalId 
+        ORDER BY date DESC
+    """
+    )
+    fun getTransactionsForGoal(userUid: String, goalId: String): Flow<List<TransactionEntity>>
 }

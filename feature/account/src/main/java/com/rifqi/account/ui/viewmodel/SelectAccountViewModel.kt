@@ -3,7 +3,7 @@ package com.rifqi.account.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.Account
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
 import com.rifqi.trackfunds.core.ui.model.SelectionItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 data class AccountListUiState(
     val isLoading: Boolean = true,
-    val accounts: List<AccountModel> = emptyList(),
+    val accounts: List<Account> = emptyList(),
     val selectionItems: List<SelectionItem> = emptyList(),
     val error: String? = null
 )
@@ -58,7 +58,7 @@ class SelectAccountViewModel @Inject constructor(
                 initialValue = AccountListUiState(isLoading = true)
             )
 
-    fun onAccountSelected(account: AccountModel) {
+    fun onAccountSelected(account: Account) {
         resultManager.setResult(account)
     }
 }

@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.YearMonth
 
-data class BudgetModel(
+data class Budget(
     val budgetId: String,
     val categoryId: String,
     val categoryName: String,

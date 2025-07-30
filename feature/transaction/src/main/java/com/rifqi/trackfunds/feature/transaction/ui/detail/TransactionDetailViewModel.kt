@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.viewmodel
+package com.rifqi.trackfunds.feature.transaction.ui.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,8 +9,6 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUs
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
-import com.rifqi.trackfunds.feature.transaction.ui.event.TransactionDetailEvent
-import com.rifqi.trackfunds.feature.transaction.ui.state.TransactionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

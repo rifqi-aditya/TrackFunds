@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 
 interface PerformTransferUseCase {
-    suspend operator fun invoke(expense: TransactionModel, income: TransactionModel): Result<Unit>
+    suspend operator fun invoke(expense: Transaction, income: Transaction): Result<Unit>
 }

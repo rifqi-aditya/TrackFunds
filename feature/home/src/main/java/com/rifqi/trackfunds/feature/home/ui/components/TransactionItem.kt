@@ -24,9 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.AccountModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.OverlappingIcon
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
@@ -39,7 +39,7 @@ import java.util.Locale
 @Composable
 fun TransactionItem(
     modifier: Modifier = Modifier,
-    transactions: TransactionModel,
+    transactions: Transaction,
     onClick: () -> Unit
 ) {
     Row(
@@ -107,59 +107,59 @@ fun TransactionItem(
     }
 }
 
-class TransactionItemPreviewParameterProvider : CollectionPreviewParameterProvider<TransactionModel>(
+class TransactionItemPreviewParameterProvider : CollectionPreviewParameterProvider<Transaction>(
     listOf(
-        TransactionModel(
+        Transaction(
             id = "1",
             description = "Makan Siang",
             amount = BigDecimal("1000000.0"),
             type = TransactionType.EXPENSE,
             date = LocalDateTime.now(),
-            account = AccountModel(
+            account = Account(
                 id = "1",
                 name = "Dompet Utama",
                 iconIdentifier = "ic_wallet",
                 balance = BigDecimal("1000000.0"),
             ),
-            category = CategoryModel(
+            category = Category(
                 id = "1",
                 name = "Makanan",
                 iconIdentifier = "ic_food",
                 type = TransactionType.EXPENSE
             )
         ),
-        TransactionModel(
+        Transaction(
             id = "2",
             description = "Gaji Bulanan",
             amount = BigDecimal("1000000.0"),
             type = TransactionType.INCOME,
             date = LocalDateTime.now().minusDays(1),
-            account = AccountModel(
+            account = Account(
                 id = "2",
                 name = "Rekening Bank",
                 iconIdentifier = "ic_bank",
                 balance = BigDecimal("1000000.0")
             ),
-            category = CategoryModel(
+            category = Category(
                 id = "2",
                 name = "Gaji",
                 iconIdentifier = "ic_salary",
                 type = TransactionType.INCOME
             )
         ),
-        TransactionModel(
+        Transaction(
             id = "3",
             description = "Beli Bensin Pertamax Turbo di SPBU dekat rumah untuk perjalanan ke kantor",
             amount = BigDecimal("150000.0"),
             type = TransactionType.EXPENSE,
             date = LocalDateTime.now().minusHours(5),
-            account = AccountModel(
+            account = Account(
                 id = "1",
                 name = "Dompet Utama Dengan Nama Yang Sangat Panjang Sekali",
                 iconIdentifier = "ic_wallet",
                 balance = BigDecimal("1000000.0")
             ),
-            category = CategoryModel(
+            category = Category(
                 id = "3",
                 name = "Transportasi",
                 iconIdentifier = "ic_transportation",
@@ -173,7 +173,7 @@ class TransactionItemPreviewParameterProvider : CollectionPreviewParameterProvid
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
 @Composable
 private fun TransactionItemPreview(
-    @PreviewParameter(TransactionItemPreviewParameterProvider::class) transactions: TransactionModel
+    @PreviewParameter(TransactionItemPreviewParameterProvider::class) transactions: Transaction
 ) {
     TrackFundsTheme {
         TransactionItem(

@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.budget.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.BudgetModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Budget
+import com.rifqi.trackfunds.core.domain.model.Category
 import java.math.BigDecimal
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -23,12 +23,12 @@ import java.util.Locale
  */
 data class BudgetUiState(
     val isLoading: Boolean = true,
-    val budgets: List<BudgetModel> = emptyList(),
+    val budgets: List<Budget> = emptyList(),
     val currentPeriod: YearMonth = YearMonth.now(),
     val totalBudgeted: BigDecimal = BigDecimal.ZERO,
     val totalSpent: BigDecimal = BigDecimal.ZERO,
     val error: String? = null,
-    val categoriesWithBudget: List<CategoryModel> = emptyList(),
+    val categoriesWithBudget: List<Category> = emptyList(),
     val showMonthPickerDialog: Boolean = false
 ) {
     /**

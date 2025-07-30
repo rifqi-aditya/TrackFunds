@@ -1,9 +1,9 @@
 package com.rifqi.trackfunds.feature.scan.ui.state
 
 import android.net.Uri
-import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.Account
 import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 
 enum class ScanPhase {
     UPLOAD,
@@ -23,7 +23,7 @@ data class ScanReceiptUiState(
     val scanResult: ScanResult? = null,
 
     // Data transaksi yang sedang diedit oleh pengguna
-    val editableTransaction: TransactionModel? = null,
+    val editableTransaction: Transaction? = null,
 
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -35,5 +35,5 @@ data class ScanReceiptUiState(
     val showDatePicker: Boolean = false,
     val categorySearchQuery: String = "",
 
-    val allAccounts: List<AccountModel> = emptyList(),
+    val allAccounts: List<Account> = emptyList(),
 )

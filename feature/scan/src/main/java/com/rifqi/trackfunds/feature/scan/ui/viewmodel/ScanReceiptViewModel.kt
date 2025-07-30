@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
@@ -56,7 +56,7 @@ class ScanReceiptViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val categoriesForSelection: StateFlow<List<CategoryModel>> =
+    val categoriesForSelection: StateFlow<List<Category>> =
         _uiState.map { TransactionType.EXPENSE to it.categorySearchQuery }
             .distinctUntilChanged()
             .flatMapLatest { (type, query) ->
@@ -179,7 +179,6 @@ class ScanReceiptViewModel @Inject constructor(
 
                 is ScanReceiptEvent.DateChanged -> {
                     _uiState.update {
-                        // Gabungkan tanggal baru dengan waktu yang sudah ada
                         val newDateTime = _uiState.value.editableTransaction?.date?.with(event.date)
                         it.copy(
                             editableTransaction = _uiState.value.editableTransaction?.copy(
@@ -291,7 +290,7 @@ class ScanReceiptViewModel @Inject constructor(
                                 errorMessage = "You must create an account first."
                             )
                         }
-                        return@onSuccess // Hentikan proses
+                        return@onSuccess
                     }
 
                     // Cocokkan kategori (tidak berubah)
@@ -300,7 +299,7 @@ class ScanReceiptViewModel @Inject constructor(
                     }
 
                     // 4. Buat objek TransactionModel awal dengan akun default
-                    val initialTransaction = TransactionModel(
+                    val initialTransaction = Transaction(
                         amount = result.totalAmount,
                         date = result.transactionDateTime,
                         description = result.merchantName ?: "",

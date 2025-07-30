@@ -1,11 +1,11 @@
 package com.rifqi.trackfunds.feature.transaction.ui.event
 
-import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.Account
 import java.time.LocalDate
 
 sealed interface TransferEvent {
-    data class FromAccountSelected(val account: AccountModel) : TransferEvent
-    data class ToAccountSelected(val account: AccountModel) : TransferEvent
+    data class FromAccountSelected(val account: Account) : TransferEvent
+    data class ToAccountSelected(val account: Account) : TransferEvent
     data class AmountChanged(val amount: String) : TransferEvent
     data class descriptionChanged(val description: String) : TransferEvent
     data class DateChanged(val date: LocalDate) : TransferEvent

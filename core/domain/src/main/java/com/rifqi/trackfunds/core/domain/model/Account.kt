@@ -3,7 +3,7 @@ package com.rifqi.trackfunds.core.domain.model
 import java.math.BigDecimal
 import java.util.UUID
 
-data class AccountModel(
+data class Account(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
     val iconIdentifier: String?,

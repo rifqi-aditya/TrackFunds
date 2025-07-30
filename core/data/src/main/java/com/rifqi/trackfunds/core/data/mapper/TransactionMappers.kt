@@ -2,19 +2,19 @@ package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.dto.TransactionDto
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
-import com.rifqi.trackfunds.core.domain.model.AccountModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import java.math.BigDecimal
 
 /**
  * Maps a [TransactionDto] (a flat object from the database query)
- * to a nested [TransactionModel] domain model.
+ * to a nested [Transaction] domain model.
  * It safely handles cases where a transaction might not have a category or a savings goal.
  */
-fun TransactionDto.toDomain(): TransactionModel {
-    return TransactionModel(
+fun TransactionDto.toDomain(): Transaction {
+    return Transaction(
         id = this.transaction.id,
         description = this.transaction.description,
         amount = this.transaction.amount,
@@ -23,7 +23,7 @@ fun TransactionDto.toDomain(): TransactionModel {
         transferPairId = this.transaction.transferPairId,
 
         category = this.category?.let { categoryInfo ->
-            CategoryModel(
+            Category(
                 id = this.transaction.categoryId ?: "",
                 name = categoryInfo.name ?: "",
                 iconIdentifier = categoryInfo.categoryIconIdentifier ?: "",
@@ -43,7 +43,7 @@ fun TransactionDto.toDomain(): TransactionModel {
             )
         },
 
-        account = AccountModel(
+        account = Account(
             id = this.transaction.accountId,
             name = this.account.name,
             iconIdentifier = this.account.accountIconIdentifier,
@@ -56,7 +56,7 @@ fun TransactionDto.toDomain(): TransactionModel {
  * Maps a TransactionItem (domain model) to a TransactionEntity (Room entity).
  * Required when saving or updating a transaction.
  */
-fun TransactionModel.toEntity(userUid: String): TransactionEntity {
+fun Transaction.toEntity(userUid: String): TransactionEntity {
     return TransactionEntity(
         id = this.id,
         userUid = userUid,
@@ -68,5 +68,24 @@ fun TransactionModel.toEntity(userUid: String): TransactionEntity {
         accountId = this.account.id,
         savingsGoalId = this.savingsGoal?.id,
         transferPairId = this.transferPairId
+    )
+}
+
+fun TransactionEntity.toDomain(): Transaction {
+    return Transaction(
+        id = this.id,
+        description = this.description,
+        amount = this.amount,
+        type = this.type,
+        date = this.date,
+        transferPairId = this.transferPairId,
+        category = null, // Category will be set later when fetching details
+        savingsGoal = null, // Savings goal will be set later when fetching details
+        account = Account(
+            id = this.accountId,
+            name = "", // Name will be set later when fetching details
+            iconIdentifier = "", // Icon will be set later when fetching details
+            balance = BigDecimal.ZERO // Balance will be set later when fetching details
+        )
     )
 }

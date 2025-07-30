@@ -37,8 +37,8 @@ fun NavGraphBuilder.savingsNavGraph(navController: NavHostController) {
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigate = { screen ->
-                    navController.navigate(screen)
+                onNavigateToEditGoal = {
+                    navController.navigate(SavingsRoutes.AddEditSavingsGoal(it))
                 }
             )
         }

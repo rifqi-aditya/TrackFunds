@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.feature.scan.ui.event
 
 import android.net.Uri
-import com.rifqi.trackfunds.core.domain.model.AccountModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.model.Category
 import java.time.LocalDate
 
 sealed interface ScanReceiptEvent {
@@ -16,8 +16,8 @@ sealed interface ScanReceiptEvent {
     data class DescriptionChanged(val description: String) : ScanReceiptEvent
     data class AmountChanged(val amount: String) : ScanReceiptEvent
     data class DateChanged(val date: LocalDate) : ScanReceiptEvent
-    data class AccountSelected(val account: AccountModel) : ScanReceiptEvent
-    data class CategorySelected(val category: CategoryModel) : ScanReceiptEvent
+    data class AccountSelected(val account: Account) : ScanReceiptEvent
+    data class CategorySelected(val category: Category) : ScanReceiptEvent
     data class CategorySearchQueryChanged(val query: String) : ScanReceiptEvent
     data object AccountClicked : ScanReceiptEvent
     data object CategoryClicked : ScanReceiptEvent

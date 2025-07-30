@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.budget
 
-import com.rifqi.trackfunds.core.domain.model.BudgetModel
+import com.rifqi.trackfunds.core.domain.model.Budget
 import kotlinx.coroutines.flow.Flow
 import java.time.YearMonth
 
@@ -13,5 +13,5 @@ interface GetTopBudgetsUseCase {
      * @param limit The maximum number of budgets to return.
      * @return A [Flow] emitting the list of top budgets.
      */
-    operator fun invoke(period: YearMonth, limit: Int = 3): Flow<List<BudgetModel>>
+    operator fun invoke(period: YearMonth, limit: Int = 3): Flow<List<Budget>>
 }

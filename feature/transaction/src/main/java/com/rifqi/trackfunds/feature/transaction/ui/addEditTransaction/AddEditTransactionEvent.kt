@@ -1,9 +1,11 @@
-package com.rifqi.trackfunds.feature.transaction.ui.event
+package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
 
-import com.rifqi.trackfunds.core.domain.model.AccountModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import android.net.Uri
+import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.feature.transaction.ui.model.LineItemUiModel
 import java.time.LocalDate
 
 /**
@@ -23,17 +25,26 @@ sealed interface AddEditTransactionEvent {
     data object DateSelectorClicked : AddEditTransactionEvent
 
     // Events for handling selection results
-    data class AccountSelected(val account: AccountModel) : AddEditTransactionEvent
-    data class CategorySelected(val category: CategoryModel) : AddEditTransactionEvent
+    data class AccountSelected(val account: Account) : AddEditTransactionEvent
+    data class CategorySelected(val category: Category) : AddEditTransactionEvent
     data class SavingsGoalSelected(val goal: SavingsGoal) : AddEditTransactionEvent
 
     // Events for dismissing selection UI
     data object DismissSheet : AddEditTransactionEvent
     data object DismissDatePicker : AddEditTransactionEvent
-    data object DismissDeleteDialog : AddEditTransactionEvent
 
     // General button click events
     data object SaveClicked : AddEditTransactionEvent
-    data object DeleteClicked : AddEditTransactionEvent
-    data object ConfirmDeleteClicked : AddEditTransactionEvent
+
+    data object ToggleDetailsSection : AddEditTransactionEvent
+    data object AddNewLineItem : AddEditTransactionEvent
+    data class OnLineItemChanged(val index: Int, val item: LineItemUiModel) :
+        AddEditTransactionEvent
+
+    data class OnDeleteLineItem(val index: Int) : AddEditTransactionEvent
+    data object OnAddReceiptClicked : AddEditTransactionEvent
+    data class OnReceiptImageSelected(val uri: Uri) : AddEditTransactionEvent
+
+    data class DeleteLineItem(val index: Int) : AddEditTransactionEvent
+
 }

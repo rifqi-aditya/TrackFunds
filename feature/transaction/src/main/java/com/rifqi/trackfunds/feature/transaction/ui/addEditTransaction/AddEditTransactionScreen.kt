@@ -1,31 +1,25 @@
-package com.rifqi.trackfunds.feature.transaction.ui.screen
+package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.SelectionItem
@@ -49,16 +42,8 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
-import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent
-import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.AccountSelected
-import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.CategorySearchChanged
-import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.CategorySelected
-import com.rifqi.trackfunds.feature.transaction.ui.event.AddEditTransactionEvent.SavingsGoalSelected
+import com.rifqi.trackfunds.feature.transaction.ui.components.ExpenseFormContent
 import com.rifqi.trackfunds.feature.transaction.ui.model.transactionTypes
-import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditSheetType
-import com.rifqi.trackfunds.feature.transaction.ui.state.AddEditTransactionUiState
-import com.rifqi.trackfunds.feature.transaction.ui.viewmodel.AddEditTransactionViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Stateful Composable (Container)
@@ -98,12 +83,12 @@ fun AddEditTransactionScreen(
                             SelectionItem(category.id, category.name, category.iconIdentifier)
                         },
                         onItemSelected = { category ->
-                            viewModel.onEvent(CategorySelected(category))
+                            viewModel.onEvent(AddEditTransactionEvent.CategorySelected(category))
                         },
                         isSearchable = true,
                         searchQuery = uiState.categorySearchQuery,
                         onSearchQueryChanged = { query ->
-                            viewModel.onEvent(CategorySearchChanged(query))
+                            viewModel.onEvent(AddEditTransactionEvent.CategorySearchChanged(query))
                         },
                     )
                 }
@@ -116,7 +101,7 @@ fun AddEditTransactionScreen(
                             SelectionItem(account.id, account.name, account.iconIdentifier)
                         },
                         onItemSelected = { account ->
-                            viewModel.onEvent(AccountSelected(account))
+                            viewModel.onEvent(AddEditTransactionEvent.AccountSelected(account))
                         },
                     )
                 }
@@ -129,7 +114,7 @@ fun AddEditTransactionScreen(
                             SelectionItem(savings.id, savings.name, savings.iconIdentifier)
                         },
                         onItemSelected = { savings ->
-                            viewModel.onEvent(SavingsGoalSelected(savings))
+                            viewModel.onEvent(AddEditTransactionEvent.SavingsGoalSelected(savings))
                         },
                     )
                 }
@@ -140,35 +125,21 @@ fun AddEditTransactionScreen(
     }
 
 
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? ->
+            uri?.let { viewModel.onEvent(AddEditTransactionEvent.OnReceiptImageSelected(it)) }
+        }
+    )
+
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collectLatest { screen ->
-            if (screen is HomeRoutes.Home) {
-                onNavigateBack()
-            } else {
-                onNavigate(screen)
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is AddEditTransactionSideEffect.NavigateBack -> onNavigateBack()
+                is AddEditTransactionSideEffect.LaunchGallery -> galleryLauncher.launch("image/*")
+                is AddEditTransactionSideEffect.ShowSnackbar -> {}
             }
         }
-    }
-
-    if (uiState.showDeleteConfirmDialog) {
-        AlertDialog(
-            onDismissRequest = { viewModel.onEvent(AddEditTransactionEvent.DismissDeleteDialog) },
-            title = { Text("Delete Transaction") },
-            text = { Text("Are you sure you want to delete this transaction? This action cannot be undone.") },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.onEvent(AddEditTransactionEvent.ConfirmDeleteClicked) },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Delete") }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.onEvent(AddEditTransactionEvent.DismissDeleteDialog) }) {
-                    Text(
-                        "Cancel"
-                    )
-                }
-            }
-        )
     }
 
     AddEditTransactionContent(
@@ -199,23 +170,6 @@ fun AddEditTransactionContent(
                 title = if (isEditMode) "Edit Transaction" else "Add Transaction",
                 onNavigateBack = onNavigateBack,
                 isFullScreen = true,
-                actions = {
-                    if (isEditMode) {
-                        IconButton(onClick = { onEvent(AddEditTransactionEvent.DeleteClicked) }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Delete Transaction"
-                            )
-                        }
-                    } else {
-                        Spacer(modifier = Modifier.width(48.dp))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
-                )
             )
         },
         bottomBar = {
@@ -225,10 +179,10 @@ fun AddEditTransactionContent(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .height(56.dp),
-                shape = MaterialTheme.shapes.large,
+                shape = MaterialTheme.shapes.medium,
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = TrackFundsTheme.extendedColors.accent,
                     contentColor = MaterialTheme.colorScheme.inverseOnSurface,
                 )
             ) {
@@ -250,7 +204,10 @@ fun AddEditTransactionContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = innerPadding.calculateTopPadding() + 16.dp)
+                .padding(
+                    top = innerPadding.calculateTopPadding() + 16.dp,
+                    bottom = innerPadding.calculateBottomPadding()
+                )
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -259,6 +216,7 @@ fun AddEditTransactionContent(
                 selectedItem = uiState.selectedTransactionType,
                 onItemSelected = { onEvent(AddEditTransactionEvent.TypeChanged(it)) },
             )
+            
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -268,6 +226,10 @@ fun AddEditTransactionContent(
                 when (uiState.selectedTransactionType) {
                     TransactionType.SAVINGS -> {
                         SavingsFormContent(uiState = uiState, onEvent = onEvent)
+                    }
+
+                    TransactionType.EXPENSE -> {
+                        ExpenseFormContent(uiState = uiState, onEvent = onEvent)
                     }
 
                     else -> {

@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.BudgetModel
+import com.rifqi.trackfunds.core.domain.model.Budget
 import com.rifqi.trackfunds.core.ui.components.GradientLinearProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -26,7 +26,7 @@ import java.time.YearMonth
 @Composable
 fun BudgetSummaryRow(
     modifier: Modifier = Modifier,
-    item: BudgetModel,
+    item: Budget,
 ) {
     val gradientBrush = when {
         item.progress > 0.8f -> Brush.horizontalGradient(
@@ -69,7 +69,7 @@ fun BudgetSummaryRow(
 }
 
 // --- DUMMY DATA UNTUK PREVIEW ---
-private val previewBudgetSafe = BudgetModel(
+private val previewBudgetSafe = Budget(
     budgetId = "1", categoryId = "c1", categoryName = "Belanja",
     categoryIconIdentifier = "shopping", budgetAmount = BigDecimal("2000000"),
     spentAmount = BigDecimal("400000"), period = YearMonth.now()

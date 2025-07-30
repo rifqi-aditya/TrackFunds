@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.usecase.account
 
-import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.Account
 
 interface UpdateAccountUseCase {
-    suspend operator fun invoke(account: AccountModel)
+    suspend operator fun invoke(account: Account)
 }

@@ -1,12 +1,12 @@
 package com.rifqi.trackfunds.feature.categories.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 
 data class CategoryListUiState(
     val isLoading: Boolean = true,
-    val defaultExpenseCategories: List<CategoryModel> = emptyList(),
-    val userExpenseCategories: List<CategoryModel> = emptyList(),
-    val defaultIncomeCategories: List<CategoryModel> = emptyList(),
-    val userIncomeCategories: List<CategoryModel> = emptyList(),
+    val defaultExpenseCategories: List<Category> = emptyList(),
+    val userExpenseCategories: List<Category> = emptyList(),
+    val defaultIncomeCategories: List<Category> = emptyList(),
+    val userIncomeCategories: List<Category> = emptyList(),
     val error: String? = null
 )

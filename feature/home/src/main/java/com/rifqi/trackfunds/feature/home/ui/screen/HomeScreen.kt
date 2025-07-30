@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +32,6 @@ import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.components.BudgetCard
 import com.rifqi.trackfunds.feature.home.ui.components.HomeHeader
 import com.rifqi.trackfunds.feature.home.ui.components.RecentTransactionsCard
-import com.rifqi.trackfunds.feature.home.ui.components.SavingsGoalCard
 import com.rifqi.trackfunds.feature.home.ui.components.SummaryCard
 import com.rifqi.trackfunds.feature.home.ui.components.TotalBalanceCard
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
@@ -160,19 +158,19 @@ fun HomeScreenContent(
                 }
             }
 
-            item {
-                SavingsGoalCard(
-                    goalName = "DP Rumah",
-                    savedAmount = BigDecimal("50000000"),
-                    targetAmount = BigDecimal("100000000"),
-                    icon = Icons.Default.TrendingUp,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {},
-                    onViewAllClick = {
-                        onEvent(HomeEvent.AllSavingsGoalsClicked)
-                    }
-                )
-            }
+//            item {
+//                SavingsGoalCard(
+//                    goalName = "DP Rumah",
+//                    savedAmount = BigDecimal("50000000"),
+//                    targetAmount = BigDecimal("100000000"),
+//                    icon = Icons.Default.TrendingUp,
+//                    modifier = Modifier.fillMaxWidth(),
+//                    onClick = {},
+//                    onViewAllClick = {
+//                        onEvent(HomeEvent.AllSavingsGoalsClicked)
+//                    }
+//                )
+//            }
         }
     }
 }

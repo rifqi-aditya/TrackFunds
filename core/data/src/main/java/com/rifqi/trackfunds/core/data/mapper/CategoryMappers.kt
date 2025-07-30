@@ -1,13 +1,13 @@
 package com.rifqi.trackfunds.core.data.mapper
 
 /**
- * This file contains mapper functions for converting between [CategoryEntity] and [CategoryModel] objects.
+ * This file contains mapper functions for converting between [CategoryEntity] and [Category] objects.
  */
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 
-fun CategoryEntity.toDomain(): CategoryModel {
-    return CategoryModel(
+fun CategoryEntity.toDomain(): Category {
+    return Category(
         id = this.id,
         userUid = this.userUid,
         name = this.name,
@@ -18,12 +18,12 @@ fun CategoryEntity.toDomain(): CategoryModel {
 }
 
 /**
- * Converts a [CategoryModel] to a [CategoryEntity].
+ * Converts a [Category] to a [CategoryEntity].
  *
  * @param userUid The UID of the user who owns this category.
  * @return The corresponding [CategoryEntity].
  */
-fun CategoryModel.toEntity(userUid: String): CategoryEntity {
+fun Category.toEntity(userUid: String): CategoryEntity {
     return CategoryEntity(
         id = this.id,
         userUid = userUid,

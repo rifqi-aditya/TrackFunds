@@ -72,6 +72,8 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.coil.compose)
+
 
     // Testing
     testImplementation(libs.junit)

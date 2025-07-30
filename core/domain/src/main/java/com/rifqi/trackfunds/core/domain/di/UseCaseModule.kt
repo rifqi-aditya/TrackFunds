@@ -26,6 +26,8 @@ import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsU
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalDetailsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalDetailsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
@@ -35,6 +37,7 @@ import com.rifqi.trackfunds.core.domain.usecase.user.GetUserProfileUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -107,6 +110,10 @@ abstract class UseCaseModule {
     @Binds
     @Singleton
     abstract fun bindGetFilteredSavingsGoalsUseCase(impl: GetFilteredSavingsGoalsUseCaseImpl): GetFilteredSavingsGoalsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetSavingsGoalDetailsUseCase(impl: GetSavingsGoalDetailsUseCaseImpl): GetSavingsGoalDetailsUseCase
 
     @Binds
     @Singleton

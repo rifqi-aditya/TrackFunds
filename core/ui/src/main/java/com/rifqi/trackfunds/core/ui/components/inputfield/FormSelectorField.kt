@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,11 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
@@ -43,17 +43,16 @@ fun FormSelectorField(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        // FIX: Ganti Card dengan Box yang memiliki border
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp) // Samakan tinggi dengan OutlinedTextField
+                .height(56.dp)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline, // Warna border standar
-                    shape = MaterialTheme.shapes.large
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = MaterialTheme.shapes.medium
                 )
-                .clip(MaterialTheme.shapes.large) // Pastikan efek klik tidak keluar dari border
+                .clip(MaterialTheme.shapes.medium)
                 .clickable(onClick = onClick)
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.CenterStart
@@ -82,9 +81,9 @@ fun FormSelectorField(
                     )
                 }
                 Icon(
-                    painter = painterResource(R.drawable.arrow_down),
+                    imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Select $label",
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(28.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

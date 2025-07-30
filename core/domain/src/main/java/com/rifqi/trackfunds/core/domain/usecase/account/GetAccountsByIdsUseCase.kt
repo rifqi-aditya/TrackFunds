@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.usecase.account
 
-import com.rifqi.trackfunds.core.domain.model.AccountModel
+import com.rifqi.trackfunds.core.domain.model.Account
 
 interface GetAccountsByIdsUseCase {
-    suspend operator fun invoke(ids: List<String>): List<AccountModel>
+    suspend operator fun invoke(ids: List<String>): List<Account>
 }

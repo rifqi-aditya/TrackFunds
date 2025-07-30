@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.event
 
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import com.rifqi.trackfunds.core.domain.model.Category
 import java.time.YearMonth
 
 /**
@@ -33,7 +33,7 @@ sealed interface AddEditBudgetEvent {
      * Event triggered when a category is selected.
      * @param category The selected category item.
      */
-    data class CategorySelected(val category: CategoryModel) : AddEditBudgetEvent
+    data class CategorySelected(val category: Category) : AddEditBudgetEvent
 
     /**
      * Event triggered when the delete button is clicked.

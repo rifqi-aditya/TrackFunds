@@ -25,7 +25,7 @@ import java.util.UUID
  * @property receiptImageUrl The URL of an image of the receipt for this transaction, if available.
  * @property receiptItemModels A list of individual items that make up this transaction, if applicable (e.g., for a grocery bill).
  */
-data class TransactionModel(
+data class Transaction(
     val id: String = UUID.randomUUID().toString(),
     val amount: BigDecimal,
     val type: TransactionType,
@@ -35,8 +35,8 @@ data class TransactionModel(
      * The category associated with this transaction. Can be null if the transaction
      * is not categorized or if it's a transfer between accounts.
      */
-    val category: CategoryModel? = null,
-    val account: AccountModel,
+    val category: Category? = null,
+    val account: Account,
     /** The savings goal this transaction is associated with, if any. */
     val savingsGoal: SavingsGoal? = null,
     /** If this is part of a transfer, this ID links it to the other transaction in the pair. */

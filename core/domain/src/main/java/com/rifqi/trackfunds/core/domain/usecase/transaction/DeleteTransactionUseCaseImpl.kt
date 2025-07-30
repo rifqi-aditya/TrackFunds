@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.repository.SavingsGoalRepository
@@ -18,7 +18,7 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
     private val transactionRunner: AppTransactionRunner
 ) : DeleteTransactionUseCase {
 
-    override suspend operator fun invoke(transaction: TransactionModel): Result<Unit> {
+    override suspend operator fun invoke(transaction: Transaction): Result<Unit> {
         val userUid = userPreferencesRepository.userUidFlow.first()
             ?: return Result.failure(IllegalStateException("User UID is not set"))
 

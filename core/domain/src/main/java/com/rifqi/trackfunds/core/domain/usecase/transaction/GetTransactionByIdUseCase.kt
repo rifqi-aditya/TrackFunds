@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.TransactionModel
+import com.rifqi.trackfunds.core.domain.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
 interface GetTransactionByIdUseCase {
@@ -8,5 +8,5 @@ interface GetTransactionByIdUseCase {
      * @param transactionId ID dari transaksi yang ingin diambil.
      * @return Sebuah Flow yang akan meng-emit TransactionItem, atau null jika tidak ditemukan.
      */
-    operator fun invoke(transactionId: String): Flow<TransactionModel?>
+    operator fun invoke(transactionId: String): Flow<Transaction?>
 }

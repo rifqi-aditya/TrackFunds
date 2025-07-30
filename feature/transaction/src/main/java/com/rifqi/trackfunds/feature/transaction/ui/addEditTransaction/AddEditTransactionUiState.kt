@@ -1,9 +1,11 @@
-package com.rifqi.trackfunds.feature.transaction.ui.state
+package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
 
-import com.rifqi.trackfunds.core.domain.model.AccountModel
-import com.rifqi.trackfunds.core.domain.model.CategoryModel
+import android.net.Uri
+import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.feature.transaction.ui.model.LineItemUiModel
 import java.time.LocalDate
 
 /**
@@ -32,8 +34,8 @@ data class AddEditTransactionUiState(
     val description: String = "",
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedTransactionType: TransactionType = TransactionType.EXPENSE,
-    val selectedAccount: AccountModel? = null,
-    val selectedCategory: CategoryModel? = null,
+    val selectedAccount: Account? = null,
+    val selectedCategory: Category? = null,
     val selectedSavingsGoal: SavingsGoal? = null,
 
     // --- UI Control States ---
@@ -41,14 +43,16 @@ data class AddEditTransactionUiState(
     val activeSheet: AddEditSheetType? = null,
     /** True if the date picker dialog should be shown. */
     val showDatePicker: Boolean = false,
-    /** True if the delete confirmation dialog should be shown. */
-    val showDeleteConfirmDialog: Boolean = false,
 
     // --- Data for Selection Sheets ---
     /** The list of all accounts to choose from. */
-    val allAccounts: List<AccountModel> = emptyList(),
+    val allAccounts: List<Account> = emptyList(),
     /** The list of all savings goals to choose from. */
     val allSavingsGoals: List<SavingsGoal> = emptyList(),
     /** The current search query in the category picker. */
-    val categorySearchQuery: String = ""
+    val categorySearchQuery: String = "",
+
+    val lineItems: List<LineItemUiModel> = emptyList(),
+    val receiptImageUri: Uri? = null,
+    val isDetailsExpanded: Boolean = false
 )
