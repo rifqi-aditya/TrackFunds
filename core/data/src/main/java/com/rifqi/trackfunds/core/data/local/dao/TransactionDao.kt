@@ -2,11 +2,8 @@ package com.rifqi.trackfunds.core.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.RawQuery
 import androidx.room.Transaction
 import androidx.room.Upsert
-import androidx.sqlite.db.SimpleSQLiteQuery
-import com.rifqi.trackfunds.core.data.local.dto.TransactionWithDetailsDto
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionWithDetails
 import kotlinx.coroutines.flow.Flow
@@ -49,15 +46,42 @@ interface TransactionDao {
 
     @Transaction
     @Query("SELECT * FROM transactions WHERE id = :transactionId AND user_uid = :userUid")
-    suspend fun findTransactionWithDetailsById(transactionId: String, userUid: String): TransactionWithDetails?
+    suspend fun findTransactionWithDetailsById(
+        transactionId: String,
+        userUid: String
+    ): TransactionWithDetails?
 
     /**
      * The main query function that retrieves a list of transactions based on dynamic filters.
      * The userUid filter must be added in the Repository before calling this.
      */
     @Transaction
-    @RawQuery(observedEntities = [TransactionEntity::class])
-    fun getFilteredTransactionDetailsRaw(query: SimpleSQLiteQuery): Flow<List<TransactionWithDetailsDto>>
+    @Query(
+        """
+    SELECT * FROM transactions
+    WHERE
+        user_uid = :userUid
+        AND (:searchQuery IS NULL OR description LIKE :searchQuery)
+        AND (:type IS NULL OR type = :type)
+        AND (:hasAccountIds = 0 OR account_id IN (:accountIds))
+        AND (:hasCategoryIds = 0 OR category_id IN (:categoryIds))
+        AND (:startDate IS NULL OR :endDate IS NULL OR date BETWEEN :startDate AND :endDate)
+    ORDER BY date DESC
+    LIMIT :limit
+"""
+    )
+    fun getFilteredTransactions(
+        userUid: String,
+        searchQuery: String?,
+        type: String?,
+        accountIds: List<String>?,
+        hasAccountIds: Boolean,
+        categoryIds: List<String>?,
+        hasCategoryIds: Boolean,
+        startDate: Long?,
+        endDate: Long?,
+        limit: Int
+    ): Flow<List<TransactionWithDetails>>
 
     // =================================================================
     // DELETE OPERATIONS
