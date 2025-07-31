@@ -12,5 +12,7 @@ data class TransactionListUiState(
     val totalIncome: BigDecimal = BigDecimal.ZERO,
     val totalExpense: BigDecimal = BigDecimal.ZERO,
     val totalSavings: BigDecimal = BigDecimal.ZERO,
-    val spendableBalance: BigDecimal = BigDecimal.ZERO,
+    val netBalance: BigDecimal = BigDecimal.ZERO,
+    val emptyStateTitle: String? = null,
+    val emptyStateMessage: String? = null
 )

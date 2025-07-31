@@ -5,11 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsByIdsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoriesByIdsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
@@ -24,11 +22,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
@@ -43,7 +41,6 @@ class TransactionListViewModel @Inject constructor(
     private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
     private val getCategoriesByIdsUseCase: GetCategoriesByIdsUseCase,
     private val getAccountsByIdsUseCase: GetAccountsByIdsUseCase,
-    private val getFilteredSavingsGoalsUseCase: GetFilteredSavingsGoalsUseCase,
     private val resultManager: NavigationResultManager
 ) : ViewModel() {
 
@@ -77,36 +74,38 @@ class TransactionListViewModel @Inject constructor(
     }
 
     private fun observeDataChanges() {
-        viewModelScope.launch {
-            combine(
-                transactionsFlow,
-                getFilteredSavingsGoalsUseCase(SavingsFilter(isAchieved = null))
-            ) { transactionList, allSavingsGoals ->
-
-                // Lakukan kalkulasi
+        transactionsFlow
+            .onEach { transactionList ->
                 val totalIncome =
                     transactionList.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
                 val totalExpense = transactionList.filter { it.type == TransactionType.EXPENSE }
                     .sumOf { it.amount }
-                val totalSavings = allSavingsGoals.sumOf { it.savedAmount }
-                val spendableBalance = totalIncome - (totalExpense + totalSavings)
 
-                // Update state dengan semua data yang sudah dihitung
+                val net = totalIncome - totalExpense
+
+                val (emptyTitle, emptyMessage) = if (transactionList.isEmpty()) {
+                    determineEmptyState(_uiState.value.activeFilter)
+                } else {
+                    null to null
+                }
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         transactions = transactionList,
                         totalIncome = totalIncome,
                         totalExpense = totalExpense,
-                        totalSavings = totalSavings,
-                        spendableBalance = spendableBalance,
-                        error = if (transactionList.isEmpty()) "No transactions found." else null
+                        netBalance = net,
+                        emptyStateTitle = emptyTitle,
+                        emptyStateMessage = emptyMessage,
+                        error = null
                     )
                 }
             }
-                .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
-                .collect()
-        }
+            .catch { e ->
+                _uiState.update { it.copy(isLoading = false, error = e.message) }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onEvent(event: TransactionListEvent) {
@@ -186,7 +185,6 @@ class TransactionListViewModel @Inject constructor(
             chips.add(ActiveFilterChip("DATE_RANGE", dateLabel, FilterChipType.DATE_RANGE))
         }
 
-        // 2. Tambahkan chip untuk setiap akun yang difilter
         filter.accountIds?.let { ids ->
             if (ids.isNotEmpty()) {
                 val accounts = getAccountsByIdsUseCase(ids)
@@ -196,7 +194,6 @@ class TransactionListViewModel @Inject constructor(
             }
         }
 
-        // 3. Tambahkan chip untuk setiap kategori yang difilter
         filter.categoryIds?.let { ids ->
             val categories = getCategoriesByIdsUseCase(ids)
             categories.forEach { category ->
@@ -217,7 +214,7 @@ class TransactionListViewModel @Inject constructor(
             FilterChipType.CATEGORY -> currentFilter.copy(
                 categoryIds = currentFilter.categoryIds?.filterNot { it == chip.id }
             )
-            // Menghapus chip tanggal akan mereset ke periode default
+
             FilterChipType.DATE_RANGE -> currentFilter.copy(
                 startDate = null,
                 endDate = null
@@ -225,4 +222,22 @@ class TransactionListViewModel @Inject constructor(
         }
         _uiState.update { it.copy(activeFilter = newFilter) }
     }
+
+    private fun determineEmptyState(filter: TransactionFilter): Pair<String, String> {
+        return when {
+            filter.searchQuery.isNotBlank() ->
+                "No Results Found" to "Try using different keywords for your search."
+
+            filter.hasActiveFilters() ->
+                "No Transactions Match" to "There are no transactions that match your current filters."
+
+            else ->
+                "No Transactions Yet" to "Tap the '+' button to add your first transaction!"
+        }
+    }
+
+    fun TransactionFilter.hasActiveFilters(): Boolean {
+        return !this.accountIds.isNullOrEmpty() || !this.categoryIds.isNullOrEmpty() || this.type != null
+    }
 }
+

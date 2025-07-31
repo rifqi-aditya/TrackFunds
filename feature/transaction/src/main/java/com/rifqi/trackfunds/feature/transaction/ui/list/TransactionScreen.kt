@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterAlt
@@ -30,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,20 +37,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.components.CompactOutlinedTextField
+import com.rifqi.trackfunds.core.ui.components.EmptyState
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
-import com.rifqi.trackfunds.core.ui.components.CompactOutlinedTextField
 import com.rifqi.trackfunds.feature.transaction.ui.components.SummaryCard
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 import com.rifqi.trackfunds.feature.transaction.ui.model.FilterChipType
 import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -104,11 +109,12 @@ fun TransactionScreenContent(
                 .fillMaxSize()
         ) {
             SummaryCard(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                spendableBalance = uiState.spendableBalance,
                 totalIncome = uiState.totalIncome,
                 totalExpense = uiState.totalExpense,
-                totalSavings = uiState.totalSavings,
+                netBalance = uiState.totalIncome.subtract(uiState.totalExpense),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -142,7 +148,7 @@ fun TransactionScreenContent(
 
                 OutlinedButton(
                     onClick = { onEvent(TransactionListEvent.FilterButtonClicked) },
-                    shape = CircleShape,
+                    shape = MaterialTheme.shapes.large,
                     border = BorderStroke(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.primary
@@ -220,33 +226,66 @@ fun TransactionScreenContent(
                 }
             }
             if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-            } else if (uiState.error != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = uiState.error, color = MaterialTheme.colorScheme.error)
-                }
-
+            } else if (uiState.transactions.isEmpty()) {
+                EmptyState(
+                    title = uiState.emptyStateTitle ?: "Something went wrong",
+                    message = uiState.emptyStateMessage ?: "Please try again later."
+                )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(uiState.transactions) { transaction ->
-                        TransactionRow(
-                            item = transaction,
-                            onClick = { onEvent(TransactionListEvent.TransactionClicked(transaction.id)) }
-                        )
-                    }
+                    uiState.transactions.groupBy { it.date.toLocalDate() }
+                        .forEach { (date, transactionsOnDate) ->
+                            stickyHeader {
+                                DateHeader(date = date)
+                            }
+                            items(transactionsOnDate, key = { it.id }) { transaction ->
+                                TransactionRow(
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    ),
+                                    item = transaction,
+                                    onClick = {
+                                        onEvent(
+                                            TransactionListEvent.TransactionClicked(
+                                                transaction.id
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        }
                 }
             }
         }
+    }
+}
+
+/**
+ * Composable baru untuk Date Header
+ */
+@Composable
+fun DateHeader(date: LocalDate) {
+    // Implementasi sederhana, bisa disesuaikan dengan format tanggal yang Anda inginkan
+    val formattedDate = when (date) {
+        LocalDate.now() -> "Today"
+        LocalDate.now().minusDays(1) -> "Yesterday"
+        else -> date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.Transparent,
+    ) {
+        Text(
+            text = formattedDate,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
     }
 }
 

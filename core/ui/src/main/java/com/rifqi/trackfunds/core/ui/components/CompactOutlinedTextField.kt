@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -42,7 +41,7 @@ fun CompactOutlinedTextField(
         modifier = modifier
             .background(
                 MaterialTheme.colorScheme.background,
-                CircleShape
+                MaterialTheme.shapes.large
             )
             .height(40.dp),
         textStyle = MaterialTheme.typography.bodyLarge.copy(
@@ -55,7 +54,7 @@ fun CompactOutlinedTextField(
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.primary,
-                        shape = CircleShape
+                        shape = MaterialTheme.shapes.large
                     )
                     .padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
