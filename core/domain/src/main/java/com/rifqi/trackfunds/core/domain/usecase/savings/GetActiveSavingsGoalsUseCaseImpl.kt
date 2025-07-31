@@ -15,7 +15,7 @@ class GetActiveSavingsGoalsUseCaseImpl @Inject constructor(
 ) : GetActiveSavingsGoalsUseCase {
     @OptIn(ExperimentalCoroutinesApi::class)
     override operator fun invoke(): Flow<List<SavingsGoal>> {
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(emptyList())
             } else {

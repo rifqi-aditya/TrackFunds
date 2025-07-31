@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionDetailsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionDetailViewModel @Inject constructor(
-    private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
+    private val getTransactionDetailsUseCase: GetTransactionDetailsUseCase,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -43,7 +43,7 @@ class TransactionDetailViewModel @Inject constructor(
 
     private fun loadTransactionDetails() {
         viewModelScope.launch {
-            getTransactionByIdUseCase(transactionId)
+            getTransactionDetailsUseCase(transactionId)
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
                 .collect { transactionItem ->

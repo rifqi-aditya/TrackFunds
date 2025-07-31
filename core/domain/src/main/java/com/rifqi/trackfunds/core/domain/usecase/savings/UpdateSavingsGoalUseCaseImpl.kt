@@ -12,7 +12,7 @@ class UpdateSavingsGoalUseCaseImpl @Inject constructor(
 ) : UpdateSavingsGoalUseCase {
 
     override suspend fun invoke(goal: SavingsGoal): Result<Unit> {
-        val userUid = userPreferencesRepository.userUidFlow.first()
+        val userUid = userPreferencesRepository.userUid.first()
             ?: return Result.failure(IllegalStateException("User UID is null"))
         return repository.updateGoal(userUid, goal)
     }

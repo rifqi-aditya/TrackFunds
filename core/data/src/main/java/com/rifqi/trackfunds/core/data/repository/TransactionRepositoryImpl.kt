@@ -1,12 +1,10 @@
 package com.rifqi.trackfunds.core.data.repository
 
 import androidx.sqlite.db.SimpleSQLiteQuery
-import com.rifqi.trackfunds.core.data.local.dao.AccountDao
-import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
+import com.rifqi.trackfunds.core.data.local.dao.TransactionItemDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
 import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
 import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
@@ -24,14 +22,13 @@ import javax.inject.Singleton
 @Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val transactionDao: TransactionDao,
-    private val accountDao: AccountDao,
-    private val categoryDao: CategoryDao,
+    private val transactionItemDao: TransactionItemDao,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : TransactionRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<Transaction>> {
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) return@flatMapLatest flowOf(emptyList())
 
             val queryString = StringBuilder()
@@ -102,53 +99,53 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getTransactionById(transactionId: String): Flow<Transaction?> {
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+    override fun getTransactionWithDetails(
+        transactionId: String,
+        userUid: String
+    ): Flow<Transaction?> {
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(null)
             } else {
-                transactionDao.getTransactionWithDetailsById(transactionId, userUid)
+                transactionDao.getTransactionWithDetails(transactionId, userUid)
                     .map { it?.toDomain() }
             }
         }
     }
 
-    override suspend fun insertTransaction(transaction: Transaction): Result<Unit> {
-        return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
-                ?: return Result.failure(Exception("User not logged in."))
+    override suspend fun findTransactionWithDetailsById(transactionId: String, userUid: String): Transaction? {
+        val dto = transactionDao.findTransactionWithDetailsById(transactionId, userUid)
+        return dto?.toDomain()
+    }
 
-            transactionDao.insertTransaction(transaction.toEntity(userUid))
+    override suspend fun saveTransaction(
+        transaction: Transaction,
+        userUid: String
+    ): Result<Unit> {
+        return try {
+            val transactionEntity = transaction.toEntity(userUid)
+
+            val itemEntities = transaction.items.map { it.toEntity(transaction.id) }
+
+            transactionDao.upsert(transactionEntity)
+
+            transactionItemDao.deleteItemsByTransactionId(transaction.id)
+
+            if (itemEntities.isNotEmpty()) {
+                transactionItemDao.upsertAll(itemEntities)
+            }
+
             Result.success(Unit)
+
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun insertLineItems(receiptItemModels: List<ReceiptItemModel>, transactionId: String): Result<Unit> {
-        return try {
-            val lineItemEntities = receiptItemModels.map { it.toEntity(transactionId) }
-            transactionDao.insertLineItems(lineItemEntities)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun updateTransaction(transaction: Transaction): Result<Unit> {
-        return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
-                ?: return Result.failure(Exception("User not logged in."))
-            transactionDao.updateTransaction(transaction.toEntity(userUid))
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
 
     override suspend fun deleteTransaction(transactionId: String): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             transactionDao.deleteTransactionById(transactionId, userUid)

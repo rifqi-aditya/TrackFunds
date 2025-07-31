@@ -26,7 +26,7 @@ class GetSavingsGoalDetailsUseCaseImpl @Inject constructor(
 ) : GetSavingsGoalDetailsUseCase {
     @OptIn(ExperimentalCoroutinesApi::class)
     override operator fun invoke(goalId: String): Flow<GoalDetails?> {
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) {
                 return@flatMapLatest flowOf(null)
             }

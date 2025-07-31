@@ -27,7 +27,7 @@ class BudgetRepositoryImpl @Inject constructor(
         val startOfMonth = period.atDay(1)
         val endOfMonth = period.atEndOfMonth().atTime(23, 59, 59)
 
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(emptyList())
             } else {
@@ -41,7 +41,7 @@ class BudgetRepositoryImpl @Inject constructor(
     override fun getTopBudgets(period: YearMonth, limit: Int): Flow<List<Budget>> {
         val startOfMonth = period.atDay(1)
         val endOfMonth = period.atEndOfMonth().atTime(23, 59, 59)
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(emptyList())
             } else {
@@ -55,7 +55,7 @@ class BudgetRepositoryImpl @Inject constructor(
 
     override suspend fun getBudgetById(budgetId: String): Result<Budget> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             val budget = budgetDao.getBudgetWithDetailsById(budgetId, userUid)?.toDomain()
@@ -68,14 +68,14 @@ class BudgetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun findBudget(categoryId: String, period: YearMonth): String? {
-        val userUid = userPreferencesRepository.userUidFlow.first() ?: return null
+        val userUid = userPreferencesRepository.userUid.first() ?: return null
         val periodDate = period.atDay(1)
         return budgetDao.findBudgetId(userUid, categoryId, periodDate)
     }
 
     override suspend fun addBudget(budget: Budget): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             budgetDao.insertBudget(budget.toEntity(userUid))
@@ -87,7 +87,7 @@ class BudgetRepositoryImpl @Inject constructor(
 
     override suspend fun updateBudget(budget: Budget): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             budgetDao.updateBudget(budget.toEntity(userUid))
@@ -99,7 +99,7 @@ class BudgetRepositoryImpl @Inject constructor(
 
     override suspend fun deleteBudget(budgetId: String): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             budgetDao.deleteBudgetById(budgetId, userUid)

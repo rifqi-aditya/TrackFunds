@@ -63,7 +63,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadUserProfile() {
         viewModelScope.launch {
             // 1. Ambil UID dari DataStore
-            userPreferencesRepository.userUidFlow
+            userPreferencesRepository.userUid
                 .filterNotNull() // Hanya lanjut jika UID ada (pengguna sudah login)
                 .flatMapLatest { uid ->
                     // 2. Gunakan UID untuk memanggil Use Case

@@ -12,6 +12,7 @@ import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
+import com.rifqi.trackfunds.core.data.local.dao.TransactionItemDao
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
 import com.rifqi.trackfunds.core.data.local.entity.BudgetEntity
@@ -19,6 +20,7 @@ import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
 import com.rifqi.trackfunds.core.data.local.entity.LineItemEntity
 import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
+import com.rifqi.trackfunds.core.data.local.entity.TransactionItemEntity
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +35,7 @@ import java.util.UUID
         AccountEntity::class,
         SavingsGoalEntity::class,
         TransactionEntity::class,
+        TransactionItemEntity::class,
         LineItemEntity::class,
         BudgetEntity::class,
     ],
@@ -46,6 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun accountDao(): AccountDao
     abstract fun transactionDao(): TransactionDao
+    abstract fun transactionItemDao(): TransactionItemDao
     abstract fun budgetDao(): BudgetDao
     abstract fun savingsGoalDao(): SavingsGoalDao
 

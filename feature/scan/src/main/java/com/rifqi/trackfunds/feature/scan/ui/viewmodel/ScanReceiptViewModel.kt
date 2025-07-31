@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
+import com.rifqi.trackfunds.core.domain.model.LineItem
 import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.model.TransactionType
 import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
 import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
@@ -218,7 +219,7 @@ class ScanReceiptViewModel @Inject constructor(
 
                 is ScanReceiptEvent.DeleteLineItem -> {
                     _uiState.value.editableTransaction?.let { transaction ->
-                        val updatedItems = transaction.receiptItemModels.toMutableList().apply {
+                        val updatedItems = transaction.items.toMutableList().apply {
                             removeAt(event.index)
                         }
 
@@ -226,7 +227,7 @@ class ScanReceiptViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 editableTransaction = transaction.copy(
-                                    receiptItemModels = updatedItems,
+                                    items = updatedItems,
                                     amount = newTotal
                                 )
                             )
@@ -236,12 +237,12 @@ class ScanReceiptViewModel @Inject constructor(
 
                 ScanReceiptEvent.AddLineItem -> {
                     _uiState.value.editableTransaction?.let { transaction ->
-                        val newItem = ReceiptItemModel("", 1, BigDecimal.ZERO)
-                        val updatedItems = transaction.receiptItemModels + newItem
+                        val newItem = LineItem("", 1, BigDecimal.ZERO)
+                        val updatedItems = transaction.items + newItem
                         _uiState.update {
                             it.copy(
                                 editableTransaction = transaction.copy(
-                                    receiptItemModels = updatedItems
+                                    items = emptyList()
                                 )
                             )
                         }
@@ -304,7 +305,7 @@ class ScanReceiptViewModel @Inject constructor(
                         date = result.transactionDateTime,
                         description = result.merchantName ?: "",
                         category = suggestedCategory,
-                        receiptItemModels = result.receiptItemModels,
+                        items = emptyList(),
                         account = defaultAccount,
                         type = TransactionType.EXPENSE
                     )
@@ -328,26 +329,26 @@ class ScanReceiptViewModel @Inject constructor(
         }
     }
 
-    private fun updateLineItem(index: Int, updater: (ReceiptItemModel) -> ReceiptItemModel) {
+    private fun updateLineItem(index: Int, updater: (TransactionItem) -> TransactionItem) {
         _uiState.value.editableTransaction?.let { transaction ->
-            val updatedItems = transaction.receiptItemModels.toMutableList().apply {
+            val updatedItems = transaction.items.toMutableList().apply {
                 val updatedItem = updater(this[index])
                 this[index] = updatedItem
             }
-            _uiState.update { it.copy(editableTransaction = transaction.copy(receiptItemModels = updatedItems)) }
+            _uiState.update { it.copy(editableTransaction = transaction.copy(items = updatedItems)) }
         }
     }
 
-    private fun recalculateTotalFromItems(items: List<ReceiptItemModel>): BigDecimal {
+    private fun recalculateTotalFromItems(items: List<TransactionItem>): BigDecimal {
         return items.sumOf {
             it.price.multiply(it.quantity.toBigDecimal())
         }
     }
 
-    private fun updateAndRecalculate(index: Int, updater: (ReceiptItemModel) -> ReceiptItemModel) {
+    private fun updateAndRecalculate(index: Int, updater: (TransactionItem) -> TransactionItem) {
         _uiState.value.editableTransaction?.let { transaction ->
             // 1. Buat list item yang sudah diperbarui
-            val updatedItems = transaction.receiptItemModels.toMutableList().apply {
+            val updatedItems = transaction.items.toMutableList().apply {
                 this[index] = updater(this[index])
             }
             // 2. Hitung total baru dari list yang diperbarui
@@ -357,7 +358,7 @@ class ScanReceiptViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     editableTransaction = transaction.copy(
-                        receiptItemModels = updatedItems,
+                        items = updatedItems,
                         amount = newTotal
                     )
                 )
@@ -366,24 +367,24 @@ class ScanReceiptViewModel @Inject constructor(
     }
 
     private fun saveTransaction() {
-        viewModelScope.launch {
-            val transactionToSave = _uiState.value.editableTransaction
-
-            if (transactionToSave == null) {
-                _uiState.update { it.copy(errorMessage = "Transaction data is missing.") }
-                return@launch
-            }
-
-            _uiState.update { it.copy(isLoading = true) }
-
-            // Panggil UseCase untuk menyimpan transaksi
-            addTransactionUseCase(transactionToSave)
-                .onSuccess {
-                    _sideEffect.emit(ScanReceiptSideEffect.NavigateBack)
-                }
-                .onFailure { error ->
-                    _uiState.update { it.copy(isLoading = false, errorMessage = error.message) }
-                }
-        }
+//        viewModelScope.launch {
+//            val transactionToSave = _uiState.value.editableTransaction
+//
+//            if (transactionToSave == null) {
+//                _uiState.update { it.copy(errorMessage = "Transaction data is missing.") }
+//                return@launch
+//            }
+//
+//            _uiState.update { it.copy(isLoading = true) }
+//
+//            // Panggil UseCase untuk menyimpan transaksi
+//            addTransactionUseCase(transactionToSave)
+//                .onSuccess {
+//                    _sideEffect.emit(ScanReceiptSideEffect.NavigateBack)
+//                }
+//                .onFailure { error ->
+//                    _uiState.update { it.copy(isLoading = false, errorMessage = error.message) }
+//                }
+//        }
     }
 }

@@ -38,8 +38,6 @@ import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCas
 import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.user.UpdateUserProfileUseCase
@@ -106,10 +104,6 @@ abstract class ViewModelScopedUseCaseModule {
     @Binds
     @ViewModelScoped
     abstract fun bindDeleteTransactionUseCase(impl: DeleteTransactionUseCaseImpl): DeleteTransactionUseCase
-
-    @Binds
-    @ViewModelScoped
-    abstract fun bindPerformTransferUseCase(impl: PerformTransferUseCaseImpl): PerformTransferUseCase
 
     // --- Budget Use Cases (Actions) ---
     @Binds

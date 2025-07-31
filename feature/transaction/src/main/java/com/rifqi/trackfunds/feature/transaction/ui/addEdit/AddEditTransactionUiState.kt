@@ -1,12 +1,12 @@
-package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
+package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
 import android.net.Uri
 import com.rifqi.trackfunds.core.domain.model.Account
 import com.rifqi.trackfunds.core.domain.model.Category
 import com.rifqi.trackfunds.core.domain.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.feature.transaction.ui.model.LineItemUiModel
 import java.time.LocalDate
+import java.util.UUID
 
 /**
  * Enum to represent which bottom sheet is currently active.
@@ -31,7 +31,10 @@ data class AddEditTransactionUiState(
 
     // --- Form Field States ---
     val amount: String = "",
+    val amountError: String? = null,
+    /** The description of the transaction, can be empty. */
     val description: String = "",
+    /** The date of the transaction, defaults to today. */
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedTransactionType: TransactionType = TransactionType.EXPENSE,
     val selectedAccount: Account? = null,
@@ -52,7 +55,18 @@ data class AddEditTransactionUiState(
     /** The current search query in the category picker. */
     val categorySearchQuery: String = "",
 
-    val lineItems: List<LineItemUiModel> = emptyList(),
+    val items: List<TransactionItemInput> = emptyList(),
     val receiptImageUri: Uri? = null,
-    val isDetailsExpanded: Boolean = false
+    val isItemsExpanded: Boolean = false,
+    val isReceiptExpanded: Boolean = false
+)
+
+data class TransactionItemInput(
+    val id: String = UUID.randomUUID().toString(),
+    val name: String = "",
+    val quantity: String = "",
+    val price: String = "",
+    val nameError: String? = null,
+    val quantityError: String? = null,
+    val priceError: String? = null
 )

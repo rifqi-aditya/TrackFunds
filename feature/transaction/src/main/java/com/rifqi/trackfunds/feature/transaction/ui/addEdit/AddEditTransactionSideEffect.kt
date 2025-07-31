@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
+package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
 /**
  * Mendefinisikan aksi sekali jalan (one-time events) yang dikirim dari

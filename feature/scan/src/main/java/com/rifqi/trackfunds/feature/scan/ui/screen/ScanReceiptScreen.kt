@@ -59,7 +59,8 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
+import com.rifqi.trackfunds.core.domain.model.LineItem
+import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
@@ -455,13 +456,13 @@ private fun ReviewPhase(
             // --- BAGIAN COLLAPSIBLE ---
             item {
                 CollapsibleSection(
-                    title = "Scanned Items (${transaction.receiptItemModels.size})",
+                    title = "Scanned Items (${transaction.items.size})",
                     isExpanded = uiState.isItemListExpanded,
                     onToggle = { onEvent(ScanReceiptEvent.ToggleItemListExpansion) }
                 ) {
                     // Konten ini hanya akan terlihat jika isExpanded = true
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        transaction.receiptItemModels.forEachIndexed { index, item ->
+                        transaction.items.forEachIndexed { index, item ->
                             EditableReceiptItemRow(
                                 index = index,
                                 item = item,
@@ -499,7 +500,7 @@ private fun ReviewPhase(
 
 // Contoh Composable untuk satu baris item
 @Composable
-fun ReceiptItemRow(item: ReceiptItemModel) {
+fun ReceiptItemRow(item: LineItem) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -512,7 +513,7 @@ fun ReceiptItemRow(item: ReceiptItemModel) {
 @Composable
 fun EditableReceiptItemRow(
     index: Int,
-    item: ReceiptItemModel,
+    item: TransactionItem,
     onEvent: (ScanReceiptEvent) -> Unit
 ) {
     Row(

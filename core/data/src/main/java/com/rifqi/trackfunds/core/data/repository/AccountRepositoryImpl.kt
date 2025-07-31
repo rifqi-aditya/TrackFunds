@@ -23,7 +23,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAllAccounts(): Flow<List<Account>> {
-        return userPreferencesRepository.userUidFlow.flatMapLatest { uid ->
+        return userPreferencesRepository.userUid.flatMapLatest { uid ->
             if (uid == null) {
                 flowOf(emptyList())
             } else {
@@ -36,7 +36,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun getAccountById(accountId: String): Result<Account> {
         return try {
-            val uid = userPreferencesRepository.userUidFlow.first()
+            val uid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             val accountEntity = accountDao.getAccountById(accountId, uid)
@@ -52,13 +52,13 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAccountsByIds(ids: List<String>): List<Account> {
-        val uid = userPreferencesRepository.userUidFlow.first() ?: return emptyList()
+        val uid = userPreferencesRepository.userUid.first() ?: return emptyList()
         return accountDao.getAccountsByIds(ids, uid).map { it.toDomain() }
     }
 
     override suspend fun addAccount(account: Account): Result<Unit> {
         return try {
-            val uid = userPreferencesRepository.userUidFlow.first()
+            val uid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             accountDao.insertAccount(account.toEntity(uid))
@@ -70,7 +70,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun updateAccount(account: Account): Result<Unit> {
         return try {
-            val uid = userPreferencesRepository.userUidFlow.first()
+            val uid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             accountDao.updateAccount(account.toEntity(uid))
@@ -82,7 +82,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAccount(accountId: String): Result<Unit> {
         return try {
-            val uid = userPreferencesRepository.userUidFlow.first()
+            val uid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             accountDao.deleteAccountById(accountId, uid)

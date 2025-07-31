@@ -19,7 +19,7 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
 ) : DeleteTransactionUseCase {
 
     override suspend operator fun invoke(transaction: Transaction): Result<Unit> {
-        val userUid = userPreferencesRepository.userUidFlow.first()
+        val userUid = userPreferencesRepository.userUid.first()
             ?: return Result.failure(IllegalStateException("User UID is not set"))
 
         return try {

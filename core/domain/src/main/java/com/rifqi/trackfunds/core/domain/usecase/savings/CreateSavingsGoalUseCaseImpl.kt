@@ -11,7 +11,7 @@ class CreateSavingsGoalUseCaseImpl @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : CreateSavingsGoalUseCase {
     override suspend operator fun invoke(goal: SavingsGoal): Result<Unit> {
-        val userUid = userPreferencesRepository.userUidFlow.first()
+        val userUid = userPreferencesRepository.userUid.first()
             ?: return Result.failure(Exception("User not logged in."))
 
         return savingsGoalRepository.createGoal(userUid, goal)

@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
-import com.rifqi.trackfunds.feature.transaction.ui.screen.FilterScreen
-import com.rifqi.trackfunds.feature.transaction.ui.screen.TransactionScreen
+import com.rifqi.trackfunds.feature.transaction.ui.filter.FilterScreen
+import com.rifqi.trackfunds.feature.transaction.ui.list.TransactionScreen
 
 fun NavGraphBuilder.transactionsNavGraph(navController: NavHostController) {
     navigation<TransactionsGraph>(

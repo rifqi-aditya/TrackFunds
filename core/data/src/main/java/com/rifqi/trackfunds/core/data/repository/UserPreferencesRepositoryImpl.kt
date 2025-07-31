@@ -30,7 +30,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
      * Menyediakan Flow yang akan emit UID pengguna setiap kali ada perubahan.
      * Akan emit null jika tidak ada UID yang tersimpan.
      */
-    override val userUidFlow: Flow<String?> = context.dataStore.data
+    override val userUid: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.USER_UID]
         }

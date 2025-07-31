@@ -30,7 +30,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             // .first() mengambil nilai pertama dari Flow, lalu berhenti mengamati.
             // Sempurna untuk pengecekan sekali jalan saat startup.
-            val uid = userPreferencesRepository.userUidFlow.first()
+            val uid = userPreferencesRepository.userUid.first()
 
             _uiState.update {
                 it.copy(

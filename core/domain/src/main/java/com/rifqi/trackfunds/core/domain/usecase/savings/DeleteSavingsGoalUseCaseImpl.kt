@@ -10,7 +10,7 @@ class DeleteSavingsGoalUseCaseImpl @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : DeleteSavingsGoalUseCase {
     override suspend operator fun invoke(goalId: String): Result<Unit> {
-        val userUid = userPreferencesRepository.userUidFlow.first()
+        val userUid = userPreferencesRepository.userUid.first()
             ?: return Result.failure(Exception("User not logged in."))
 
         return repository.deleteGoal(userUid, goalId)

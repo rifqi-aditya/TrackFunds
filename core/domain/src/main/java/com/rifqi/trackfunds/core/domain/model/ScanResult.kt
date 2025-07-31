@@ -8,5 +8,5 @@ data class ScanResult(
     val transactionDateTime: LocalDateTime,
     val totalAmount: BigDecimal,
     val categoryStandardKey: String?,
-    val receiptItemModels: List<ReceiptItemModel> = emptyList(),
+    val lineItems: List<LineItem> = emptyList(),
 )

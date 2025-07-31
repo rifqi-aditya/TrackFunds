@@ -1,9 +1,9 @@
 package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.entity.LineItemEntity
-import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
+import com.rifqi.trackfunds.core.domain.model.LineItem
 
-fun ReceiptItemModel.toEntity(transactionId: String): LineItemEntity {
+fun LineItem.toEntity(transactionId: String): LineItemEntity {
     return LineItemEntity(
         transactionId = transactionId,
         name = this.name,
@@ -12,8 +12,8 @@ fun ReceiptItemModel.toEntity(transactionId: String): LineItemEntity {
     )
 }
 
-fun LineItemEntity.toDomain(): ReceiptItemModel {
-    return ReceiptItemModel(
+fun LineItemEntity.toDomain(): LineItem {
+    return LineItem(
         name = this.name,
         quantity = this.quantity.toInt(),
         price = this.price

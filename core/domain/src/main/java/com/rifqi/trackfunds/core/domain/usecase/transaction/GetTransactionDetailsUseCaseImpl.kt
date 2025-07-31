@@ -1,7 +1,7 @@
-package com.rifqi.trackfunds.core.domain.usecase.savings
+package com.rifqi.trackfunds.core.domain.usecase.transaction
 
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.repository.SavingsGoalRepository
+import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -9,17 +9,21 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
-class GetSavingsGoalByIdUseCaseImpl @Inject constructor(
-    private val repository: SavingsGoalRepository,
+class GetTransactionDetailsUseCaseImpl @Inject constructor(
+    private val repository: TransactionRepository,
     private val userPreferencesRepository: UserPreferencesRepository
-) : GetSavingsGoalByIdUseCase {
+) : GetTransactionDetailsUseCase {
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override operator fun invoke(goalId: String): Flow<SavingsGoal?> {
+    override operator fun invoke(transactionId: String): Flow<Transaction?> {
         return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) {
                 flowOf(null)
             } else {
-                repository.getGoalById(userUid, goalId)
+                repository.getTransactionWithDetails(
+                    transactionId = transactionId,
+                    userUid = userUid
+                )
             }
         }
     }

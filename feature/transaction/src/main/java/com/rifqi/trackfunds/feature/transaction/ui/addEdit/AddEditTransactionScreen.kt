@@ -1,8 +1,14 @@
-package com.rifqi.trackfunds.feature.transaction.ui.addEditTransaction
+package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,12 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.SelectionItem
@@ -42,8 +48,8 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
-import com.rifqi.trackfunds.feature.transaction.ui.components.ExpenseFormContent
-import com.rifqi.trackfunds.feature.transaction.ui.model.transactionTypes
+import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionDetailsSection
+import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionTypes
 
 /**
  * Stateful Composable (Container)
@@ -56,7 +62,6 @@ import com.rifqi.trackfunds.feature.transaction.ui.model.transactionTypes
 fun AddEditTransactionScreen(
     viewModel: AddEditTransactionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigate: (AppScreen) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val categoriesForSelection by viewModel.categoriesForSelection.collectAsState()
@@ -77,7 +82,7 @@ fun AddEditTransactionScreen(
             when (uiState.activeSheet) {
                 AddEditSheetType.CATEGORY -> {
                     SelectionList(
-                        title = "Pilih Kategori",
+                        title = "Select Category",
                         items = categoriesForSelection,
                         itemBuilder = { category ->
                             SelectionItem(category.id, category.name, category.iconIdentifier)
@@ -108,7 +113,7 @@ fun AddEditTransactionScreen(
 
                 AddEditSheetType.SAVINGS_GOAL -> {
                     SelectionList(
-                        title = "Pilih Kategori",
+                        title = "Select Savings Goal",
                         items = uiState.allSavingsGoals,
                         itemBuilder = { savings ->
                             SelectionItem(savings.id, savings.name, savings.iconIdentifier)
@@ -212,11 +217,11 @@ fun AddEditTransactionContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             AnimatedSlideToggleButton(
-                items = transactionTypes,
+                items = TransactionTypes,
                 selectedItem = uiState.selectedTransactionType,
                 onItemSelected = { onEvent(AddEditTransactionEvent.TypeChanged(it)) },
             )
-            
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -226,10 +231,6 @@ fun AddEditTransactionContent(
                 when (uiState.selectedTransactionType) {
                     TransactionType.SAVINGS -> {
                         SavingsFormContent(uiState = uiState, onEvent = onEvent)
-                    }
-
-                    TransactionType.EXPENSE -> {
-                        ExpenseFormContent(uiState = uiState, onEvent = onEvent)
                     }
 
                     else -> {
@@ -251,6 +252,8 @@ private fun StandardFormContent(
         value = uiState.amount,
         placeholder = "0",
         onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
+        isError = uiState.amountError != null,
+        errorMessage = uiState.amountError,
     )
 
     FormSelectorField(
@@ -277,10 +280,34 @@ private fun StandardFormContent(
     GeneralTextInputField(
         value = uiState.description,
         onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
-        label = "Description",
+        label = "Description (Optional)",
         placeholder = "Enter transaction description",
         singleLine = false,
     )
+
+    AnimatedVisibility(
+        visible = uiState.selectedTransactionType == TransactionType.EXPENSE,
+        enter = expandVertically(
+            expandFrom = Alignment.Top,
+            animationSpec = tween(durationMillis = 300)
+        ) + fadeIn(
+            animationSpec = tween(durationMillis = 150)
+        ),
+        exit = shrinkVertically(
+            shrinkTowards = Alignment.Top,
+            animationSpec = tween(durationMillis = 300)
+        ) + fadeOut(
+            animationSpec = tween(durationMillis = 150)
+        )
+    ) {
+        TransactionDetailsSection(
+            isItemsExpanded = uiState.isItemsExpanded,
+            isReceiptExpanded = uiState.isReceiptExpanded,
+            items = uiState.items,
+            receiptImageUri = uiState.receiptImageUri,
+            onEvent = onEvent
+        )
+    }
 
     uiState.error?.let { errorMessage ->
         Text(

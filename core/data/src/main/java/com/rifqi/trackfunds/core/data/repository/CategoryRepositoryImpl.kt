@@ -24,7 +24,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getFilteredCategories(filter: CategoryFilter): Flow<List<Category>> {
-        return userPreferencesRepository.userUidFlow.flatMapLatest { userUid ->
+        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
             if (userUid == null) return@flatMapLatest flowOf(emptyList())
 
             categoryDao.getFilteredCategories(
@@ -40,7 +40,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun getCategoryById(categoryId: String): Result<Category> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             val category = categoryDao.getCategoryById(categoryId, userUid)?.toDomain()
@@ -53,7 +53,7 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCategoriesByIds(ids: List<String>): List<Category> {
-        val userUid = userPreferencesRepository.userUidFlow.first() ?: return emptyList()
+        val userUid = userPreferencesRepository.userUid.first() ?: return emptyList()
         return categoryDao.getCategoriesByIds(ids, userUid).map { it.toDomain() }
     }
 
@@ -64,7 +64,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun insertCategory(category: Category): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
             categoryDao.insertCategory(category.toEntity(userUid))
             Result.success(Unit)
@@ -75,7 +75,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun updateCategory(category: Category): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             // PENTING: Lakukan pengecekan di sini untuk melindungi kategori default
@@ -95,7 +95,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCategory(categoryId: String): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             val categoryToDelete = categoryDao.getCategoryById(categoryId, userUid)

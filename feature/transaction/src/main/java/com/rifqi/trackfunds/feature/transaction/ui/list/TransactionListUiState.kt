@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.transaction.ui.state
+package com.rifqi.trackfunds.feature.transaction.ui.list
 
 import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter

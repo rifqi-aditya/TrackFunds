@@ -7,7 +7,6 @@ import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.model.Account
 import com.rifqi.trackfunds.core.domain.model.Transaction
 import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.usecase.transaction.PerformTransferUseCase
 import com.rifqi.trackfunds.feature.transaction.ui.event.TransferEvent
 import com.rifqi.trackfunds.feature.transaction.ui.state.AccountSelectionMode
 import com.rifqi.trackfunds.feature.transaction.ui.state.TransferUiState
@@ -26,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransferViewModel @Inject constructor(
-    private val performTransferUseCase: PerformTransferUseCase,
+//    private val performTransferUseCase: PerformTransferUseCase,
     private val resultManager: NavigationResultManager,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
@@ -140,7 +139,7 @@ class TransferViewModel @Inject constructor(
 
             try {
                 // Panggil UseCase dengan objek yang sudah jadi
-                performTransferUseCase(expense, income)
+//                performTransferUseCase(expense, income)
                 snackbarManager.showMessage("Transfer berhasil")
                 _uiState.update { it.copy(isLoading = false, isTransferSuccessful = true) }
             } catch (e: Exception) {

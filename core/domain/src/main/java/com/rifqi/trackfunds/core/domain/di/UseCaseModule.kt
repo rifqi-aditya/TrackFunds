@@ -30,14 +30,13 @@ import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalDetailsUse
 import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalDetailsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCaseImpl
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionByIdUseCaseImpl
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionDetailsUseCase
+import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionDetailsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.usecase.user.GetUserProfileUseCase
 import com.rifqi.trackfunds.core.domain.usecase.user.GetUserProfileUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -87,7 +86,7 @@ abstract class UseCaseModule {
 
     @Binds
     @Singleton
-    abstract fun bindGetTransactionByIdUseCase(impl: GetTransactionByIdUseCaseImpl): GetTransactionByIdUseCase
+    abstract fun bindGetTransactionDetailsUseCase(impl: GetTransactionDetailsUseCaseImpl): GetTransactionDetailsUseCase
 
     // --- Budget Use Cases (GET) ---
     @Binds

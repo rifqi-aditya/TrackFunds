@@ -8,7 +8,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
-import com.rifqi.trackfunds.core.domain.model.ReceiptItemModel
+import com.rifqi.trackfunds.core.domain.model.LineItem
 import com.rifqi.trackfunds.core.domain.model.ScanResult
 import com.rifqi.trackfunds.core.domain.repository.ScanRepository
 import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
@@ -54,8 +54,8 @@ private data class ReceiptItemDto(
     val quantity: Int = 1,
     val price: Double
 ) {
-    fun toDomain(): ReceiptItemModel {
-        return ReceiptItemModel(
+    fun toDomain(): LineItem {
+        return LineItem(
             name = name,
             quantity = quantity,
             price = BigDecimal(price.toString())
@@ -88,7 +88,7 @@ class ScanRepositoryImpl @Inject constructor(
 
     override suspend fun analyzeReceiptText(ocrText: String): Result<ScanResult> {
         return try {
-            val userUid = userPreferencesRepository.userUidFlow.first()
+            val userUid = userPreferencesRepository.userUid.first()
                 ?: return Result.failure(Exception("User not logged in."))
 
             val categories = categoryDao.getFilteredCategories(
@@ -160,7 +160,7 @@ class ScanRepositoryImpl @Inject constructor(
             transactionDateTime = transactionDateTime,
             totalAmount = BigDecimal(dto.totalAmount?.toString() ?: "0"),
             categoryStandardKey = dto.category,
-            receiptItemModels = dto.items.map { it.toDomain() }
+            lineItems = dto.items.map { it.toDomain() }
         )
     }
 }
