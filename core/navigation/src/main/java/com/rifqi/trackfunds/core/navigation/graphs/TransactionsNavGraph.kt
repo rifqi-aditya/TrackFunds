@@ -10,7 +10,7 @@ import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.feature.transaction.ui.filter.FilterScreen
-import com.rifqi.trackfunds.feature.transaction.ui.list.TransactionScreen
+import com.rifqi.trackfunds.feature.transaction.ui.list.TransactionListScreen
 
 fun NavGraphBuilder.transactionsNavGraph(navController: NavHostController) {
     navigation<TransactionsGraph>(
@@ -20,7 +20,7 @@ fun NavGraphBuilder.transactionsNavGraph(navController: NavHostController) {
             enterTransition = { fadeIn(animationSpec = tween(400)) },
             exitTransition = { fadeOut(animationSpec = tween(400)) }
         ) {
-            TransactionScreen(
+            TransactionListScreen(
                 onNavigate = { screen -> navController.navigate(screen) },
             )
         }

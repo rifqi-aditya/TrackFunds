@@ -13,9 +13,14 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 data class ChipData(
@@ -33,6 +38,15 @@ fun FilterGroup(
     onChipClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    // 2. Tentukan batas jumlah chip yang ditampilkan saat tidak diperluas
+    val chipLimit = 6
+
+    // 3. Tentukan list mana yang akan ditampilkan berdasarkan state isExpanded
+    val chipsToShow = if (isExpanded) chips else chips.take(chipLimit)
+
+
     Column(modifier = modifier) {
         Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
         Spacer(modifier = Modifier.height(8.dp))
@@ -40,7 +54,7 @@ fun FilterGroup(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            chips.forEach { chip ->
+            chipsToShow.forEach { chip ->
                 FilterChip(
                     selected = chip.isSelected,
                     onClick = { onChipClick(chip.id) },
@@ -58,7 +72,7 @@ fun FilterGroup(
                     label = { Text(chip.label) },
                     shape = MaterialTheme.shapes.large,
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.inverseSurface,
+                        selectedContainerColor = TrackFundsTheme.extendedColors.accent,
                         selectedLabelColor = MaterialTheme.colorScheme.surface
                     ),
                     border = FilterChipDefaults.filterChipBorder(
@@ -72,6 +86,14 @@ fun FilterGroup(
                         ),
                         borderWidth = 1.dp
                     )
+                )
+            }
+            if (!isExpanded && chips.size > chipLimit) {
+                FilterChip(
+                    selected = false,
+                    onClick = { isExpanded = true },
+                    label = { Text("View All") },
+                    shape = MaterialTheme.shapes.large
                 )
             }
         }

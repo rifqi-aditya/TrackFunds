@@ -64,7 +64,7 @@ import java.time.format.DateTimeFormatter
  * - Ini yang akan dipanggil dari NavGraph.
  */
 @Composable
-fun TransactionScreen(
+fun TransactionListScreen(
     viewModel: TransactionListViewModel = hiltViewModel(),
     onNavigate: (AppScreen) -> Unit,
 ) {

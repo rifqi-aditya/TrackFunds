@@ -62,7 +62,7 @@ fun FilterScreen(
 @Composable
 fun FilterScreenContent(
     uiState: FilterTransactionUiState,
-    onEvent: (FilterEvent) -> Unit,
+    onEvent: (FilterTransactionEvent) -> Unit,
     onNavigateBack: () -> Unit
 ) {
     Scaffold(
@@ -71,18 +71,29 @@ fun FilterScreenContent(
                 title = "Filter",
                 onNavigateBack = onNavigateBack,
                 isFullScreen = true,
+                actions = {
+                    TextButton(
+                        onClick = { onEvent(FilterTransactionEvent.ClearFiltersClicked) },
+                    ) {
+                        Text(
+                            text = "Reset",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             )
         },
         bottomBar = {
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(26.dp)
                     .height(56.dp),
                 shape = MaterialTheme.shapes.large,
-                onClick = { onEvent(FilterEvent.ApplyFilterClicked) },
+                onClick = { onEvent(FilterTransactionEvent.ApplyFilterTransactionClicked) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = TrackFundsTheme.extendedColors.accent,
                     contentColor = MaterialTheme.colorScheme.inverseOnSurface,
                 )
 
@@ -109,7 +120,7 @@ fun FilterScreenContent(
                             uiState.selectedCategoryIds.contains(it.id)
                         )
                     },
-                    onChipClick = { onEvent(FilterEvent.CategoryToggled(it)) }
+                    onChipClick = { onEvent(FilterTransactionEvent.CategoryToggled(it)) }
                 )
             }
 
@@ -125,7 +136,7 @@ fun FilterScreenContent(
                             uiState.selectedAccountIds.contains(it.id)
                         )
                     },
-                    onChipClick = { onEvent(FilterEvent.AccountToggled(it)) }
+                    onChipClick = { onEvent(FilterTransactionEvent.AccountToggled(it)) }
                 )
             }
 
@@ -136,7 +147,7 @@ fun FilterScreenContent(
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.weight(1f)
                     )
-                    TextButton(onClick = { onEvent(FilterEvent.ManualDateSelectionClicked) }) {
+                    TextButton(onClick = { onEvent(FilterTransactionEvent.ManualDateSelectionClicked) }) {
                         Text("Custom Date")
                     }
                 }
@@ -150,7 +161,7 @@ fun FilterScreenContent(
                             val isSelected = uiState.selectedDateOption == option
                             FilterChip(
                                 selected = isSelected,
-                                onClick = { onEvent(FilterEvent.DateOptionSelected(option)) },
+                                onClick = { onEvent(FilterTransactionEvent.DateOptionSelected(option)) },
                                 label = { Text(option.displayName) },
                                 shape = MaterialTheme.shapes.large,
                                 colors = FilterChipDefaults.filterChipColors(
@@ -181,7 +192,7 @@ fun FilterScreenContent(
                         }"
                         FilterChip(
                             selected = true,
-                            onClick = { onEvent(FilterEvent.ManualDateSelectionClicked) },
+                            onClick = { onEvent(FilterTransactionEvent.ManualDateSelectionClicked) },
                             label = { Text(label) }
                         )
                     }

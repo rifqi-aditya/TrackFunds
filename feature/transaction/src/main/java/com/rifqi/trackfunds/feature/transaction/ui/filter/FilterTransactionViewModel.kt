@@ -110,23 +110,23 @@ class FilterTransactionViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: FilterEvent) {
+    fun onEvent(event: FilterTransactionEvent) {
         when (event) {
-            is FilterEvent.AccountToggled -> {
+            is FilterTransactionEvent.AccountToggled -> {
                 val newSet = _uiState.value.selectedAccountIds.toMutableSet()
                 if (newSet.contains(event.accountId)) newSet.remove(event.accountId)
                 else newSet.add(event.accountId)
                 _uiState.update { it.copy(selectedAccountIds = newSet) }
             }
 
-            is FilterEvent.CategoryToggled -> {
+            is FilterTransactionEvent.CategoryToggled -> {
                 val newSet = _uiState.value.selectedCategoryIds.toMutableSet()
                 if (newSet.contains(event.categoryId)) newSet.remove(event.categoryId)
                 else newSet.add(event.categoryId)
                 _uiState.update { it.copy(selectedCategoryIds = newSet) }
             }
 
-            is FilterEvent.DateRangeSelected -> {
+            is FilterTransactionEvent.DateRangeSelected -> {
                 _uiState.update {
                     it.copy(
                         selectedDateRange = Pair(
@@ -137,19 +137,19 @@ class FilterTransactionViewModel @Inject constructor(
                 }
             }
 
-            is FilterEvent.DateOptionSelected -> {
+            is FilterTransactionEvent.DateOptionSelected -> {
                 _uiState.update { it.copy(selectedDateOption = event.option) }
             }
 
-            FilterEvent.ManualDateSelectionClicked -> {
+            FilterTransactionEvent.ManualDateSelectionClicked -> {
                 _uiState.update { it.copy(showDatePicker = true) }
             }
 
-            FilterEvent.DatePickerDismissed -> {
+            FilterTransactionEvent.DatePickerDismissed -> {
                 _uiState.update { it.copy(showDatePicker = false) }
             }
 
-            is FilterEvent.CustomDateSelected -> {
+            is FilterTransactionEvent.CustomDateSelected -> {
                 _uiState.update {
                     it.copy(
                         selectedDateOption = DateRangeOption.CUSTOM,
@@ -160,8 +160,20 @@ class FilterTransactionViewModel @Inject constructor(
                 }
             }
 
-            FilterEvent.ApplyFilterClicked -> {
+            FilterTransactionEvent.ApplyFilterTransactionClicked -> {
                 applyFilterAndNavigateBack()
+            }
+
+            FilterTransactionEvent.ClearFiltersClicked -> {
+                _uiState.update {
+                    it.copy(
+                        selectedCategoryIds = emptySet(),
+                        selectedAccountIds = emptySet(),
+                        selectedDateOption = DateRangeOption.LAST_30_DAYS,
+                        customStartDate = null,
+                        customEndDate = null
+                    )
+                }
             }
         }
     }
