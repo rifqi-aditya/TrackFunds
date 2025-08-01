@@ -7,7 +7,6 @@ import javax.inject.Singleton
 
 @Singleton
 class NavigationResultManager @Inject constructor() {
-    // Untuk mengirim HASIL kembali (dari B ke A)
     private val _result = MutableStateFlow<Any?>(null)
     val result: StateFlow<Any?> = _result
 
@@ -15,7 +14,6 @@ class NavigationResultManager @Inject constructor() {
         _result.value = data
     }
 
-    // FIX: Tambahkan ini untuk mengirim ARGUMEN ke depan (dari A ke B)
     private val _argument = MutableStateFlow<Any?>(null)
     val argument: StateFlow<Any?> = _argument
 

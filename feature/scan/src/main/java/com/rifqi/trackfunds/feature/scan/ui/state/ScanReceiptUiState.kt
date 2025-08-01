@@ -9,7 +9,7 @@ enum class ScanPhase {
     UPLOAD,
     IMAGE_PREVIEW,
     PROCESSING,
-    REVIEW
+//    REVIEW
 }
 
 enum class ScanSheetType {

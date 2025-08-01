@@ -6,11 +6,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,37 +17,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,40 +43,25 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.rifqi.trackfunds.core.domain.model.LineItem
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
-import com.rifqi.trackfunds.core.ui.components.SelectionItem
-import com.rifqi.trackfunds.core.ui.components.SelectionList
-import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
-import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
-import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
-import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
-import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.scan.ui.components.LinearStepIndicator
 import com.rifqi.trackfunds.feature.scan.ui.event.ScanReceiptEvent
 import com.rifqi.trackfunds.feature.scan.ui.sideeffect.ScanReceiptSideEffect
 import com.rifqi.trackfunds.feature.scan.ui.state.ScanPhase
 import com.rifqi.trackfunds.feature.scan.ui.state.ScanReceiptUiState
-import com.rifqi.trackfunds.feature.scan.ui.state.ScanSheetType
 import com.rifqi.trackfunds.feature.scan.ui.viewmodel.ScanReceiptViewModel
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanReceiptScreen(
-    // Callback navigasi yang dikelola oleh NavHost
     onNavigateBack: () -> Unit,
     onNavigateToCamera: () -> Unit,
-//    onNavigateToConfirm: (ScanResult) -> Unit
+    onNavigateToAddTransaction: () -> Unit
 ) {
     val viewModel: ScanReceiptViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val categoriesForSelection =
-        viewModel.categoriesForSelection.collectAsStateWithLifecycle().value
 
     // Launcher untuk memilih gambar dari galeri
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -109,61 +78,11 @@ fun ScanReceiptScreen(
                 is ScanReceiptSideEffect.NavigateBack -> onNavigateBack()
                 is ScanReceiptSideEffect.NavigateToCamera -> onNavigateToCamera()
                 is ScanReceiptSideEffect.LaunchGallery -> galleryLauncher.launch("image/*")
+                is ScanReceiptSideEffect.NavigateToAddTransaction -> onNavigateToAddTransaction()
             }
         }
     }
 
-    CustomDatePickerDialog(
-        showDialog = uiState.showDatePicker,
-        initialDate = uiState.editableTransaction?.date?.toLocalDate() ?: LocalDate.now(),
-        onDismiss = {
-            viewModel.onEvent(ScanReceiptEvent.DismissAllPickers)
-        },
-        onConfirm = { newDate ->
-            viewModel.onEvent(ScanReceiptEvent.DateChanged(newDate))
-        }
-    )
-
-    if (uiState.activeSheet != null) {
-        ModalBottomSheet(onDismissRequest = { viewModel.onEvent(ScanReceiptEvent.DismissAllPickers) }) {
-            when (uiState.activeSheet) {
-                ScanSheetType.CATEGORY -> {
-                    SelectionList(
-                        title = "Pilih Kategori",
-                        items = categoriesForSelection,
-                        itemBuilder = { category ->
-                            SelectionItem(category.id, category.name, category.iconIdentifier)
-                        },
-                        onItemSelected = { category ->
-                            viewModel.onEvent(ScanReceiptEvent.CategorySelected(category))
-                        },
-                        isSearchable = true,
-                        searchQuery = uiState.categorySearchQuery,
-                        onSearchQueryChanged = { query ->
-                            viewModel.onEvent(ScanReceiptEvent.CategorySearchQueryChanged(query))
-                        },
-                    )
-                }
-
-                ScanSheetType.ACCOUNT -> {
-                    SelectionList(
-                        title = "Select Account",
-                        items = uiState.allAccounts,
-                        itemBuilder = { account ->
-                            SelectionItem(account.id, account.name, account.iconIdentifier)
-                        },
-                        onItemSelected = { account ->
-                            viewModel.onEvent(ScanReceiptEvent.AccountSelected(account))
-                        },
-                    )
-                }
-
-                null -> TODO()
-            }
-        }
-    }
-
-    // Panggil UI stateless
     ScanContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
@@ -196,33 +115,24 @@ private fun ScanContent(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
             // Step indicator
-            val steps = listOf("Upload", "Preview", "Processing", "Review")
+            val steps = listOf("Upload", "Preview", "Processing")
             LinearStepIndicator(
                 currentStep = uiState.currentPhase.ordinal,
                 steps = steps,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
-            // Konten dinamis berdasarkan fase
             AnimatedContent(targetState = uiState.currentPhase, label = "PhaseAnimation") { phase ->
                 when (phase) {
                     ScanPhase.UPLOAD -> UploadPhase(onEvent)
                     ScanPhase.IMAGE_PREVIEW -> ImagePreviewPhase(
                         imageUri = uiState.imagePreviewUri,
+                        errorMessage = uiState.errorMessage,
                         onConfirm = { onEvent(ScanReceiptEvent.ConfirmImage) },
                         onRetake = { onEvent(ScanReceiptEvent.ScanReceiptAgainClicked) }
                     )
 
                     ScanPhase.PROCESSING -> ProcessingPhase()
-                    ScanPhase.REVIEW -> {
-                        // Di sini kita akan menampilkan AddEditTransactionScreen
-                        // dengan data yang sudah terisi dari hasil scan.
-                        // Untuk saat ini, kita gunakan placeholder ReviewPhase.
-                        ReviewPhase(
-                            uiState = uiState,
-                            onEvent = onEvent
-                        )
-                    }
                 }
             }
         }
@@ -304,6 +214,7 @@ private fun UploadPhase(onEvent: (ScanReceiptEvent) -> Unit) {
 @Composable
 fun ImagePreviewPhase(
     imageUri: Uri?,
+    errorMessage: String?,
     onConfirm: () -> Unit,
     onRetake: () -> Unit
 ) {
@@ -330,6 +241,16 @@ fun ImagePreviewPhase(
                 .weight(1f),
             contentScale = ContentScale.Fit
         )
+
+        AnimatedVisibility(visible = errorMessage != null) {
+            Text(
+                text = errorMessage ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -382,206 +303,6 @@ private fun ProcessingPhase() {
             )
             Spacer(Modifier.height(16.dp))
             Text("Analyzing your receipt, please wait...")
-        }
-    }
-}
-
-@Composable
-private fun ReviewPhase(
-    uiState: ScanReceiptUiState,
-    onEvent: (ScanReceiptEvent) -> Unit
-) {
-    val transaction =
-        uiState.editableTransaction ?: return
-
-    Scaffold(
-        bottomBar = {
-            Button(
-                onClick = { onEvent(ScanReceiptEvent.SaveTransactionClicked) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(56.dp)
-            ) {
-                Text("Save Transaction")
-            }
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // --- FORM UTAMA ---
-            item {
-                GeneralTextInputField(
-                    label = "Description (Merchant)",
-                    value = transaction.description,
-                    onValueChange = { onEvent(ScanReceiptEvent.DescriptionChanged(it)) }
-                )
-            }
-            item {
-                AmountInputField(
-                    value = transaction.amount.toPlainString(),
-                    onValueChange = { onEvent(ScanReceiptEvent.AmountChanged(it)) }
-                )
-            }
-            item {
-                FormSelectorField(
-                    label = "Category",
-                    value = transaction.category?.name ?: "Choose category",
-                    onClick = { onEvent(ScanReceiptEvent.CategoryClicked) },
-                    leadingIconRes = transaction.category?.iconIdentifier,
-                )
-            }
-            item {
-                FormSelectorField(
-                    label = "Account",
-                    value = transaction.account.name,
-                    onClick = { onEvent(ScanReceiptEvent.AccountClicked) },
-                    leadingIconRes = transaction.account.iconIdentifier,
-                )
-            }
-            item {
-                DatePickerField(
-                    label = "Date",
-                    value = transaction.date.toLocalDate(),
-                    onClick = { onEvent(ScanReceiptEvent.DateClicked) },
-                    mode = DatePickerMode.FULL_DATE
-                )
-            }
-
-            // --- BAGIAN COLLAPSIBLE ---
-            item {
-                CollapsibleSection(
-                    title = "Scanned Items (${transaction.items.size})",
-                    isExpanded = uiState.isItemListExpanded,
-                    onToggle = { onEvent(ScanReceiptEvent.ToggleItemListExpansion) }
-                ) {
-                    // Konten ini hanya akan terlihat jika isExpanded = true
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        transaction.items.forEachIndexed { index, item ->
-                            EditableReceiptItemRow(
-                                index = index,
-                                item = item,
-                                onEvent = onEvent
-                            )
-                        }
-                        TextButton(onClick = { onEvent(ScanReceiptEvent.AddLineItem) }) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Item")
-                            Spacer(Modifier.width(8.dp))
-                            Text("Add Item")
-                        }
-                    }
-                }
-            }
-
-            item {
-                CollapsibleSection(
-                    title = "Original Receipt",
-                    isExpanded = uiState.isReceiptImageExpanded,
-                    onToggle = { onEvent(ScanReceiptEvent.ToggleReceiptImageExpansion) }
-                ) {
-                    AsyncImage(
-                        model = uiState.imagePreviewUri,
-                        contentDescription = "Receipt Image",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-            }
-        }
-    }
-}
-
-// Contoh Composable untuk satu baris item
-@Composable
-fun ReceiptItemRow(item: LineItem) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = "${item.quantity}x ${item.name}", modifier = Modifier.weight(1f))
-        Text(text = "Rp ${item.price}")
-    }
-}
-
-@Composable
-fun EditableReceiptItemRow(
-    index: Int,
-    item: TransactionItem,
-    onEvent: (ScanReceiptEvent) -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        OutlinedTextField(
-            value = item.quantity.toString(),
-            onValueChange = {
-                onEvent(
-                    ScanReceiptEvent.LineItemQuantityChanged(
-                        index,
-                        it.toInt()
-                    )
-                )
-            },
-            modifier = Modifier.width(60.dp),
-            label = { Text("Qty") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-        OutlinedTextField(
-            value = item.name,
-            onValueChange = { onEvent(ScanReceiptEvent.LineItemNameChanged(index, it)) },
-            modifier = Modifier.weight(1f),
-            label = { Text("Item Name") }
-        )
-        OutlinedTextField(
-            value = item.price.toPlainString(),
-            onValueChange = { onEvent(ScanReceiptEvent.LineItemPriceChanged(index, it)) },
-            modifier = Modifier.width(100.dp),
-            label = { Text("Price") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-        IconButton(onClick = { onEvent(ScanReceiptEvent.DeleteLineItem(index)) }) {
-            Icon(Icons.Default.Delete, contentDescription = "Delete Item")
-        }
-    }
-}
-
-@Composable
-fun CollapsibleSection(
-    title: String,
-    isExpanded: Boolean,
-    onToggle: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onToggle),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = "Toggle"
-            )
-        }
-        AnimatedVisibility(visible = isExpanded) {
-            Column(modifier = Modifier.padding(top = 8.dp)) {
-                content()
-            }
         }
     }
 }

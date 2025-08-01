@@ -12,5 +12,5 @@ interface ScanRepository {
     /**
      * Analyzes extracted text with Gemini to get structured receipt data.
      */
-    suspend fun analyzeReceiptText(ocrText: String): Result<ScanResult>
+    suspend fun analyzeReceiptText(ocrText: String, userUid: String): Result<ScanResult>
 }

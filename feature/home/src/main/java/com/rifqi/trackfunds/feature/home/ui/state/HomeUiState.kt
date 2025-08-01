@@ -14,11 +14,9 @@ import java.time.format.DateTimeFormatter
  * @param error An error message string if an error occurs, null otherwise.
  * @param currentMonth A formatted string for the currently month's.
  * @param userName The name of the current user.
- * @param totalExpenseThisMonth The sum of all expenses for the current month.
  * @param totalBalance The sum of all balances from all accounts.
  * @param totalSavings The sum of all current amounts from all savings goals.
  * @param totalAccounts The total number of user accounts.
- * @param recentTransactions A list of the most recent transactions.
  */
 data class HomeUiState(
     val isLoading: Boolean = true,

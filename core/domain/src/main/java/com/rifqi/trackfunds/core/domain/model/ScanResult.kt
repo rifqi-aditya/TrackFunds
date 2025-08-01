@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.core.domain.model
 
+import android.net.Uri
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -8,5 +9,6 @@ data class ScanResult(
     val transactionDateTime: LocalDateTime,
     val totalAmount: BigDecimal,
     val categoryStandardKey: String?,
-    val lineItems: List<LineItem> = emptyList(),
+    val transactionItem: List<TransactionItem> = emptyList(),
+    val receiptImageUri: Uri? = null,
 )

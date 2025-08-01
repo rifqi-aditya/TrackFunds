@@ -45,7 +45,7 @@ fun RecentTransactionsCard(
     onViewAllClick: () -> Unit,
     onTransactionClick: (String) -> Unit
 ) {
-    val tabs = listOf("All", "Expense", "Income")
+    val tabs = listOf("Expense", "Income")
     val pagerState = rememberPagerState(initialPage = uiState.selectedTabIndex) {
         tabs.size
     }
@@ -124,26 +124,26 @@ fun RecentTransactionsCard(
             val maxHeight = 250.dp
 
             val pagerHeight = when (uiState.selectedTabIndex) {
-                1 -> calculatePagerHeight(
+                0 -> calculatePagerHeight(
                     uiState.recentExpenseTransactions.size,
                     heightPerItem,
                     emptyStateHeight,
                     maxHeight
                 )
 
-                2 -> calculatePagerHeight(
+                else -> calculatePagerHeight(
                     uiState.recentIncomeTransactions.size,
                     heightPerItem,
                     emptyStateHeight,
                     maxHeight
                 )
 
-                else -> calculatePagerHeight(
-                    uiState.recentSavingsTransactions.size,
-                    heightPerItem,
-                    emptyStateHeight,
-                    maxHeight
-                )
+//                else -> calculatePagerHeight(
+//                    uiState.recentSavingsTransactions.size,
+//                    heightPerItem,
+//                    emptyStateHeight,
+//                    maxHeight
+//                )
             }
 
             HorizontalPager(
@@ -154,9 +154,9 @@ fun RecentTransactionsCard(
                     .animateContentSize()
             ) { page ->
                 val transactionsToShow = when (page) {
-                    1 -> uiState.recentExpenseTransactions
-                    2 -> uiState.recentIncomeTransactions
-                    else -> uiState.recentSavingsTransactions
+                    0 -> uiState.recentExpenseTransactions
+                    else -> uiState.recentIncomeTransactions
+//                    else -> uiState.recentSavingsTransactions
                 }
 
                 if (transactionsToShow.isEmpty()) {
