@@ -2,6 +2,7 @@ package com.rifqi.trackfunds.core.data.repository
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.UnknownException
 import com.google.mlkit.vision.common.InputImage
@@ -40,6 +41,7 @@ class ScanRepositoryImpl @Inject constructor(
             val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
             val image = InputImage.fromFilePath(context, imageUri)
             val visionText = recognizer.process(image).await()
+            Log.d("ScanRepository", "Extracted text: ${visionText.text}")
             visionText.text.ifBlank {
                 throw ScanException.NoTextFound()
             }

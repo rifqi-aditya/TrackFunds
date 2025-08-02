@@ -74,4 +74,7 @@ data class TransactionItemInput(
     val nameError: String? = null,
     val quantityError: String? = null,
     val priceError: String? = null
-)
+) {
+    val priceAsBigDecimal: BigDecimal
+        get() = price.replace(".", "").toBigDecimalOrNull() ?: BigDecimal.ZERO
+}

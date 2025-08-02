@@ -5,4 +5,5 @@ sealed interface TransactionDetailEvent {
     data object DeleteClicked : TransactionDetailEvent
     data object ConfirmDeleteClicked : TransactionDetailEvent
     data object DismissDeleteDialog : TransactionDetailEvent
+    data class ReceiptClicked(val imageUrl: String) : TransactionDetailEvent
 }

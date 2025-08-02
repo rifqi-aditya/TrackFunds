@@ -39,7 +39,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
 
@@ -384,16 +383,11 @@ class AddEditTransactionViewModel @Inject constructor(
     }
 
     private fun TransactionItemInput.toDomainModel(): TransactionItem? =
-        if (name.isBlank() || quantity.isBlank() || price.isBlank()) {
-            null
-        } else {
-            TransactionItem(
-                id = 0L,
-                name = name,
-                price = price.toBigDecimalOrNull() ?: BigDecimal.ZERO,
-                quantity = quantity.toIntOrNull() ?: 1
-            )
-        }
+        TransactionItem(
+            name = name,
+            price = priceAsBigDecimal,
+            quantity = quantity.toIntOrNull() ?: 1
+        )
 
     private fun TransactionItem.toUiModel(): TransactionItemInput =
         TransactionItemInput(

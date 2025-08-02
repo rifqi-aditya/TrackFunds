@@ -1,24 +1,33 @@
 package com.rifqi.trackfunds.feature.transaction.ui.detail
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,20 +43,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.category.model.TransactionType
-import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
-import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
-import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.transaction.ui.components.DetailRow
-import kotlinx.coroutines.flow.collectLatest
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
+@SuppressLint("UseKtx")
 @Composable
 fun TransactionDetailScreen(
     viewModel: TransactionDetailViewModel = hiltViewModel(),
@@ -55,13 +66,26 @@ fun TransactionDetailScreen(
     onNavigateToEdit: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collectLatest { screen ->
-            when (screen) {
-                is TransactionRoutes.AddEditTransaction -> onNavigateToEdit(screen.transactionId!!)
-                is HomeRoutes.Home -> onNavigateBack()
-                else -> {}
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is TransactionDetailSideEffect.NavigateToEdit -> {
+                    onNavigateToEdit(effect.transactionId)
+                }
+
+                is TransactionDetailSideEffect.NavigateBackAfterDelete -> {
+                    onNavigateBack()
+                }
+
+                is TransactionDetailSideEffect.ShowSnackbar -> {
+                }
+
+                is TransactionDetailSideEffect.ViewReceipt -> {
+                    val intent = Intent(Intent.ACTION_VIEW, effect.imageUrl.toUri())
+                    context.startActivity(intent)
+                }
             }
         }
     }
@@ -93,7 +117,6 @@ fun TransactionDetailScreen(
     )
 }
 
-// --- Stateless Composable (Presentational UI) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDetailContent(
@@ -104,38 +127,26 @@ fun TransactionDetailContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detail Transaksi") },
+                title = { Text("Transaction Details") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.ArrowBackIos,
-                            "Back"
-                        )
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onEvent(TransactionDetailEvent.DeleteClicked) }) {
-                        DisplayIconFromResource(
-                            identifier = "delete",
-                            contentDescription = "Delete Transaction",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    IconButton(onClick = { onEvent(TransactionDetailEvent.EditClicked) }) {
-                        DisplayIconFromResource(
-                            identifier = "edit",
-                            contentDescription = "Edit Transaction",
-                            modifier = Modifier.size(
-                                24.dp
-                            )
-                        )
+                    // Tombol aksi hanya muncul jika data sudah dimuat
+                    if (uiState.details != null) {
+                        IconButton(onClick = { onEvent(TransactionDetailEvent.EditClicked) }) {
+                            Icon(Icons.Rounded.Edit, "Edit Transaction")
+                        }
+                        IconButton(onClick = { onEvent(TransactionDetailEvent.DeleteClicked) }) {
+                            Icon(Icons.Rounded.Delete, "Delete Transaction")
+                        }
                     }
                 }
             )
         }
     ) { paddingValues ->
-        val transaction = uiState.transaction
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -143,116 +154,198 @@ fun TransactionDetailContent(
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else if (transaction != null) {
+            } else if (uiState.error != null) {
+                Text(
+                    text = uiState.error,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
+            } else if (uiState.details != null) {
+                val details = uiState.details
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        DisplayIconFromResource(
+                            identifier = details.categoryIconIdentifier,
+                            contentDescription = details.categoryName,
+                            modifier = Modifier.size(56.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(details.description, style = MaterialTheme.typography.titleLarge)
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = details.formattedAmount,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = details.amountColor
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = details.formattedDate,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
-                    DisplayIconFromResource(
-                        identifier = transaction.category?.iconIdentifier,
-                        contentDescription = transaction.category?.name,
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.1f)) // Latar belakang ikon lebih lembut
-                            .padding(10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = transaction.description.ifBlank {
-                            "-"
-                        },
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        text = if (transaction.type == TransactionType.INCOME) {
-                            "+ ${formatCurrency(transaction.amount)}"
-                        } else {
-                            "- ${formatCurrency(transaction.amount)}"
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (transaction.type == TransactionType.INCOME) {
-                            TrackFundsTheme.extendedColors.income
-                        } else {
-                            TrackFundsTheme.extendedColors.expense
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // --- Bagian Detail (Menggunakan DetailRow) ---
-                    DetailRow(label = "Account Source") {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            DisplayIconFromResource(
-                                identifier = transaction.account.iconIdentifier,
-                                contentDescription = transaction.account.name,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Color.Gray.copy(
-                                            alpha = 0.1f
-                                        )
-                                    )
-                                    .padding(4.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = transaction.account.name,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
+                    // Bagian Detail Tambahan
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            DetailRow(label = "Type", value = details.transactionType)
+                            DetailRow(label = "Account", value = details.accountName)
+                            // Anda bisa menambahkan detail lain di sini
                         }
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    DetailRow(label = "Transaction Date") {
-                        Text(
-                            text = transaction.date.format(
-                                DateTimeFormatter.ofPattern(
-                                    "dd MMMM yyyy",
-                                    Locale.getDefault()
+                    // Bagian Rincian Item (Kondisional)
+                    if (details.lineItems.isNotEmpty()) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text("Items", style = MaterialTheme.typography.titleMedium)
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surface
                                 )
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    )
+                                ) {
+                                    details.lineItems.forEachIndexed { index, item ->
+                                        LineItemRow(item = item)
+
+                                        // Kunci #3: Tambahkan pemisah antar item, kecuali untuk yang terakhir
+                                        if (index < details.lineItems.lastIndex) {
+                                            Divider(modifier = Modifier.padding(vertical = 8.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    DetailRow(label = "Category") {
-                        Text(
-                            text = transaction.category?.name ?: "-",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                    // Bagian Struk (Kondisional)
+                    if (details.receiptImageUrl != null) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "Receipt",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            // 1. Buat Box bisa diklik untuk melihat gambar penuh
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .clip(MaterialTheme.shapes.large) // Bentuk lebih besar agar konsisten
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .clickable {
+                                        onEvent(
+                                            TransactionDetailEvent.ReceiptClicked(
+                                                details.receiptImageUrl
+                                            )
+                                        )
+                                    }, // Event baru
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // 2. Isi parameter AsyncImage
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(details.receiptImageUrl)
+                                        .crossfade(true) // Animasi fade-in yang halus
+                                        .build(),
+                                    contentDescription = "Receipt Image",
+                                    contentScale = ContentScale.Crop, // Penuhi Box tanpa merusak rasio
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        }
                     }
-
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                    DetailRow(label = "Type") {
-                        Text(
-                            text = transaction.type.name.lowercase(Locale.getDefault())
-                                .replaceFirstChar { it.uppercase() },
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LineItemRow(item: TransactionItemUiModel) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically // Jaga agar semua teks sejajar
+    ) {
+        // Kolom untuk nama dan detail, akan mengisi semua ruang yang tersedia
+        Column(
+            modifier = Modifier
+                .weight(1f) // <-- Kunci #1: Memberi bobot
+                .padding(end = 16.dp) // Beri jarak dari total harga
+        ) {
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold, // Beri penekanan pada nama
+                maxLines = 1, // <-- Kunci #2: Batasi hanya satu baris
+                overflow = TextOverflow.Ellipsis // <-- Tampilkan "..." jika terlalu panjang
+            )
+            Text(
+                text = item.quantityAndPrice,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        // Teks untuk total harga
+        Text(
+            text = item.formattedTotal,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TransactionDetailContentPreview() {
+    TrackFundsTheme {
+        TransactionDetailContent(
+            uiState = TransactionDetailUiState(
+                isLoading = false,
+                details = TransactionDetailsUiModel(
+                    formattedAmount = "- Rp 75.000",
+                    amountColor = Color.Red,
+                    description = "Kopi dan Roti di Starbucks",
+                    categoryName = "Makanan & Minuman",
+                    categoryIconIdentifier = "ic_food",
+                    formattedDate = "Sabtu, 02 Agustus 2025, 17:05",
+                    accountName = "GoPay",
+                    transactionType = "Expense",
+                    lineItems = listOf(
+                        TransactionItemUiModel("Kopi Susu", "(x2 @ Rp20.000)", "Rp40.000"),
+                        TransactionItemUiModel("Roti Coklat", "(x1 @ Rp15.000)", "Rp15.000")
+                    )
+                )
+            ),
+            onEvent = {},
+            onNavigateBack = {}
+        )
     }
 }

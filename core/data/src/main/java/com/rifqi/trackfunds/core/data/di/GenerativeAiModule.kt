@@ -16,9 +16,7 @@ object GenerativeAiModule {
     @Singleton
     fun provideGenerativeModel(): GenerativeModel {
         return GenerativeModel(
-            modelName = "gemini-2.5-flash",
-
-            // Kunci API yang diambil secara aman dari BuildConfig.
+            modelName = "gemini-2.5-flash-lite",
             apiKey = BuildConfig.GEMINI_API_KEY
         )
     }

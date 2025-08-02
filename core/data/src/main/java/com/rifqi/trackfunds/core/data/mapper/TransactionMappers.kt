@@ -108,10 +108,19 @@ fun TransactionWithDetails.toDomain(): Transaction {
             name = this.account.name,
             iconIdentifier = this.account.iconIdentifier,
             balance = this.account.balance
-        )
+        ),
+        items = this.items.map { it.toDomain() }
     )
 }
 
+fun TransactionItemEntity.toDomain(): TransactionItem {
+    return TransactionItem(
+        id = this.id,
+        name = this.name,
+        quantity = this.quantity,
+        price = this.price
+    )
+}
 
 fun TransactionItem.toEntity(transactionId: String): TransactionItemEntity {
     return TransactionItemEntity(
