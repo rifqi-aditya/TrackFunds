@@ -32,13 +32,11 @@ private data class BudgetStatus(val text: String, val color: Color)
 @Composable
 fun BudgetCard(
     spentAmount: BigDecimal,
-    totalBudget: BigDecimal,
+    remainingAmount: BigDecimal,
+    progress: Float,
     onDetailsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Menghitung progress dan sisa budget
-    val remainingAmount = totalBudget - spentAmount
-    val progress = (spentAmount.toFloat() / totalBudget.toFloat()).coerceIn(0f, 1f)
 
     // Menentukan status dan warna berdasarkan progress
     val status = remember(progress) {
@@ -133,22 +131,25 @@ fun BudgetCardPreview() {
             // Skenario 1: Budget Aman
             BudgetCard(
                 spentAmount = BigDecimal("2500000"),
-                totalBudget = BigDecimal("5000000"),
-                onDetailsClick = {}
+                remainingAmount = BigDecimal("5000000"),
+                onDetailsClick = {},
+                progress = 0.5f // 50% digunakan
             )
 
             // Skenario 2: Budget Hati-hati
             BudgetCard(
                 spentAmount = BigDecimal("4200000"),
-                totalBudget = BigDecimal("5000000"),
-                onDetailsClick = {}
+                remainingAmount = BigDecimal("800000"),
+                onDetailsClick = {},
+                progress = 0.84f // 84% digunakan
             )
 
             // Skenario 3: Budget Melebihi Batas
             BudgetCard(
                 spentAmount = BigDecimal("5500000"),
-                totalBudget = BigDecimal("5000000"),
-                onDetailsClick = {}
+                remainingAmount = BigDecimal("-500000"),
+                onDetailsClick = {},
+                progress = 1.1f // 110% digunakan
             )
         }
     }

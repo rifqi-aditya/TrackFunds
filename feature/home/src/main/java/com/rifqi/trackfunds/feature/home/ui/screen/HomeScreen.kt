@@ -39,7 +39,6 @@ import com.rifqi.trackfunds.feature.home.ui.preview.HomeUiStatePreviewParameterP
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.math.BigDecimal
 
 
 /**
@@ -138,9 +137,10 @@ fun HomeScreenContent(
 
             item {
                 BudgetCard(
-                    spentAmount = BigDecimal("2600000"),
-                    totalBudget = BigDecimal("5000000"),
+                    spentAmount = state.totalBudgetSpent,
+                    remainingAmount = state.totalBudgetRemaining,
                     onDetailsClick = { onEvent(HomeEvent.AllBudgetsClicked) },
+                    progress = state.budgetProgress,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

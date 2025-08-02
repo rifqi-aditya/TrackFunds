@@ -59,6 +59,7 @@ interface BudgetDao {
                 SELECT SUM(t.amount) 
                 FROM transactions AS t 
                 WHERE t.category_id = b.category_id 
+                AND t.date BETWEEN b.period AND DATE(b.period, 'last day of month')
                 AND t.type = 'EXPENSE'
                 AND t.user_uid = :userUid
             ), 0) as spentAmount

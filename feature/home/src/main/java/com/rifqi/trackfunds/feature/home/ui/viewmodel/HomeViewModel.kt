@@ -3,6 +3,7 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
@@ -28,7 +29,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
@@ -41,6 +44,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getAccountsUseCase: GetAccountsUseCase,
     private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
+    private val getBudgetsUseCase: GetBudgetsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -91,15 +95,15 @@ class HomeViewModel @Inject constructor(
 
             // Kita hanya perlu mengambil transaksi untuk bulan ini
             val monthlyTransactionsFlow = getFilteredTransactionsUseCase(monthlyFilter)
+            val monthlyBudgetsFlow = getBudgetsUseCase(period = YearMonth.now())
             val allAccountsFlow = getAccountsUseCase()
 
-            // Gabungkan flow yang dibutuhkan
             combine(
                 monthlyTransactionsFlow,
-                allAccountsFlow
-            ) { monthlyTransactions, allAccounts ->
+                allAccountsFlow,
+                monthlyBudgetsFlow
+            ) { monthlyTransactions, allAccounts, monthlyBudgets ->
 
-                // Hitung metrik sesuai definisi kita
                 val totalBalance = allAccounts.sumOf { it.balance }
 
                 val totalIncome = monthlyTransactions
@@ -110,12 +114,26 @@ class HomeViewModel @Inject constructor(
                     .filter { it.type == TransactionType.EXPENSE }
                     .sumOf { it.amount }
 
-                // Ambil 5 transaksi pengeluaran terakhir DARI DATA BULAN INI
+                val totalBudgetAmount = monthlyBudgets.sumOf { it.budgetAmount }
+
+                val totalBudgetSpent = monthlyBudgets.sumOf { it.spentAmount }
+
+                val totalBudgetRemaining = totalBudgetAmount - totalBudgetSpent
+
+                val budgetProgress = if (totalBudgetAmount > BigDecimal.ZERO) {
+                    (totalBudgetSpent.toFloat() / totalBudgetAmount.toFloat()).coerceIn(0f, 1f)
+                } else {
+                    0f
+                }
+
                 val recentExpenses = monthlyTransactions
                     .filter { it.type == TransactionType.EXPENSE }
                     .take(5)
 
-                // Update UiState dengan data yang sudah dihitung
+                val recentIncome = monthlyTransactions
+                    .filter { it.type == TransactionType.INCOME }
+                    .take(5)
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -123,6 +141,10 @@ class HomeViewModel @Inject constructor(
                         totalIncome = totalIncome,
                         totalExpense = totalExpense,
                         recentExpenseTransactions = recentExpenses,
+                        recentIncomeTransactions = recentIncome,
+                        totalBudgetSpent = totalBudgetSpent,
+                        totalBudgetRemaining = totalBudgetRemaining,
+                        budgetProgress = budgetProgress,
                         error = null
                     )
                 }
