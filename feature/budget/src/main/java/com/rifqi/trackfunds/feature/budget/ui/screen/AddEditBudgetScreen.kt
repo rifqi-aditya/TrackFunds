@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
+import com.rifqi.trackfunds.core.ui.components.SelectionItemData
 import com.rifqi.trackfunds.core.ui.components.SelectionList
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
@@ -119,17 +120,24 @@ private fun AddEditBudgetOverlays(
     if (uiState.showCategorySheet) {
         ModalBottomSheet(onDismissRequest = { onEvent(AddEditBudgetEvent.DismissCategorySheet) }) {
             SelectionList(
-                title = "Pilih Kategori",
-                items = categoriesForSelection,
-                itemBuilder = { category ->
-                    com.rifqi.trackfunds.core.ui.components.SelectionItem(
-                        category.id,
-                        category.name,
-                        category.iconIdentifier
+                title = "Select Category",
+                items = categoriesForSelection.map { category ->
+                    SelectionItemData(
+                        id = category.id,
+                        title = category.name,
+                        iconIdentifier = category.iconIdentifier
                     )
                 },
-                onItemSelected = { category ->
-                    onEvent(AddEditBudgetEvent.CategorySelected(category))
+                selectedItemId = uiState.selectedCategory?.id,
+                onItemSelected = { categoryId ->
+                    val selected = categoriesForSelection.find { it.id == categoryId }
+                    selected?.let {
+                        onEvent(
+                            AddEditBudgetEvent.CategorySelected(
+                                it
+                            )
+                        )
+                    }
                 },
                 isSearchable = true,
                 searchQuery = uiState.categorySearchQuery,

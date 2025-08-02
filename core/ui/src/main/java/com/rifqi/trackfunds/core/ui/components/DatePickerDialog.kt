@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 /**
  * Sebuah DatePickerDialog yang bisa digunakan kembali dan dikontrol oleh state.
@@ -33,7 +33,7 @@ fun CustomDatePickerDialog(
     if (showDialog) {
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = initialDate
-                .atStartOfDay(ZoneId.systemDefault()) // Konversi LocalDate ke Epoch Milliseconds UTC
+                .atStartOfDay(ZoneOffset.UTC) // Konversi LocalDate ke Epoch Milliseconds UTC
                 .toInstant()
                 .toEpochMilli()
         )
@@ -47,7 +47,7 @@ fun CustomDatePickerDialog(
                         datePickerState.selectedDateMillis?.let { millis ->
                             // Konversi millis kembali ke LocalDate
                             val newDate = Instant.ofEpochMilli(millis)
-                                .atZone(ZoneId.systemDefault())
+                                .atZone(ZoneOffset.UTC)
                                 .toLocalDate()
                             onConfirm(newDate)
                         } ?: onDismiss() // Tutup jika tidak ada tanggal terpilih

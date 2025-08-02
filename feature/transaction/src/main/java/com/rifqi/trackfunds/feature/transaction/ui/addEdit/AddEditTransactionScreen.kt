@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
-import com.rifqi.trackfunds.core.ui.components.SelectionItem
+import com.rifqi.trackfunds.core.ui.components.SelectionItemData
 import com.rifqi.trackfunds.core.ui.components.SelectionList
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
@@ -47,6 +47,7 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.FormSelectorField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionDetailsSection
 import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionTypes
@@ -83,12 +84,23 @@ fun AddEditTransactionScreen(
                 AddEditSheetType.CATEGORY -> {
                     SelectionList(
                         title = "Select Category",
-                        items = categoriesForSelection,
-                        itemBuilder = { category ->
-                            SelectionItem(category.id, category.name, category.iconIdentifier)
+                        items = categoriesForSelection.map { category ->
+                            SelectionItemData(
+                                id = category.id,
+                                title = category.name,
+                                iconIdentifier = category.iconIdentifier
+                            )
                         },
-                        onItemSelected = { category ->
-                            viewModel.onEvent(AddEditTransactionEvent.CategorySelected(category))
+                        selectedItemId = uiState.selectedCategory?.id,
+                        onItemSelected = { categoryId ->
+                            val selected = categoriesForSelection.find { it.id == categoryId }
+                            selected?.let {
+                                viewModel.onEvent(
+                                    AddEditTransactionEvent.CategorySelected(
+                                        it
+                                    )
+                                )
+                            }
                         },
                         isSearchable = true,
                         searchQuery = uiState.categorySearchQuery,
@@ -101,12 +113,24 @@ fun AddEditTransactionScreen(
                 AddEditSheetType.ACCOUNT -> {
                     SelectionList(
                         title = "Select Account",
-                        items = uiState.allAccounts,
-                        itemBuilder = { account ->
-                            SelectionItem(account.id, account.name, account.iconIdentifier)
+                        items = uiState.allAccounts.map { account ->
+                            SelectionItemData(
+                                id = account.id,
+                                title = account.name,
+                                subtitle = formatCurrency(account.balance),
+                                iconIdentifier = account.iconIdentifier
+                            )
                         },
-                        onItemSelected = { account ->
-                            viewModel.onEvent(AddEditTransactionEvent.AccountSelected(account))
+                        selectedItemId = uiState.selectedAccount?.id,
+                        onItemSelected = { accountId ->
+                            val selected = uiState.allAccounts.find { it.id == accountId }
+                            selected?.let {
+                                viewModel.onEvent(
+                                    AddEditTransactionEvent.AccountSelected(
+                                        it
+                                    )
+                                )
+                            }
                         },
                     )
                 }
@@ -114,13 +138,26 @@ fun AddEditTransactionScreen(
                 AddEditSheetType.SAVINGS_GOAL -> {
                     SelectionList(
                         title = "Select Savings Goal",
-                        items = uiState.allSavingsGoals,
-                        itemBuilder = { savings ->
-                            SelectionItem(savings.id, savings.name, savings.iconIdentifier)
+                        items = uiState.allSavingsGoals.map { savings ->
+                            // Map dari SavingsGoal ke SelectionItemData
+                            SelectionItemData(
+                                id = savings.id,
+                                title = savings.name,
+                                subtitle = "Saved: ${formatCurrency(savings.savedAmount)}",
+                                iconIdentifier = savings.iconIdentifier
+                            )
                         },
-                        onItemSelected = { savings ->
-                            viewModel.onEvent(AddEditTransactionEvent.SavingsGoalSelected(savings))
-                        },
+                        selectedItemId = uiState.selectedSavingsGoal?.id,
+                        onItemSelected = { savingsId ->
+                            val selected = uiState.allSavingsGoals.find { it.id == savingsId }
+                            selected?.let {
+                                viewModel.onEvent(
+                                    AddEditTransactionEvent.SavingsGoalSelected(
+                                        it
+                                    )
+                                )
+                            }
+                        }
                     )
                 }
 
