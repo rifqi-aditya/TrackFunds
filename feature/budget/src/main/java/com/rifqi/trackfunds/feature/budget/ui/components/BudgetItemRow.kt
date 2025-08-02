@@ -21,7 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.Budget
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 

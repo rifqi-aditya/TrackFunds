@@ -6,21 +6,22 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
-import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
-import com.rifqi.trackfunds.core.domain.model.params.AddTransactionParams
-import com.rifqi.trackfunds.core.domain.model.params.UpdateTransactionParams
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.category.GetCategoryByStandardKeyUseCase
-import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
-import com.rifqi.trackfunds.core.domain.usecase.savings.GetActiveSavingsGoalsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.AddTransactionUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionDetailsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.UpdateTransactionUseCase
-import com.rifqi.trackfunds.core.domain.validator.transaction.ValidateAmount
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
+import com.rifqi.trackfunds.core.domain.category.model.AddTransactionParams
+import com.rifqi.trackfunds.core.domain.category.model.UpdateTransactionParams
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.transaction.usecase.AddTransactionUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.UpdateTransactionUseCase
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryByStandardKeyUseCase
+import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.validators.ValidateTransactionUseCase
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
+import com.rifqi.trackfunds.core.ui.utils.formatNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -39,12 +40,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.util.UUID
 import javax.inject.Inject
 
 
 @HiltViewModel
 class AddEditTransactionViewModel @Inject constructor(
-    private val validateAmountUseCase: ValidateAmount,
     private val transactionDetailsUseCase: GetTransactionDetailsUseCase,
     private val transactionAddUseCase: AddTransactionUseCase,
     private val transactionUpdateUseCase: UpdateTransactionUseCase,
@@ -54,6 +55,7 @@ class AddEditTransactionViewModel @Inject constructor(
     private val categoryByStandardKeyUseCase: GetCategoryByStandardKeyUseCase,
     private val activeSavingsGoalsUseCase: GetActiveSavingsGoalsUseCase,
     private val snackbarManager: SnackbarManager,
+    private val validateTransactionUseCase: ValidateTransactionUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -303,17 +305,21 @@ class AddEditTransactionViewModel @Inject constructor(
         viewModelScope.launch {
             var suggestedCategory: Category? = null
 
-
             scanResult.categoryStandardKey?.let { key ->
                 suggestedCategory = categoryByStandardKeyUseCase(key)
             }
 
             _uiState.update {
                 it.copy(
-                    amount = scanResult.totalAmount.toPlainString() ?: it.amount,
+                    amount = formatNumber(scanResult.totalAmount),
                     description = scanResult.merchantName ?: it.description,
                     selectedDate = scanResult.transactionDateTime.toLocalDate() ?: it.selectedDate,
-                    selectedCategory = suggestedCategory ?: it.selectedCategory
+                    selectedCategory = suggestedCategory ?: it.selectedCategory,
+                    items = scanResult.transactionItem.map { item ->
+                        item.toUiModel()
+                    },
+                    receiptImageUri = scanResult.receiptImageUri ?: it.receiptImageUri,
+                    isItemsExpanded = true,
                 )
             }
         }
@@ -322,19 +328,20 @@ class AddEditTransactionViewModel @Inject constructor(
     private fun saveTransaction() {
         val currentState = uiState.value
 
-        val amountResult = validateAmountUseCase(currentState.amount)
+        val validationResult = validateTransactionUseCase(
+            amount = currentState.amount,
+            account = currentState.selectedAccount
+        )
 
-        val hasError = listOf(amountResult).any { !it.isSuccess }
-
-        _uiState.update {
-            it.copy(
-                amountError = amountResult.errorMessage,
-                error = null,
-                isSaving = false
-            )
-        }
-
-        if (hasError) {
+        if (!validationResult.isSuccess) {
+            // 3. Update UiState dengan semua pesan error
+            _uiState.update {
+                it.copy(
+                    // Anda perlu menambahkan properti error ini di AddEditTransactionUiState
+                    amountError = validationResult.amountError,
+                    accountError = validationResult.accountError
+                )
+            }
             return
         }
 
@@ -348,8 +355,7 @@ class AddEditTransactionViewModel @Inject constructor(
                     amount = currentState.amount.toBigDecimal(),
                     type = currentState.selectedTransactionType,
                     date = currentState.selectedDate,
-                    account = currentState.selectedAccount
-                        ?: throw IllegalStateException("Account must be selected"),
+                    account = currentState.selectedAccount!!,
                     category = currentState.selectedCategory,
                     savingsGoal = currentState.selectedSavingsGoal,
                     items = currentState.items.mapNotNull { it.toDomainModel() }
@@ -361,8 +367,7 @@ class AddEditTransactionViewModel @Inject constructor(
                     amount = currentState.amount.toBigDecimal(),
                     type = currentState.selectedTransactionType,
                     date = currentState.selectedDate,
-                    account = currentState.selectedAccount
-                        ?: throw IllegalStateException("Account must be selected"),
+                    account = currentState.selectedAccount!!,
                     category = currentState.selectedCategory,
                     savingsGoal = currentState.selectedSavingsGoal,
                     items = currentState.items.mapNotNull { it.toDomainModel() }
@@ -385,7 +390,7 @@ class AddEditTransactionViewModel @Inject constructor(
             null
         } else {
             TransactionItem(
-                id = 0L, // ID is auto-generated by the database for new items
+                id = 0L,
                 name = name,
                 price = price.toBigDecimalOrNull() ?: BigDecimal.ZERO,
                 quantity = quantity.toIntOrNull() ?: 1
@@ -394,9 +399,9 @@ class AddEditTransactionViewModel @Inject constructor(
 
     private fun TransactionItem.toUiModel(): TransactionItemInput =
         TransactionItemInput(
-            id = id.toString(),
-            name = name,
-            quantity = quantity.toString(),
-            price = price.toPlainString()
+            id = UUID.randomUUID().toString(),
+            name = this.name,
+            quantity = this.quantity.toString(),
+            price = formatNumber(this.price)
         )
 }

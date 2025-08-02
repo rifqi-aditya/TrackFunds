@@ -22,7 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
+import com.rifqi.trackfunds.core.domain.common.model.CashFlowSummary
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.models.BarProperties

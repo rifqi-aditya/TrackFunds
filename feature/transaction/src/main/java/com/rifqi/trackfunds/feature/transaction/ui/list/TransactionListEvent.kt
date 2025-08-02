@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.list
 
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 
 sealed interface TransactionListEvent {

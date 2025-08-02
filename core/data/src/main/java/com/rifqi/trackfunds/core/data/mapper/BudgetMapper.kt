@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.dto.BudgetWithDetailsDto
 import com.rifqi.trackfunds.core.data.local.entity.BudgetEntity
-import com.rifqi.trackfunds.core.domain.model.Budget
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
 import java.math.BigDecimal
 import java.time.YearMonth
 

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 @Composable

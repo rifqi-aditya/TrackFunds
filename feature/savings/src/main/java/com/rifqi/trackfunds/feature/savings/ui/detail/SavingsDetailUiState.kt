@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.savings.ui.detail
 
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 
 data class SavingsDetailUiState(
     val isLoading: Boolean = true,

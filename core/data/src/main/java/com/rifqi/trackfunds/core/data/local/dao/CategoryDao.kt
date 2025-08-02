@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import kotlinx.coroutines.flow.Flow
 
 /**

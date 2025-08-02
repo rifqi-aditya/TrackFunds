@@ -3,11 +3,11 @@ package com.rifqi.trackfunds.feature.reports.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
-import com.rifqi.trackfunds.core.domain.model.CategorySpending
-import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
+import com.rifqi.trackfunds.core.domain.common.model.CashFlowSummary
+import com.rifqi.trackfunds.core.domain.common.model.CategorySpending
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.feature.reports.ui.event.ReportEvent
 import com.rifqi.trackfunds.feature.reports.ui.state.ReportUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

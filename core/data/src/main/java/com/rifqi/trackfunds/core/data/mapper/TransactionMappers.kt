@@ -4,11 +4,11 @@ import com.rifqi.trackfunds.core.data.local.dto.TransactionWithDetailsDto
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionItemEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionWithDetails
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.model.Transaction
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
 import java.math.BigDecimal
 
 /**

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.account.ui.event.AccountsEvent
 import com.rifqi.account.ui.state.AccountsUiState
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import dagger.hilt.android.lifecycle.HiltViewModel

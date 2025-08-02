@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme

@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.MonthYearPickerDialog
 import com.rifqi.trackfunds.core.ui.components.SelectionList

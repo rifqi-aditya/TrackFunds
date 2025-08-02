@@ -2,8 +2,8 @@ package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.dto.CashFlowDto
 import com.rifqi.trackfunds.core.data.local.dto.CategorySpendingDto
-import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
-import com.rifqi.trackfunds.core.domain.model.CategorySpending
+import com.rifqi.trackfunds.core.domain.common.model.CashFlowSummary
+import com.rifqi.trackfunds.core.domain.common.model.CategorySpending
 import java.math.BigDecimal
 
 fun CategorySpendingDto.toDomain(): CategorySpending {

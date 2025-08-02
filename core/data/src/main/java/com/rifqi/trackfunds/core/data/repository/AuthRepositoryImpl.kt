@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.core.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
-import com.rifqi.trackfunds.core.domain.repository.AuthRepository
-import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.auth.repository.AuthRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton

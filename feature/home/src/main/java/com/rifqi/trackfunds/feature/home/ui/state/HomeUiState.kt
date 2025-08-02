@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.home.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.Budget
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 import java.math.BigDecimal
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter

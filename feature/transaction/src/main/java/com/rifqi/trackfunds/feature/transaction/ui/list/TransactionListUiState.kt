@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.feature.transaction.ui.list
 
-import com.rifqi.trackfunds.core.domain.model.Transaction
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import java.math.BigDecimal
 
 data class TransactionListUiState(

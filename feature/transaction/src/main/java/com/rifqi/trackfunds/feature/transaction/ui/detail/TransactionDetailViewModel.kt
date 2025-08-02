@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.rifqi.trackfunds.core.domain.usecase.transaction.DeleteTransactionUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetTransactionDetailsUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.DeleteTransactionUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes

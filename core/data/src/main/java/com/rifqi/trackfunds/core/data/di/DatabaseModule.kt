@@ -84,12 +84,4 @@ object DatabaseModule {
     fun provideUserDao(database: AppDatabase): UserDao { // <-- Tambahkan ini
         return database.userDao()
     }
-
-
-
-    // (Opsional) Menyediakan CoroutineScope level aplikasi jika dibutuhkan di tempat lain
-    // Jika AppDatabase.getDatabase() Anda tidak lagi menerima scope, ini tidak wajib untuk database
-    // @Provides
-    // @Singleton
-    // fun provideApplicationScope(): CoroutineScope = CoroutineScope(Dispatchers.IO)
 }

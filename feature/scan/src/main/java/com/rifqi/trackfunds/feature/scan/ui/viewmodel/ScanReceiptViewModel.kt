@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.exception.ScanException
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
+import com.rifqi.trackfunds.core.domain.common.exception.ScanException
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.scan.usecase.ScanReceiptUseCase
 import com.rifqi.trackfunds.feature.scan.ui.event.ScanReceiptEvent
 import com.rifqi.trackfunds.feature.scan.ui.sideeffect.ScanReceiptSideEffect
 import com.rifqi.trackfunds.feature.scan.ui.state.ScanPhase

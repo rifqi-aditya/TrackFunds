@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.budget.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.Category
 import java.math.BigDecimal
 import java.time.YearMonth
 

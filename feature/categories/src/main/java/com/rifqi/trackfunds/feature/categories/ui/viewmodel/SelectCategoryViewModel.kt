@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
-import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
+import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.feature.categories.ui.state.SelectCategoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

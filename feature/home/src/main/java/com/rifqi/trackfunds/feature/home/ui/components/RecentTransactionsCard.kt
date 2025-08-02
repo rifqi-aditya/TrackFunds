@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState

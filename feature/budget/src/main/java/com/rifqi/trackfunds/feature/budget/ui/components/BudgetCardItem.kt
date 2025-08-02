@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.Budget
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
 import com.rifqi.trackfunds.core.ui.components.GradientLinearProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource

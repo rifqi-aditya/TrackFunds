@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.account.ui.event.AddEditAccountEvent
 import com.rifqi.account.ui.state.AddEditAccountUiState
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.usecase.account.AddAccountUseCase
-import com.rifqi.trackfunds.core.domain.usecase.account.DeleteAccountUseCase
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountByIdUseCase
-import com.rifqi.trackfunds.core.domain.usecase.account.UpdateAccountUseCase
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.account.usecase.AddAccountUseCase
+import com.rifqi.trackfunds.core.domain.account.usecase.DeleteAccountUseCase
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountByIdUseCase
+import com.rifqi.trackfunds.core.domain.account.usecase.UpdateAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -3,10 +3,10 @@ package com.rifqi.trackfunds.feature.savings.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.GoalDetails
-import com.rifqi.trackfunds.core.domain.model.Transaction
-import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalDetailsUseCase
+import com.rifqi.trackfunds.core.domain.savings.model.GoalDetails
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.savings.usecase.DeleteSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalDetailsUseCase
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.core.ui.utils.formatLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel

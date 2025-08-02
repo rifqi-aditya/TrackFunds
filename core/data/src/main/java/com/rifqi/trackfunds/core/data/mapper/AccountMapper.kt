@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.entity.AccountEntity
-import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.account.model.Account
 
 /**
  * Converts AccountItem (domain model) to AccountEntity (database model).

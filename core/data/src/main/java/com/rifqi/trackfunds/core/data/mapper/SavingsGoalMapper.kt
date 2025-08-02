@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 
 fun SavingsGoalEntity.toDomain(): SavingsGoal {
     return SavingsGoal(

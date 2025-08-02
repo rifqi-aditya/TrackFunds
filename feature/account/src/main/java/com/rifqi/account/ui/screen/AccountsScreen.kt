@@ -35,7 +35,7 @@ import com.rifqi.account.ui.event.AccountsEvent
 import com.rifqi.account.ui.preview.AccountListPreviewParameterProvider
 import com.rifqi.account.ui.state.AccountsUiState
 import com.rifqi.account.ui.viewmodel.AccountsViewModel
-import com.rifqi.trackfunds.core.domain.model.Account
+import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource

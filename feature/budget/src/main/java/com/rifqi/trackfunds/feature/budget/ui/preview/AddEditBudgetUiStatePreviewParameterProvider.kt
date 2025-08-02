@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.feature.budget.ui.preview
 
 import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.feature.budget.ui.state.AddEditBudgetUiState
 import java.time.YearMonth
 

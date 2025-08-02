@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.categories.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.Category
 
 data class CategoryListUiState(
     val isLoading: Boolean = true,

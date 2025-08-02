@@ -4,13 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
-import com.rifqi.trackfunds.core.domain.usecase.savings.DeleteSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.usecase.savings.GetSavingsGoalByIdUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.savings.usecase.DeleteSavingsGoalUseCase
+import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
-import com.rifqi.trackfunds.feature.savings.ui.detail.SavingsDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

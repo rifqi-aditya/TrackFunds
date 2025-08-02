@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.categories.ui.state
 
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 
 data class AddEditCategoryUiState(
     val isLoading: Boolean = false,

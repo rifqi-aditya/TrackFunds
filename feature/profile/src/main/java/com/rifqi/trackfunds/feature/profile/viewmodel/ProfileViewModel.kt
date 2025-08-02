@@ -2,9 +2,9 @@ package com.rifqi.trackfunds.feature.profile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
-import com.rifqi.trackfunds.core.domain.usecase.auth.LogoutUserUseCase
-import com.rifqi.trackfunds.core.domain.usecase.user.GetUserProfileUseCase
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUserUseCase
+import com.rifqi.trackfunds.core.domain.user.usecase.GetUserProfileUseCase
 import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.Auth

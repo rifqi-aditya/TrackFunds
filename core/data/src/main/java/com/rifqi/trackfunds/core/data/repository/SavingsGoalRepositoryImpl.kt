@@ -3,9 +3,9 @@ package com.rifqi.trackfunds.core.data.repository
 import com.rifqi.trackfunds.core.data.local.dao.SavingsGoalDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
-import com.rifqi.trackfunds.core.domain.repository.SavingsGoalRepository
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsFilter
+import com.rifqi.trackfunds.core.domain.savings.repository.SavingsGoalRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.math.BigDecimal

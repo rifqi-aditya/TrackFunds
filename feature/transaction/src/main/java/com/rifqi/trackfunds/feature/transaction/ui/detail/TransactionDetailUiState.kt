@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.detail
 
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 
 data class TransactionDetailUiState(
     val isLoading: Boolean = true,

@@ -1,9 +1,9 @@
 package com.rifqi.trackfunds.feature.reports.ui.state
 
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.model.CashFlowSummary
-import com.rifqi.trackfunds.core.domain.model.CategorySpending
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.common.model.CashFlowSummary
+import com.rifqi.trackfunds.core.domain.common.model.CategorySpending
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import java.time.LocalDate
 import java.time.YearMonth
 

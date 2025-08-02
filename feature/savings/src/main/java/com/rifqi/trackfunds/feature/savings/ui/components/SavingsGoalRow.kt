@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import com.rifqi.trackfunds.core.ui.components.DynamicProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource

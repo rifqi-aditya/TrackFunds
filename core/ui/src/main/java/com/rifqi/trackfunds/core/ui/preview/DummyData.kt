@@ -1,10 +1,10 @@
 package com.rifqi.trackfunds.core.ui.preview
 
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.model.Budget
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.Transaction
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.YearMonth

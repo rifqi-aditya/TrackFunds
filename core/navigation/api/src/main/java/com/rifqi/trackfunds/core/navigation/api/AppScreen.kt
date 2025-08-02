@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.navigation.api
 
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import kotlinx.serialization.Serializable
 
 /**

@@ -2,13 +2,13 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.model.filter.SavingsFilter
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.budget.GetTopBudgetsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.savings.GetFilteredSavingsGoalsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.transaction.GetFilteredTransactionsUseCase
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsFilter
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.budget.usecase.GetTopBudgetsUseCase
+import com.rifqi.trackfunds.core.domain.savings.usecase.GetFilteredSavingsGoalsUseCase
+import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph

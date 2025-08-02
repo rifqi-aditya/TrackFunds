@@ -3,8 +3,8 @@ package com.rifqi.account.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
 import com.rifqi.trackfunds.core.ui.model.SelectionItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

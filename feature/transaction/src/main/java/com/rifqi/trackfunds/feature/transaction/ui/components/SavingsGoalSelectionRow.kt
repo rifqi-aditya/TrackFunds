@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 

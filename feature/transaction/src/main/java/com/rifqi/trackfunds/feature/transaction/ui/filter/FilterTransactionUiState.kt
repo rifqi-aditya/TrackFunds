@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.feature.transaction.ui.filter
 
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.category.model.Category
 import java.time.LocalDate
 
 /**

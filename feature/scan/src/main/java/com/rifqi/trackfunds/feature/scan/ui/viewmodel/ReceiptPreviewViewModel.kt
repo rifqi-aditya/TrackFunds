@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.domain.usecase.scan.ScanReceiptUseCase
+import com.rifqi.trackfunds.core.domain.scan.usecase.ScanReceiptUseCase
 import com.rifqi.trackfunds.core.navigation.api.ScanRoutes
 import com.rifqi.trackfunds.feature.scan.ui.event.ReceiptPreviewEvent
 import com.rifqi.trackfunds.feature.scan.ui.state.ReceiptPreviewUiState

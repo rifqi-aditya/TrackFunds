@@ -10,9 +10,9 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.local.dto.GeminiResponseDto
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
-import com.rifqi.trackfunds.core.domain.exception.ScanException
-import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.repository.ScanRepository
+import com.rifqi.trackfunds.core.domain.common.exception.ScanException
+import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
+import com.rifqi.trackfunds.core.domain.scan.repository.ScanRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await

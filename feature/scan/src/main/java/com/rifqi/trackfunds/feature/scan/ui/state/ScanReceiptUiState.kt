@@ -1,9 +1,9 @@
 package com.rifqi.trackfunds.feature.scan.ui.state
 
 import android.net.Uri
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.model.ScanResult
-import com.rifqi.trackfunds.core.domain.model.Transaction
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 
 enum class ScanPhase {
     UPLOAD,

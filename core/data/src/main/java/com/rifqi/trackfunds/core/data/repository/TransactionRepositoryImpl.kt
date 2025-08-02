@@ -4,10 +4,10 @@ import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionItemDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.Transaction
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
-import com.rifqi.trackfunds.core.domain.repository.TransactionRepository
-import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
-import com.rifqi.trackfunds.core.domain.model.filter.TransactionFilter
-import com.rifqi.trackfunds.core.domain.usecase.account.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rifqi.trackfunds.core.domain.model.CategorySpending
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.common.model.CategorySpending
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 
 @Composable
 fun FinancialAllocationCard(

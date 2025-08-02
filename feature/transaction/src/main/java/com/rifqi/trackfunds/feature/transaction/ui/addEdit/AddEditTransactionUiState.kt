@@ -1,10 +1,10 @@
 package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
 import android.net.Uri
-import com.rifqi.trackfunds.core.domain.model.Account
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import java.time.LocalDate
 import java.util.UUID
 
@@ -38,6 +38,7 @@ data class AddEditTransactionUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedTransactionType: TransactionType = TransactionType.EXPENSE,
     val selectedAccount: Account? = null,
+    val accountError: String? = null,
     val selectedCategory: Category? = null,
     val selectedSavingsGoal: SavingsGoal? = null,
 

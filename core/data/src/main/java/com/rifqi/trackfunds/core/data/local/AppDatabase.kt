@@ -21,7 +21,7 @@ import com.rifqi.trackfunds.core.data.local.entity.SavingsGoalEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionEntity
 import com.rifqi.trackfunds.core.data.local.entity.TransactionItemEntity
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

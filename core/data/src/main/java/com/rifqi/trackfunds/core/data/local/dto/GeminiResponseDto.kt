@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.data.local.dto
 
-import com.rifqi.trackfunds.core.domain.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal

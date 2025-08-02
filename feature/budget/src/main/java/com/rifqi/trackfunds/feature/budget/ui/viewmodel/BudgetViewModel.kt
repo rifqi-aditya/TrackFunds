@@ -2,10 +2,10 @@ package com.rifqi.trackfunds.feature.budget.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.Budget
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.usecase.budget.GetBudgetsUseCase
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.feature.budget.ui.event.BudgetEvent

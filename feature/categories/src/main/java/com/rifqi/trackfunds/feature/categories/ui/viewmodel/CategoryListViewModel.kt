@@ -2,9 +2,9 @@ package com.rifqi.trackfunds.feature.categories.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.model.TransactionType
-import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
-import com.rifqi.trackfunds.core.domain.usecase.category.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
+import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.feature.categories.ui.event.CategoryListEvent

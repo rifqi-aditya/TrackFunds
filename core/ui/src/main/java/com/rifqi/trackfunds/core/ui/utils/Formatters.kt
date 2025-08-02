@@ -20,6 +20,16 @@ fun formatCurrency(amount: BigDecimal, locale: Locale = Locale("in", "ID")): Str
     return currencyFormat.format(amount)
 }
 
+/**
+ * Memformat angka menjadi String dengan pemisah ribuan (misal: 120.000).
+ * Tanpa simbol mata uang.
+ */
+fun formatNumber(amount: BigDecimal, locale: Locale = Locale("in", "ID")): String {
+    val numberFormat = NumberFormat.getNumberInstance(locale)
+    numberFormat.maximumFractionDigits = 0
+    return numberFormat.format(amount)
+}
+
 
 /**
  * Mengubah objek LocalDate menjadi String dengan format "29 Jul 2025".

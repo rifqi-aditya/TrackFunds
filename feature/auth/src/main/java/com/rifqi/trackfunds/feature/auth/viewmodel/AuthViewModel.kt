@@ -2,13 +2,13 @@ package com.rifqi.trackfunds.feature.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.validator.ValidationResult
-import com.rifqi.trackfunds.core.domain.usecase.auth.LoginUserUseCase
-import com.rifqi.trackfunds.core.domain.usecase.auth.RegisterUserUseCase
-import com.rifqi.trackfunds.core.domain.validator.auth.ValidateConfirmPassword
-import com.rifqi.trackfunds.core.domain.validator.auth.ValidateEmail
-import com.rifqi.trackfunds.core.domain.validator.auth.ValidateFullName
-import com.rifqi.trackfunds.core.domain.validator.auth.ValidatePassword
+import com.rifqi.trackfunds.core.domain.common.model.ValidationResult
+import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUserUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUserUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidateConfirmPassword
+import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidateEmail
+import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidateFullName
+import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidatePassword
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.feature.auth.event.AuthEvent

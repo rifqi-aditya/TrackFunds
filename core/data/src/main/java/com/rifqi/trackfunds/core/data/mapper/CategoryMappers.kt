@@ -4,7 +4,7 @@ package com.rifqi.trackfunds.core.data.mapper
  * This file contains mapper functions for converting between [CategoryEntity] and [Category] objects.
  */
 import com.rifqi.trackfunds.core.data.local.entity.CategoryEntity
-import com.rifqi.trackfunds.core.domain.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.Category
 
 fun CategoryEntity.toDomain(): Category {
     return Category(

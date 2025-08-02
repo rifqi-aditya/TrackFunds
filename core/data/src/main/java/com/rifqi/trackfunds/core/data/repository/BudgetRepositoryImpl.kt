@@ -3,9 +3,9 @@ package com.rifqi.trackfunds.core.data.repository
 import com.rifqi.trackfunds.core.data.local.dao.BudgetDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.Budget
-import com.rifqi.trackfunds.core.domain.repository.BudgetRepository
-import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.budget.model.Budget
+import com.rifqi.trackfunds.core.domain.budget.repository.BudgetRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

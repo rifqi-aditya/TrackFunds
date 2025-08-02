@@ -6,8 +6,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.data.mapper.toDomainModel
-import com.rifqi.trackfunds.core.domain.model.User
-import com.rifqi.trackfunds.core.domain.repository.UserRepository
+import com.rifqi.trackfunds.core.domain.common.model.User
+import com.rifqi.trackfunds.core.domain.user.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map

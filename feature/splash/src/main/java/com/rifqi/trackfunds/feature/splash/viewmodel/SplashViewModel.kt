@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.feature.splash.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import com.rifqi.trackfunds.core.navigation.api.Auth
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.feature.splash.state.SplashUiState

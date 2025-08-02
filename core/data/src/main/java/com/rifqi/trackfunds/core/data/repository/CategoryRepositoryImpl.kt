@@ -3,10 +3,10 @@ package com.rifqi.trackfunds.core.data.repository
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
-import com.rifqi.trackfunds.core.domain.model.Category
-import com.rifqi.trackfunds.core.domain.model.filter.CategoryFilter
-import com.rifqi.trackfunds.core.domain.repository.CategoryRepository
-import com.rifqi.trackfunds.core.domain.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
+import com.rifqi.trackfunds.core.domain.category.repository.CategoryRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.feature.categories.ui.event
 
-import com.rifqi.trackfunds.core.domain.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 
 /**
  * Represents all possible user actions on the Category List screen.
