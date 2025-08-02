@@ -33,7 +33,7 @@ import java.math.BigDecimal
 fun TotalBalanceCard(
     totalBalance: BigDecimal,
     onInfoClicked: () -> Unit,
-    onWalletClicked: () -> Unit,
+    onAccountClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -71,7 +71,7 @@ fun TotalBalanceCard(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Info,
-                            contentDescription = "Informasi lebih lanjut tentang Total Balance",
+                            contentDescription = "Info about Total Balance",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                     }
@@ -83,40 +83,32 @@ fun TotalBalanceCard(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-
-            // Spacer untuk memberi sedikit jarak jika diperlukan,
-            // namun SpaceBetween sudah cukup
-            // Spacer(modifier = Modifier.width(16.dp))
-
-            // Bagian Kanan: Tombol "My Wallet"
-            // Dibungkus Row agar menjadi satu kesatuan yang bisa diklik
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
-                    .clickable(onClick = onWalletClicked)
+                    .clickable(onClick = onAccountClicked)
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "My Wallet",
+                    text = "My Accounts",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Box(
                     modifier = Modifier
-                        .size(32.dp) // 1. Tentukan ukuran total lingkaran
-                        .clip(CircleShape) // 2. Potong Box menjadi bentuk lingkaran
-                        .background(MaterialTheme.colorScheme.primary), // 3. Beri warna latar belakang
-                    contentAlignment = Alignment.Center // Pastikan ikon berada di tengah Box
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "Navigate to Wallet",
-                        // Sesuaikan warna ikon agar kontras dengan background
                         tint = MaterialTheme.colorScheme.inverseOnSurface,
-                        modifier = Modifier.size(16.dp) // Ukuran ikon tetap kecil di dalam lingkaran
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }

@@ -25,8 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
+import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
+import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
+import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.components.BudgetCard
@@ -36,6 +39,7 @@ import com.rifqi.trackfunds.feature.home.ui.components.SummaryCard
 import com.rifqi.trackfunds.feature.home.ui.components.TotalBalanceCard
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.preview.HomeUiStatePreviewParameterProvider
+import com.rifqi.trackfunds.feature.home.ui.sideeffect.HomeSideEffect
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import com.rifqi.trackfunds.feature.home.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -55,12 +59,46 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collectLatest { screen ->
-            if (screen is HomeRoutes.Home) {
-                onNavigateBack()
-            } else {
-                onNavigate(screen)
+    LaunchedEffect(true) {
+        viewModel.sideEffect.collectLatest { sideEffect ->
+            when (sideEffect) {
+                HomeSideEffect.NavigateBack -> {
+                    onNavigateBack()
+                }
+
+                HomeSideEffect.NavigateToAccounts -> {
+                    onNavigate(AccountRoutes.Accounts)
+                }
+
+                HomeSideEffect.NavigateToBudgets -> {
+                    onNavigate(BudgetRoutes.Budgets)
+                }
+
+                HomeSideEffect.NavigateToTransactions -> {
+                    onNavigate(TransactionRoutes.Transactions)
+                }
+
+                HomeSideEffect.NavigateToNotifications -> {
+
+                }
+
+                is HomeSideEffect.NavigateToTransactionDetails -> {
+                    onNavigate(
+                        TransactionRoutes.TransactionDetail(
+                            transactionId = sideEffect.transactionId
+                        )
+                    )
+                }
+
+                is HomeSideEffect.ShowSnackbar -> {
+
+                }
+
+                HomeSideEffect.NavigateToProfile -> {
+                    onNavigate(
+                        ProfileRoutes.Profile
+                    )
+                }
             }
         }
     }
@@ -107,7 +145,9 @@ fun HomeScreenContent(
             item {
                 TotalBalanceCard(
                     totalBalance = state.totalBalance,
-                    onWalletClicked = { },
+                    onAccountClicked = {
+                        onEvent(HomeEvent.AccountsClicked)
+                    },
                     onInfoClicked = { },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -139,7 +179,7 @@ fun HomeScreenContent(
                 BudgetCard(
                     spentAmount = state.totalBudgetSpent,
                     remainingAmount = state.totalBudgetRemaining,
-                    onDetailsClick = { onEvent(HomeEvent.AllBudgetsClicked) },
+                    onSeeAllClick = { onEvent(HomeEvent.AllBudgetsClicked) },
                     progress = state.budgetProgress,
                     modifier = Modifier.fillMaxWidth()
                 )

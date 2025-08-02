@@ -7,26 +7,20 @@ import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetsUseCase
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
-import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
-import com.rifqi.trackfunds.core.navigation.api.AppScreen
-import com.rifqi.trackfunds.core.navigation.api.BudgetsGraph
-import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
-import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
-import com.rifqi.trackfunds.core.navigation.api.SavingsGraph
-import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes.TransactionDetail
-import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
 import com.rifqi.trackfunds.feature.home.ui.event.HomeEvent
+import com.rifqi.trackfunds.feature.home.ui.sideeffect.HomeSideEffect
+import com.rifqi.trackfunds.feature.home.ui.sideeffect.HomeSideEffect.NavigateToTransactionDetails
 import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -50,8 +44,8 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<AppScreen>()
-    val navigationEvent = _navigationEvent.asSharedFlow()
+    private val _sideEffect = Channel<HomeSideEffect>()
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     init {
         loadHomeScreenData()
@@ -64,16 +58,16 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeEvent) {
         viewModelScope.launch {
             when (event) {
-                HomeEvent.AllTransactionsClicked -> _navigationEvent.emit(TransactionsGraph)
-                HomeEvent.AllBudgetsClicked -> _navigationEvent.emit(BudgetsGraph)
-                HomeEvent.NotificationsClicked -> _navigationEvent.emit(ProfileRoutes.Notifications)
-                HomeEvent.AccountsClicked -> _navigationEvent.emit(AccountsGraph)
-                HomeEvent.BalanceClicked -> _navigationEvent.emit(AccountsGraph)
-                HomeEvent.ProfileClicked -> _navigationEvent.emit(ProfileGraph)
-                HomeEvent.AllSavingsGoalsClicked -> _navigationEvent.emit(SavingsGraph)
+                HomeEvent.AllTransactionsClicked -> _sideEffect.send(HomeSideEffect.NavigateToTransactions)
+                HomeEvent.AllBudgetsClicked -> _sideEffect.send(HomeSideEffect.NavigateToBudgets)
+                HomeEvent.NotificationsClicked -> _sideEffect.send(HomeSideEffect.NavigateToNotifications)
+                HomeEvent.AccountsClicked -> _sideEffect.send(HomeSideEffect.NavigateToAccounts)
+                HomeEvent.ProfileClicked -> _sideEffect.send(HomeSideEffect.NavigateToProfile)
 
-                is HomeEvent.TransactionClicked -> _navigationEvent.emit(
-                    TransactionDetail(event.transactionId)
+                is HomeEvent.TransactionClicked -> _sideEffect.send(
+                    NavigateToTransactionDetails(
+                        transactionId = event.transactionId
+                    )
                 )
 
                 is HomeEvent.TabSelected -> {

@@ -14,7 +14,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,19 +33,9 @@ fun BudgetCard(
     spentAmount: BigDecimal,
     remainingAmount: BigDecimal,
     progress: Float,
-    onDetailsClick: () -> Unit,
+    onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    // Menentukan status dan warna berdasarkan progress
-    val status = remember(progress) {
-        when {
-            progress > 1f -> BudgetStatus("Melebihi Batas!", Color.Red)
-            progress > 0.8f -> BudgetStatus("Hati-hati", Color(0xFFFFA726)) // Orange
-            else -> BudgetStatus("Aman", Color(0xFF2E7D32)) // Green
-        }
-    }
-
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -71,7 +60,7 @@ fun BudgetCard(
                 Text(
                     "See All",
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable { onSeeAllClick() },
                 )
             }
 
@@ -132,7 +121,7 @@ fun BudgetCardPreview() {
             BudgetCard(
                 spentAmount = BigDecimal("2500000"),
                 remainingAmount = BigDecimal("5000000"),
-                onDetailsClick = {},
+                onSeeAllClick = {},
                 progress = 0.5f // 50% digunakan
             )
 
@@ -140,7 +129,7 @@ fun BudgetCardPreview() {
             BudgetCard(
                 spentAmount = BigDecimal("4200000"),
                 remainingAmount = BigDecimal("800000"),
-                onDetailsClick = {},
+                onSeeAllClick = {},
                 progress = 0.84f // 84% digunakan
             )
 
@@ -148,7 +137,7 @@ fun BudgetCardPreview() {
             BudgetCard(
                 spentAmount = BigDecimal("5500000"),
                 remainingAmount = BigDecimal("-500000"),
-                onDetailsClick = {},
+                onSeeAllClick = {},
                 progress = 1.1f // 110% digunakan
             )
         }
