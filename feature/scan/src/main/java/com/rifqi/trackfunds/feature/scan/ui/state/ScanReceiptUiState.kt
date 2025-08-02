@@ -9,11 +9,6 @@ enum class ScanPhase {
     UPLOAD,
     IMAGE_PREVIEW,
     PROCESSING,
-//    REVIEW
-}
-
-enum class ScanSheetType {
-    CATEGORY, ACCOUNT
 }
 
 
@@ -31,7 +26,6 @@ data class ScanReceiptUiState(
     // Flags untuk UI
     val isItemListExpanded: Boolean = false,
     val isReceiptImageExpanded: Boolean = false,
-    val activeSheet: ScanSheetType? = null,
     val showDatePicker: Boolean = false,
     val categorySearchQuery: String = "",
 

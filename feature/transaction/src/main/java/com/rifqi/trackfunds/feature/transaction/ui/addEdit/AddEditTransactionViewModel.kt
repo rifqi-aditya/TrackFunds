@@ -6,19 +6,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
-import com.rifqi.trackfunds.core.domain.category.model.Category
-import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
-import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
+import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.category.model.AddTransactionParams
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
 import com.rifqi.trackfunds.core.domain.category.model.UpdateTransactionParams
+import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryByStandardKeyUseCase
+import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
+import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
 import com.rifqi.trackfunds.core.domain.transaction.usecase.AddTransactionUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.UpdateTransactionUseCase
-import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryByStandardKeyUseCase
-import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.validators.ValidateTransactionUseCase
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.ui.utils.formatNumber
@@ -334,10 +334,8 @@ class AddEditTransactionViewModel @Inject constructor(
         )
 
         if (!validationResult.isSuccess) {
-            // 3. Update UiState dengan semua pesan error
             _uiState.update {
                 it.copy(
-                    // Anda perlu menambahkan properti error ini di AddEditTransactionUiState
                     amountError = validationResult.amountError,
                     accountError = validationResult.accountError
                 )
@@ -352,7 +350,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 val params = UpdateTransactionParams(
                     id = editingTransactionId!!,
                     description = currentState.description,
-                    amount = currentState.amount.toBigDecimal(),
+                    amount = currentState.amountAsBigDecimal,
                     type = currentState.selectedTransactionType,
                     date = currentState.selectedDate,
                     account = currentState.selectedAccount!!,
@@ -364,7 +362,7 @@ class AddEditTransactionViewModel @Inject constructor(
             } else {
                 val params = AddTransactionParams(
                     description = currentState.description,
-                    amount = currentState.amount.toBigDecimal(),
+                    amount = currentState.amountAsBigDecimal,
                     type = currentState.selectedTransactionType,
                     date = currentState.selectedDate,
                     account = currentState.selectedAccount!!,

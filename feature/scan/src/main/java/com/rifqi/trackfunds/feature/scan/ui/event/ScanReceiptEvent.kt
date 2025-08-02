@@ -11,5 +11,4 @@ sealed interface ScanReceiptEvent {
 
     // Aksi Umum
     data object ScanReceiptAgainClicked : ScanReceiptEvent
-    data object DismissAllPickers : ScanReceiptEvent
 }

@@ -3,8 +3,9 @@ package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 import android.net.Uri
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.category.model.Category
-import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
@@ -60,7 +61,10 @@ data class AddEditTransactionUiState(
     val receiptImageUri: Uri? = null,
     val isItemsExpanded: Boolean = false,
     val isReceiptExpanded: Boolean = false
-)
+) {
+    val amountAsBigDecimal: BigDecimal
+        get() = amount.replace(".", "").toBigDecimalOrNull() ?: BigDecimal.ZERO
+}
 
 data class TransactionItemInput(
     val id: String = UUID.randomUUID().toString(),
