@@ -2,12 +2,9 @@ package com.rifqi.trackfunds.feature.home.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.category.model.TransactionType
-import com.rifqi.trackfunds.core.domain.savings.model.SavingsFilter
-import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.budget.usecase.GetTopBudgetsUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetFilteredSavingsGoalsUseCase
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
@@ -32,7 +29,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
@@ -45,8 +41,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getAccountsUseCase: GetAccountsUseCase,
     private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
-    private val getFilteredSavingsGoalsUseCase: GetFilteredSavingsGoalsUseCase,
-    private val getTopBudgetsUseCase: GetTopBudgetsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -89,44 +83,47 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            // Tentukan periode "Bulan Ini"
+            // Tentukan periode "Bulan Ini" dengan benar
             val today = LocalDate.now()
             val startDate = today.withDayOfMonth(1)
             val endDate = today.with(TemporalAdjusters.lastDayOfMonth())
-
-            // Buat filter untuk mengambil data bulan ini
             val monthlyFilter = TransactionFilter(startDate = startDate, endDate = endDate)
 
-            // Gabungkan semua data yang dibutuhkan
+            // Kita hanya perlu mengambil transaksi untuk bulan ini
+            val monthlyTransactionsFlow = getFilteredTransactionsUseCase(monthlyFilter)
+            val allAccountsFlow = getAccountsUseCase()
+
+            // Gabungkan flow yang dibutuhkan
             combine(
-                getAccountsUseCase(),
-                getFilteredSavingsGoalsUseCase(SavingsFilter()),
-                getFilteredTransactionsUseCase(TransactionFilter()),
-                getTopBudgetsUseCase(YearMonth.from(startDate))
-            ) { allAccounts, allSavings, recentTransaction, topBudgets ->
+                monthlyTransactionsFlow,
+                allAccountsFlow
+            ) { monthlyTransactions, allAccounts ->
 
+                // Hitung metrik sesuai definisi kita
                 val totalBalance = allAccounts.sumOf { it.balance }
-                val totalSavings = allSavings.sumOf { it.savedAmount }
-                val recentExpenses = recentTransaction
-                    .filter { it.type == TransactionType.EXPENSE }
-                    .take(3)
-                val recentIncomes = recentTransaction
-                    .filter { it.type == TransactionType.INCOME }
-                    .take(3)
-                val recentSavings = recentTransaction
-                    .filter { it.type == TransactionType.SAVINGS }
-                    .take(3)
 
+                val totalIncome = monthlyTransactions
+                    .filter { it.type == TransactionType.INCOME }
+                    .sumOf { it.amount }
+
+                val totalExpense = monthlyTransactions
+                    .filter { it.type == TransactionType.EXPENSE }
+                    .sumOf { it.amount }
+
+                // Ambil 5 transaksi pengeluaran terakhir DARI DATA BULAN INI
+                val recentExpenses = monthlyTransactions
+                    .filter { it.type == TransactionType.EXPENSE }
+                    .take(5)
+
+                // Update UiState dengan data yang sudah dihitung
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         totalBalance = totalBalance,
-                        totalSavings = totalSavings,
-                        totalAccounts = allAccounts.size,
-                        recentSavingsTransactions = recentSavings,
+                        totalIncome = totalIncome,
+                        totalExpense = totalExpense,
                         recentExpenseTransactions = recentExpenses,
-                        recentIncomeTransactions = recentIncomes,
-                        topBudgets = topBudgets
+                        error = null
                     )
                 }
             }.catch { e ->

@@ -67,7 +67,7 @@ fun HomeScreen(
     }
 
     HomeScreenContent(
-        uiState = uiState,
+        state = uiState,
         onEvent = viewModel::onEvent
     )
 }
@@ -81,7 +81,7 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
-    uiState: HomeUiState,
+    state: HomeUiState,
     onEvent: (HomeEvent) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -107,7 +107,7 @@ fun HomeScreenContent(
 
             item {
                 TotalBalanceCard(
-                    totalBalance = uiState.totalBalance,
+                    totalBalance = state.totalBalance,
                     onWalletClicked = { },
                     onInfoClicked = { },
                     modifier = Modifier.fillMaxWidth()
@@ -121,14 +121,14 @@ fun HomeScreenContent(
                 ) {
                     SummaryCard(
                         title = "Total Income",
-                        amount = formatCurrency(BigDecimal("1000000")),
+                        amount = formatCurrency(state.totalIncome),
                         icon = Icons.AutoMirrored.Filled.TrendingUp,
                         iconBackgroundColor = TrackFundsTheme.extendedColors.income,
                         modifier = Modifier.weight(1f)
                     )
                     SummaryCard(
                         title = "Total Expense",
-                        amount = formatCurrency(BigDecimal("1000000")),
+                        amount = formatCurrency(state.totalExpense),
                         icon = Icons.AutoMirrored.Filled.TrendingDown,
                         iconBackgroundColor = TrackFundsTheme.extendedColors.expense,
                         modifier = Modifier.weight(1f)
@@ -148,7 +148,7 @@ fun HomeScreenContent(
             item {
                 Column(modifier = Modifier.fillMaxSize()) {
                     RecentTransactionsCard(
-                        uiState = uiState,
+                        uiState = state,
                         onEvent = onEvent,
                         onViewAllClick = { onEvent(HomeEvent.AllTransactionsClicked) },
                         onTransactionClick = { transactionId ->
@@ -183,7 +183,7 @@ private fun HomeScreenContentPreview(
 ) {
     TrackFundsTheme {
         HomeScreenContent(
-            uiState = uiState,
+            state = uiState,
             onEvent = {}
         )
     }

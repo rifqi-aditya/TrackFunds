@@ -329,17 +329,21 @@ class AddEditTransactionViewModel @Inject constructor(
 
         val validationResult = validateTransactionUseCase(
             amount = currentState.amount,
-            account = currentState.selectedAccount
+            account = currentState.selectedAccount,
+            category = currentState.selectedCategory,
+            date = currentState.selectedDate
         )
 
         if (!validationResult.isSuccess) {
             _uiState.update {
                 it.copy(
                     amountError = validationResult.amountError,
-                    accountError = validationResult.accountError
+                    accountError = validationResult.accountError,
+                    categoryError = validationResult.categoryError,
+                    dateError = validationResult.dateError
                 )
             }
-            return
+            return // Hentikan proses
         }
 
         viewModelScope.launch {

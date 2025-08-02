@@ -1,5 +1,7 @@
 package com.rifqi.trackfunds.core.ui.components.inputfield
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +37,19 @@ fun FormSelectorField(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     leadingIconRes: String?,
-    leadingIconContentDescription: String? = label
+    leadingIconContentDescription: String? = label,
+    isError: Boolean = false,
+    errorMessage: String? = null
 ) {
+    val borderColor by animateColorAsState(
+        targetValue = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
+        label = "borderColorAnimation"
+    )
+    val labelColor by animateColorAsState(
+        targetValue = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+        label = "labelColorAnimation"
+    )
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = label,
@@ -49,7 +63,7 @@ fun FormSelectorField(
                 .height(56.dp)
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = borderColor,
                     shape = MaterialTheme.shapes.medium
                 )
                 .clip(MaterialTheme.shapes.medium)
@@ -87,6 +101,14 @@ fun FormSelectorField(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+        AnimatedVisibility(visible = isError && errorMessage != null) {
+            Text(
+                text = errorMessage ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
         }
     }
 }

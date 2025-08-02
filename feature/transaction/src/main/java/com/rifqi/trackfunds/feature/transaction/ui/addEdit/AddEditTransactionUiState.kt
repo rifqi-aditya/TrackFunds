@@ -37,10 +37,12 @@ data class AddEditTransactionUiState(
     val description: String = "",
     /** The date of the transaction, defaults to today. */
     val selectedDate: LocalDate = LocalDate.now(),
+    val dateError: String? = null,
     val selectedTransactionType: TransactionType = TransactionType.EXPENSE,
     val selectedAccount: Account? = null,
     val accountError: String? = null,
     val selectedCategory: Category? = null,
+    val categoryError: String? = null,
     val selectedSavingsGoal: SavingsGoal? = null,
 
     // --- UI Control States ---

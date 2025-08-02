@@ -48,6 +48,10 @@ import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
+import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent.AccountSelected
+import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent.CategorySearchChanged
+import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent.CategorySelected
+import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent.SavingsGoalSelected
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionDetailsSection
 import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionTypes
@@ -96,7 +100,7 @@ fun AddEditTransactionScreen(
                             val selected = categoriesForSelection.find { it.id == categoryId }
                             selected?.let {
                                 viewModel.onEvent(
-                                    AddEditTransactionEvent.CategorySelected(
+                                    CategorySelected(
                                         it
                                     )
                                 )
@@ -105,7 +109,7 @@ fun AddEditTransactionScreen(
                         isSearchable = true,
                         searchQuery = uiState.categorySearchQuery,
                         onSearchQueryChanged = { query ->
-                            viewModel.onEvent(AddEditTransactionEvent.CategorySearchChanged(query))
+                            viewModel.onEvent(CategorySearchChanged(query))
                         },
                     )
                 }
@@ -126,7 +130,7 @@ fun AddEditTransactionScreen(
                             val selected = uiState.allAccounts.find { it.id == accountId }
                             selected?.let {
                                 viewModel.onEvent(
-                                    AddEditTransactionEvent.AccountSelected(
+                                    AccountSelected(
                                         it
                                     )
                                 )
@@ -152,7 +156,7 @@ fun AddEditTransactionScreen(
                             val selected = uiState.allSavingsGoals.find { it.id == savingsId }
                             selected?.let {
                                 viewModel.onEvent(
-                                    AddEditTransactionEvent.SavingsGoalSelected(
+                                    SavingsGoalSelected(
                                         it
                                     )
                                 )
@@ -298,6 +302,8 @@ private fun StandardFormContent(
         value = uiState.selectedCategory?.name ?: "Choose category",
         onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
         leadingIconRes = uiState.selectedCategory?.iconIdentifier,
+        isError = uiState.categoryError != null,
+        errorMessage = uiState.categoryError,
     )
 
     FormSelectorField(
@@ -305,6 +311,8 @@ private fun StandardFormContent(
         value = uiState.selectedAccount?.name ?: "Choose account",
         onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
         leadingIconRes = uiState.selectedAccount?.iconIdentifier,
+        isError = uiState.accountError != null,
+        errorMessage = uiState.accountError,
     )
 
     DatePickerField(
