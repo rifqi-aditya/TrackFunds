@@ -7,7 +7,7 @@ import com.rifqi.trackfunds.core.domain.common.model.User
  * Mengubah UserEntity (objek database) menjadi User (objek domain).
  * Digunakan saat mengambil data dari database.
  */
-fun UserEntity.toDomainModel(): User {
+fun UserEntity.toDomain(): User {
     return User(
         uid = this.uid,
         email = this.email,

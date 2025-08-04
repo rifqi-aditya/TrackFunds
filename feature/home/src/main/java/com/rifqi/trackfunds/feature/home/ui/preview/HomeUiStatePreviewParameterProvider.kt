@@ -2,7 +2,7 @@ package com.rifqi.trackfunds.feature.home.ui.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.rifqi.trackfunds.core.ui.preview.DummyData
-import com.rifqi.trackfunds.feature.home.ui.state.HomeUiState
+import com.rifqi.trackfunds.feature.home.ui.home.HomeUiState
 import java.math.BigDecimal
 
 class HomeUiStatePreviewParameterProvider : PreviewParameterProvider<HomeUiState> {

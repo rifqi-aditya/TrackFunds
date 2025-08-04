@@ -3,8 +3,8 @@ package com.rifqi.trackfunds.feature.profile.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
-import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUserUseCase
-import com.rifqi.trackfunds.core.domain.user.usecase.GetUserProfileUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUseCase
+import com.rifqi.trackfunds.core.domain.user.usecase.GetUserUseCase
 import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.Auth
@@ -27,8 +27,8 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val logoutUserUseCase: LogoutUserUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    private val logoutUseCase: LogoutUseCase,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -47,7 +47,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 ProfileEvent.LogoutClicked -> {
-                    logoutUserUseCase()
+                    logoutUseCase()
                     _navigationEvent.emit(Auth)
                 }
 
@@ -67,7 +67,7 @@ class ProfileViewModel @Inject constructor(
                 .filterNotNull() // Hanya lanjut jika UID ada (pengguna sudah login)
                 .flatMapLatest { uid ->
                     // 2. Gunakan UID untuk memanggil Use Case
-                    getUserProfileUseCase()
+                    getUserUseCase()
                 }
                 .collect { userProfile ->
                     if (userProfile != null) {

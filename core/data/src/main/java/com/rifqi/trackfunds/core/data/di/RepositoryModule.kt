@@ -6,6 +6,7 @@ import com.rifqi.trackfunds.core.data.repository.BudgetRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.CategoryRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.SavingsGoalRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.ScanRepositoryImpl
+import com.rifqi.trackfunds.core.data.repository.SettingsRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.TransactionRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.UserPreferencesRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.UserRepositoryImpl
@@ -18,6 +19,7 @@ import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesReposit
 import com.rifqi.trackfunds.core.domain.common.repository.UserSessionProvider
 import com.rifqi.trackfunds.core.domain.savings.repository.SavingsGoalRepository
 import com.rifqi.trackfunds.core.domain.scan.repository.ScanRepository
+import com.rifqi.trackfunds.core.domain.settings.repository.SettingsRepository
 import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.user.repository.UserRepository
 import dagger.Binds
@@ -89,4 +91,10 @@ abstract class RepositoryModule {
     abstract fun bindUserSessionProvider(
         impl: UserSessionProviderImpl
     ): UserSessionProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindSettingsRepository(
+        impl: SettingsRepositoryImpl
+    ): SettingsRepository
 }

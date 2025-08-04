@@ -3,8 +3,8 @@ package com.rifqi.trackfunds.feature.auth.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.common.model.ValidationResult
-import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUserUseCase
-import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUserUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUseCase
 import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidateConfirmPassword
 import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidateEmail
 import com.rifqi.trackfunds.core.domain.auth.usecase.validators.ValidateFullName
@@ -31,8 +31,8 @@ class AuthViewModel @Inject constructor(
     private val validatePassword: ValidatePassword,
     private val validateConfirmPassword: ValidateConfirmPassword,
     // Use cases
-    private val loginUserUseCase: LoginUserUseCase,
-    private val registerUserUseCase: RegisterUserUseCase
+    private val loginUseCase: LoginUseCase,
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -109,8 +109,8 @@ class AuthViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
 
             val submissionResult = when (currentState.authMode) {
-                AuthMode.LOGIN -> loginUserUseCase(currentState.email, currentState.password)
-                AuthMode.REGISTER -> registerUserUseCase(
+                AuthMode.LOGIN -> loginUseCase(currentState.email, currentState.password)
+                AuthMode.REGISTER -> registerUseCase(
                     currentState.email,
                     currentState.password,
                     currentState.fullName

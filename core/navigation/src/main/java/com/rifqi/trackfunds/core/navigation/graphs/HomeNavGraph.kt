@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.api.HomeRoutes
-import com.rifqi.trackfunds.feature.home.ui.screen.HomeScreen
+import com.rifqi.trackfunds.feature.home.ui.home.HomeScreen
 
 fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
     navigation<HomeGraph>(

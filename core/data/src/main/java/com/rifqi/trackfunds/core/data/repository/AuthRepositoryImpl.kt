@@ -56,8 +56,10 @@ class AuthRepositoryImpl @Inject constructor(
     /**
      * Melakukan logout dari Firebase dan menghapus sesi UID dari DataStore.
      */
-    override suspend fun logout() {
-        auth.signOut()
-        userPreferencesRepository.clearUserUid()
+    override suspend fun logout(): Result<Unit> {
+        return runCatching {
+            auth.signOut()
+            userPreferencesRepository.clearUserUid()
+        }
     }
 }

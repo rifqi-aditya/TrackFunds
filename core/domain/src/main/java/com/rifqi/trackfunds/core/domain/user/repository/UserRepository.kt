@@ -5,7 +5,7 @@ import com.rifqi.trackfunds.core.domain.common.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun getProfile(): Flow<User?>
+    fun getUser(): Flow<User?>
     suspend fun createOrUpdateProfile(
         user: User,
         imageUri: Uri?

@@ -28,12 +28,18 @@ import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCas
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCaseImpl
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalDetailsUseCase
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalDetailsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.GetAppVersionUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.GetAppVersionUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.GetThemePreferenceUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.GetThemePreferenceUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.SetThemePreferenceUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.SetThemePreferenceUseCaseImpl
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCaseImpl
-import com.rifqi.trackfunds.core.domain.user.usecase.GetUserProfileUseCase
-import com.rifqi.trackfunds.core.domain.user.usecase.GetUserProfileUseCaseImpl
+import com.rifqi.trackfunds.core.domain.user.usecase.GetUserUseCase
+import com.rifqi.trackfunds.core.domain.user.usecase.GetUserUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -47,7 +53,7 @@ abstract class UseCaseModule {
     // --- User Use Cases (GET) ---
     @Binds
     @Singleton
-    abstract fun bindGetUserProfileUseCase(impl: GetUserProfileUseCaseImpl): GetUserProfileUseCase
+    abstract fun bindGetUserProfileUseCase(impl: GetUserUseCaseImpl): GetUserUseCase
 
     // --- Category Use Cases (GET) ---
     @Binds
@@ -117,4 +123,19 @@ abstract class UseCaseModule {
     @Binds
     @Singleton
     abstract fun bindGetSavingsGoalByIdUseCase(impl: GetSavingsGoalByIdUseCaseImpl): GetSavingsGoalByIdUseCase
+
+    @Binds
+    abstract fun bindGetThemePreferenceUseCase(
+        impl: GetThemePreferenceUseCaseImpl
+    ): GetThemePreferenceUseCase
+
+    @Binds
+    abstract fun bindSetThemePreferenceUseCase(
+        impl: SetThemePreferenceUseCaseImpl
+    ): SetThemePreferenceUseCase
+
+    @Binds
+    abstract fun bindGetAppVersionUseCase(
+        impl: GetAppVersionUseCaseImpl
+    ): GetAppVersionUseCase
 }

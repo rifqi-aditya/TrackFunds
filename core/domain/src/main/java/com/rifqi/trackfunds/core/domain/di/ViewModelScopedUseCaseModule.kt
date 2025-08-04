@@ -6,12 +6,12 @@ import com.rifqi.trackfunds.core.domain.account.usecase.DeleteAccountUseCase
 import com.rifqi.trackfunds.core.domain.account.usecase.DeleteAccountUseCaseImpl
 import com.rifqi.trackfunds.core.domain.account.usecase.UpdateAccountUseCase
 import com.rifqi.trackfunds.core.domain.account.usecase.UpdateAccountUseCaseImpl
-import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUserUseCase
-import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUserUseCaseImpl
-import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUserUseCase
-import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUserUseCaseImpl
-import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUserUseCase
-import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUserUseCaseImpl
+import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.LoginUseCaseImpl
+import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.LogoutUseCaseImpl
+import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUseCase
+import com.rifqi.trackfunds.core.domain.auth.usecase.RegisterUseCaseImpl
 import com.rifqi.trackfunds.core.domain.budget.usecase.AddBudgetUseCase
 import com.rifqi.trackfunds.core.domain.budget.usecase.AddBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.budget.usecase.CheckExistingBudgetUseCase
@@ -55,15 +55,15 @@ abstract class ViewModelScopedUseCaseModule {
     // --- Auth Use Cases ---
     @Binds
     @ViewModelScoped
-    abstract fun bindLoginUserUseCase(impl: LoginUserUseCaseImpl): LoginUserUseCase
+    abstract fun bindLoginUserUseCase(impl: LoginUseCaseImpl): LoginUseCase
 
     @Binds
     @ViewModelScoped
-    abstract fun bindRegisterUserUseCase(impl: RegisterUserUseCaseImpl): RegisterUserUseCase
+    abstract fun bindRegisterUserUseCase(impl: RegisterUseCaseImpl): RegisterUseCase
 
     @Binds
     @ViewModelScoped
-    abstract fun bindLogoutUserUseCase(impl: LogoutUserUseCaseImpl): LogoutUserUseCase
+    abstract fun bindLogoutUserUseCase(impl: LogoutUseCaseImpl): LogoutUseCase
 
     // --- User Use Cases ---
     @Binds

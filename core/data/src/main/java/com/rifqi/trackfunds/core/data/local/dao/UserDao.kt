@@ -13,5 +13,5 @@ interface UserDao {
     suspend fun insertOrUpdateProfile(user: UserEntity)
 
     @Query("SELECT * FROM users WHERE uid = :uid LIMIT 1")
-    fun getProfile(uid: String): Flow<UserEntity?>
+    fun getUser(uid: String): Flow<UserEntity?>
 }

@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
-import com.rifqi.trackfunds.core.data.mapper.toDomainModel
+import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.domain.common.model.User
 import com.rifqi.trackfunds.core.domain.user.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
@@ -22,10 +22,10 @@ class UserRepositoryImpl @Inject constructor(
     private val storage: FirebaseStorage
 ) : UserRepository {
 
-    override fun getProfile(): Flow<User?> {
+    override fun getUser(): Flow<User?> {
         val uid = auth.currentUser?.uid ?: return flowOf(null)
-        return userDao.getProfile(uid).map { entity ->
-            entity?.toDomainModel()
+        return userDao.getUser(uid).map { entity ->
+            entity?.toDomain()
         }
     }
 

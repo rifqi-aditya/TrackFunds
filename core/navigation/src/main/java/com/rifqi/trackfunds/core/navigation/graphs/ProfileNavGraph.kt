@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.Auth
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
+import com.rifqi.trackfunds.feature.home.ui.settings.SettingsScreen
 import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
@@ -20,11 +21,16 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                     navController.navigate(screen)
                 },
                 onNavigateToLogin = {
-                    // Logika logout yang kompleks dan bersih ada di sini
                     navController.navigate(Auth) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
+            )
+        }
+        composable<ProfileRoutes.Settings> {
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigate = { screen -> navController.navigate(screen) }
             )
         }
     }
