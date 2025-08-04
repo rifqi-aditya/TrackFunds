@@ -42,21 +42,21 @@ class UpdateTransactionUseCaseImpl @Inject constructor(
 
                 // 2. Batalkan efek transaksi LAMA dari akun LAMA
                 val oldAccount =
-                    accountRepository.getAccountById(originalTransaction.account.id, userUid).getOrThrow()
+                    accountRepository.getAccountById(originalTransaction.account.id).getOrThrow()
                 val revertedAccount = oldAccount.revertTransaction(originalTransaction)
-                accountRepository.saveAccount(revertedAccount, userUid)
+                accountRepository.saveAccount(revertedAccount)
 
                 // 3. Terapkan efek transaksi BARU ke akun TUJUAN
                 val targetAccount =
                     if (updatedTransaction.account.id == originalTransaction.account.id) {
                         revertedAccount
                     } else {
-                        accountRepository.getAccountById(updatedTransaction.account.id, userUid).getOrThrow()
+                        accountRepository.getAccountById(updatedTransaction.account.id).getOrThrow()
                     }
 
                 val finalAccount = targetAccount.applyTransaction(updatedTransaction)
 
-                accountRepository.saveAccount(finalAccount, userUid)
+                accountRepository.saveAccount(finalAccount)
 
                 // 4. Simpan perubahan transaksi ke database
                 transactionRepository.saveTransaction(updatedTransaction, userUid)

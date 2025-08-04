@@ -37,14 +37,14 @@ class AddTransactionUseCaseImpl @Inject constructor(
                 )
 
                 val originalAccount =
-                    accountRepository.getAccountById(newTransaction.account.id, userUid)
+                    accountRepository.getAccountById(newTransaction.account.id)
                         .getOrThrow()
 
                 val updatedAccount = originalAccount.applyTransaction(newTransaction)
 
                 transactionRepository.saveTransaction(newTransaction, userUid)
 
-                accountRepository.saveAccount(updatedAccount, userUid)
+                accountRepository.saveAccount(updatedAccount)
             }
             Result.success(Unit)
         } catch (e: Exception) {
