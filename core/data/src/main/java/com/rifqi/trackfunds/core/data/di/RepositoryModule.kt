@@ -9,14 +9,16 @@ import com.rifqi.trackfunds.core.data.repository.ScanRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.TransactionRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.UserPreferencesRepositoryImpl
 import com.rifqi.trackfunds.core.data.repository.UserRepositoryImpl
+import com.rifqi.trackfunds.core.data.repository.UserSessionProviderImpl
 import com.rifqi.trackfunds.core.domain.account.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.auth.repository.AuthRepository
 import com.rifqi.trackfunds.core.domain.budget.repository.BudgetRepository
 import com.rifqi.trackfunds.core.domain.category.repository.CategoryRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserSessionProvider
 import com.rifqi.trackfunds.core.domain.savings.repository.SavingsGoalRepository
 import com.rifqi.trackfunds.core.domain.scan.repository.ScanRepository
 import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
-import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import com.rifqi.trackfunds.core.domain.user.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -81,4 +83,10 @@ abstract class RepositoryModule {
     abstract fun bindUserRepository(
         impl: UserRepositoryImpl
     ): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserSessionProvider(
+        impl: UserSessionProviderImpl
+    ): UserSessionProvider
 }
