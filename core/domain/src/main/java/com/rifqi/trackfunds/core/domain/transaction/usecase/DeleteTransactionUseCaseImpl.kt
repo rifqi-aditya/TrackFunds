@@ -27,10 +27,10 @@ class DeleteTransactionUseCaseImpl @Inject constructor(
                     transactionRepository.findTransactionWithDetailsById(transactionId, userUid)
                         ?: throw IllegalStateException("Transaction not found for deletion")
 
-                val account = accountRepository.getAccountById(transaction.account.id).getOrThrow()
+                val account = accountRepository.getAccountById(transaction.account.id, userUid).getOrThrow()
 
                 val revertedAccount = account.revertTransaction(transaction)
-                accountRepository.updateAccount(revertedAccount)
+                accountRepository.saveAccount(revertedAccount, userUid)
 
                 transaction.savingsGoal?.let {
                     if (transaction.type == TransactionType.EXPENSE) {

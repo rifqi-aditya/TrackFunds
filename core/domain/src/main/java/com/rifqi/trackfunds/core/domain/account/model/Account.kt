@@ -16,7 +16,7 @@ data class Account(
     /**
      * Optional identifier for the account's icon.
      */
-    val iconIdentifier: String?,
+    val iconIdentifier: String,
     /**
      * Current balance of the account.
      */

@@ -10,10 +10,10 @@ import com.rifqi.trackfunds.core.domain.account.model.Account
 fun Account.toEntity(userUid: String): AccountEntity {
     return AccountEntity(
         id = this.id,
+        userUid = userUid,
         name = this.name,
         iconIdentifier = this.iconIdentifier,
         balance = this.balance,
-        userUid = userUid
     )
 }
 

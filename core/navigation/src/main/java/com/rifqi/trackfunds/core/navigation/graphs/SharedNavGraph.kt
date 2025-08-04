@@ -3,8 +3,6 @@ package com.rifqi.trackfunds.core.navigation.graphs
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.rifqi.account.ui.screen.SelectAccountScreen
-import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.feature.categories.ui.screen.AddEditCategoryScreen
@@ -39,13 +37,6 @@ fun NavGraphBuilder.sharedNavGraph(navController: NavHostController) {
             onNavigateBack = { navController.popBackStack() },
             onNavigateToAddCategory = { navController.navigate(SharedRoutes.AddEditCategory()) },
             onSearchClicked = { },
-        )
-    }
-
-    composable<SharedRoutes.SelectAccount> {
-        SelectAccountScreen(
-            onNavigateBack = { navController.popBackStack() },
-            onNavigateToAddAccount = { navController.navigate(AccountRoutes.AddEditAccount()) }
         )
     }
 

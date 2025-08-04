@@ -7,10 +7,10 @@ import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.category.model.AddTransactionParams
+import com.rifqi.trackfunds.core.domain.transaction.model.AddTransactionParams
 import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
-import com.rifqi.trackfunds.core.domain.category.model.UpdateTransactionParams
+import com.rifqi.trackfunds.core.domain.transaction.model.UpdateTransactionParams
 import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryByStandardKeyUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase

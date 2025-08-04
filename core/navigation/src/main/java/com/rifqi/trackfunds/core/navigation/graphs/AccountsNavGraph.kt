@@ -4,8 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.rifqi.account.ui.screen.AccountsScreen
-import com.rifqi.account.ui.screen.AddEditAccountScreen
+import com.rifqi.account.ui.addedit.AddEditAccountScreen
+import com.rifqi.account.ui.list.AccountsScreen
 import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AccountsGraph
 

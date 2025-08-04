@@ -1,12 +1,14 @@
-package com.rifqi.trackfunds.core.domain.category.model
+package com.rifqi.trackfunds.core.domain.transaction.model
 
 import com.rifqi.trackfunds.core.domain.account.model.Account
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
-import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
 import java.math.BigDecimal
 import java.time.LocalDate
 
-data class AddTransactionParams(
+data class UpdateTransactionParams(
+    val id: String,
     val description: String,
     val amount: BigDecimal,
     val type: TransactionType,

@@ -5,90 +5,43 @@ import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.account.repository.AccountRepository
-import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AccountRepositoryImpl @Inject constructor(
-    private val accountDao: AccountDao,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val accountDao: AccountDao
 ) : AccountRepository {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getAllAccounts(): Flow<List<Account>> {
-        return userPreferencesRepository.userUid.flatMapLatest { uid ->
-            if (uid == null) {
-                flowOf(emptyList())
-            } else {
-                accountDao.getAccounts(uid).map { entities ->
-                    entities.map { it.toDomain() }
-                }
-            }
+    override fun getAllAccounts(userUid: String): Flow<List<Account>> {
+        return accountDao.getAccounts(userUid).map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 
-    override suspend fun getAccountById(accountId: String): Result<Account> {
-        return try {
-            val uid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
-
-            val accountEntity = accountDao.getAccountById(accountId, uid)
-
-            if (accountEntity != null) {
-                Result.success(accountEntity.toDomain())
-            } else {
-                Result.failure(Exception("Account with ID $accountId not found."))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun getAccountById(accountId: String, userUid: String): Result<Account> {
+        return runCatching {
+            accountDao.getAccountById(accountId, userUid)?.toDomain()
+                ?: throw Exception("Account not found.")
         }
     }
 
-    override suspend fun getAccountsByIds(ids: List<String>): List<Account> {
-        val uid = userPreferencesRepository.userUid.first() ?: return emptyList()
-        return accountDao.getAccountsByIds(ids, uid).map { it.toDomain() }
+    override suspend fun getAccountsByIds(ids: List<String>, userUid: String): List<Account> {
+        return accountDao.getAccountsByIds(ids, userUid).map { it.toDomain() }
     }
 
-    override suspend fun addAccount(account: Account): Result<Unit> {
-        return try {
-            val uid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
-
-            accountDao.insertAccount(account.toEntity(uid))
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun saveAccount(account: Account, userUid: String): Result<Unit> {
+        return runCatching {
+            val accountEntity = account.toEntity(userUid)
+            accountDao.upsert(accountEntity)
         }
     }
 
-    override suspend fun updateAccount(account: Account): Result<Unit> {
-        return try {
-            val uid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
-
-            accountDao.updateAccount(account.toEntity(uid))
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun deleteAccount(accountId: String): Result<Unit> {
-        return try {
-            val uid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
-
-            accountDao.deleteAccountById(accountId, uid)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun deleteAccount(accountId: String, userUid: String): Result<Unit> {
+        return runCatching {
+            accountDao.deleteAccountById(accountId, userUid)
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.rifqi.trackfunds.core.domain.transaction.usecase
 
-import com.rifqi.trackfunds.core.domain.category.model.UpdateTransactionParams
 import com.rifqi.trackfunds.core.domain.account.repository.AccountRepository
 import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
 import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.UpdateTransactionParams
 import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
 import kotlinx.coroutines.flow.first
 import java.time.LocalTime
@@ -42,21 +42,21 @@ class UpdateTransactionUseCaseImpl @Inject constructor(
 
                 // 2. Batalkan efek transaksi LAMA dari akun LAMA
                 val oldAccount =
-                    accountRepository.getAccountById(originalTransaction.account.id).getOrThrow()
+                    accountRepository.getAccountById(originalTransaction.account.id, userUid).getOrThrow()
                 val revertedAccount = oldAccount.revertTransaction(originalTransaction)
-                accountRepository.updateAccount(revertedAccount)
+                accountRepository.saveAccount(revertedAccount, userUid)
 
                 // 3. Terapkan efek transaksi BARU ke akun TUJUAN
                 val targetAccount =
                     if (updatedTransaction.account.id == originalTransaction.account.id) {
                         revertedAccount
                     } else {
-                        accountRepository.getAccountById(updatedTransaction.account.id).getOrThrow()
+                        accountRepository.getAccountById(updatedTransaction.account.id, userUid).getOrThrow()
                     }
 
                 val finalAccount = targetAccount.applyTransaction(updatedTransaction)
 
-                accountRepository.updateAccount(finalAccount)
+                accountRepository.saveAccount(finalAccount, userUid)
 
                 // 4. Simpan perubahan transaksi ke database
                 transactionRepository.saveTransaction(updatedTransaction, userUid)

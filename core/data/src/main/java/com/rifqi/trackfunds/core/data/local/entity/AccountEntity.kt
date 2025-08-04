@@ -23,6 +23,6 @@ data class AccountEntity(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "user_uid") val userUid: String,
     val name: String,
-    @ColumnInfo(name = "icon_identifier") val iconIdentifier: String?,
+    @ColumnInfo(name = "icon_identifier") val iconIdentifier: String,
     val balance: BigDecimal = BigDecimal.ZERO,
 )

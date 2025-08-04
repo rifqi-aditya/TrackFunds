@@ -9,20 +9,21 @@ import kotlinx.coroutines.flow.Flow
  */
 interface AccountRepository {
     /** Fetches all accounts for the currently logged-in user. */
-    fun getAllAccounts(): Flow<List<Account>>
+    fun getAllAccounts(userUid: String): Flow<List<Account>>
 
     /** Fetches a single account by its ID for the currently logged-in user. */
-    suspend fun getAccountById(accountId: String): Result<Account>
+    suspend fun getAccountById(accountId: String, userUid: String): Result<Account>
 
     /** Fetches a list of accounts by their IDs for the currently logged-in user. */
-    suspend fun getAccountsByIds(ids: List<String>): List<Account>
+    suspend fun getAccountsByIds(ids: List<String>, userUid: String): List<Account>
 
-    /** Adds a new account for the currently logged-in user. */
-    suspend fun addAccount(account: Account): Result<Unit>
-
-    /** Updates an existing account for the currently logged-in user. */
-    suspend fun updateAccount(account: Account): Result<Unit>
+    /**
+     * Saves a new account or updates an existing one for the currently logged-in user.
+     * @param account The account object to be saved.
+     * @param userUid The UID of the currently logged-in user.
+     */
+    suspend fun saveAccount(account: Account, userUid: String): Result<Unit>
 
     /** Deletes an account by its ID for the currently logged-in user. */
-    suspend fun deleteAccount(accountId: String): Result<Unit>
+    suspend fun deleteAccount(accountId: String, userUid: String): Result<Unit>
 }

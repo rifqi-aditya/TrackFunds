@@ -1,11 +1,11 @@
 package com.rifqi.trackfunds.core.domain.transaction.usecase
 
-import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
-import com.rifqi.trackfunds.core.domain.category.model.AddTransactionParams
 import com.rifqi.trackfunds.core.domain.account.repository.AccountRepository
-import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
 import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import com.rifqi.trackfunds.core.domain.transaction.AppTransactionRunner
+import com.rifqi.trackfunds.core.domain.transaction.model.AddTransactionParams
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
 import kotlinx.coroutines.flow.first
 import java.time.LocalTime
 import java.util.UUID
@@ -37,13 +37,14 @@ class AddTransactionUseCaseImpl @Inject constructor(
                 )
 
                 val originalAccount =
-                    accountRepository.getAccountById(newTransaction.account.id).getOrThrow()
+                    accountRepository.getAccountById(newTransaction.account.id, userUid)
+                        .getOrThrow()
 
                 val updatedAccount = originalAccount.applyTransaction(newTransaction)
 
                 transactionRepository.saveTransaction(newTransaction, userUid)
 
-                accountRepository.updateAccount(updatedAccount)
+                accountRepository.saveAccount(updatedAccount, userUid)
             }
             Result.success(Unit)
         } catch (e: Exception) {

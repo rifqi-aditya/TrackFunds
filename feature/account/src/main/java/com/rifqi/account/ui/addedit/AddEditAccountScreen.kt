@@ -1,26 +1,30 @@
-package com.rifqi.account.ui.screen
+package com.rifqi.account.ui.addedit
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -36,10 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.account.ui.event.AddEditAccountEvent
 import com.rifqi.account.ui.model.DefaultAccountsIcons
-import com.rifqi.account.ui.state.AddEditAccountUiState
-import com.rifqi.account.ui.viewmodel.AddEditAccountViewModel
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.IconPicker
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
@@ -55,9 +56,14 @@ fun AddEditAccountScreen(
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState()
 
-    LaunchedEffect(uiState.isAccountSaved) {
-        if (uiState.isAccountSaved) {
-            onNavigateBack()
+    LaunchedEffect(true) {
+        viewModel.sideEffect.collect {
+            when (it) {
+                is AddEditAccountSideEffect.NavigateBack -> onNavigateBack()
+                is AddEditAccountSideEffect.ShowSnackbar -> {
+
+                }
+            }
         }
     }
     if (uiState.showIconPicker) {
@@ -105,7 +111,8 @@ fun AddEditAccountScreen(
     AddEditAccountContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = onNavigateBack,
+        isEditMode = viewModel.isEditMode
     )
 }
 
@@ -114,16 +121,17 @@ fun AddEditAccountScreen(
 fun AddEditAccountContent(
     uiState: AddEditAccountUiState,
     onEvent: (AddEditAccountEvent) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    isEditMode: Boolean
 ) {
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = if (uiState.isEditMode) "Edit Account" else "Add New Account",
+                title = if (isEditMode) "Edit Account" else "Add New Account",
                 isFullScreen = true,
                 onNavigateBack = onNavigateBack,
                 actions = {
-                    if (uiState.isEditMode) {
+                    if (isEditMode) {
                         IconButton(onClick = { onEvent(AddEditAccountEvent.DeleteClicked) }) {
                             DisplayIconFromResource(
                                 identifier = "delete",
@@ -136,72 +144,13 @@ fun AddEditAccountContent(
                     }
                 }
             )
-        }
-    ) { paddingValues ->
-        val iconBorderColor = if (uiState.iconError != null) {
-            MaterialTheme.colorScheme.error
-        } else {
-            MaterialTheme.colorScheme.outline
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding(), bottom = 16.dp)
-                .padding(horizontal = 16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator()
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .border(
-                            width = 1.dp,
-                            color = iconBorderColor,
-                            shape = CircleShape
-                        )
-                        .clickable { onEvent(AddEditAccountEvent.ShowIconPickerClicked) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (uiState.iconIdentifier.isNotBlank()) {
-                        DisplayIconFromResource(
-                            identifier = uiState.iconIdentifier,
-                            contentDescription = "Savings Icon",
-                            modifier = Modifier.size(48.dp)
-                        )
-                    } else {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                Icons.Default.AddAPhoto,
-                                contentDescription = null,
-                                tint = if (uiState.iconError != null) MaterialTheme.colorScheme.error else LocalContentColor.current
-                            )
-                            Text("Select an icon", style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                }
-
-                GeneralTextInputField(
-                    value = uiState.name,
-                    onValueChange = { onEvent(AddEditAccountEvent.NameChanged(it)) },
-                    label = "Account Name",
-                    isError = uiState.nameError != null,
-                    errorMessage = uiState.nameError,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                AmountInputField(
-                    value = uiState.initialBalance,
-                    onValueChange = { onEvent(AddEditAccountEvent.BalanceChanged(it)) },
-                    label = "Initial Balance",
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = { onEvent(AddEditAccountEvent.SaveAccountClicked) },
                     modifier = Modifier
@@ -210,15 +159,126 @@ fun AddEditAccountContent(
                     enabled = !uiState.isSaving
                 ) {
                     if (uiState.isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     } else {
-                        Text("Save Account")
+                        Text(if (isEditMode) "Save Changes" else "Create Account")
                     }
                 }
             }
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            contentPadding = PaddingValues(top = 24.dp, bottom = 24.dp)
+        ) {
+            // Bagian loading
+            if (uiState.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) { CircularProgressIndicator() }
+                }
+                return@LazyColumn
+            }
+
+            // Icon Picker
+            item {
+                IconPicker(
+                    iconIdentifier = uiState.iconIdentifier,
+                    iconError = uiState.iconError,
+                    onIconClicked = { onEvent(AddEditAccountEvent.ShowIconPickerClicked) }
+                )
+            }
+
+            // Form Fields
+            item {
+                GeneralTextInputField(
+                    value = uiState.name,
+                    onValueChange = { onEvent(AddEditAccountEvent.NameChanged(it)) },
+                    label = "Account Name",
+                    isError = uiState.nameError != null,
+                    errorMessage = uiState.nameError,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            // 2. Tampilkan Saldo Awal hanya saat mode Tambah
+            if (!isEditMode) {
+                item {
+                    AmountInputField(
+                        value = uiState.initialBalance,
+                        onValueChange = { onEvent(AddEditAccountEvent.BalanceChanged(it)) },
+                        label = "Initial Balance",
+                        isError = uiState.balanceError != null,
+                        errorMessage = uiState.balanceError,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            // 3. Pindahkan tombol Hapus ke bawah (hanya di mode edit)
+            if (isEditMode) {
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Divider()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(
+                        onClick = { onEvent(AddEditAccountEvent.DeleteClicked) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Delete Account", color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun IconPicker(
+    iconIdentifier: String,
+    iconError: String?,
+    onIconClicked: () -> Unit
+) {
+    val borderColor by animateColorAsState(
+        targetValue = if (iconError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
+        label = "iconBorderColor"
+    )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .clip(CircleShape)
+                .border(width = 1.dp, color = borderColor, shape = CircleShape)
+                .clickable(onClick = onIconClicked),
+            contentAlignment = Alignment.Center
+        ) {
+            if (iconIdentifier.isNotBlank()) {
+                DisplayIconFromResource(
+                    identifier = iconIdentifier,
+                    contentDescription = "Selected Icon",
+                    modifier = Modifier.size(48.dp)
+                )
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Default.AddAPhoto, contentDescription = null)
+                    Text("Select Icon", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+        AnimatedVisibility(visible = iconError != null) {
+            Text(
+                text = iconError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }
