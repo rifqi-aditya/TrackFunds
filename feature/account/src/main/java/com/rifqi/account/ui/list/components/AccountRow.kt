@@ -25,7 +25,7 @@ import com.rifqi.account.ui.list.AccountItemUiModel
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 @Composable
-fun AccountCard( // Nama diganti agar lebih deskriptif
+fun AccountCard(
     item: AccountItemUiModel,
     onClick: () -> Unit
 ) {
@@ -52,8 +52,6 @@ fun AccountCard( // Nama diganti agar lebih deskriptif
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(8.dp)
             )
-
-            // Kolom untuk Nama dan Saldo
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.name,
@@ -66,8 +64,6 @@ fun AccountCard( // Nama diganti agar lebih deskriptif
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
-            // Ikon Panah di akhir
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Edit Account",

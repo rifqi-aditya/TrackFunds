@@ -20,7 +20,7 @@ import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun IconPicker(
+fun IconPickerSheet(
     icons: List<String>,
     selectedIconIdentifier: String,
     onIconSelected: (String) -> Unit,

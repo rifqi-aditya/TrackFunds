@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @Composable
 fun TotalBalanceHeader(
@@ -31,7 +32,8 @@ fun TotalBalanceHeader(
         Text(
             text = totalBalance,
             style = MaterialTheme.typography.displaySmall, // Ukuran font lebih besar
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = TrackFundsTheme.extendedColors.accent
         )
         Text(
             text = "across $accountCount accounts",

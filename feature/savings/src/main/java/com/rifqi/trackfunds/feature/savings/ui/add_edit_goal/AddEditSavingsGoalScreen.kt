@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
-import com.rifqi.trackfunds.core.ui.components.IconPicker
+import com.rifqi.trackfunds.core.ui.components.IconPickerSheet
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
@@ -83,7 +83,7 @@ fun AddEditSavingsGoalScreen(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                IconPicker(
+                IconPickerSheet(
                     icons = DefaultSavingsIcons.list,
                     selectedIconIdentifier = uiState.iconIdentifier,
                     onIconSelected = { identifier ->

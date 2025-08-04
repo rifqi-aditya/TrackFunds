@@ -1,5 +1,6 @@
 package com.rifqi.account.ui.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import com.rifqi.account.ui.list.components.TotalBalanceHeader
 import com.rifqi.trackfunds.core.navigation.api.AccountRoutes
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +66,11 @@ fun AccountsScreen(
                 isFullScreen = true,
                 actions = {
                     IconButton(onClick = { viewModel.onEvent(AccountsEvent.AddAccountClicked) }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Account")
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Add Account",
+                            tint = TrackFundsTheme.extendedColors.accent
+                        )
                     }
                 },
                 onNavigateBack = onNavigateBack
@@ -89,7 +95,8 @@ fun AccountsContent(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
             TotalBalanceHeader(
@@ -102,9 +109,7 @@ fun AccountsContent(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
         }
-
         items(accounts, key = { it.id }) { account ->
             AccountCard(
                 item = account,

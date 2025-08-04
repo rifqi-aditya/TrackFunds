@@ -30,7 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
-import com.rifqi.trackfunds.core.ui.components.IconPicker
+import com.rifqi.trackfunds.core.ui.components.IconPickerSheet
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.categories.ui.event.AddEditCategoryEvent
@@ -118,7 +118,7 @@ fun AddEditCategoryContent(
 
             // Area pemilihan ikon
             Text("Pilih Ikon", style = MaterialTheme.typography.titleMedium)
-            IconPicker(
+            IconPickerSheet(
                 icons = CategoryIcons.list,
                 selectedIconIdentifier = uiState.iconIdentifier,
                 onIconSelected = { onEvent(AddEditCategoryEvent.IconChanged(it)) }

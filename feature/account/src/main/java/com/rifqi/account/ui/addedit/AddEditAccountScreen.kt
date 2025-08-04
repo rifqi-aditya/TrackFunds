@@ -1,9 +1,5 @@
 package com.rifqi.account.ui.addedit
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,16 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -37,15 +30,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.account.ui.addedit.components.IconPicker
 import com.rifqi.account.ui.model.DefaultAccountsIcons
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
-import com.rifqi.trackfunds.core.ui.components.IconPicker
+import com.rifqi.trackfunds.core.ui.components.IconPickerSheet
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
-import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +54,6 @@ fun AddEditAccountScreen(
             when (it) {
                 is AddEditAccountSideEffect.NavigateBack -> onNavigateBack()
                 is AddEditAccountSideEffect.ShowSnackbar -> {
-
                 }
             }
         }
@@ -78,7 +70,7 @@ fun AddEditAccountScreen(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                IconPicker(
+                IconPickerSheet(
                     icons = DefaultAccountsIcons.list,
                     selectedIconIdentifier = uiState.iconIdentifier,
                     onIconSelected = { identifier ->
@@ -93,16 +85,16 @@ fun AddEditAccountScreen(
     if (uiState.showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(AddEditAccountEvent.DismissDeleteDialog) },
-            title = { Text("Hapus Akun") },
-            text = { Text("Apakah Anda yakin ingin menghapus akun ini? Semua transaksi terkait akan ikut terhapus.") },
+            title = { Text("Delete Account") },
+            text = { Text("Are you sure you want to delete this account? All related transactions will also be deleted.") },
             confirmButton = {
                 TextButton(onClick = { viewModel.onEvent(AddEditAccountEvent.ConfirmDeleteClicked) }) {
-                    Text("Hapus", color = MaterialTheme.colorScheme.error)
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(AddEditAccountEvent.DismissDeleteDialog) }) {
-                    Text("Batal")
+                    Text("Cancel")
                 }
             }
         )
@@ -130,19 +122,6 @@ fun AddEditAccountContent(
                 title = if (isEditMode) "Edit Account" else "Add New Account",
                 isFullScreen = true,
                 onNavigateBack = onNavigateBack,
-                actions = {
-                    if (isEditMode) {
-                        IconButton(onClick = { onEvent(AddEditAccountEvent.DeleteClicked) }) {
-                            DisplayIconFromResource(
-                                identifier = "delete",
-                                contentDescription = "Delete Account",
-                                modifier = Modifier
-                                    .padding(end = 8.dp, start = 4.dp)
-                                    .size(24.dp)
-                            )
-                        }
-                    }
-                }
             )
         },
         bottomBar = {
@@ -156,10 +135,18 @@ fun AddEditAccountContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    enabled = !uiState.isSaving
+                    shape = MaterialTheme.shapes.medium,
+                    enabled = !uiState.isSaving,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = TrackFundsTheme.extendedColors.accent,
+                        contentColor = TrackFundsTheme.extendedColors.onAccent
+                    )
                 ) {
                     if (uiState.isSaving) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = TrackFundsTheme.extendedColors.onAccent
+                        )
                     } else {
                         Text(if (isEditMode) "Save Changes" else "Create Account")
                     }
@@ -176,7 +163,6 @@ fun AddEditAccountContent(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
             contentPadding = PaddingValues(top = 24.dp, bottom = 24.dp)
         ) {
-            // Bagian loading
             if (uiState.isLoading) {
                 item {
                     Box(
@@ -187,7 +173,6 @@ fun AddEditAccountContent(
                 return@LazyColumn
             }
 
-            // Icon Picker
             item {
                 IconPicker(
                     iconIdentifier = uiState.iconIdentifier,
@@ -196,7 +181,6 @@ fun AddEditAccountContent(
                 )
             }
 
-            // Form Fields
             item {
                 GeneralTextInputField(
                     value = uiState.name,
@@ -208,7 +192,6 @@ fun AddEditAccountContent(
                 )
             }
 
-            // 2. Tampilkan Saldo Awal hanya saat mode Tambah
             if (!isEditMode) {
                 item {
                     AmountInputField(
@@ -222,63 +205,18 @@ fun AddEditAccountContent(
                 }
             }
 
-            // 3. Pindahkan tombol Hapus ke bawah (hanya di mode edit)
             if (isEditMode) {
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
-                    Divider()
+                    HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
                     Spacer(modifier = Modifier.height(8.dp))
                     TextButton(
                         onClick = { onEvent(AddEditAccountEvent.DeleteClicked) },
-                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Delete Account", color = MaterialTheme.colorScheme.error)
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun IconPicker(
-    iconIdentifier: String,
-    iconError: String?,
-    onIconClicked: () -> Unit
-) {
-    val borderColor by animateColorAsState(
-        targetValue = if (iconError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline,
-        label = "iconBorderColor"
-    )
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .border(width = 1.dp, color = borderColor, shape = CircleShape)
-                .clickable(onClick = onIconClicked),
-            contentAlignment = Alignment.Center
-        ) {
-            if (iconIdentifier.isNotBlank()) {
-                DisplayIconFromResource(
-                    identifier = iconIdentifier,
-                    contentDescription = "Selected Icon",
-                    modifier = Modifier.size(48.dp)
-                )
-            } else {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.AddAPhoto, contentDescription = null)
-                    Text("Select Icon", style = MaterialTheme.typography.bodySmall)
-                }
-            }
-        }
-        AnimatedVisibility(visible = iconError != null) {
-            Text(
-                text = iconError ?: "",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 4.dp)
-            )
         }
     }
 }
