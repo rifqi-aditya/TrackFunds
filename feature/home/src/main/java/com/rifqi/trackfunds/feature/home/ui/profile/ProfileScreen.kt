@@ -32,7 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @Composable
 fun ProfileScreen(
@@ -137,12 +138,12 @@ fun ProfileContent(
                         )
                     }
 
-                    item {
-                        Spacer(Modifier.height(32.dp))
-                        TextButton(onClick = {}) {
-                            Text("Hapus Akun", color = MaterialTheme.colorScheme.error)
-                        }
-                    }
+//                    item {
+//                        Spacer(Modifier.height(32.dp))
+//                        TextButton(onClick = {}) {
+//                            Text("Hapus Akun", color = MaterialTheme.colorScheme.error)
+//                        }
+//                    }
                 }
             }
         }
@@ -157,18 +158,35 @@ fun ProfileHeader(photoUrl: String?, onChangePhotoClicked: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        AsyncImage(
-            model = photoUrl,
-            contentDescription = "Profile Picture",
+        // 1. Gunakan Box sebagai bingkai utama
+        Box(
             modifier = Modifier
-                .size(80.dp)
+                .size(80.dp) // Ukuran lingkaran bisa disesuaikan
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
-            placeholder = rememberVectorPainter(image = Icons.Default.Person),
-            error = rememberVectorPainter(image = Icons.Default.Person)
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            // 2. Ikon placeholder di lapisan bawah dengan ukuran proporsional
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Placeholder",
+                modifier = Modifier.size(48.dp), // Ukuran ikon lebih besar
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            // 3. AsyncImage akan menimpa ikon ini saat berhasil dimuat
+            AsyncImage(
+                model = photoUrl,
+                contentDescription = "Profile Picture",
+                modifier = Modifier.fillMaxSize(), // Penuhi ukuran Box
+                contentScale = ContentScale.Crop
+            )
+        }
         TextButton(onClick = onChangePhotoClicked) {
-            Text("Ubah Foto Profil")
+            Text(
+                "Change Photo",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -221,7 +239,7 @@ fun InfoRow(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileContentPreview() {
-    MaterialTheme {
+    TrackFundsTheme {
         ProfileContent(
             uiState = ProfileUiState(
                 isLoading = false,

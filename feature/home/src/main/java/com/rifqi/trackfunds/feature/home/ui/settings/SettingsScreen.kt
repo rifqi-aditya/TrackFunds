@@ -2,7 +2,9 @@ package com.rifqi.trackfunds.feature.home.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -139,9 +141,11 @@ fun SettingsContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
+                Spacer(modifier = Modifier.height(8.dp))
                 UserProfileHeader(
                     userName = uiState.userName,
                     userEmail = uiState.userEmail,
+                    photoUrl = uiState.userPhotoUrl,
                     onClick = { onEvent(SettingsEvent.ProfileClicked) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )

@@ -50,6 +50,7 @@ class SettingsViewModel @Inject constructor(
                 isLoading = false,
                 userName = user?.fullName ?: "Guest",
                 userEmail = user?.email ?: "",
+                userPhotoUrl = user?.photoUrl,
                 appTheme = theme,
                 appVersion = getAppVersionUseCase(),
                 // Pertahankan state dialog dari nilai sebelumnya

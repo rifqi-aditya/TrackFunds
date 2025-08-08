@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -27,22 +26,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,10 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +58,6 @@ fun EditProfileScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     // Launcher untuk memilih gambar dari galeri
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -79,7 +73,9 @@ fun EditProfileScreen(
             when (effect) {
                 is EditProfileSideEffect.NavigateBack -> onNavigateBack()
                 is EditProfileSideEffect.LaunchImagePicker -> galleryLauncher.launch("image/*")
-                is EditProfileSideEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
+                is EditProfileSideEffect.ShowSnackbar -> {
+
+                }
             }
         }
     }
@@ -88,7 +84,6 @@ fun EditProfileScreen(
         uiState = uiState,
         onEvent = viewModel::onEvent,
         onNavigateBack = onNavigateBack,
-        snackbarHostState = snackbarHostState
     )
 }
 
@@ -100,7 +95,6 @@ fun EditProfileContent(
     uiState: EditProfileUiState,
     onEvent: (EditProfileEvent) -> Unit,
     onNavigateBack: () -> Unit,
-    snackbarHostState: SnackbarHostState
 ) {
     if (uiState.showDatePicker) {
         CustomDatePickerDialog(
@@ -112,15 +106,11 @@ fun EditProfileContent(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = { Text("Edit Profile") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
+            AppTopAppBar(
+                title = "Edit Profile",
+                onNavigateBack = onNavigateBack,
+                isFullScreen = true
             )
         },
         bottomBar = {
@@ -128,13 +118,26 @@ fun EditProfileContent(
                 onClick = { onEvent(EditProfileEvent.SaveClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                enabled = !uiState.isSaving
+                    .padding(16.dp)
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium,
+                enabled = !uiState.isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = TrackFundsTheme.extendedColors.accent,
+                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                )
             ) {
-                if (uiState.isSaving) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = TrackFundsTheme.extendedColors.accent
+                    )
                 } else {
-                    Text("Save Changes")
+                    Text(
+                        "Save Changes",
+                        color = TrackFundsTheme.extendedColors.onAccent
+                    )
                 }
             }
         }
@@ -202,19 +205,30 @@ fun ProfileImageEditor(
     ) {
         val imageModel = newImageUri ?: currentImageUrl
 
-        AsyncImage(
-            model = imageModel,
-            contentDescription = "Profile Picture",
+        // 1. Gunakan Box sebagai bingkai utama
+        Box(
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
-                .border(4.dp, MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentScale = ContentScale.Crop,
+            contentAlignment = Alignment.Center
+        ) {
+            // 2. Ikon placeholder di lapisan bawah dengan ukuran proporsional
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Placeholder",
+                modifier = Modifier.size(72.dp), // Ukuran ikon yang lebih besar
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-            placeholder = rememberVectorPainter(image = Icons.Default.Person),
-            error = rememberVectorPainter(image = Icons.Default.Person)
-        )
+            // 3. AsyncImage akan menimpa ikon ini saat berhasil dimuat
+            AsyncImage(
+                model = imageModel,
+                contentDescription = "Profile Picture",
+                modifier = Modifier.fillMaxSize(), // Penuhi ukuran Box
+                contentScale = ContentScale.Crop
+            )
+        }
 
         TextButton(onClick = onChangePhotoClicked) {
             Icon(
