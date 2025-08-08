@@ -80,7 +80,8 @@ class AuthViewModel @Inject constructor(
                     it.copy(
                         authMode = newMode,
                         password = "",
-                        confirmPassword = ""
+                        confirmPassword = "",
+                        generalError = ""
                     )
                 }
             }
