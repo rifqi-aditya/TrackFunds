@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -28,7 +29,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,6 +53,7 @@ import coil.compose.AsyncImage
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerField
 import com.rifqi.trackfunds.core.ui.components.inputfield.DatePickerMode
+import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,26 +161,21 @@ fun EditProfileContent(
                         onChangePhotoClicked = { onEvent(EditProfileEvent.ChangePhotoClicked) }
                     )
 
-                    OutlinedTextField(
+                    GeneralTextInputField(
                         value = uiState.fullName,
                         onValueChange = { onEvent(EditProfileEvent.FullNameChanged(it)) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Full Name") },
+                        label = "Full Name",
                         isError = uiState.fullNameError != null,
-                        supportingText = {
-                            if (uiState.fullNameError != null) {
-                                Text(uiState.fullNameError, color = MaterialTheme.colorScheme.error)
-                            }
-                        },
-                        singleLine = true
+                        errorMessage = uiState.fullNameError,
                     )
 
-                    OutlinedTextField(
+                    GeneralTextInputField(
                         value = uiState.phoneNumber,
                         onValueChange = { onEvent(EditProfileEvent.PhoneNumberChanged(it)) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Phone Number") },
-                        singleLine = true
+                        label = "Phone Number",
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                     )
 
                     DatePickerField(
@@ -215,7 +212,6 @@ fun ProfileImageEditor(
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentScale = ContentScale.Crop,
 
-            // --- PERBAIKAN DI SINI ---
             placeholder = rememberVectorPainter(image = Icons.Default.Person),
             error = rememberVectorPainter(image = Icons.Default.Person)
         )

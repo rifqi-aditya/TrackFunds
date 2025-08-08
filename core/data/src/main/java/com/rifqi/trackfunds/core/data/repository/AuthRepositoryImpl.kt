@@ -6,7 +6,6 @@ import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.domain.auth.exception.AuthException
 import com.rifqi.trackfunds.core.domain.auth.repository.AuthRepository
 import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
-import com.rifqi.trackfunds.core.domain.user.usecase.ValidateFullName
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton

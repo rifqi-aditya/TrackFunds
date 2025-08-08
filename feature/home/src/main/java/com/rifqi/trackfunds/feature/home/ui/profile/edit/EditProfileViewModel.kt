@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.user.model.UpdateProfileParams
 import com.rifqi.trackfunds.core.domain.user.usecase.GetUserUseCase
-import com.rifqi.trackfunds.core.domain.user.usecase.UpdateUserUseCase
+import com.rifqi.trackfunds.core.domain.user.usecase.UpdateProfileUseCase
 import com.rifqi.trackfunds.core.domain.user.usecase.ValidateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
-    private val updateUserUseCase: UpdateUserUseCase,
+    private val updateProfileUseCase: UpdateProfileUseCase,
     private val validateProfileUseCase: ValidateProfileUseCase
 ) : ViewModel() {
 
@@ -94,9 +94,8 @@ class EditProfileViewModel @Inject constructor(
                 newImageUri = currentState.newImageUri
             )
 
-            updateUserUseCase(params)
+            updateProfileUseCase(params)
                 .onSuccess {
-                    sendSideEffect(EditProfileSideEffect.ShowSnackbar("Profile updated successfully"))
                     sendSideEffect(EditProfileSideEffect.NavigateBack)
                 }
                 .onFailure { error ->

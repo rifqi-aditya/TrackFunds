@@ -11,6 +11,7 @@ import com.rifqi.trackfunds.core.domain.user.repository.UserRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -45,7 +46,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun saveProfile(user: User, newImageUri: Uri?): Result<Unit> {
         return runCatching {
             val uid = sessionProvider.getUid()
-            val existingEntity = userDao.getUserByEmail(user.email!!)
+            val existingEntity = userDao.getProfile(uid).first()
                 ?: throw Exception("User entity not found for update.")
 
             var finalPhotoUrl = existingEntity.photoUrl
