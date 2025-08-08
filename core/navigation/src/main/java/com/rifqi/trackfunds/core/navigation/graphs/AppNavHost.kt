@@ -48,7 +48,7 @@ fun AppNavHost(
         }
         composable<Auth> {
             AuthScreen(
-                onNavigateToHome = {
+                onNavigate = {
                     navController.navigate(HomeGraph) {
                         popUpTo(Splash) { inclusive = true }
                     }

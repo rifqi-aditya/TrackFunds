@@ -6,5 +6,4 @@ sealed interface SettingsSideEffect {
     data object NavigateToManageCategories : SettingsSideEffect
     data object NavigateToSecurity : SettingsSideEffect
     data object NavigateToLogin : SettingsSideEffect
-    data object ShowThemePicker : SettingsSideEffect
 }

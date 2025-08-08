@@ -11,19 +11,11 @@ import javax.inject.Inject
 class ValidateEmail @Inject constructor() {
     operator fun invoke(email: String): ValidationResult {
         if (email.isBlank()) {
-            return ValidationResult(
-                isSuccess = false,
-                errorMessage = "Email can't be empty."
-            )
+            return ValidationResult(false, "Email cannot be empty.")
         }
-
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            return ValidationResult(
-                isSuccess = false,
-                errorMessage = "Invalid email format."
-            )
+            return ValidationResult(false, "Please enter a valid email address.")
         }
-
-        return ValidationResult(isSuccess = true)
+        return ValidationResult(true)
     }
 }

@@ -19,4 +19,6 @@ data class AuthUiState(
     val confirmPassword: String = "",
     val confirmPasswordError: String? = null,
     val isPasswordVisible: Boolean = false,
+
+    val generalError: String? = null,
 )

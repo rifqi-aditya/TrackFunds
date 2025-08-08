@@ -99,6 +99,8 @@ dependencies {
     // Google ML Kit Text Recognition
     implementation(libs.text.recognition)
 
+    implementation("at.favre.lib:bcrypt:0.10.2")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

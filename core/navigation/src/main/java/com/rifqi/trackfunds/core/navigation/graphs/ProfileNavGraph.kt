@@ -4,11 +4,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.rifqi.trackfunds.core.navigation.api.Auth
 import com.rifqi.trackfunds.core.navigation.api.ProfileGraph
 import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
 import com.rifqi.trackfunds.feature.home.ui.settings.SettingsScreen
-import com.rifqi.trackfunds.feature.profile.screen.ProfileScreen
+import com.rifqi.trackfunds.feature.home.ui.profile.edit.EditProfileScreen
+import com.rifqi.trackfunds.feature.home.ui.profile.ProfileScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation<ProfileGraph>(
@@ -20,17 +20,17 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 onNavigate = { screen ->
                     navController.navigate(screen)
                 },
-                onNavigateToLogin = {
-                    navController.navigate(Auth) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                }
             )
         }
         composable<ProfileRoutes.Settings> {
             SettingsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigate = { screen -> navController.navigate(screen) }
+            )
+        }
+        composable<ProfileRoutes.EditProfile> {
+            EditProfileScreen(
+                onNavigateBack = { navController.popBackStack() },
             )
         }
     }

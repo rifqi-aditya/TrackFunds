@@ -1,64 +1,64 @@
 package com.rifqi.trackfunds.core.data.repository
 
-import com.google.firebase.auth.FirebaseAuth
+import at.favre.lib.crypto.bcrypt.BCrypt
+import com.rifqi.trackfunds.core.data.local.dao.UserDao
+import com.rifqi.trackfunds.core.data.local.entity.UserEntity
+import com.rifqi.trackfunds.core.domain.auth.exception.AuthException
 import com.rifqi.trackfunds.core.domain.auth.repository.AuthRepository
 import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
-import kotlinx.coroutines.tasks.await
+import com.rifqi.trackfunds.core.domain.user.usecase.ValidateFullName
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
-    private val auth: FirebaseAuth,
+    private val userDao: UserDao,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : AuthRepository {
 
-    /**
-     * Mencoba untuk login dengan email dan password.
-     * Jika berhasil, simpan UID ke DataStore.
-     * Mengembalikan Result.success atau Result.failure dengan exception.
-     */
     override suspend fun login(email: String, pass: String): Result<Unit> {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, pass).await()
-            val uid = result.user?.uid
-            if (uid != null) {
-                userPreferencesRepository.saveUserUid(uid)
-                Result.success(Unit)
-            } else {
-                Result.failure(Exception("Failed to get user ID."))
+        return runCatching {
+            val user = userDao.getUserByEmail(email)
+                ?: throw AuthException("Invalid email or password.")
+
+            val result = BCrypt.verifyer().verify(pass.toCharArray(), user.hashedPassword)
+            if (!result.verified) {
+                throw AuthException("Invalid email or password.")
             }
-        } catch (e: Exception) {
-            Result.failure(e)
+
+            userPreferencesRepository.saveUserUid(user.uid)
         }
     }
 
-    /**
-     * Mencoba untuk mendaftarkan pengguna baru dengan email dan password.
-     * Jika berhasil, simpan UID ke DataStore.
-     * Mengembalikan Result.success atau Result.failure dengan exception.
-     */
-    override suspend fun register(email: String, pass: String): Result<String> {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, pass).await()
-            val uid = result.user?.uid
-            if (uid != null) {
-                userPreferencesRepository.saveUserUid(uid) // Tetap simpan sesi
-                Result.success(uid) // Kembalikan UID jika berhasil
-            } else {
-                Result.failure(Exception("Failed to get user ID after registration."))
+    override suspend fun register(email: String, pass: String, fullName: String): Result<String> {
+        return runCatching {
+            if (userDao.getUserByEmail(email) != null) {
+                throw AuthException("Email is already registered.")
             }
-        } catch (e: Exception) {
-            Result.failure(e)
+
+            val hashedPassword = BCrypt.withDefaults().hashToString(12, pass.toCharArray())
+            val newUid = UUID.randomUUID().toString()
+
+            val newUser = UserEntity(
+                uid = newUid,
+                email = email,
+                hashedPassword = hashedPassword,
+                fullName = fullName,
+                photoUrl = null,
+                phoneNumber = null,
+                birthdate = null
+            )
+
+            userDao.upsert(newUser)
+
+            userPreferencesRepository.saveUserUid(newUid)
+            newUid
         }
     }
 
-    /**
-     * Melakukan logout dari Firebase dan menghapus sesi UID dari DataStore.
-     */
     override suspend fun logout(): Result<Unit> {
         return runCatching {
-            auth.signOut()
             userPreferencesRepository.clearUserUid()
         }
     }

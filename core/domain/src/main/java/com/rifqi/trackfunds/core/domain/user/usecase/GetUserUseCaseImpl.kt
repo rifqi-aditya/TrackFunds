@@ -9,6 +9,6 @@ class GetUserUseCaseImpl @Inject constructor(
     private val userRepository: UserRepository
 ) : GetUserUseCase {
     override operator fun invoke(): Flow<User?> {
-        return userRepository.getUser()
+        return userRepository.observeProfile()
     }
 }

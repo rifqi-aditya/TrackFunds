@@ -40,25 +40,27 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.inputfield.GeneralTextInputField
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.auth.event.AuthEvent
+import com.rifqi.trackfunds.feature.auth.sideeffect.AuthSideEffect
 import com.rifqi.trackfunds.feature.auth.state.AuthMode
 import com.rifqi.trackfunds.feature.auth.state.AuthUiState
 import com.rifqi.trackfunds.feature.auth.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(
-    onNavigateToHome: (AppScreen) -> Unit,
+    onNavigate: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect { screen ->
-            onNavigateToHome(screen)
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is AuthSideEffect.NavigateToHome -> onNavigate()
+            }
         }
     }
 

@@ -70,8 +70,15 @@ class SettingsViewModel @Inject constructor(
                 SettingsEvent.ManageAccountsClicked -> _sideEffect.send(SettingsSideEffect.NavigateToManageAccounts)
                 SettingsEvent.ManageCategoriesClicked -> _sideEffect.send(SettingsSideEffect.NavigateToManageCategories)
                 SettingsEvent.SecurityClicked -> _sideEffect.send(SettingsSideEffect.NavigateToSecurity)
-                SettingsEvent.ThemeItemClicked -> _sideEffect.send(SettingsSideEffect.ShowThemePicker)
-                is SettingsEvent.ThemeChanged -> setThemePreferenceUseCase(event.theme)
+                SettingsEvent.ThemeItemClicked -> {
+                    _uiState.update { it.copy(showThemePickerDialog = true) }
+                }
+
+                is SettingsEvent.ThemeChanged -> {
+                    setThemePreferenceUseCase(event.theme)
+                    _uiState.update { it.copy(showThemePickerDialog = false) }
+                }
+
                 SettingsEvent.LogoutClicked -> _uiState.update { it.copy(showLogoutConfirmDialog = true) }
                 SettingsEvent.DismissLogoutDialog -> _uiState.update {
                     it.copy(
@@ -95,6 +102,10 @@ class SettingsViewModel @Inject constructor(
                                 _uiState.update { it.copy(isLoading = false) }
                             }
                     }
+                }
+
+                SettingsEvent.DismissThemeDialog -> {
+                    _uiState.update { it.copy(showThemePickerDialog = false) }
                 }
             }
         }

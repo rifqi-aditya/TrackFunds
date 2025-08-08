@@ -9,11 +9,8 @@ import javax.inject.Inject
 class ValidateConfirmPassword @Inject constructor() {
     operator fun invoke(password: String, confirmPassword: String): ValidationResult {
         if (password != confirmPassword) {
-            return ValidationResult(
-                isSuccess = false,
-                errorMessage = "Passwords do not match."
-            )
+            return ValidationResult(false, "Passwords do not match.")
         }
-        return ValidationResult(isSuccess = true)
+        return ValidationResult(true)
     }
 }

@@ -40,8 +40,8 @@ import com.rifqi.trackfunds.core.domain.transaction.usecase.DeleteTransactionUse
 import com.rifqi.trackfunds.core.domain.transaction.usecase.DeleteTransactionUseCaseImpl
 import com.rifqi.trackfunds.core.domain.transaction.usecase.UpdateTransactionUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.UpdateTransactionUseCaseImpl
-import com.rifqi.trackfunds.core.domain.user.usecase.UpdateUserProfileUseCase
-import com.rifqi.trackfunds.core.domain.user.usecase.UpdateUserProfileUseCaseImpl
+import com.rifqi.trackfunds.core.domain.user.usecase.UpdateUserUseCase
+import com.rifqi.trackfunds.core.domain.user.usecase.UpdateUserUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -68,7 +68,7 @@ abstract class ViewModelScopedUseCaseModule {
     // --- User Use Cases ---
     @Binds
     @ViewModelScoped
-    abstract fun bindUpdateUserProfileUseCase(impl: UpdateUserProfileUseCaseImpl): UpdateUserProfileUseCase
+    abstract fun bindUpdateUserProfileUseCase(impl: UpdateUserUseCaseImpl): UpdateUserUseCase
 
     // --- Category Use Cases (Actions) ---
     @Binds

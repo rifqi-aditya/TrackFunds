@@ -12,4 +12,5 @@ sealed interface SettingsEvent {
     data object LogoutClicked : SettingsEvent
     data object ConfirmLogoutClicked : SettingsEvent
     data object DismissLogoutDialog : SettingsEvent
+    data object DismissThemeDialog : SettingsEvent
 }

@@ -46,7 +46,6 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:account"))
-    implementation(project(":feature:profile"))
     implementation(project(":feature:transaction"))
     implementation(project(":feature:budget"))
     implementation(project(":feature:scan"))

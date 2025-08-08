@@ -18,7 +18,6 @@ class UserSessionProviderImpl @Inject constructor(
     }
 
     override suspend fun getUid(): String {
-        // Ambil UID sekali, jika null, lempar exception khusus
         return userPreferencesRepository.userUid.first()
             ?: throw AuthRequiredException()
     }

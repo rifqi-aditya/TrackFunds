@@ -1,5 +1,7 @@
 package com.rifqi.trackfunds.core.domain.auth.usecase
 
+import com.rifqi.trackfunds.core.domain.auth.model.RegisterParams
+
 interface RegisterUseCase {
-    suspend operator fun invoke(email: String, pass: String, fullName: String): Result<Unit>
+    suspend operator fun invoke(params: RegisterParams): Result<String>
 }

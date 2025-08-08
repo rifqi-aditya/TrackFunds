@@ -119,6 +119,9 @@ sealed interface ProfileRoutes : AppScreen {
     data object Profile : ProfileRoutes
 
     @Serializable
+    data object EditProfile : ProfileRoutes
+
+    @Serializable
     data object Settings : ProfileRoutes
 
     @Serializable

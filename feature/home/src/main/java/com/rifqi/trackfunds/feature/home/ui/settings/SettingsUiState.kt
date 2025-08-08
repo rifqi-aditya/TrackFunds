@@ -8,5 +8,6 @@ data class SettingsUiState(
     val userEmail: String = "",
     val appTheme: AppTheme = AppTheme.SYSTEM,
     val appVersion: String = "1.0.0",
-    val showLogoutConfirmDialog: Boolean = false
+    val showLogoutConfirmDialog: Boolean = false,
+    val showThemePickerDialog: Boolean = false
 )

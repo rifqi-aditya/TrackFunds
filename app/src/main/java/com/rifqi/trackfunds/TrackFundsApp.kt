@@ -10,7 +10,6 @@ import dagger.hilt.android.HiltAndroidApp
 class TrackFundsApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Inisialisasi Firebase
         FirebaseApp.initializeApp(this)
 
         // Inisialisasi App Check
