@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.domain.transaction.repository
 
-import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
@@ -9,7 +9,7 @@ interface TransactionRepository {
      * Retrieves a filtered list of transactions.
      * This is the main function to get transactions based on various criteria.
      */
-    fun getFilteredTransactions(filter: TransactionFilter, userUid: String): Flow<List<Transaction>>
+    fun getFilteredTransactions(filter: TransactionFilter): Flow<List<Transaction>>
 
     /**
      * Retrieves a single transaction by its ID.

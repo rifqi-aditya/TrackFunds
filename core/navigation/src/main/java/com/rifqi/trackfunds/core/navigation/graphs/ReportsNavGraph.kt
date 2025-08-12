@@ -6,14 +6,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.ReportRoutes
 import com.rifqi.trackfunds.core.navigation.api.ReportsGraph
-import com.rifqi.trackfunds.feature.reports.ui.screen.ReportScreen
+import com.rifqi.trackfunds.feature.reports.ui.screen.ReportsScreen
 
 fun NavGraphBuilder.reportsNavGraph(navController: NavHostController) {
     navigation<ReportsGraph>(
         startDestination = ReportRoutes.Report,
     ) {
         composable<ReportRoutes.Report> {
-            ReportScreen()
+            ReportsScreen(
+            )
         }
     }
 }

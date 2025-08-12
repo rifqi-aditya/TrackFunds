@@ -3,11 +3,11 @@ package com.rifqi.trackfunds.feature.transaction.ui.filter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
-import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
+import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
+import com.rifqi.trackfunds.core.domain.common.model.DateRangeOption
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,77 +37,35 @@ class FilterTransactionViewModel @Inject constructor(
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     init {
+        // Ambil filter yang ada saat ini dari layar sebelumnya
         val initialFilter = resultManager.argument.value as? TransactionFilter
-
-
         if (initialFilter != null) {
-            // 2. Terjemahkan filter tanggal menjadi pilihan yang sesuai
-            val (initialDateOption, customStart, customEnd) = determineDateOptionFrom(initialFilter)
-
-            // 3. Jika ada, gunakan untuk mengisi state awal
+            // Langsung terapkan state dari filter yang ada
             _uiState.update {
                 it.copy(
                     selectedCategoryIds = initialFilter.categoryIds?.toSet() ?: emptySet(),
                     selectedAccountIds = initialFilter.accountIds?.toSet() ?: emptySet(),
-                    selectedDateOption = initialDateOption,
-                    customStartDate = customStart,
-                    customEndDate = customEnd
+                    // Anda perlu menambahkan `dateOption` ke TransactionFilter Anda
+                    // selectedDateOption = initialFilter.dateOption
                 )
             }
-            // 4. Bersihkan titipan agar tidak dipakai lagi jika pengguna kembali
             resultManager.setArgument(null)
         }
-
-        loadInitialData()
+        loadChoiceData()
     }
 
-    private fun determineDateOptionFrom(filter: TransactionFilter): Triple<DateRangeOption, LocalDate?, LocalDate?> {
-        val today = LocalDate.now()
-        val startDate = filter.startDate
-        val endDate = filter.endDate
-
-        return when {
-            startDate == null && endDate == null -> Triple(DateRangeOption.ALL_TIME, null, null)
-            startDate == today && endDate == today -> Triple(DateRangeOption.TODAY, null, null)
-            startDate == today.minusDays(6) && endDate == today -> Triple(
-                DateRangeOption.LAST_7_DAYS,
-                null,
-                null
-            )
-
-            startDate == today.minusMonths(1).plusDays(1) && endDate == today -> Triple(
-                DateRangeOption.LAST_30_DAYS,
-                null,
-                null
-            )
-
-            startDate == today.minusMonths(3).plusDays(1) && endDate == today -> Triple(
-                DateRangeOption.LAST_90_DAYS,
-                null,
-                null
-            )
-            // Jika tidak cocok dengan pola di atas, anggap sebagai kustom
-            else -> Triple(DateRangeOption.CUSTOM, startDate, endDate)
-        }
-    }
-
-    private fun loadInitialData() {
+    private fun loadChoiceData() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             combine(
-                getFilteredCategoriesUseCase(
-                    filter = CategoryFilter()
-                ),
+                getFilteredCategoriesUseCase(CategoryFilter()),
                 getAccountsUseCase()
             ) { categories, accounts ->
                 _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        allCategories = categories,
-                        allAccounts = accounts
-                    )
+                    it.copy(isLoading = false, allCategories = categories, allAccounts = accounts)
                 }
             }.catch { e ->
-                _uiState.update { it.copy(isLoading = false) }
+                _uiState.update { it.copy(isLoading = false, error = e.message) }
             }.collect()
         }
     }
@@ -169,7 +129,7 @@ class FilterTransactionViewModel @Inject constructor(
                     it.copy(
                         selectedCategoryIds = emptySet(),
                         selectedAccountIds = emptySet(),
-                        selectedDateOption = DateRangeOption.LAST_30_DAYS,
+                        selectedDateOption = DateRangeOption.THIS_MONTH,
                         customStartDate = null,
                         customEndDate = null
                     )
@@ -180,7 +140,7 @@ class FilterTransactionViewModel @Inject constructor(
 
     private fun applyFilterAndNavigateBack() {
         val state = _uiState.value
-        val (startDate, endDate) = calculateDateRange()
+        val (startDate, endDate) = calculateDateRange(state)
         val finalFilter = TransactionFilter(
             categoryIds = state.selectedCategoryIds.toList().ifEmpty { null },
             accountIds = state.selectedAccountIds.toList().ifEmpty { null },
@@ -195,16 +155,20 @@ class FilterTransactionViewModel @Inject constructor(
         }
     }
 
-    private fun calculateDateRange(): Pair<LocalDate?, LocalDate?> {
+    private fun calculateDateRange(state: FilterTransactionUiState): Pair<LocalDate?, LocalDate?> {
         val today = LocalDate.now()
-        val state = _uiState.value
         return when (state.selectedDateOption) {
-            DateRangeOption.ALL_TIME -> Pair(null, null)
-            DateRangeOption.TODAY -> Pair(today, today)
-            DateRangeOption.LAST_7_DAYS -> Pair(today.minusDays(6), today)
-            DateRangeOption.LAST_30_DAYS -> Pair(today.minusMonths(1).plusDays(1), today)
-            DateRangeOption.LAST_90_DAYS -> Pair(today.minusMonths(3).plusDays(1), today)
-            DateRangeOption.CUSTOM -> Pair(state.customStartDate, state.customEndDate)
+            DateRangeOption.THIS_WEEK -> today.with(DayOfWeek.MONDAY) to today
+            DateRangeOption.THIS_MONTH -> today.withDayOfMonth(1) to today.with(TemporalAdjusters.lastDayOfMonth())
+            DateRangeOption.LAST_MONTH -> today.minusMonths(1).withDayOfMonth(1).let {
+                it to it.with(
+                    TemporalAdjusters.lastDayOfMonth()
+                )
+            }
+
+            DateRangeOption.THIS_YEAR -> today.withDayOfYear(1) to today.with(TemporalAdjusters.lastDayOfYear())
+            DateRangeOption.ALL_TIME -> null to null
+            DateRangeOption.CUSTOM -> state.customStartDate to state.customEndDate
         }
     }
 }

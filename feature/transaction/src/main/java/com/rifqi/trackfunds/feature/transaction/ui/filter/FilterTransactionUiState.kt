@@ -1,8 +1,8 @@
 package com.rifqi.trackfunds.feature.transaction.ui.filter
 
-import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.common.model.DateRangeOption
 import java.time.LocalDate
 
 /**
@@ -10,6 +10,7 @@ import java.time.LocalDate
  */
 data class FilterTransactionUiState(
     val isLoading: Boolean = true,
+    val error: String? = null,
     val allCategories: List<Category> = emptyList(),
     val allAccounts: List<Account> = emptyList(),
 
@@ -17,7 +18,7 @@ data class FilterTransactionUiState(
     val selectedCategoryIds: Set<String> = emptySet(),
     val selectedAccountIds: Set<String> = emptySet(),
     val selectedDateRange: Pair<LocalDate?, LocalDate?> = Pair(null, null),
-    val selectedDateOption: DateRangeOption = DateRangeOption.LAST_30_DAYS,
+    val selectedDateOption: DateRangeOption = DateRangeOption.THIS_MONTH,
     val customStartDate: LocalDate? = null,
     val customEndDate: LocalDate? = null,
     val showDatePicker: Boolean = false

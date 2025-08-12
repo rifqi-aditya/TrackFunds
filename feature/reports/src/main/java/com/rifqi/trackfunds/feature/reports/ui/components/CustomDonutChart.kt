@@ -2,10 +2,14 @@ package com.rifqi.trackfunds.feature.reports.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +38,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -42,263 +49,381 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rifqi.trackfunds.core.domain.common.model.CategorySpending
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
+import com.rifqi.trackfunds.feature.reports.ui.state.CategorySummaryUiModel
 import java.math.BigDecimal
+import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
-private val chartColors = listOf(
-    Color(0xFF358AC8), Color(0xFF59C4B0), Color(0xFFF56666),
-    Color(0xFF8378D1), Color(0xFFFFCA28), Color(0xFF4CAF50),
-    Color(0xFF9E9E9E)
-)
 
 @Composable
 fun CustomDonutChart(
-    data: List<CategorySpending>,
-    modifier: Modifier = Modifier
+    data: List<CategorySummaryUiModel>,
+    modifier: Modifier = Modifier,
 ) {
     if (data.isEmpty()) {
         Box(
             modifier
                 .fillMaxWidth()
-                .padding(32.dp), contentAlignment = Alignment.Center
+                .padding(32.dp),
+            contentAlignment = Alignment.Center
         ) {
             Text("No expense data for this period.")
         }
         return
     }
 
-    val totalExpense = remember(data) { data.sumOf { it.totalAmount } }
+    // Samakan sumber warna (legend & slice) → gunakan mapping deterministik default-nya
+    val entries = data // sudah berwarna dari VM
+
+
+    val totalAmount = remember(entries) {
+        entries.fold(BigDecimal.ZERO) { acc, x -> acc + x.totalAmount }
+    }
+
     var selectedIndex by remember { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Box untuk Chart Donat
+        // Chart + label tengah
         Box(
             modifier = Modifier
                 .padding(8.dp)
-                .size(200.dp),
+                .size(220.dp),
             contentAlignment = Alignment.Center
         ) {
-            // Teks di tengah Donat
+            // label tengah: total atau detail slice terpilih
+            val centerTitle =
+                if (selectedIndex == null) "Total" else entries[selectedIndex!!].categoryName
+            val centerValue =
+                if (selectedIndex == null) totalAmount else entries[selectedIndex!!].totalAmount
+
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Total", style = MaterialTheme.typography.bodyMedium)
+                Text(centerTitle, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    text = formatCurrency(totalExpense),
+                    text = formatCurrency(centerValue),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            // Canvas untuk menggambar Donat
             DonutChartCanvas(
-                data = data,
-                totalValue = totalExpense,
-                selectedIndex = selectedIndex
+                data = entries,
+                totalValue = totalAmount,
+                selectedIndex = selectedIndex,
+                onSliceClick = { idx -> selectedIndex = if (selectedIndex == idx) null else idx }
             )
         }
-        
-        Spacer(modifier = Modifier.height(24.dp))
 
+        Spacer(Modifier.height(16.dp))
+
+        // Legend
         ChartLegend(
-            data = data,
-            totalValue = totalExpense,
-            onItemClick = { index ->
-                selectedIndex = if (selectedIndex == index) null else index
-            }
+            data = entries,
+            selectedIndex = selectedIndex,
+            onItemClick = { idx -> selectedIndex = if (selectedIndex == idx) null else idx }
         )
     }
 }
 
+/* =========================
+   CANVAS & HIT TEST
+   ========================= */
 
 @Composable
 private fun DonutChartCanvas(
-    data: List<CategorySpending>,
+    data: List<CategorySummaryUiModel>,
     totalValue: BigDecimal,
-    selectedIndex: Int?
+    selectedIndex: Int?,
+    onSliceClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val animatedProgress = remember { Animatable(0f) }
+    val animSweep = remember { Animatable(0f) }
 
+    // animasi masuk
     LaunchedEffect(data) {
-        animatedProgress.animateTo(1f, animationSpec = tween(durationMillis = 1000))
+        animSweep.snapTo(0f)
+        animSweep.animateTo(1f, animationSpec = tween(900))
     }
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val strokeWidth = 40f
+    val density = LocalDensity.current
+    val baseStroke = with(density) { 20.dp.toPx() }
+    val selectedStroke = with(density) { 20.dp.toPx() }
+    val explodeOffsetPx = with(density) { 8.dp.toPx() }
+
+    // proporsi per-slice
+    val proportions = remember(data, totalValue) {
+        if (totalValue <= BigDecimal.ZERO) {
+            List(data.size) { 0f }
+        } else {
+            data.map { (it.totalAmount.toDouble() / totalValue.toDouble()).toFloat() }
+        }
+    }
+
+    // ----- 🔸 Animasi di LUAR Canvas: alpha & highlight per-slice -----
+    val targetAlphas = remember(selectedIndex, data) {
+        data.indices.map { idx ->
+            if (selectedIndex == null || selectedIndex == idx) 1f else 0.35f
+        }
+    }
+    val alphas = targetAlphas.mapIndexed { idx, target ->
+        val state by animateFloatAsState(
+            targetValue = target,
+            animationSpec = tween(200),
+            label = "alpha_$idx"
+        )
+        state
+    }
+
+    val targetHighlights = remember(selectedIndex, data) {
+        data.indices.map { idx -> if (selectedIndex == idx) 1f else 0f }
+    }
+    val highlights = targetHighlights.mapIndexed { idx, target ->
+        val state by animateFloatAsState(
+            targetValue = target,
+            animationSpec = tween(200),
+            label = "highlight_$idx"
+        )
+        state
+    }
+    // ------------------------------------------------------------------
+
+    // precompute angle starts untuk hit-test
+    val sweepsFull = remember(proportions) { proportions.map { it * 360f } }
+    val cumStarts = remember(sweepsFull) {
+        val acc = ArrayList<Float>(sweepsFull.size)
+        var s = -90f // mulai jam 12
+        for (w in sweepsFull) {
+            acc.add(s)
+            s += w
+        }
+        acc
+    }
+
+    // pointer input untuk deteksi klik slice
+    var canvasSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
+
+    Canvas(
+        modifier = modifier
+            .fillMaxSize()
+            .pointerInput(data, cumStarts, sweepsFull, onSliceClick) {
+                detectTapGestures { offset ->
+                    if (totalValue <= BigDecimal.ZERO) return@detectTapGestures
+
+                    val center = Offset(canvasSize.width / 2f, canvasSize.height / 2f)
+                    val dx = offset.x - center.x
+                    val dy = offset.y - center.y
+                    val r = hypot(dx, dy)
+
+                    val outerR = min(canvasSize.width, canvasSize.height) / 2f
+                    val innerR = outerR - baseStroke
+
+                    // tap harus di ring
+                    if (r < innerR || r > outerR) return@detectTapGestures
+
+                    // konversi ke sudut derajat sumbu jam 12
+                    var angle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat() + 90f
+                    if (angle < 0f) angle += 360f
+
+                    // cari slice
+                    cumStarts.forEachIndexed { idx, start ->
+                        val sweep = sweepsFull[idx]
+                        val end = start + sweep
+                        val normAngle = angle // sudah 0..360
+                        if (normAngle in start..end) {
+                            onSliceClick(idx)
+                            return@detectTapGestures
+                        }
+                    }
+                }
+            }
+    ) {
+        canvasSize = size
+
+        val outerR = min(size.width, size.height) / 2f
+        val innerR = outerR - baseStroke
         var startAngle = -90f
 
         data.forEachIndexed { index, item ->
             if (totalValue > BigDecimal.ZERO) {
-                val proportion = item.totalAmount.toFloat() / totalValue.toFloat()
-                val sweepAngle = proportion * 360f * animatedProgress.value
-                val alpha = if (selectedIndex == null || selectedIndex == index) 1f else 0.3f
-                val color = chartColors[index % chartColors.size].copy(alpha = alpha)
+                val proportion = proportions.getOrElse(index) { 0f }
+                val sweepAngle = proportion * 360f * animSweep.value
 
-                // Gambar irisan donat
-                drawArc(
-                    color = color,
-                    startAngle = startAngle,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    style = Stroke(width = strokeWidth, cap = StrokeCap.Butt)
-                )
+                val alpha = alphas[index]
+                val highlight = highlights[index]
+                val stroke = baseStroke + (selectedStroke - baseStroke) * highlight
 
-                // Tampilkan hanya untuk irisan yang cukup besar
-                if (sweepAngle > 10) {
-                    // Tentukan sudut tengah dari irisan untuk menempatkan garis dan teks
-                    val angleInRadians = Math.toRadians(startAngle + sweepAngle / 2.0)
+                // offset keluar (explode) untuk slice terpilih
+                val midAngle = startAngle + sweepAngle / 2f
+                val rad = Math.toRadians(midAngle.toDouble())
+                val dx = (cos(rad) * explodeOffsetPx * highlight).toFloat()
+                val dy = (sin(rad) * explodeOffsetPx * highlight).toFloat()
 
-                    // Titik awal garis (di tengah-tengah tebalnya irisan donat)
-                    val lineStartRadius = (size.width / 2) - (strokeWidth / 2)
-                    val lineStartX = center.x + (lineStartRadius * cos(angleInRadians)).toFloat()
-                    val lineStartY = center.y + (lineStartRadius * sin(angleInRadians)).toFloat()
+                // gambar arc
+                withTransform({
+                    translate(left = dx, top = dy)
+                }) {
+                    drawArc(
+                        color = item.color.copy(alpha = alpha),
+                        startAngle = startAngle,
+                        sweepAngle = sweepAngle,
+                        useCenter = false,
+                        style = Stroke(width = stroke, cap = StrokeCap.Butt)
+                    )
+                }
 
-                    // Titik tengah garis (belokan)
-                    val lineMiddleRadius = (size.width / 2) + 20.dp.toPx()
-                    val lineMiddleX = center.x + (lineMiddleRadius * cos(angleInRadians)).toFloat()
-                    val lineMiddleY = center.y + (lineMiddleRadius * sin(angleInRadians)).toFloat()
+                // label garis & persentase (hanya untuk slice cukup besar)
+                if (sweepAngle > 12f) {
+                    val angleRad = Math.toRadians((startAngle + sweepAngle / 2f).toDouble())
 
-                    // Titik akhir garis (horizontal)
+                    val lineStartRadius = innerR + (baseStroke / 2f)
+                    val lineStartX = center.x + (lineStartRadius * cos(angleRad)).toFloat() + dx
+                    val lineStartY = center.y + (lineStartRadius * sin(angleRad)).toFloat() + dy
+
+                    val lineMiddleRadius = outerR + 16.dp.toPx()
+                    val lineMiddleX = center.x + (lineMiddleRadius * cos(angleRad)).toFloat() + dx
+                    val lineMiddleY = center.y + (lineMiddleRadius * sin(angleRad)).toFloat() + dy
+
                     val lineEndX =
-                        if (cos(angleInRadians) > 0) lineMiddleX + 10.dp.toPx() else lineMiddleX - 10.dp.toPx()
+                        if (cos(angleRad) > 0) lineMiddleX + 10.dp.toPx() else lineMiddleX - 10.dp.toPx()
 
-                    // Gambar garis penunjuk
+                    // garis
                     drawLine(
-                        color = color,
+                        color = item.color.copy(alpha = alpha),
                         start = Offset(lineStartX, lineStartY),
                         end = Offset(lineMiddleX, lineMiddleY),
                         strokeWidth = 1.5.dp.toPx()
                     )
                     drawLine(
-                        color = color,
+                        color = item.color.copy(alpha = alpha),
                         start = Offset(lineMiddleX, lineMiddleY),
                         end = Offset(lineEndX, lineMiddleY),
                         strokeWidth = 1.5.dp.toPx()
                     )
 
-                    // Siapkan dan gambar teks persentase
-                    val percentage = (proportion * 100)
-                    val labelText = "${"%.0f".format(percentage)}%"
-                    val textLayoutResult = textMeasurer.measure(
+                    // teks persentase
+                    val pct = (proportion * 100f)
+                    val labelText = "${pct.roundToInt()}%"
+                    val layout = textMeasurer.measure(
                         text = AnnotatedString(labelText),
                         style = TextStyle(
-                            color = color,
+                            color = item.color.copy(alpha = alpha),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
 
-                    val angleDegrees = Math.toDegrees(angleInRadians)
-
-                    val textX = when {
-                        angleDegrees in -90.0..90.0 -> {
-                            lineEndX + 2.dp.toPx()
-                        }
-
-                        else -> { // Kuadran kiri
-                            lineEndX - textLayoutResult.size.width - 2.dp.toPx()
-                        }
+                    val angleDeg = Math.toDegrees(angleRad)
+                    val textX = if (angleDeg in -90.0..90.0) {
+                        lineEndX + 2.dp.toPx()
+                    } else {
+                        lineEndX - layout.size.width - 2.dp.toPx()
                     }
-
-                    val textY = lineMiddleY - (textLayoutResult.size.height / 2)
+                    val textY = lineMiddleY - (layout.size.height / 2f)
 
                     drawText(
-                        textLayoutResult = textLayoutResult,
-                        topLeft = Offset(x = textX, y = textY)
+                        textLayoutResult = layout,
+                        topLeft = Offset(textX, textY)
                     )
                 }
 
-                startAngle += sweepAngle
+                startAngle += proportion * 360f
             }
         }
     }
 }
 
+/* =========================
+   LEGEND
+   ========================= */
+
 @Composable
 private fun ChartLegend(
-    data: List<CategorySpending>,
-    totalValue: BigDecimal,
+    data: List<CategorySummaryUiModel>,
+    selectedIndex: Int?,
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         itemsIndexed(data) { index, item ->
-
-            // Setiap item legenda sekarang adalah satu unit yang bisa diklik
+            val selected = selectedIndex == index
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { onItemClick(index) }
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onItemClick(index) }
+                    .padding(vertical = 6.dp)
             ) {
-                // Kotak warna (dot)
                 Box(
                     modifier = Modifier
-                        .size(8.dp)
-                        .background(
-                            chartColors[index % chartColors.size],
+                        .size(if (selected) 12.dp else 8.dp)
+                        .background(item.color, CircleShape)
+                        .border(
+                            width = if (selected) 1.5.dp else 0.dp,
+                            color = if (selected) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f) else Color.Transparent,
                             shape = CircleShape
                         )
                 )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Teks nama kategori
-                Text(item.categoryName, style = MaterialTheme.typography.bodyMedium)
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                // Teks persentase
-                if (totalValue > BigDecimal.ZERO) {
-                    val percentage = (item.totalAmount.toFloat() / totalValue.toFloat()) * 100
-                    Text(
-                        text = "(${"%.0f".format(percentage)}%)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = item.categoryName,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                        color = if (selected) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
-                }
+                )
             }
         }
     }
-
 }
 
-// --- DUMMY DATA UNTUK PREVIEW ---
+/* =========================
+   PREVIEW
+   ========================= */
+
 private val previewSpendingData = listOf(
-    CategorySpending("Makan & Minum", BigDecimal("1250000")),
-    CategorySpending("Transportasi", BigDecimal("600000")),
-    CategorySpending("Belanja", BigDecimal("850000")),
-    CategorySpending("Tagihan", BigDecimal("450000"))
+    CategorySummaryUiModel("Food", BigDecimal(1500), 0.30f, Color(0xFF358AC8)),
+    CategorySummaryUiModel("Transport", BigDecimal(1000), 0.20f, Color(0xFF59C4B0)),
+    CategorySummaryUiModel("Fun", BigDecimal(500), 0.10f, Color(0xFFF56666)),
+    CategorySummaryUiModel("Utilities", BigDecimal(2000), 0.40f, Color(0xFF8378D1)),
 )
 
-// --- FUNGSI PREVIEW ---
-
-@Preview(name = "Donut Chart - Light Mode", showBackground = true)
+@Preview(name = "Donut Chart - Light", showBackground = true)
 @Preview(
-    name = "Donut Chart - Dark Mode",
+    name = "Donut Chart - Dark",
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun CustomDonutChartPreview() {
     TrackFundsTheme {
-        CustomDonutChart(data = previewSpendingData)
+        CustomDonutChart(
+            data = previewSpendingData,
+        )
     }
 }
 
-@Preview(name = "Donut Chart - No Data", showBackground = true)
+@Preview(name = "Donut Chart - Empty", showBackground = true)
 @Composable
 private fun CustomDonutChartEmptyPreview() {
     TrackFundsTheme {
-        // Berikan list kosong untuk melihat tampilan "No data"
         CustomDonutChart(data = emptyList())
     }
 }

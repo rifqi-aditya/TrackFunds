@@ -4,10 +4,11 @@ import com.rifqi.trackfunds.core.data.local.dao.TransactionDao
 import com.rifqi.trackfunds.core.data.local.dao.TransactionItemDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
+import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
+import com.rifqi.trackfunds.core.domain.common.repository.UserSessionProvider
 import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.repository.TransactionRepository
-import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -22,25 +23,35 @@ import javax.inject.Singleton
 class TransactionRepositoryImpl @Inject constructor(
     private val transactionDao: TransactionDao,
     private val transactionItemDao: TransactionItemDao,
+    private val sessionProvider: UserSessionProvider,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : TransactionRepository {
 
-    override fun getFilteredTransactions(
-        filter: TransactionFilter,
-        userUid: String
-    ): Flow<List<Transaction>> = transactionDao.getFilteredTransactions(
-        userUid = userUid,
-        searchQuery = filter.searchQuery.takeIf { it.isNotBlank() }?.let { "%$it%" },
-        type = filter.type?.name,
-        accountIds = filter.accountIds,
-        hasAccountIds = !filter.accountIds.isNullOrEmpty(),
-        categoryIds = filter.categoryIds,
-        hasCategoryIds = !filter.categoryIds.isNullOrEmpty(),
-        startDate = filter.startDate?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
-        endDate = filter.endDate?.atTime(23, 59, 59)?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
-        limit = filter.limit ?: -1
-    ).map { dtoList ->
-        dtoList.map { it.toDomain() }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getFilteredTransactions(filter: TransactionFilter): Flow<List<Transaction>> {
+        // 1. Ambil Flow userUid dari sessionProvider
+        return sessionProvider.getUidFlow().flatMapLatest { userUid ->
+            if (userUid == null) {
+                // 2. Jika tidak ada user, kembalikan flow dengan list kosong
+                flowOf(emptyList())
+            } else {
+                // 3. Jika ada user, panggil DAO dengan userUid tersebut
+                transactionDao.getFilteredTransactions(
+                    userUid = userUid,
+                    searchQuery = filter.searchQuery.takeIf { it.isNotBlank() }?.let { "%$it%" },
+                    type = filter.type?.name,
+                    accountIds = filter.accountIds,
+                    hasAccountIds = !filter.accountIds.isNullOrEmpty(),
+                    categoryIds = filter.categoryIds,
+                    hasCategoryIds = !filter.categoryIds.isNullOrEmpty(),
+                    startDate = filter.startDate?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
+                    endDate = filter.endDate?.atTime(23, 59, 59)?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
+                    limit = filter.limit ?: -1
+                ).map { dtoList ->
+                    dtoList.map { it.toDomain() }
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

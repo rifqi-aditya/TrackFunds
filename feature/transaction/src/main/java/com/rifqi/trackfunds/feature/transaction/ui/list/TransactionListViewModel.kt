@@ -3,10 +3,10 @@ package com.rifqi.trackfunds.feature.transaction.ui.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
-import com.rifqi.trackfunds.core.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsByIdsUseCase
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoriesByIdsUseCase
+import com.rifqi.trackfunds.core.domain.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
@@ -162,33 +162,32 @@ class TransactionListViewModel @Inject constructor(
 
     private suspend fun buildActiveFilterChips(filter: TransactionFilter): List<ActiveFilterChip> {
         val chips = mutableListOf<ActiveFilterChip>()
-        val today = LocalDate.now()
 
-
-        val dateLabel = when {
-            filter.startDate == null && filter.endDate == null -> null
-            filter.startDate == today && filter.endDate == today -> DateRangeOption.TODAY.displayName
-            filter.startDate == today.minusDays(6) && filter.endDate == today -> DateRangeOption.LAST_7_DAYS.displayName
-
-            filter.startDate == today.minusMonths(1)
-                .plusDays(1) && filter.endDate == today -> DateRangeOption.LAST_30_DAYS.displayName
-
-            filter.startDate == today.minusMonths(3)
-                .plusDays(1) && filter.endDate == today -> DateRangeOption.LAST_90_DAYS.displayName
-
-            filter.startDate != null && filter.endDate != null -> {
-                // Untuk rentang tanggal kustom
-                val formatter = DateTimeFormatter.ofPattern("d MMM")
-                "${filter.startDate!!.format(formatter)} - ${filter.endDate!!.format(formatter)}"
+        // --- Logika Tanggal yang Jauh Lebih Sederhana ---
+        val dateLabel = when (filter.dateOption) {
+            DateRangeOption.CUSTOM -> {
+                val startDate = filter.startDate
+                val endDate = filter.endDate
+                // Jika custom, format tanggalnya
+                if (startDate != null && endDate != null) {
+                    val formatter = DateTimeFormatter.ofPattern("d MMM")
+                    val label = "${startDate.format(formatter)} - ${endDate.format(formatter)}"
+                } else {
+                    filter.dateOption.displayName
+                }
             }
-
-            else -> null
+            // Jangan tampilkan chip untuk "All Time" karena itu defaultnya
+            DateRangeOption.ALL_TIME -> null
+            // Untuk semua opsi lain, cukup gunakan nama dari enum
+            else -> filter.dateOption.displayName
         }
 
         if (dateLabel != null) {
-            chips.add(ActiveFilterChip("DATE_RANGE", dateLabel, FilterChipType.DATE_RANGE))
+            chips.add(ActiveFilterChip("DATE_RANGE", dateLabel.toString(), FilterChipType.DATE_RANGE))
         }
 
+
+        // Logika untuk akun dan kategori tidak perlu diubah, sudah bagus.
         filter.accountIds?.let { ids ->
             if (ids.isNotEmpty()) {
                 val accounts = getAccountsByIdsUseCase(ids)

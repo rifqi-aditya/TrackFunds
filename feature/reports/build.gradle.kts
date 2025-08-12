@@ -81,7 +81,7 @@ dependencies {
 
     implementation(libs.lottie.compose)
 
-    implementation ("io.github.ehsannarmani:compose-charts:0.1.7")
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.9")
 
     // Testing
     testImplementation(libs.junit)

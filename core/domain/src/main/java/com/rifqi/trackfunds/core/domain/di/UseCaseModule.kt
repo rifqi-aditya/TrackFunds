@@ -20,6 +20,12 @@ import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryUseCaseImpl
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCaseImpl
+import com.rifqi.trackfunds.core.domain.reports.usecase.GetCashFlowReportUseCase
+import com.rifqi.trackfunds.core.domain.reports.usecase.GetCashFlowReportUseCaseImpl
+import com.rifqi.trackfunds.core.domain.reports.usecase.GetExpenseReportUseCase
+import com.rifqi.trackfunds.core.domain.reports.usecase.GetExpenseReportUseCaseImpl
+import com.rifqi.trackfunds.core.domain.reports.usecase.GetIncomeReportUseCase
+import com.rifqi.trackfunds.core.domain.reports.usecase.GetIncomeReportUseCaseImpl
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetFilteredSavingsGoalsUseCase
@@ -138,4 +144,19 @@ abstract class UseCaseModule {
     abstract fun bindGetAppVersionUseCase(
         impl: GetAppVersionUseCaseImpl
     ): GetAppVersionUseCase
+
+    @Binds
+    abstract fun bindGetCashFlowReportUseCase(
+        impl: GetCashFlowReportUseCaseImpl
+    ): GetCashFlowReportUseCase
+
+    @Binds
+    abstract fun bindGetExpenseReportUseCase(
+        impl: GetExpenseReportUseCaseImpl
+    ): GetExpenseReportUseCase
+
+    @Binds
+    abstract fun bindGetIncomeReportUseCase(
+        impl: GetIncomeReportUseCaseImpl
+    ): GetIncomeReportUseCase
 }

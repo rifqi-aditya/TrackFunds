@@ -13,4 +13,15 @@ data class Category(
     val type: TransactionType,
     val standardKey: String? = null,
     val userUid: String? = null
-)
+) {
+    companion object {
+        fun uncategorized(): Category {
+            return Category(
+                name = "Uncategorized",
+                iconIdentifier = "ic_category_uncategorized",
+                type = TransactionType.EXPENSE,
+                standardKey = "uncategorized"
+            )
+        }
+    }
+}
