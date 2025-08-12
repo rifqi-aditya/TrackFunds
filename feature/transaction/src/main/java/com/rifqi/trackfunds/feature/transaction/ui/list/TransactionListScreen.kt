@@ -231,6 +231,7 @@ fun TransactionScreenContent(
                 }
             } else if (uiState.transactions.isEmpty()) {
                 EmptyState(
+                    modifier = Modifier.weight(1f),
                     title = uiState.emptyStateTitle ?: "Something went wrong",
                     message = uiState.emptyStateMessage ?: "Please try again later."
                 )

@@ -26,7 +26,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 
 @Composable
 fun UserProfileHeader(
@@ -41,7 +40,8 @@ fun UserProfileHeader(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = TrackFundsTheme.extendedColors.accent)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -73,12 +73,12 @@ fun UserProfileHeader(
                     userName,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = TrackFundsTheme.extendedColors.onAccent
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     userEmail,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TrackFundsTheme.extendedColors.onAccent
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

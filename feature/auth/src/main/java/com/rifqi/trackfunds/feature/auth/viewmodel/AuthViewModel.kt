@@ -81,7 +81,7 @@ class AuthViewModel @Inject constructor(
                         authMode = newMode,
                         password = "",
                         confirmPassword = "",
-                        generalError = ""
+                        generalError = null,
                     )
                 }
             }

@@ -53,9 +53,6 @@ data class TransactionEntity(
     val type: TransactionType,
     val date: LocalDateTime,
 
-    @ColumnInfo(name = "payment_method")
-    val paymentMethod: String? = null,
-
     @ColumnInfo(name = "receipt_image_url")
     val receiptImageUrl: String? = null,
 

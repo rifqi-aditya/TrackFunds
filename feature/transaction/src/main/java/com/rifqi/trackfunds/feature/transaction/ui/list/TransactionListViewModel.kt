@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.model.DateRangeOption
-import com.rifqi.trackfunds.core.domain.category.model.TransactionType
-import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsByIdsUseCase
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoriesByIdsUseCase
+import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
@@ -132,7 +132,11 @@ class TransactionListViewModel @Inject constructor(
                 removeFilter(event.chip)
             }
 
-            is TransactionListEvent.TransactionClicked -> {}
+            is TransactionListEvent.TransactionClicked -> {
+                viewModelScope.launch {
+                    _navigationEvent.emit(TransactionRoutes.TransactionDetail(event.transactionId))
+                }
+            }
         }
     }
 

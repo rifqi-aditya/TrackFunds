@@ -82,7 +82,6 @@ abstract class AppDatabase : RoomDatabase() {
                 scope.launch {
                     populateDatabase(
                         database.categoryDao(),
-                        database.accountDao(),
                     )
                 }
             }
@@ -90,7 +89,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(
             categoryDao: CategoryDao,
-            accountDao: AccountDao,
         ) {
             // --- MEMBUAT KATEGORI DEFAULT DENGAN STANDARD KEY & ICON IDENTIFIER YANG SAMA ---
             val initialCategories = listOf(
