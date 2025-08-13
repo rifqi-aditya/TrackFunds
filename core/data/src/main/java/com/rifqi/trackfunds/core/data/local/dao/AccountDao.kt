@@ -24,6 +24,15 @@ interface AccountDao {
     fun getAccounts(userUid: String): Flow<List<AccountEntity>>
 
     /**
+     * Observes the count of accounts for a specific user.
+     *
+     * @param userUid the user ID.
+     * @return the count of accounts for the user.
+     */
+    @Query("SELECT COUNT(id) FROM accounts WHERE user_uid = :userUid")
+    fun observeAccountCount(userUid: String): Flow<Int>
+
+    /**
      * Select a account by id.
      *
      * @param accountId the account id.

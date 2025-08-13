@@ -151,7 +151,7 @@ class AuthViewModel @Inject constructor(
             }
 
             result.onSuccess {
-                _sideEffect.send(AuthSideEffect.NavigateToHome)
+                _sideEffect.send(AuthSideEffect.AuthSucceeded)
             }.onFailure { error ->
                 _uiState.update { it.copy(generalError = error.message) }
             }

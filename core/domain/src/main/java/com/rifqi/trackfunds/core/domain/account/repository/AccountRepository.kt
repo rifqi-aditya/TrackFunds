@@ -11,6 +11,9 @@ interface AccountRepository {
     /** Fetches all accounts for the currently logged-in user. */
     fun getAllAccounts(): Flow<List<Account>>
 
+    /** Observes the count of accounts for the currently logged-in user. */
+    fun observeAccountCount(): Flow<Int>
+
     /** Fetches a single account by its ID for the currently logged-in user. */
     suspend fun getAccountById(accountId: String): Result<Account>
 

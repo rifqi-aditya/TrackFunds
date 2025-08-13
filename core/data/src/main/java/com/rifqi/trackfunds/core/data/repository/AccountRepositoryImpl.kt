@@ -30,6 +30,14 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeAccountCount(): Flow<Int> {
+        return sessionProvider.getUidFlow().flatMapLatest { userUid ->
+            if (userUid == null) flowOf(0)
+            else accountDao.observeAccountCount(userUid)
+        }
+    }
+
     override suspend fun getAccountById(accountId: String): Result<Account> {
         return runCatching {
             val userUid = sessionProvider.getUid()

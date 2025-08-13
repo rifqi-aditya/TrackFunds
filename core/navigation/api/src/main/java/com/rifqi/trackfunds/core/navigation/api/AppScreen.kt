@@ -10,21 +10,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface AppScreen
 
-// --- Rute Awal & Otentikasi ---
-
-/**
- * Layar awal (splash screen) untuk memeriksa status login dan mengarahkan pengguna.
- */
-@Serializable
-data object Splash : AppScreen
-
-/**
- * Layar untuk alur otentikasi (Login & Register).
- */
-@Serializable
-data object Auth : AppScreen
-
-
 // --- Titik Masuk Grafik Navigasi Utama ---
 
 @Serializable
@@ -54,6 +39,15 @@ data object SharedGraph : AppScreen
 @Serializable
 data object AccountsGraph : AppScreen
 
+
+/**
+ * Layar untuk alur otentikasi (Login & Register).
+ */
+@Serializable
+data object Auth : AppScreen
+
+@Serializable
+data object AccountSetup : AppScreen
 
 // --- Rute-rute di Dalam Setiap Grafik (Nested Routes) ---
 
@@ -162,9 +156,6 @@ sealed interface ScanRoutes : AppScreen {
 
     @Serializable
     data object CameraScan : ScanRoutes
-
-    @Serializable
-    data class ReceiptPreview(val imageUri: String) : ScanRoutes
 }
 
 
@@ -181,9 +172,6 @@ sealed interface SharedRoutes : AppScreen {
         val categoryId: String? = null,
         val type: TransactionType? = null
     ) : SharedRoutes
-
-    @Serializable
-    data object SelectAccount : SharedRoutes
 
     @Serializable
     data class SelectCategory(val transactionType: String) : SharedRoutes

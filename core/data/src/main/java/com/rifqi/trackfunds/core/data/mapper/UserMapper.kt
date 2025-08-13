@@ -1,7 +1,7 @@
 package com.rifqi.trackfunds.core.data.mapper
 
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
-import com.rifqi.trackfunds.core.domain.common.model.User
+import com.rifqi.trackfunds.core.domain.user.model.User
 
 /**
  * Mengubah UserEntity (objek database) menjadi User (objek domain).

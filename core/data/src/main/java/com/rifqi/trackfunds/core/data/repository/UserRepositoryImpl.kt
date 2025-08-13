@@ -5,7 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
-import com.rifqi.trackfunds.core.domain.common.model.User
+import com.rifqi.trackfunds.core.domain.user.model.User
 import com.rifqi.trackfunds.core.domain.common.repository.UserSessionProvider
 import com.rifqi.trackfunds.core.domain.user.repository.UserRepository
 import dagger.hilt.android.qualifiers.ApplicationContext

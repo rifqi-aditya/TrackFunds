@@ -12,11 +12,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.rifqi.trackfunds.core.navigation.api.AccountSetup
+import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.Auth
 import com.rifqi.trackfunds.core.navigation.api.HomeGraph
-import com.rifqi.trackfunds.core.navigation.api.Splash
 import com.rifqi.trackfunds.feature.auth.screen.AuthScreen
-import com.rifqi.trackfunds.feature.splash.screen.SplashScreen
+import com.rifqi.trackfunds.feature.onboarding.ui.accountsetup.AccountSetupScreen
 
 /**
  * Composable placeholder untuk layar yang belum diimplementasikan.
@@ -33,30 +34,36 @@ fun PlaceholderScreen(name: String) {
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    startDestination: AppScreen
 ) {
     NavHost(
         navController = navController,
-        startDestination = Splash,
+        startDestination = startDestination,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         modifier = modifier,
     ) {
-        // --- Rute Awal & Otentikasi ---
-        composable<Splash> {
-            SplashScreen(navController = navController)
-        }
         composable<Auth> {
             AuthScreen(
                 onNavigate = {
                     navController.navigate(HomeGraph) {
-                        popUpTo(Splash) { inclusive = true }
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 }
             )
         }
 
-        // --- Perakitan Grafik Navigasi Fitur ---
+        composable<AccountSetup> {
+            AccountSetupScreen(
+                onNavigateHome = {
+                    navController.navigate(HomeGraph) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         homeNavGraph(navController)
         transactionsNavGraph(navController)
         budgetNavGraph(navController)
@@ -66,7 +73,6 @@ fun AppNavHost(
         accountsNavGraph(navController)
         savingsNavGraph(navController)
 
-        // Rute-rute bersama (shared) yang bisa diakses dari banyak tempat
         sharedNavGraph(navController)
     }
 }

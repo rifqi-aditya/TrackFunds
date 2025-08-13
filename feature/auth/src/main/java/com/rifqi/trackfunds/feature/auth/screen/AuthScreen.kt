@@ -61,7 +61,10 @@ fun AuthScreen(
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is AuthSideEffect.NavigateToHome -> onNavigate()
+                AuthSideEffect.AuthSucceeded -> {
+                }
             }
+
         }
     }
 

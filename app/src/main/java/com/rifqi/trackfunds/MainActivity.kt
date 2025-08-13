@@ -11,8 +11,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rifqi.trackfunds.core.domain.settings.model.AppTheme
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.ui.MainScreen
 import com.rifqi.trackfunds.ui.MainViewModel
-import com.rifqi.trackfunds.ui.TrackFundsMainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,9 +22,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val splash = installSplashScreen()
-        splash.setKeepOnScreenCondition { !mainViewModel.isReady.value }
+        splash.setKeepOnScreenCondition { mainViewModel.uiState.value.startDestination == null }
 
         enableEdgeToEdge()
 
@@ -36,7 +35,12 @@ class MainActivity : ComponentActivity() {
                 else -> isSystemInDarkTheme()
             }
             TrackFundsTheme(darkTheme = useDarkTheme) {
-                TrackFundsMainScreen(viewModel = mainViewModel)
+                uiState.startDestination?.let { startDest ->
+                    MainScreen(
+                        viewModel = mainViewModel,
+                        startDestination = startDest
+                    )
+                }
             }
         }
     }

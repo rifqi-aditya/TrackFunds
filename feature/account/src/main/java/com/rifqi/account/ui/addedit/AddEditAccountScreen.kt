@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.account.ui.addedit.components.IconPicker
-import com.rifqi.account.ui.model.DefaultAccountsIcons
+import com.rifqi.trackfunds.core.domain.account.model.AccountsIcons
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.IconPickerSheet
 import com.rifqi.trackfunds.core.ui.components.inputfield.AmountInputField
@@ -71,7 +71,7 @@ fun AddEditAccountScreen(
                 )
 
                 IconPickerSheet(
-                    icons = DefaultAccountsIcons.list,
+                    icons = AccountsIcons.list,
                     selectedIconIdentifier = uiState.iconIdentifier,
                     onIconSelected = { identifier ->
                         viewModel.onEvent(AddEditAccountEvent.IconIdentifierChanged(identifier))

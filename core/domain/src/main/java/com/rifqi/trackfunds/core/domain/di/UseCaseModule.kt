@@ -6,6 +6,8 @@ import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsByIdsUseCase
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsByIdsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCaseImpl
+import com.rifqi.trackfunds.core.domain.account.usecase.ObserveAccountCountUseCase
+import com.rifqi.trackfunds.core.domain.account.usecase.ObserveAccountCountUseCaseImpl
 import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetByIdUseCase
 import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetByIdUseCaseImpl
 import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetsUseCase
@@ -82,6 +84,10 @@ abstract class UseCaseModule {
     @Binds
     @Singleton
     abstract fun bindGetAccountsUseCase(impl: GetAccountsUseCaseImpl): GetAccountsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindObserveAccountCountUseCase(impl: ObserveAccountCountUseCaseImpl): ObserveAccountCountUseCase
 
     @Binds
     @Singleton

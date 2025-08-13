@@ -24,10 +24,10 @@
             <option value="$PROJECT_DIR$/feature/budget" />
             <option value="$PROJECT_DIR$/feature/categories" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/onboarding" />
             <option value="$PROJECT_DIR$/feature/reports" />
             <option value="$PROJECT_DIR$/feature/savings" />
             <option value="$PROJECT_DIR$/feature/scan" />
-            <option value="$PROJECT_DIR$/feature/splash" />
             <option value="$PROJECT_DIR$/feature/transaction" />
           </set>
         </option>

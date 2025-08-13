@@ -1,6 +1,6 @@
 package com.rifqi.trackfunds.core.domain.user.usecase
 
-import com.rifqi.trackfunds.core.domain.common.model.User
+import com.rifqi.trackfunds.core.domain.user.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface GetUserUseCase {

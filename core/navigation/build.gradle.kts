@@ -42,7 +42,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:navigation:api"))
     implementation(project(":feature:auth"))
-    implementation(project(":feature:splash"))
     implementation(project(":feature:home"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:account"))
@@ -51,6 +50,7 @@ dependencies {
     implementation(project(":feature:scan"))
     implementation(project(":feature:reports"))
     implementation(project(":feature:savings"))
+    implementation(project(":feature:onboarding"))
 
     // Pastikan Anda menggunakan Compose BOM untuk mengelola versi secara konsisten
     implementation(platform(libs.androidx.compose.bom)) // Gunakan versi terbaru yang stabil
@@ -81,11 +81,9 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-
     // Debugging (hanya untuk development)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
