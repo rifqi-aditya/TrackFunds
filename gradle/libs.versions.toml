@@ -3,6 +3,7 @@
 [versions]
 # --- Fondasi Utama (Stabil dan Teruji) ---
 agp = "8.10.1"
+coreSplashscreen = "1.0.1"
 datastorePreferences = "1.1.7"
 generativeai = "0.9.0"
 kotlin = "2.1.21"
@@ -55,6 +56,7 @@ navigationCommonAndroid = "2.9.1"
 [libraries]
 # AndroidX Core & Lifecycle
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }

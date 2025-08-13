@@ -2,4 +2,12 @@
 <resources>
 
     <style name="Theme.TrackFunds" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.TrackFunds.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_wrapped</item>
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+        <item name="postSplashScreenTheme">@style/Theme.TrackFunds</item>
+    </style>
+
 </resources>

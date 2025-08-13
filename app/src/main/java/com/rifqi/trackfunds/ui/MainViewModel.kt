@@ -10,6 +10,8 @@ import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -25,14 +27,22 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     private val _navigationEvent = MutableSharedFlow<AppScreen>()
-    val navigationEvent = _navigationEvent.asSharedFlow()
+    val navigationEvent: SharedFlow<AppScreen> = _navigationEvent.asSharedFlow()
+
+    // ✅ Flag untuk SplashScreen
+    private val _isReady = MutableStateFlow(false)
+    val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
 
     init {
+        // Begitu dapat theme pertama kali, app dianggap siap (splash dilepas)
         getThemePreferenceUseCase()
-            .onEach { theme -> _uiState.update { it.copy(theme = theme) } }
+            .onEach { theme ->
+                _uiState.update { it.copy(theme = theme) }
+                _isReady.value = true
+            }
             .launchIn(viewModelScope)
     }
 
@@ -40,21 +50,14 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is TrackFundsMainEvent.FloatButtonClicked -> {
-                    _uiState.value = _uiState.value.copy(
-                        isAddActionDialogVisible = true
-                    )
+                    _uiState.update { it.copy(isAddActionDialogVisible = true) }
                 }
-
                 TrackFundsMainEvent.AddActionDialogDismissed -> {
-                    _uiState.value = _uiState.value.copy(
-                        isAddActionDialogVisible = false
-                    )
+                    _uiState.update { it.copy(isAddActionDialogVisible = false) }
                 }
-
                 TrackFundsMainEvent.AddTransactionManuallyClicked -> {
                     _navigationEvent.emit(TransactionRoutes.AddEditTransaction())
                 }
-
                 TrackFundsMainEvent.ScanReceiptClicked -> {
                     _navigationEvent.emit(ScanGraph)
                 }
