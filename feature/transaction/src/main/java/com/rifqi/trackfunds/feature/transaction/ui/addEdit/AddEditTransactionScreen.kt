@@ -55,6 +55,7 @@ import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEve
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionDetailsSection
 import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionTypes
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Stateful Composable (Container)
@@ -179,7 +180,7 @@ fun AddEditTransactionScreen(
     )
 
     LaunchedEffect(Unit) {
-        viewModel.sideEffect.collect { effect ->
+        viewModel.sideEffect.collectLatest { effect ->
             when (effect) {
                 is AddEditTransactionSideEffect.NavigateBack -> onNavigateBack()
                 is AddEditTransactionSideEffect.LaunchGallery -> galleryLauncher.launch("image/*")

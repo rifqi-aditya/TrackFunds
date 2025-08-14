@@ -58,7 +58,10 @@ fun NavGraphBuilder.sharedNavGraph(navController: NavHostController) {
 
     composable<TransactionRoutes.AddEditTransaction> {
         AddEditTransactionScreen(
-            onNavigateBack = { navController.popBackStack() },
+            onNavigateBack = {
+                val popped = navController.popBackStack()
+                if (!popped) navController.navigateUp()
+            },
         )
     }
 }

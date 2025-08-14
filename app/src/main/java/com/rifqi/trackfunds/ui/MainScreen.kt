@@ -21,10 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rifqi.trackfunds.core.navigation.api.AccountSetup
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
+import com.rifqi.trackfunds.core.navigation.api.Auth
+import com.rifqi.trackfunds.core.navigation.api.HomeGraph
 import com.rifqi.trackfunds.core.navigation.graphs.AppNavHost
 import com.rifqi.trackfunds.core.navigation.model.navigationItemsLists
 import com.rifqi.trackfunds.core.navigation.ui.components.CustomBottomNavBar
@@ -52,11 +56,20 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { route ->
-            navController.navigate(route) {
-                popUpTo(navController.graph.id) { inclusive = true }
+            when (route) {
+                is HomeGraph, is Auth, is AccountSetup -> {
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+                else -> {
+                    navController.navigate(route)
+                }
             }
         }
     }
+
 
     // Logic untuk menampilkan bottom bar (tidak berubah)
     val showBottomBar = navigationItemsLists.any { navItem ->

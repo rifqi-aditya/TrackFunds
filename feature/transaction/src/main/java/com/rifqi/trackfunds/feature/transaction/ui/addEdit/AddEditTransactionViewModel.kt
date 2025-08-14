@@ -7,15 +7,15 @@ import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.common.NavigationResultManager
 import com.rifqi.trackfunds.core.common.snackbar.SnackbarManager
 import com.rifqi.trackfunds.core.domain.account.usecase.GetAccountsUseCase
-import com.rifqi.trackfunds.core.domain.transaction.model.AddTransactionParams
 import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
-import com.rifqi.trackfunds.core.domain.transaction.model.UpdateTransactionParams
 import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryByStandardKeyUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
+import com.rifqi.trackfunds.core.domain.transaction.model.AddTransactionParams
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
+import com.rifqi.trackfunds.core.domain.transaction.model.UpdateTransactionParams
 import com.rifqi.trackfunds.core.domain.transaction.usecase.AddTransactionUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.UpdateTransactionUseCase
@@ -24,10 +24,12 @@ import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.ui.utils.formatNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -35,7 +37,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -65,8 +66,12 @@ class AddEditTransactionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
 
-    private val _sideEffect = Channel<AddEditTransactionSideEffect>()
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val _sideEffect = MutableSharedFlow<AddEditTransactionSideEffect>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val sideEffect = _sideEffect.asSharedFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val categoriesForSelection: StateFlow<List<Category>> =
@@ -260,7 +265,7 @@ class AddEditTransactionViewModel @Inject constructor(
 
             is AddEditTransactionEvent.OnAddReceiptClicked -> {
                 viewModelScope.launch {
-                    _sideEffect.send(AddEditTransactionSideEffect.LaunchGallery)
+                    _sideEffect.tryEmit(AddEditTransactionSideEffect.LaunchGallery)
                 }
             }
 
@@ -343,7 +348,7 @@ class AddEditTransactionViewModel @Inject constructor(
                     dateError = validationResult.dateError
                 )
             }
-            return // Hentikan proses
+            return
         }
 
         viewModelScope.launch {
@@ -378,8 +383,14 @@ class AddEditTransactionViewModel @Inject constructor(
 
             result.onSuccess {
                 val message = if (isEditMode) "Transaction updated" else "Transaction saved"
-                snackbarManager.showMessage(message)
-                _sideEffect.send(AddEditTransactionSideEffect.NavigateBack)
+
+                // 1) kirim event navigate dulu (non-suspending)
+                _sideEffect.tryEmit(AddEditTransactionSideEffect.NavigateBack)
+
+                // 2) jalankan snackbar terpisah supaya tidak memblok
+                viewModelScope.launch {
+                    snackbarManager.showMessage(message) // boleh suspend
+                }
             }.onFailure { exception ->
                 _uiState.update { it.copy(isSaving = false, error = exception.message) }
             }
