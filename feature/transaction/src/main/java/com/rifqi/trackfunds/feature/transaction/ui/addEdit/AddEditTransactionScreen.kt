@@ -32,9 +32,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rifqi.trackfunds.core.common.utils.ReceiptImageStore
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
@@ -171,11 +173,17 @@ fun AddEditTransactionScreen(
         }
     }
 
+    val context = LocalContext.current
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { uri: Uri? ->
-            uri?.let { viewModel.onEvent(AddEditTransactionEvent.OnReceiptImageSelected(it)) }
+        onResult = { picked: Uri? ->
+            picked?.let {
+                val stored = ReceiptImageStore.saveIntoAppStorage(context, it)
+                viewModel.onEvent(
+                    AddEditTransactionEvent.OnReceiptImageSelected(stored.toString())
+                )
+            }
         }
     )
 

@@ -2,8 +2,8 @@ package com.rifqi.trackfunds.core.domain.transaction.model
 
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.category.model.Category
-import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,7 +24,7 @@ data class Transaction(
     val savingsGoal: SavingsGoal? = null,
     /** If this is part of a transfer, this ID links it to the other transaction in the pair. */
     val transferPairId: String? = null,
-    val receiptImageUrl: String? = null,
+    val receiptImageUri: String? = null,
     /** A list of detailed line items for this transaction, e.g., items on a receipt. */
     val items: List<TransactionItem> = emptyList()
 )

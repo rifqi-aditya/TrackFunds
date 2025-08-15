@@ -13,7 +13,7 @@ data class TransactionDetailsUiModel(
     val accountName: String = "",
     val transactionType: String = "",
     val lineItems: List<TransactionItemUiModel> = emptyList(),
-    val receiptImageUrl: String? = null
+    val receiptImageUri: String? = null
 )
 
 // Model untuk satu baris item di UI

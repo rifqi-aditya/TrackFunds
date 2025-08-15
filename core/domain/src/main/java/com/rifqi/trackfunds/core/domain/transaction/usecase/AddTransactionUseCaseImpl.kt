@@ -33,6 +33,7 @@ class AddTransactionUseCaseImpl @Inject constructor(
                     account = params.account,
                     category = params.category,
                     savingsGoal = params.savingsGoal,
+                    receiptImageUri = params.receiptImageUri,
                     items = params.items
                 )
 

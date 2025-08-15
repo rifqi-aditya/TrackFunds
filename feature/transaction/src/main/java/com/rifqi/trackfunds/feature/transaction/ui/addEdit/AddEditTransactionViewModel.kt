@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -270,7 +271,7 @@ class AddEditTransactionViewModel @Inject constructor(
             }
 
             is AddEditTransactionEvent.OnReceiptImageSelected -> {
-                _uiState.update { it.copy(receiptImageUri = event.uri) }
+                _uiState.update { it.copy(receiptImageUri = event.uriString) }
             }
 
             is AddEditTransactionEvent.OnDeleteLineItem -> {
@@ -314,6 +315,7 @@ class AddEditTransactionViewModel @Inject constructor(
             }
 
             _uiState.update {
+                Log.d("AddEditTransactionViewModel", "handleScanResult: $scanResult")
                 it.copy(
                     amount = formatNumber(scanResult.totalAmount),
                     description = scanResult.merchantName ?: it.description,
@@ -322,7 +324,7 @@ class AddEditTransactionViewModel @Inject constructor(
                     items = scanResult.transactionItem.map { item ->
                         item.toUiModel()
                     },
-                    receiptImageUri = scanResult.receiptImageUri ?: it.receiptImageUri,
+                    receiptImageUri = scanResult.receiptImageUri?.toString() ?: it.receiptImageUri,
                     isItemsExpanded = true,
                 )
             }
@@ -364,7 +366,8 @@ class AddEditTransactionViewModel @Inject constructor(
                     account = currentState.selectedAccount!!,
                     category = currentState.selectedCategory,
                     savingsGoal = currentState.selectedSavingsGoal,
-                    items = currentState.items.mapNotNull { it.toDomainModel() }
+                    items = currentState.items.mapNotNull { it.toDomainModel() },
+                    receiptImageUri = currentState.receiptImageUri
                 )
                 transactionUpdateUseCase(params)
             } else {
@@ -376,7 +379,8 @@ class AddEditTransactionViewModel @Inject constructor(
                     account = currentState.selectedAccount!!,
                     category = currentState.selectedCategory,
                     savingsGoal = currentState.selectedSavingsGoal,
-                    items = currentState.items.mapNotNull { it.toDomainModel() }
+                    items = currentState.items.mapNotNull { it.toDomainModel() },
+                    receiptImageUri = currentState.receiptImageUri
                 )
                 transactionAddUseCase(params)
             }

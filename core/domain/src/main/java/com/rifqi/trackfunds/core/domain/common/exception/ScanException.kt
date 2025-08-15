@@ -26,4 +26,10 @@ sealed class ScanException(override val message: String) : Exception(message) {
         ScanException("An unexpected error occurred. Please try again in a moment.")
 
     class NotAReceipt : ScanException("The uploaded image does not appear to be a receipt.")
+
+    /**
+     * Thrown when the AI is not confident enough to process the receipt.
+     */
+    class LowConfidence(val reason: String = "The AI is not confident enough to process this receipt. Please try again with a clearer image.") :
+        ScanException(reason)
 }

@@ -1,10 +1,9 @@
 package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
-import android.net.Uri
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.category.model.Category
-import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.savings.model.SavingsGoal
 import java.time.LocalDate
 
 /**
@@ -41,7 +40,7 @@ sealed interface AddEditTransactionEvent {
 
     data class OnDeleteLineItem(val index: Int) : AddEditTransactionEvent
     data object OnAddReceiptClicked : AddEditTransactionEvent
-    data class OnReceiptImageSelected(val uri: Uri) : AddEditTransactionEvent
+    data class OnReceiptImageSelected(val uriString: String) : AddEditTransactionEvent
 
     data class DeleteLineItem(val index: Int) : AddEditTransactionEvent
 

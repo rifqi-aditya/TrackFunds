@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.feature.transaction.ui.detail
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -52,9 +53,12 @@ class TransactionDetailViewModel @Inject constructor(
     private fun loadTransactionDetails() {
         getTransactionDetailsUseCase(transactionId)
             .onStart { _uiState.update { it.copy(isLoading = true) } }
-            .map { transaction -> transaction?.toDetailsUiModel() }
+            .map { transaction ->
+                transaction?.toDetailsUiModel()
+            }
             .catch { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
             .onEach { detailsModel ->
+                Log.d("TransactionDetailViewModel", "Loaded transaction details: $detailsModel")
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -89,7 +93,7 @@ class TransactionDetailViewModel @Inject constructor(
 
             is TransactionDetailEvent.ReceiptClicked -> {
                 viewModelScope.launch {
-                    _sideEffect.send(TransactionDetailSideEffect.ViewReceipt(event.imageUrl))
+                    _sideEffect.send(TransactionDetailSideEffect.ViewReceipt(event.imageUriString))
                 }
             }
         }
@@ -124,7 +128,7 @@ private fun Transaction.toDetailsUiModel(): TransactionDetailsUiModel {
         accountName = this.account.name,
         transactionType = this.type.name.lowercase().replaceFirstChar { it.titlecase() },
         lineItems = this.items.map { it.toLineItemUiModel() },
-        receiptImageUrl = this.receiptImageUrl
+        receiptImageUri = this.receiptImageUri
     )
 }
 

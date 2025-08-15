@@ -2,6 +2,7 @@ package com.rifqi.trackfunds.feature.scan.ui.screen
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -65,7 +66,7 @@ fun ScanReceiptScreen(
 
     // Launcher untuk memilih gambar dari galeri
     val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
             uri?.let { viewModel.onEvent(ScanReceiptEvent.ImageSelected(it)) }
         }
@@ -77,7 +78,10 @@ fun ScanReceiptScreen(
             when (effect) {
                 is ScanReceiptSideEffect.NavigateBack -> onNavigateBack()
                 is ScanReceiptSideEffect.NavigateToCamera -> onNavigateToCamera()
-                is ScanReceiptSideEffect.LaunchGallery -> galleryLauncher.launch("image/*")
+                is ScanReceiptSideEffect.LaunchGallery -> galleryLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+
                 is ScanReceiptSideEffect.NavigateToAddTransaction -> onNavigateToAddTransaction()
             }
         }

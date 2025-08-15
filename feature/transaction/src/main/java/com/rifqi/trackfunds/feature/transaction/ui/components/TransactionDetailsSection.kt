@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.transaction.ui.components
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -52,7 +51,7 @@ fun TransactionDetailsSection(
     isItemsExpanded: Boolean,
     isReceiptExpanded: Boolean,
     items: List<TransactionItemInput>,
-    receiptImageUri: Uri?,
+    receiptImageUri: String?,
     onEvent: (AddEditTransactionEvent) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -169,7 +168,7 @@ private fun LineItemsContent(
 
 @Composable
 private fun ReceiptContent(
-    receiptImageUri: Uri?,
+    receiptImageUri: String?,
     onEvent: (AddEditTransactionEvent) -> Unit
 ) {
     if (receiptImageUri != null) {

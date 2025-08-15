@@ -12,6 +12,7 @@ data class AddTransactionParams(
     val amount: BigDecimal,
     val type: TransactionType,
     val date: LocalDate,
+    val receiptImageUri: String? = null,
     val account: Account,
     val category: Category?,
     val savingsGoal: SavingsGoal?,

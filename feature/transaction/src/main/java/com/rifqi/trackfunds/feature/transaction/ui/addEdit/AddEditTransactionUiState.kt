@@ -1,6 +1,5 @@
 package com.rifqi.trackfunds.feature.transaction.ui.addEdit
 
-import android.net.Uri
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
@@ -60,7 +59,7 @@ data class AddEditTransactionUiState(
     val categorySearchQuery: String = "",
 
     val items: List<TransactionItemInput> = emptyList(),
-    val receiptImageUri: Uri? = null,
+    val receiptImageUri: String? = null,
     val isItemsExpanded: Boolean = false,
     val isReceiptExpanded: Boolean = false
 ) {

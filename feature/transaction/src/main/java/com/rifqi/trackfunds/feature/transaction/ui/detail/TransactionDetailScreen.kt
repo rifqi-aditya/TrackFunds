@@ -2,6 +2,7 @@ package com.rifqi.trackfunds.feature.transaction.ui.detail
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +40,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,13 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 import com.rifqi.trackfunds.feature.transaction.ui.components.DetailRow
+import com.rifqi.trackfunds.feature.transaction.ui.components.FullscreenReceiptViewer
 
 @SuppressLint("UseKtx")
 @Composable
@@ -67,6 +71,8 @@ fun TransactionDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+
+    var fullscreenUri by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -82,12 +88,24 @@ fun TransactionDetailScreen(
                 is TransactionDetailSideEffect.ShowSnackbar -> {
                 }
 
-                is TransactionDetailSideEffect.ViewReceipt -> {
-                    val intent = Intent(Intent.ACTION_VIEW, effect.imageUrl.toUri())
-                    context.startActivity(intent)
-                }
+                is TransactionDetailSideEffect.ViewReceipt -> fullscreenUri = effect.imageUriString
             }
         }
+    }
+
+    if (!fullscreenUri.isNullOrBlank()) {
+        FullscreenReceiptViewer(
+            uriString = fullscreenUri!!,
+            onClose = { fullscreenUri = null },
+            onOpenExternal = {
+                val uri = Uri.parse(fullscreenUri)
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "image/*")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(intent)
+            }
+        )
     }
 
     if (uiState.showDeleteConfirmDialog) {
@@ -242,8 +260,7 @@ fun TransactionDetailContent(
                         }
                     }
 
-                    // Bagian Struk (Kondisional)
-                    if (details.receiptImageUrl != null) {
+                    if (!details.receiptImageUri.isNullOrBlank()) {
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -253,35 +270,38 @@ fun TransactionDetailContent(
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold
                             )
-                            // 1. Buat Box bisa diklik untuk melihat gambar penuh
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(200.dp)
-                                    .clip(MaterialTheme.shapes.large) // Bentuk lebih besar agar konsisten
+                                    .height(220.dp)
+                                    .clip(MaterialTheme.shapes.large)
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
                                     .clickable {
-                                        onEvent(
-                                            TransactionDetailEvent.ReceiptClicked(
-                                                details.receiptImageUrl
-                                            )
-                                        )
-                                    }, // Event baru
+                                        onEvent(TransactionDetailEvent.ReceiptClicked(details.receiptImageUri))
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
-                                // 2. Isi parameter AsyncImage
-                                AsyncImage(
+                                SubcomposeAsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(details.receiptImageUrl)
-                                        .crossfade(true) // Animasi fade-in yang halus
+                                        .data(details.receiptImageUri)
+                                        .crossfade(true)
                                         .build(),
                                     contentDescription = "Receipt Image",
-                                    contentScale = ContentScale.Crop, // Penuhi Box tanpa merusak rasio
-                                    modifier = Modifier.fillMaxSize()
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize(),
+                                    loading = { CircularProgressIndicator() },
+                                    error = {
+                                        Text(
+                                            "Failed to load image",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
                                 )
                             }
                         }
                     }
+
                 }
             }
         }

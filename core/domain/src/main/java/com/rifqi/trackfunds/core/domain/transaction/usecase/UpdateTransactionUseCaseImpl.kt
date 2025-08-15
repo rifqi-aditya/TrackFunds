@@ -37,6 +37,7 @@ class UpdateTransactionUseCaseImpl @Inject constructor(
                     account = params.account,
                     category = params.category ?: originalTransaction.category,
                     savingsGoal = params.savingsGoal ?: originalTransaction.savingsGoal,
+                    receiptImageUri = params.receiptImageUri ?: originalTransaction.receiptImageUri,
                     items = params.items
                 )
 

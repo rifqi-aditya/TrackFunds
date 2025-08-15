@@ -7,36 +7,42 @@ import java.math.BigDecimal
 
 @Serializable
 data class GeminiResponseDto(
+    @SerialName("is_receipt")
+    val isReceipt: Boolean = false,
+
+    @SerialName("quality_score")
+    val qualityScore: Double? = null,
+
     @SerialName("merchant_name")
     val merchantName: String? = null,
 
     @SerialName("total_amount")
-    val totalAmount: Double? = null, // Menggunakan Double atau Long/Int
+    val totalAmount: Double? = null,
 
     @SerialName("transaction_date")
-    val transactionDate: String? = null, // Format YYYY-MM-DD
+    val transactionDate: String? = null,
 
     @SerialName("transaction_time")
-    val transactionTime: String? = null, // Format HH:mm:ss
+    val transactionTime: String? = null,
 
-    @SerialName("category_key")
-    val category: String? = null, // Ini akan berisi "standardKey"
+    @SerialName("category")
+    val category: String? = null,
 
-    @SerialName("line_items")
-    val items: List<ReceiptItemDto> = emptyList()
+    @SerialName("items")
+    val items: List<ItemDto> = emptyList()
 )
 
 @Serializable
-data class ReceiptItemDto(
-    val name: String,
-    val quantity: Int = 1,
-    val price: Double
+data class ItemDto(
+    @SerialName("name") val name: String? = null,
+    @SerialName("quantity") val quantity: Double? = 1.0,
+    @SerialName("price") val price: Double? = null
 ) {
     fun toDomain(): TransactionItem {
         return TransactionItem(
-            name = name,
-            quantity = quantity,
-            price = BigDecimal(price.toString())
+            name = name.orEmpty(),
+            quantity = (quantity ?: 1.0).toInt().coerceAtLeast(1),
+            price = BigDecimal((price ?: 0.0).toString())
         )
     }
 }

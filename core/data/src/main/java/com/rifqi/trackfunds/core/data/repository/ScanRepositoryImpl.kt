@@ -36,42 +36,53 @@ class ScanRepositoryImpl @Inject constructor(
 
     private var cachedCategories: List<CategoryEntity>? = null
 
-    override suspend fun extractTextFromImage(imageUri: Uri): Result<String> {
-        return runCatching {
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-            val image = InputImage.fromFilePath(context, imageUri)
-            val visionText = recognizer.process(image).await()
-            Log.d("ScanRepository", "Extracted text: ${visionText.text}")
-            visionText.text.ifBlank {
-                throw ScanException.NoTextFound()
-            }
-        }
+    override suspend fun extractTextFromImage(imageUri: Uri): Result<String> = runCatching {
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+        val image = InputImage.fromFilePath(context, imageUri)
+        val vt = recognizer.process(image).await()
+        val raw = vt.text.trim()
+        Log.d("ScanRepository", "Extracted text: $raw")
+        if (raw.isBlank()) throw ScanException.NoTextFound()
+        if (raw.length < 20) throw ScanException.NoTextFound()
+        raw
     }
 
     override suspend fun analyzeReceiptText(ocrText: String, userUid: String): Result<ScanResult> {
         return try {
-            // --- Bagian ini tetap sama ---
+            // 1) Ambil kategori (cache)
             val categories = cachedCategories ?: categoryDao.getFilteredCategories(
                 userUid = userUid,
                 type = null,
                 isUnbudgeted = null,
                 budgetPeriod = null
-            ).first().also {
-                cachedCategories = it
-            }
+            ).first().also { cachedCategories = it }
+
+            // 2) Prompt ke Gemini
             val prompt = createGeminiPrompt(ocrText, categories)
             val response = generativeModel.generateContent(prompt)
             val responseText = response.text ?: throw ScanException.ParsingFailed()
+            Log.d("ScanRepository", "Gemini response: $responseText")
 
-            val cleanedJson = responseText.removePrefix("```json").removeSuffix("```").trim()
+            // 3) Sanitasi & parse JSON
+            val cleanedJson = sanitizeJsonBlock(responseText)
+            Log.d("ScanRepository", "Cleaned JSON: $cleanedJson")
             val json = Json { ignoreUnknownKeys = true }
             val dto = json.decodeFromString<GeminiResponseDto>(cleanedJson)
+            Log.d("ScanRepository", "Parsed DTO: $dto")
 
-            if (dto.totalAmount == null && dto.merchantName == null) {
+            if (!dto.isReceipt) {
                 return Result.failure(ScanException.NotAReceipt())
             }
 
-            // 3. Jika valid, baru map ke ScanResult
+            val quality = dto.qualityScore ?: 0.0
+            val tooLowQuality = quality < 0.6
+            val invalidTotal = (dto.totalAmount == null) || (dto.totalAmount <= 1000.0) // cegah "9"
+
+            if (tooLowQuality || invalidTotal) {
+                return Result.failure(ScanException.LowConfidence("low quality or total missing/small"))
+            }
+
+            // 5) Map -> Domain (hanya setelah valid)
             val scanResult = mapResponse(dto)
             Result.success(scanResult)
 
@@ -84,35 +95,50 @@ class ScanRepositoryImpl @Inject constructor(
         }
     }
 
+
     /**
      * Membuat prompt yang akan dikirim ke Gemini.
      */
     private fun createGeminiPrompt(ocrText: String, categories: List<CategoryEntity>): String {
         val categoryListString = categories.joinToString("\n") { "- ${it.standardKey}: ${it.name}" }
-        val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
         return """
-            You are an expert financial assistant analyzing OCR text from a receipt.
-            Your task is to extract information, standardize it, determine the most suitable category from the provided list, and return the output ONLY in a valid JSON object format.
+      You analyze OCR text of a retail receipt. Respond with ONLY a valid JSON object (no markdown).
 
-            RULES:
-            1.  **PRIMARY GOAL:** First, determine if the provided OCR text is from a sales receipt. If the text is clearly not from a receipt (e.g., a random note, a menu, a poster), you MUST return a JSON object where key fields like `merchant_name` and `total_amount` are `null`.
-            2.  **EXTRACTION:** If it IS a receipt, extract `merchant_name`, `transaction_date`, `transaction_time`, `total_amount`, and `line_items`.
-            3.  **MISSING DATA:** If a specific field's value cannot be found on the receipt, use `null` for that field in the JSON. **DO NOT INVENT or guess data.** For `total_amount`, find the most likely final total, often labeled "Total" or being the largest amount.
-            4.  **FORMATTING:** Standardize `transaction_date` to `YYYY-MM-DD` format (use today's date, $currentDate, if it's missing). Standardize `transaction_time` to `HH:mm:ss` (use `null` if missing). `total_amount` must be a single number (Double or Integer), without currency symbols or commas.
-            5.  **LINE ITEMS:** `line_items` must be an array of objects, each with `name` (String), `quantity` (Number, default 1), and `price` (Number). If no individual items are clearly listed, you MUST use an empty array `[]`.
-            6.  **CATEGORY:** Analyze the merchant and items to select the single most relevant `category_key` from the list provided. If no category is a good match, you MUST use "miscellaneous".
-            7.  **OUTPUT:** Respond with ONLY the raw JSON object. Do not include any explanatory text, greetings, or markdown formatting like ```json.
+      Decide if the text is a sales receipt and extract fields. If unsure, be conservative.
 
-            ---
-            AVAILABLE CATEGORIES:
-            $categoryListString
-            ---
-            OCR TEXT TO ANALYZE:
-            $ocrText
-            ---
-        """.trimIndent()
+      JSON schema (unknown fields allowed):
+      {
+        "is_receipt": boolean,
+        "quality_score": number,            // 0.0 .. 1.0 confidence
+        "merchant_name": string|null,
+        "transaction_date": "YYYY-MM-DD"|null,   // if missing, use "$today"
+        "transaction_time": "HH:mm:ss"|null,
+        "total_amount": number|null,             // no currency symbols, dot as decimal
+        "items": [ { "name": string, "quantity": number|null, "price": number|null }, ... ],
+        "category": string                        // one of provided keys, else "miscellaneous"
+      }
+
+      Rules:
+        - If NOT a receipt: set "is_receipt": false and "quality_score": 0.0; keep other fields null/empty.
+        - Do NOT guess: if a value is unknown or not explicitly supported by the text, return null.
+        - "total_amount" = final payable total.
+        - Items: output lines that look like items; quantity/price may be null if unclear.
+        - Merchant name (very important):
+          • Fill ONLY if a clear brand/store name is explicitly present in the text.
+          • Do NOT infer from addresses, building names, tax IDs, phone/emails, URLs, or generic words (e.g., street/city/“minimarket”).
+          • If uncertain, set merchant_name = null and reduce quality_score (≤ 0.6).
+        - Normalize Indonesian numerals: "124,000"→124000 ; "11,273"→11273.
+
+      AVAILABLE CATEGORIES:
+      $categoryListString
+
+      OCR TEXT:
+      $ocrText
+    """.trimIndent()
     }
+
 
     /**
      * Fungsi ini sekarang hanya bertanggung jawab untuk MAPPING dari DTO ke Domain,
@@ -121,14 +147,22 @@ class ScanRepositoryImpl @Inject constructor(
     private fun mapResponse(dto: GeminiResponseDto): ScanResult {
         val date = dto.transactionDate?.let { LocalDate.parse(it) } ?: LocalDate.now()
         val time = dto.transactionTime?.let { LocalTime.parse(it) } ?: LocalTime.MIDNIGHT
-        val transactionDateTime = LocalDateTime.of(date, time)
+        val dateTime = LocalDateTime.of(date, time)
 
         return ScanResult(
-            merchantName = dto.merchantName,
-            transactionDateTime = transactionDateTime,
+            merchantName = dto.merchantName?.lowercase()?.trim(),
+            transactionDateTime = dateTime,
             totalAmount = BigDecimal(dto.totalAmount?.toString() ?: "0"),
             categoryStandardKey = dto.category,
             transactionItem = dto.items.map { it.toDomain() }
         )
+    }
+
+
+    private fun sanitizeJsonBlock(text: String): String {
+        // Ambil blok JSON di dalam balasan Gemini (tanpa ```json ... ```)
+        val fenced = Regex("```(?:json)?\\s*([\\s\\S]*?)\\s*```", RegexOption.IGNORE_CASE)
+        val m = fenced.find(text)
+        return (m?.groupValues?.getOrNull(1) ?: text).trim()
     }
 }

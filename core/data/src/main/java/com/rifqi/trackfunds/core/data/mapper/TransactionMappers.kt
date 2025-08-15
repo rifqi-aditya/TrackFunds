@@ -70,6 +70,7 @@ fun Transaction.toEntity(userUid: String): TransactionEntity {
         categoryId = this.category?.id,
         accountId = this.account.id,
         savingsGoalId = this.savingsGoal?.id,
+        receiptImageUri = this.receiptImageUri,
         transferPairId = this.transferPairId
     )
 }
@@ -109,7 +110,8 @@ fun TransactionWithDetails.toDomain(): Transaction {
             iconIdentifier = this.account.iconIdentifier,
             balance = this.account.balance
         ),
-        items = this.items.map { it.toDomain() }
+        items = this.items.map { it.toDomain() },
+        receiptImageUri = this.transaction.receiptImageUri
     )
 }
 
