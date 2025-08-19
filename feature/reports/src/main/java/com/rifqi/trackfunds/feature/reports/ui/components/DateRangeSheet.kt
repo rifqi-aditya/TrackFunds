@@ -25,7 +25,7 @@ fun DateRangeSheet(
         onOptionSelected = onPick,
         onClose = onClose,
         key = { it.name },
-        primaryLabel = { it.displayName },
+        primaryLabel = { it.name},
         secondaryLabel = { opt ->
             if (opt == DateRangeOption.CUSTOM && customStart != null && customEnd != null) {
                 "${customStart.format(formatter)} – ${customEnd.format(formatter)}"

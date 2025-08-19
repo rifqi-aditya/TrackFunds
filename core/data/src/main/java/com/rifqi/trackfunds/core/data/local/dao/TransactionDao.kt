@@ -66,7 +66,7 @@ interface TransactionDao {
         AND (:hasAccountIds = 0 OR account_id IN (:accountIds))
         AND (:hasCategoryIds = 0 OR category_id IN (:categoryIds))
         AND (:startDate IS NULL OR :endDate IS NULL OR date BETWEEN :startDate AND :endDate)
-    ORDER BY date ASC
+    ORDER BY date DESC
     LIMIT :limit
 """
     )

@@ -72,7 +72,6 @@ fun AppNavHost(
         profileNavGraph(navController)
         accountsNavGraph(navController)
         savingsNavGraph(navController)
-
         sharedNavGraph(navController)
     }
 }

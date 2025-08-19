@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="this_week">Minggu ini</string>
+    <string name="this_month">Bulan ini</string>
+    <string name="last_month">Bulan lalu</string>
+    <string name="this_year">Tahun ini</string>
+    <string name="all_time">Sepanjang waktu</string>
+    <string name="custom">Kustom</string>
+
+    <!-- Umum -->
+    <string name="filter">Filter</string>
+    <string name="apply_filters">Terapkan Filter</string>
+    <string name="cancel">Batal</string>
+    <string name="reset">Atur Ulang</string>
+    <string name="transaction_type">Tipe Transaksi</string>
+    <string name="category">Kategori</string>
+    <string name="account_source">Sumber Akun</string>
+    <string name="transaction_date">Tanggal Transaksi</string>
+    <string name="active_filters">Filter Aktif</string>
+    <string name="see_all">Lihat semua</string>
+    <string name="see_all_count">Lihat semua (%1$d)</string>
+    <string name="show_less">Sembunyikan</string>
+</resources>

@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionsGraph
-import com.rifqi.trackfunds.feature.transaction.ui.filter.FilterScreen
+import com.rifqi.trackfunds.feature.transaction.ui.filter.FilterRoute
 import com.rifqi.trackfunds.feature.transaction.ui.list.TransactionListScreen
 
 fun NavGraphBuilder.transactionsNavGraph(navController: NavHostController) {
@@ -25,8 +25,8 @@ fun NavGraphBuilder.transactionsNavGraph(navController: NavHostController) {
             )
         }
         composable<TransactionRoutes.FilterTransactions> {
-            FilterScreen(
-                onNavigateBack = { navController.popBackStack() }
+            FilterRoute(
+                onNavigateBack = { navController.popBackStack() },
             )
         }
     }

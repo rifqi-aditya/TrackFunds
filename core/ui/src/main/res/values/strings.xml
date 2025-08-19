@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Date range -->
+    <string name="this_week">This Week</string>
+    <string name="this_month">This Month</string>
+    <string name="last_month">Last Month</string>
+    <string name="this_year">This Year</string>
+    <string name="all_time">All Time</string>
+    <string name="custom">Custom</string>
+
+    <!-- Common -->
+    <string name="filter">Filter</string>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">Reset</string>
+    <string name="transaction_type">Transaction Type</string>
+    <string name="category">Category</string>
+    <string name="account_source">Account Source</string>
+    <string name="transaction_date">Transaction Date</string>
+    <string name="active_filters">Active Filters</string>
+    <string name="see_all">See all</string>
+    <string name="see_all_count">See all (%1$d)</string>
+    <string name="show_less">Show less</string>
+</resources>

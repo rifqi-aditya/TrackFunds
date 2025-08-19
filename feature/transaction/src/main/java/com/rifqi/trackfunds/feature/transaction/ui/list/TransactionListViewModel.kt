@@ -163,7 +163,6 @@ class TransactionListViewModel @Inject constructor(
     private suspend fun buildActiveFilterChips(filter: TransactionFilter): List<ActiveFilterChip> {
         val chips = mutableListOf<ActiveFilterChip>()
 
-        // --- Logika Tanggal yang Jauh Lebih Sederhana ---
         val dateLabel = when (filter.dateOption) {
             DateRangeOption.CUSTOM -> {
                 val startDate = filter.startDate
@@ -173,18 +172,14 @@ class TransactionListViewModel @Inject constructor(
                     val formatter = DateTimeFormatter.ofPattern("d MMM")
                     val label = "${startDate.format(formatter)} - ${endDate.format(formatter)}"
                 } else {
-                    filter.dateOption.displayName
+                    filter.dateOption.name
                 }
             }
-            // Jangan tampilkan chip untuk "All Time" karena itu defaultnya
-            DateRangeOption.ALL_TIME -> null
             // Untuk semua opsi lain, cukup gunakan nama dari enum
-            else -> filter.dateOption.displayName
+            else -> filter.dateOption.name
         }
 
-        if (dateLabel != null) {
-            chips.add(ActiveFilterChip("DATE_RANGE", dateLabel.toString(), FilterChipType.DATE_RANGE))
-        }
+        chips.add(ActiveFilterChip("DATE_RANGE", dateLabel.toString(), FilterChipType.DATE_RANGE))
 
 
         // Logika untuk akun dan kategori tidak perlu diubah, sudah bagus.

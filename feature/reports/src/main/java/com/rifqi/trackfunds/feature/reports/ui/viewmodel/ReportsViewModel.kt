@@ -267,7 +267,7 @@ class ReportsViewModel @Inject constructor(
         return if (option == DateRangeOption.CUSTOM && customStart != null && customEnd != null) {
             buildDateRangeLabel(customStart, customEnd)
         } else {
-            option.displayName // ← hanya nama opsi (mis. "This Month")
+            option.name
         }
     }
 }
