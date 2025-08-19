@@ -1,6 +1,7 @@
 package com.rifqi.trackfunds.core.data.di
 
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.generationConfig
 import com.rifqi.trackfunds.core.data.BuildConfig
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,14 @@ object GenerativeAiModule {
     fun provideGenerativeModel(): GenerativeModel {
         return GenerativeModel(
             modelName = "gemini-2.5-flash-lite",
-            apiKey = BuildConfig.GEMINI_API_KEY
+            apiKey = BuildConfig.GEMINI_API_KEY,
+            generationConfig {
+                temperature = 0.2f
+                topP = 0.2f
+                topK = 10
+                candidateCount = 1
+                responseMimeType = "application/json"
+            }
         )
     }
 }

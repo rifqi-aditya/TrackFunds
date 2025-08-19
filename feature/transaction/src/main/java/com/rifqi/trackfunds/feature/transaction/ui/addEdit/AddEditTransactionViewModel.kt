@@ -318,7 +318,7 @@ class AddEditTransactionViewModel @Inject constructor(
                 Log.d("AddEditTransactionViewModel", "handleScanResult: $scanResult")
                 it.copy(
                     amount = formatNumber(scanResult.totalAmount),
-                    description = scanResult.merchantName ?: it.description,
+                    description = scanResult.description ?: it.description,
                     selectedDate = scanResult.transactionDateTime.toLocalDate() ?: it.selectedDate,
                     selectedCategory = suggestedCategory ?: it.selectedCategory,
                     items = scanResult.transactionItem.map { item ->

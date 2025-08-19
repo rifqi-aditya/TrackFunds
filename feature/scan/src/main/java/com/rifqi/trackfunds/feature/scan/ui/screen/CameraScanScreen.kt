@@ -73,16 +73,14 @@ fun CameraScanScreen(
         }
     }
 
-    // 1. Controller dibuat dan dimiliki di sini (Stateful Composable)
     val context = LocalContext.current
     val cameraController = remember { LifecycleCameraController(context) }
 
     CameraScanContent(
         hasPermission = hasCameraPermission,
-        controller = cameraController, // Teruskan controller ke bawah
+        controller = cameraController,
         onNavigateBack = onNavigateBack,
         onTakePhoto = {
-            // Logika takePhoto sekarang memanggil ViewModel
             takePhoto(
                 context = context,
                 controller = cameraController,

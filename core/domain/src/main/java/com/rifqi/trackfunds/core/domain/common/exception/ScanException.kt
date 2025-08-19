@@ -23,7 +23,7 @@ sealed class ScanException(override val message: String) : Exception(message) {
      * For all other unexpected errors.
      */
     data class UnknownError(val originalMessage: String?) :
-        ScanException("An unexpected error occurred. Please try again in a moment.")
+        ScanException("An unexpected error occurred. Please try asdsa again in a moment.")
 
     class NotAReceipt : ScanException("The uploaded image does not appear to be a receipt.")
 

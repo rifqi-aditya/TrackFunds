@@ -64,8 +64,19 @@ interface CategoryDao {
      * This query explicitly only looks for default categories.
      */
     // DITAMBAHKAN: Pengecekan IS NULL untuk memastikan hanya kategori default yang diambil
-    @Query("SELECT * FROM categories WHERE standard_key = :key AND user_uid IS NULL LIMIT 1")
-    suspend fun getCategoryByStandardKey(key: String): CategoryEntity?
+    @Query("""
+        SELECT *
+        FROM categories
+        WHERE standard_key = :key
+          AND (user_uid = :userUid OR user_uid IS NULL)
+        ORDER BY CASE WHEN user_uid = :userUid THEN 0 ELSE 1 END
+        LIMIT 1
+    """)
+    suspend fun getCategoryByStandardKey(
+        key: String,
+        userUid: String
+    ): CategoryEntity?
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllCategories(categories: List<CategoryEntity>)

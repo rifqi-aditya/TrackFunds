@@ -13,8 +13,8 @@ data class GeminiResponseDto(
     @SerialName("quality_score")
     val qualityScore: Double? = null,
 
-    @SerialName("merchant_name")
-    val merchantName: String? = null,
+    @SerialName("description")
+    val description: String? = null,
 
     @SerialName("total_amount")
     val totalAmount: Double? = null,

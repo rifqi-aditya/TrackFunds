@@ -58,8 +58,8 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCategoryByStandardKey(key: String): Category? {
-        // Fungsi ini tidak butuh userUid karena hanya mencari kategori default
-        return categoryDao.getCategoryByStandardKey(key)?.toDomain()
+        val userUid = userPreferencesRepository.userUid.first() ?: return null
+        return categoryDao.getCategoryByStandardKey(key, userUid)?.toDomain()
     }
 
     override suspend fun insertCategory(category: Category): Result<Unit> {

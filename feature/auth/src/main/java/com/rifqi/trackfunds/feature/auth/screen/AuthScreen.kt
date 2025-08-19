@@ -104,7 +104,7 @@ fun AuthContent(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "TrackFunds", // Ganti dengan logo Anda
+                    text = "TrackFunds",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

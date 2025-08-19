@@ -1,8 +1,6 @@
 package com.rifqi.trackfunds.core.common.utils
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.content.FileProvider
 import java.io.File
@@ -14,28 +12,20 @@ object ReceiptImageStore {
 
     /** Salin ke filesDir/receipts + kompres JPEG ringan agar ramah UI & storage */
     fun saveIntoAppStorage(context: Context, sourceUri: Uri): Uri {
+        val resolver = context.contentResolver
         val fileName = "${UUID.randomUUID()}.jpg"
         val dir = File(context.filesDir, "receipts").apply { mkdirs() }
         val destFile = File(dir, fileName)
 
-        context.contentResolver.openInputStream(sourceUri).use { inStream ->
-            // Jika sumber sudah JPEG & kamu mau copy mentah, bisa copyTo langsung.
-            // Di sini kita kompres untuk jaga ukuran & konsistensi.
-            val bitmap = BitmapFactory.decodeStream(inStream)
-                ?: error("Unable to decode image")
-
-            FileOutputStream(destFile).use { out ->
-                // quality 85 cukup aman untuk teks struk
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+        resolver.openInputStream(sourceUri).use { inStream ->
+            FileOutputStream(destFile).use { outStream ->
+                inStream?.copyTo(outStream)
             }
         }
 
-        return FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            destFile
-        )
+        return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", destFile)
     }
+
 
     fun deleteFromAppStorage(context: Context, storedUri: Uri): Boolean {
         return try {

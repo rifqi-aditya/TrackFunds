@@ -41,7 +41,6 @@ class ScanRepositoryImpl @Inject constructor(
         val image = InputImage.fromFilePath(context, imageUri)
         val vt = recognizer.process(image).await()
         val raw = vt.text.trim()
-        Log.d("ScanRepository", "Extracted text: $raw")
         if (raw.isBlank()) throw ScanException.NoTextFound()
         if (raw.length < 20) throw ScanException.NoTextFound()
         raw
@@ -61,7 +60,6 @@ class ScanRepositoryImpl @Inject constructor(
             val prompt = createGeminiPrompt(ocrText, categories)
             val response = generativeModel.generateContent(prompt)
             val responseText = response.text ?: throw ScanException.ParsingFailed()
-            Log.d("ScanRepository", "Gemini response: $responseText")
 
             // 3) Sanitasi & parse JSON
             val cleanedJson = sanitizeJsonBlock(responseText)
@@ -76,7 +74,7 @@ class ScanRepositoryImpl @Inject constructor(
 
             val quality = dto.qualityScore ?: 0.0
             val tooLowQuality = quality < 0.6
-            val invalidTotal = (dto.totalAmount == null) || (dto.totalAmount <= 1000.0) // cegah "9"
+            val invalidTotal = (dto.totalAmount == null) || (dto.totalAmount <= 1000.0)
 
             if (tooLowQuality || invalidTotal) {
                 return Result.failure(ScanException.LowConfidence("low quality or total missing/small"))
@@ -99,44 +97,53 @@ class ScanRepositoryImpl @Inject constructor(
     /**
      * Membuat prompt yang akan dikirim ke Gemini.
      */
-    private fun createGeminiPrompt(ocrText: String, categories: List<CategoryEntity>): String {
-        val categoryListString = categories.joinToString("\n") { "- ${it.standardKey}: ${it.name}" }
+    private fun createGeminiPrompt(
+        ocrText: String,
+        categories: List<CategoryEntity>
+    ): String {
         val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val categoryKeys = categories.joinToString(", ") { "\"${it.standardKey}\"" }
+        Log.d("ScanRepository", "Available categories: $categoryKeys")
 
         return """
-      You analyze OCR text of a retail receipt. Respond with ONLY a valid JSON object (no markdown).
-
-      Decide if the text is a sales receipt and extract fields. If unsure, be conservative.
-
-      JSON schema (unknown fields allowed):
-      {
-        "is_receipt": boolean,
-        "quality_score": number,            // 0.0 .. 1.0 confidence
-        "merchant_name": string|null,
-        "transaction_date": "YYYY-MM-DD"|null,   // if missing, use "$today"
-        "transaction_time": "HH:mm:ss"|null,
-        "total_amount": number|null,             // no currency symbols, dot as decimal
-        "items": [ { "name": string, "quantity": number|null, "price": number|null }, ... ],
-        "category": string                        // one of provided keys, else "miscellaneous"
-      }
-
-      Rules:
-        - If NOT a receipt: set "is_receipt": false and "quality_score": 0.0; keep other fields null/empty.
-        - Do NOT guess: if a value is unknown or not explicitly supported by the text, return null.
-        - "total_amount" = final payable total.
-        - Items: output lines that look like items; quantity/price may be null if unclear.
-        - Merchant name (very important):
-          • Fill ONLY if a clear brand/store name is explicitly present in the text.
-          • Do NOT infer from addresses, building names, tax IDs, phone/emails, URLs, or generic words (e.g., street/city/“minimarket”).
-          • If uncertain, set merchant_name = null and reduce quality_score (≤ 0.6).
-        - Normalize Indonesian numerals: "124,000"→124000 ; "11,273"→11273.
-
-      AVAILABLE CATEGORIES:
-      $categoryListString
-
-      OCR TEXT:
-      $ocrText
-    """.trimIndent()
+            You analyze OCR text of a retail receipt from indonesia.
+            
+            Return ONLY a valid JSON object — no explanations, no markdown, no code fences, no extra text.
+               
+            Currency & locale:
+            - Assume Indonesian format: "." thousands, "," decimals.
+            - Output monetary amounts in **integer Rupiah** (no decimals). Examples:
+              "Rp 75.000" -> 75000, "12.345,67" -> 12346
+  
+            Rules:
+            - If a field is unknown, use null.
+            - Use Indonesian locale for currency. Output monetary amounts in integer Rupiah (no decimals).
+            - Dates must be "YYYY-MM-DD". If missing, use "$today".
+            - Time must be "HH:mm" or null.
+            - "items" should contain only actual line items (name, optional quantity, optional price).
+            - "category" must be one of: [$categoryKeys]. If none fits, use "miscellaneous".
+            - Be conservative: set is_receipt = false if the text is not clearly a receipt.
+            
+            Short description (IMPORTANT):
+            - Provide a concise Indonesian description (max 8–10 word) summarizing the purchase,
+            - Do **not** guess or invent store/brand names. If unclear, write a generic description.
+            - Never include address, NPWP, or transaction number.
+            
+            Schema:
+            {
+              "is_receipt": boolean,
+              "quality_score": number,
+              "description": string|null,
+              "transaction_date": "YYYY-MM-DD"|null,
+              "transaction_time": "HH:mm"|null,
+              "total_amount": number|null,
+              "items": [ { "name": string, "quantity": number|null, "price": number|null } ],
+              "category": string
+            }
+            
+            OCR_TEXT:
+            $ocrText
+            """.trimIndent()
     }
 
 
@@ -150,7 +157,7 @@ class ScanRepositoryImpl @Inject constructor(
         val dateTime = LocalDateTime.of(date, time)
 
         return ScanResult(
-            merchantName = dto.merchantName?.lowercase()?.trim(),
+            description = dto.description,
             transactionDateTime = dateTime,
             totalAmount = BigDecimal(dto.totalAmount?.toString() ?: "0"),
             categoryStandardKey = dto.category,
