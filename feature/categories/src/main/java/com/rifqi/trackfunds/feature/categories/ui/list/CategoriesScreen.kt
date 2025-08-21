@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.categories.ui.screen
+package com.rifqi.trackfunds.feature.categories.ui.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -34,9 +34,6 @@ import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.categories.ui.components.AddCategoryRow
 import com.rifqi.trackfunds.feature.categories.ui.components.CategoryRow
-import com.rifqi.trackfunds.feature.categories.ui.event.CategoryListEvent
-import com.rifqi.trackfunds.feature.categories.ui.state.CategoryListUiState
-import com.rifqi.trackfunds.feature.categories.ui.viewmodel.CategoryListViewModel
 import kotlinx.coroutines.launch
 
 @Composable

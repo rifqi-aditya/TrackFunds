@@ -1,4 +1,4 @@
-package com.rifqi.trackfunds.feature.categories.ui.viewmodel
+package com.rifqi.trackfunds.feature.categories.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,8 +7,6 @@ import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
-import com.rifqi.trackfunds.feature.categories.ui.event.CategoryListEvent
-import com.rifqi.trackfunds.feature.categories.ui.state.CategoryListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

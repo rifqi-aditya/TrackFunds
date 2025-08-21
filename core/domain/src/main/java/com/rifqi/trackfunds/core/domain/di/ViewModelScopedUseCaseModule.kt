@@ -22,6 +22,8 @@ import com.rifqi.trackfunds.core.domain.budget.usecase.UpdateBudgetUseCase
 import com.rifqi.trackfunds.core.domain.budget.usecase.UpdateBudgetUseCaseImpl
 import com.rifqi.trackfunds.core.domain.category.usecase.AddCategoryUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.AddCategoryUseCaseImpl
+import com.rifqi.trackfunds.core.domain.category.usecase.DeleteCategoryUseCase
+import com.rifqi.trackfunds.core.domain.category.usecase.DeleteCategoryUseCaseImpl
 import com.rifqi.trackfunds.core.domain.category.usecase.UpdateCategoryUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.UpdateCategoryUseCaseImpl
 import com.rifqi.trackfunds.core.domain.savings.usecase.AddFundsToSavingsGoalUseCase
@@ -78,6 +80,10 @@ abstract class ViewModelScopedUseCaseModule {
     @Binds
     @ViewModelScoped
     abstract fun bindAddCategoryUseCase(impl: AddCategoryUseCaseImpl): AddCategoryUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindDeleteCategoryUseCase(impl: DeleteCategoryUseCaseImpl): DeleteCategoryUseCase
 
     // --- Account Use Cases (Actions) ---
     @Binds

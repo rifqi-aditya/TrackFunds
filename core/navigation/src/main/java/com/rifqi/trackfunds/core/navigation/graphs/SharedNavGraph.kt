@@ -5,9 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.rifqi.trackfunds.core.navigation.api.SharedRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
-import com.rifqi.trackfunds.feature.categories.ui.screen.AddEditCategoryScreen
-import com.rifqi.trackfunds.feature.categories.ui.screen.CategoriesScreen
-import com.rifqi.trackfunds.feature.categories.ui.screen.SelectCategoryScreen
+import com.rifqi.trackfunds.feature.categories.ui.addedit.AddEditCategoryScreen
+import com.rifqi.trackfunds.feature.categories.ui.list.CategoriesScreen
 import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionScreen
 import com.rifqi.trackfunds.feature.transaction.ui.detail.TransactionDetailScreen
 
@@ -29,14 +28,6 @@ fun NavGraphBuilder.sharedNavGraph(navController: NavHostController) {
     composable<SharedRoutes.AddEditCategory> {
         AddEditCategoryScreen(
             onNavigateBack = { navController.popBackStack() }
-        )
-    }
-
-    composable<SharedRoutes.SelectCategory> {
-        SelectCategoryScreen(
-            onNavigateBack = { navController.popBackStack() },
-            onNavigateToAddCategory = { navController.navigate(SharedRoutes.AddEditCategory()) },
-            onSearchClicked = { },
         )
     }
 
