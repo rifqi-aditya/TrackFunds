@@ -3,9 +3,9 @@ package com.rifqi.trackfunds.feature.categories.ui.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,8 +14,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
+import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.categories.ui.components.AddCategoryRow
 import com.rifqi.trackfunds.feature.categories.ui.components.CategoryRow
 import com.rifqi.trackfunds.feature.categories.ui.event.CategoryListEvent
@@ -74,24 +78,40 @@ fun CategoryListContent(
                 onNavigateBack = onNavigateBack,
                 isFullScreen = true
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
                 .padding(top = innerPadding.calculateTopPadding())
-                .background(MaterialTheme.colorScheme.surface)
                 .fillMaxSize()
         ) {
-            TabRow(selectedTabIndex = pagerState.currentPage) {
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                containerColor = MaterialTheme.colorScheme.background,
+                divider = {},
+                indicator = { tabs ->
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(tabs[pagerState.currentPage]),
+                        color = TrackFundsTheme.extendedColors.accent,
+                        height = 2.dp
+                    )
+                }
+            ) {
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text("Expense") }
+                    text = { Text("Expense") },
+                    selectedContentColor = TrackFundsTheme.extendedColors.accent,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text("Income") }
+                    text = { Text("Income") },
+                    selectedContentColor = TrackFundsTheme.extendedColors.accent,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             HorizontalPager(state = pagerState) { page ->
@@ -103,17 +123,27 @@ fun CategoryListContent(
 
                 val type = if (page == 0) TransactionType.EXPENSE else TransactionType.INCOME
 
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    item {
-                        Text(
-                            "Your Category",
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 16.dp,
-                                bottom = 8.dp
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentPadding = PaddingValues(
+                        top = 8.dp,
+                        bottom = 24.dp
+                    )
+                ) {
+                    stickyHeader {
+                        Surface(
+                            tonalElevation = 1.dp,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "Your Category",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
-                        )
+                        }
                     }
                     item {
                         AddCategoryRow(onClick = { onEvent(CategoryListEvent.AddCategoryClicked(type)) })
@@ -125,12 +155,18 @@ fun CategoryListContent(
                             onClick = { onEvent(CategoryListEvent.CategoryClicked(category.id)) }
                         )
                     }
-                    item {
-                        Spacer(Modifier.height(16.dp)) // Beri jarak
-                        Text(
-                            "General Category",
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
+                    stickyHeader {
+                        Surface(
+                            tonalElevation = 1.dp,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "Default Category",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
                     }
                     items(defaultCategories) { category ->
                         CategoryRow(

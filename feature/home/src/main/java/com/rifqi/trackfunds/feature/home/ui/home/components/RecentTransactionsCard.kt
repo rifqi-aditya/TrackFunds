@@ -138,13 +138,6 @@ fun RecentTransactionsCard(
                     emptyStateHeight,
                     maxHeight
                 )
-
-//                else -> calculatePagerHeight(
-//                    uiState.recentSavingsTransactions.size,
-//                    heightPerItem,
-//                    emptyStateHeight,
-//                    maxHeight
-//                )
             }
 
             HorizontalPager(
