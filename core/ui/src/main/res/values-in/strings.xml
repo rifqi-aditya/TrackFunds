@@ -155,5 +155,31 @@
     <string name="cd_add_receipt">Tambah Struk</string>
     <string name="cd_toggle_expand">Buka/Tutup</string>
 
-    <!-- Language -->
+    <string name="dialog_title_select_action">Pilih Aksi</string>
+    <string name="action_label_scan_receipt">Pindai Struk</string>
+    <string name="action_desc_scan_receipt">Unggah dan periksa struk Anda.</string>
+    <string name="action_label_manual_transaction">Transaksi Manual</string>
+    <string name="action_desc_manual_transaction">Catat transaksi Anda secara manual.</string>
+
+    <string name="cd_dismiss">Tutup</string>
+
+
+    <string name="scan_receipt_title">Pindai Struk</string>
+
+    <string name="scan_step_upload">Unggah</string>
+    <string name="scan_step_preview">Pratinjau</string>
+    <string name="scan_step_processing">Memproses</string>
+
+    <string name="upload_phase_title">Unggah Struk</string>
+    <string name="upload_phase_description">Cukup unggah foto yang jelas, dan kami akan membaca detailnya untuk Anda.</string>
+    <string name="upload_phase_button_gallery">Pilih dari Galeri</string>
+    <string name="upload_phase_button_camera">Gunakan Kamera</string>
+
+    <string name="preview_phase_title">Apakah struk ini cukup jelas?</string>
+    <string name="preview_phase_description">Pastikan semua detail seperti barang, harga, dan total terlihat.</string>
+    <string name="preview_phase_cd_image">Pratinjau Struk</string>
+    <string name="preview_phase_button_retake">Ambil Ulang</string>
+    <string name="preview_phase_button_confirm">Ya, Gunakan Foto Ini</string>
+
+    <string name="processing_phase_message">Menganalisis struk Anda, harap tunggu…</string>
 </resources>

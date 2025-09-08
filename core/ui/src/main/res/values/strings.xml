@@ -186,4 +186,31 @@
     <string name="cd_add_receipt">Add Receipt</string>
     <string name="cd_toggle_expand">Toggle</string>
 
+    <string name="dialog_title_select_action">Select Action</string>
+    <string name="action_label_scan_receipt">Scan Receipt</string>
+    <string name="action_desc_scan_receipt">Upload and review your receipts.</string>
+    <string name="action_label_manual_transaction">Manual Transaction</string>
+    <string name="action_desc_manual_transaction">Record your transaction manually.</string>
+
+    <string name="cd_dismiss">Dismiss</string>
+
+    <string name="scan_receipt_title">Scan Receipt</string>
+
+    <string name="scan_step_upload">Upload</string>
+    <string name="scan_step_preview">Preview</string>
+    <string name="scan_step_processing">Processing</string>
+
+    <string name="upload_phase_title">Upload a Receipt</string>
+    <string name="upload_phase_description">Just upload a clear photo, and we\'ll read the details for you.</string>
+    <string name="upload_phase_button_gallery">Choose from Gallery</string>
+    <string name="upload_phase_button_camera">Use Camera</string>
+
+    <string name="preview_phase_title">Is this receipt clear enough?</string>
+    <string name="preview_phase_description">Make sure all details like items, prices, and total are visible.</string>
+    <string name="preview_phase_cd_image">Receipt Preview</string>
+    <string name="preview_phase_button_retake">Retake</string>
+    <string name="preview_phase_button_confirm">Yes, Use This Photo</string>
+
+    <string name="processing_phase_message">Analyzing your receipt, please wait…</string>
+
 </resources>

@@ -24,11 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
 
@@ -41,7 +43,6 @@ fun AddTransactionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        // Tidak pakai tombol confirm/dismiss karena konten kustom
         confirmButton = {},
         dismissButton = {},
         shape = MaterialTheme.shapes.extraLarge,
@@ -55,14 +56,14 @@ fun AddTransactionDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Select Action",
+                    text = stringResource(R.string.dialog_title_select_action),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.semantics { heading() }
                 )
                 IconButton(onClick = onDismissRequest) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Dismiss",
+                        contentDescription = stringResource(R.string.cd_dismiss),
                         modifier = Modifier
                             .size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -78,8 +79,8 @@ fun AddTransactionDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 ActionRow(
-                    label = "Scan Receipt",
-                    description = "Upload and review your receipts.",
+                    label = stringResource(R.string.action_label_scan_receipt),
+                    description = stringResource(R.string.action_desc_scan_receipt),
                     iconIdentifier = "scan_receipt",
                     onClick = {
                         onDismissRequest()
@@ -87,8 +88,8 @@ fun AddTransactionDialog(
                     }
                 )
                 ActionRow(
-                    label = "Manual Transaction",
-                    description = "Record your transaction manually.",
+                    label = stringResource(R.string.action_label_manual_transaction),
+                    description = stringResource(R.string.action_desc_manual_transaction),
                     iconIdentifier = "edit",
                     onClick = {
                         onDismissRequest()
@@ -121,13 +122,13 @@ private fun ActionRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 72.dp) // spec 2-line list item
+                .heightIn(min = 72.dp)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically // <- center vertical
+            verticalAlignment = Alignment.CenterVertically
         ) {
             DisplayIconFromResource(
                 identifier = iconIdentifier,
-                contentDescription = null,
+                contentDescription = null, // Deskripsi diberikan oleh teks di sebelahnya
                 modifier = Modifier.size(38.dp)
             )
 

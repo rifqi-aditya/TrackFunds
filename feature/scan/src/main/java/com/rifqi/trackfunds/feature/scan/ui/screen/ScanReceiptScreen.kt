@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,7 +65,6 @@ fun ScanReceiptScreen(
     val viewModel: ScanReceiptViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // Launcher untuk memilih gambar dari galeri
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
@@ -72,7 +72,6 @@ fun ScanReceiptScreen(
         }
     )
 
-    // Menangani side effect dari ViewModel
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
@@ -105,21 +104,23 @@ private fun ScanContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = "Scan Receipt",
-                // Tombol kembali akan mereset state atau kembali ke halaman sebelumnya
+                title = stringResource(R.string.scan_receipt_title),
                 onNavigateBack = {
                     if (uiState.currentPhase == ScanPhase.UPLOAD) {
                         onNavigateBack()
                     } else {
-//                        onEvent(ScanReceiptEvent.ScanAgainClicked)
+                        // onEvent(ScanReceiptEvent.ScanAgainClicked)
                     }
                 }
             )
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
-            // Step indicator
-            val steps = listOf("Upload", "Preview", "Processing")
+            val steps = listOf(
+                stringResource(R.string.scan_step_upload),
+                stringResource(R.string.scan_step_preview),
+                stringResource(R.string.scan_step_processing)
+            )
             LinearStepIndicator(
                 currentStep = uiState.currentPhase.ordinal,
                 steps = steps,
@@ -167,9 +168,12 @@ private fun UploadPhase(onEvent: (ScanReceiptEvent) -> Unit) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text("Upload a Receipt", style = MaterialTheme.typography.titleLarge)
         Text(
-            "Just upload a clear photo, and we'll read the details for you.",
+            stringResource(R.string.upload_phase_title),
+            style = MaterialTheme.typography.titleLarge
+        )
+        Text(
+            stringResource(R.string.upload_phase_description),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 8.dp)
@@ -190,7 +194,7 @@ private fun UploadPhase(onEvent: (ScanReceiptEvent) -> Unit) {
         ) {
             Icon(Icons.Default.PhotoLibrary, contentDescription = null)
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Choose from Gallery")
+            Text(stringResource(R.string.upload_phase_button_gallery))
         }
 
         Spacer(Modifier.height(12.dp))
@@ -210,7 +214,10 @@ private fun UploadPhase(onEvent: (ScanReceiptEvent) -> Unit) {
                 tint = TrackFundsTheme.extendedColors.accent
             )
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Use Camera", color = TrackFundsTheme.extendedColors.accent)
+            Text(
+                stringResource(R.string.upload_phase_button_camera),
+                color = TrackFundsTheme.extendedColors.accent
+            )
         }
     }
 }
@@ -228,10 +235,13 @@ fun ImagePreviewPhase(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Is this receipt clear enough?", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            stringResource(R.string.preview_phase_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Make sure all details like items, prices, and total are visible.",
+            stringResource(R.string.preview_phase_description),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium
         )
@@ -239,7 +249,7 @@ fun ImagePreviewPhase(
 
         AsyncImage(
             model = imageUri,
-            contentDescription = "Receipt Preview",
+            contentDescription = stringResource(R.string.preview_phase_cd_image),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
@@ -272,7 +282,10 @@ fun ImagePreviewPhase(
                     1.dp, TrackFundsTheme.extendedColors.accent
                 )
             ) {
-                Text("Retake", color = TrackFundsTheme.extendedColors.accent)
+                Text(
+                    stringResource(R.string.preview_phase_button_retake),
+                    color = TrackFundsTheme.extendedColors.accent
+                )
             }
 
             Button(
@@ -286,7 +299,7 @@ fun ImagePreviewPhase(
                     contentColor = MaterialTheme.colorScheme.inverseOnSurface
                 )
             ) {
-                Text("Yes, Use This Photo")
+                Text(stringResource(R.string.preview_phase_button_confirm))
             }
         }
     }
@@ -306,7 +319,7 @@ private fun ProcessingPhase() {
                 modifier = Modifier.size(250.dp)
             )
             Spacer(Modifier.height(16.dp))
-            Text("Analyzing your receipt, please wait...")
+            Text(stringResource(R.string.processing_phase_message))
         }
     }
 }
