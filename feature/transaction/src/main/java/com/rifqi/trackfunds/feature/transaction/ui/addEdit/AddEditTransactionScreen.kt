@@ -33,11 +33,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rifqi.trackfunds.core.common.utils.ReceiptImageStore
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.getDisplayName
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.components.CustomDatePickerDialog
 import com.rifqi.trackfunds.core.ui.components.SelectionItemData
@@ -55,8 +58,8 @@ import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEve
 import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent.CategorySelected
 import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent.SavingsGoalSelected
 import com.rifqi.trackfunds.feature.transaction.ui.components.AnimatedSlideToggleButton
+import com.rifqi.trackfunds.feature.transaction.ui.components.ToggleItem
 import com.rifqi.trackfunds.feature.transaction.ui.components.TransactionDetailsSection
-import com.rifqi.trackfunds.feature.transaction.ui.model.TransactionTypes
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -90,11 +93,11 @@ fun AddEditTransactionScreen(
             when (uiState.activeSheet) {
                 AddEditSheetType.CATEGORY -> {
                     SelectionList(
-                        title = "Select Category",
+                        title = stringResource(R.string.select_category),
                         items = categoriesForSelection.map { category ->
                             SelectionItemData(
                                 id = category.id,
-                                title = category.name,
+                                title = category.getDisplayName(LocalContext.current),
                                 iconIdentifier = category.iconIdentifier
                             )
                         },
@@ -119,7 +122,7 @@ fun AddEditTransactionScreen(
 
                 AddEditSheetType.ACCOUNT -> {
                     SelectionList(
-                        title = "Select Account",
+                        title = stringResource(R.string.select_account),
                         items = uiState.allAccounts.map { account ->
                             SelectionItemData(
                                 id = account.id,
@@ -144,13 +147,15 @@ fun AddEditTransactionScreen(
 
                 AddEditSheetType.SAVINGS_GOAL -> {
                     SelectionList(
-                        title = "Select Savings Goal",
+                        title = stringResource(R.string.select_savings_goal),
                         items = uiState.allSavingsGoals.map { savings ->
-                            // Map dari SavingsGoal ke SelectionItemData
                             SelectionItemData(
                                 id = savings.id,
                                 title = savings.name,
-                                subtitle = "Saved: ${formatCurrency(savings.savedAmount)}",
+                                subtitle = stringResource(
+                                    R.string.saved_amount_subtitle,
+                                    formatCurrency(savings.savedAmount)
+                                ),
                                 iconIdentifier = savings.iconIdentifier
                             )
                         },
@@ -168,7 +173,7 @@ fun AddEditTransactionScreen(
                     )
                 }
 
-                null -> TODO()
+                else -> {}
             }
         }
     }
@@ -205,6 +210,7 @@ fun AddEditTransactionScreen(
     )
 }
 
+
 /**
  * Stateless Composable (Presentational)
  * - Hanya menerima state dan lambda.
@@ -222,7 +228,9 @@ fun AddEditTransactionContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = if (isEditMode) "Edit Transaction" else "Add Transaction",
+                title = stringResource(
+                    if (isEditMode) R.string.title_edit_transaction else R.string.title_add_transaction
+                ),
                 onNavigateBack = onNavigateBack,
                 isFullScreen = true,
             )
@@ -249,7 +257,9 @@ fun AddEditTransactionContent(
                     )
                 } else {
                     Text(
-                        if (isEditMode) "Save Changes" else "Save Transaction",
+                        text = stringResource(
+                            if (isEditMode) R.string.button_save_changes else R.string.button_save_transaction
+                        ),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -266,8 +276,18 @@ fun AddEditTransactionContent(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            val transactionTypes = listOf(
+                ToggleItem(
+                    TransactionType.EXPENSE,
+                    stringResource(R.string.transaction_type_expense)
+                ),
+                ToggleItem(
+                    TransactionType.INCOME,
+                    stringResource(R.string.transaction_type_income)
+                ),
+            )
             AnimatedSlideToggleButton(
-                items = TransactionTypes,
+                items = transactionTypes,
                 selectedItem = uiState.selectedTransactionType,
                 onItemSelected = { onEvent(AddEditTransactionEvent.TypeChanged(it)) },
             )
@@ -292,23 +312,24 @@ fun AddEditTransactionContent(
     }
 }
 
-
 @Composable
 private fun StandardFormContent(
     uiState: AddEditTransactionUiState,
     onEvent: (AddEditTransactionEvent) -> Unit
 ) {
     AmountInputField(
+        label = stringResource(R.string.label_transaction_amount),
         value = uiState.amount,
-        placeholder = "0",
+        placeholder = stringResource(R.string.placeholder_zero),
         onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
         isError = uiState.amountError != null,
         errorMessage = uiState.amountError,
     )
 
     FormSelectorField(
-        label = "Category",
-        value = uiState.selectedCategory?.name ?: "Choose category",
+        label = stringResource(R.string.label_category),
+        value = uiState.selectedCategory?.getDisplayName(context = LocalContext.current)
+            ?: stringResource(R.string.placeholder_choose_category),
         onClick = { onEvent(AddEditTransactionEvent.CategorySelectorClicked) },
         leadingIconRes = uiState.selectedCategory?.iconIdentifier,
         isError = uiState.categoryError != null,
@@ -316,8 +337,9 @@ private fun StandardFormContent(
     )
 
     FormSelectorField(
-        label = "Source Account",
-        value = uiState.selectedAccount?.name ?: "Choose account",
+        label = stringResource(R.string.label_source_account),
+        value = uiState.selectedAccount?.name
+            ?: stringResource(R.string.placeholder_choose_account),
         onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
         leadingIconRes = uiState.selectedAccount?.iconIdentifier,
         isError = uiState.accountError != null,
@@ -325,7 +347,7 @@ private fun StandardFormContent(
     )
 
     DatePickerField(
-        label = "Date",
+        label = stringResource(R.string.label_date),
         value = uiState.selectedDate,
         onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) },
         mode = DatePickerMode.FULL_DATE
@@ -334,8 +356,8 @@ private fun StandardFormContent(
     GeneralTextInputField(
         value = uiState.description,
         onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
-        label = "Description (Optional)",
-        placeholder = "Enter transaction description",
+        label = stringResource(R.string.label_description_optional),
+        placeholder = stringResource(R.string.placeholder_enter_description),
         singleLine = false,
     )
 
@@ -381,27 +403,29 @@ private fun SavingsFormContent(
     onEvent: (AddEditTransactionEvent) -> Unit
 ) {
     FormSelectorField(
-        label = "Savings Goal",
-        value = uiState.selectedSavingsGoal?.name ?: "Choose savings goal",
+        label = stringResource(R.string.label_savings_goal),
+        value = uiState.selectedSavingsGoal?.name
+            ?: stringResource(R.string.placeholder_choose_savings_goal),
         onClick = { onEvent(AddEditTransactionEvent.SavingsGoalSelectorClicked) },
         leadingIconRes = uiState.selectedSavingsGoal?.iconIdentifier,
     )
 
     FormSelectorField(
-        label = "Source Account",
-        value = uiState.selectedAccount?.name ?: "Choose account",
+        label = stringResource(R.string.label_source_account),
+        value = uiState.selectedAccount?.name
+            ?: stringResource(R.string.placeholder_choose_account),
         onClick = { onEvent(AddEditTransactionEvent.AccountSelectorClicked) },
         leadingIconRes = uiState.selectedAccount?.iconIdentifier,
     )
 
     AmountInputField(
         value = uiState.amount,
-        placeholder = "0",
+        placeholder = stringResource(R.string.placeholder_zero),
         onValueChange = { onEvent(AddEditTransactionEvent.AmountChanged(it)) },
     )
 
     DatePickerField(
-        label = "Date",
+        label = stringResource(R.string.label_date),
         value = uiState.selectedDate,
         onClick = { onEvent(AddEditTransactionEvent.DateSelectorClicked) },
         mode = DatePickerMode.FULL_DATE
@@ -410,8 +434,8 @@ private fun SavingsFormContent(
     GeneralTextInputField(
         value = uiState.description,
         onValueChange = { onEvent(AddEditTransactionEvent.DescriptionChanged(it)) },
-        label = "Description",
-        placeholder = "Enter transaction description",
+        label = stringResource(R.string.label_description),
+        placeholder = stringResource(R.string.placeholder_enter_description),
         singleLine = false,
     )
     uiState.error?.let { errorMessage ->

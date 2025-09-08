@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="debug_lang_marker">ID</string>
     <string name="this_week">Minggu ini</string>
     <string name="this_month">Bulan ini</string>
@@ -80,6 +80,80 @@
     <string name="home_monthly_budget_title">Anggaran Bulan Ini</string>
     <string name="home_budget_used">Digunakan</string>
     <string name="home_budget_remaining">Sisa</string>
+
+    <string name="category_food_and_drink">Makanan &amp; Minuman</string>
+    <string name="category_groceries">Belanja Bulanan</string>
+    <string name="category_transportation">Transportasi</string>
+    <string name="category_fuel">Bahan Bakar</string>
+    <string name="category_shopping">Belanja</string>
+    <string name="category_utilities">Tagihan &amp; Utilitas</string>
+    <string name="category_housing">Perumahan</string>
+    <string name="category_health">Kesehatan</string>
+    <string name="category_insurance">Asuransi</string>
+    <string name="category_personal_care">Perawatan Diri</string>
+    <string name="category_entertainment">Hiburan</string>
+    <string name="category_education">Pendidikan</string>
+    <string name="category_travel">Liburan &amp; Perjalanan</string>
+    <string name="category_sports_fitness">Olahraga &amp; Kebugaran</string>
+    <string name="category_pets">Hewan Peliharaan</string>
+    <string name="category_gifts_donations">Hadiah &amp; Donasi</string>
+    <string name="category_fees_charges">Biaya &amp; Ongkos</string>
+    <string name="category_miscellaneous">Lain-lain</string>
+
+    <string name="category_salary">Gaji</string>
+    <string name="category_bonus">Bonus</string>
+    <string name="category_investment_income">Pendapatan Investasi</string>
+    <string name="category_gifts_received">Hadiah Diterima</string>
+    <string name="category_freelance">Freelance</string>
+    <string name="category_other_income">Pendapatan Lain</string>
+
+    <string name="title_add_transaction">Tambah Transaksi</string>
+    <string name="title_edit_transaction">Ubah Transaksi</string>
+    <string name="button_save_transaction">Simpan Transaksi</string>
+    <string name="button_save_changes">Simpan Perubahan</string>
+
+    <string name="select_category">Pilih Kategori</string>
+    <string name="select_account">Pilih Akun</string>
+    <string name="select_savings_goal">Pilih Target Tabungan</string>
+
+    <string name="label_category">Kategori</string>
+    <string name="label_source_account">Akun Sumber</string>
+    <string name="label_savings_goal">Target Tabungan</string>
+    <string name="label_date">Tanggal</string>
+    <string name="label_description">Deskripsi</string>
+    <string name="label_description_optional">Deskripsi (Opsional)</string>
+    <string name="label_transaction_amount">Nominal Transaksi</string>
+
+    <string name="placeholder_zero">0</string>
+    <string name="placeholder_choose_category">Pilih kategori</string>
+    <string name="placeholder_choose_account">Pilih akun</string>
+    <string name="placeholder_choose_savings_goal">Pilih target tabungan</string>
+    <string name="placeholder_enter_description">Masukkan deskripsi transaksi</string>
+
+    <string name="saved_amount_subtitle">Tersimpan: %1$s</string>
+
+    <string name="transaction_type_expense">Pengeluaran</string>
+    <string name="transaction_type_income">Pemasukan</string>
+
+    <string name="label_items_optional">Daftar Barang (Opsional)</string>
+    <string name="placeholder_tap_to_add">Ketuk untuk menambah</string>
+    <string name="label_receipt_image_optional">Gambar Struk (Opsional)</string>
+    <string name="status_image_attached">Gambar terlampir</string>
+    <string name="message_no_items_added">Belum ada barang yang ditambahkan.</string>
+    <string name="button_add_new_item">Tambah Barang Baru</string>
+    <string name="button_add_receipt_image">Tambah Gambar Struk</string>
+    <string name="button_change_image">Ganti Gambar</string>
+
+    <plurals name="plural_number_of_items" tools:ignore="UnusedQuantity">
+        <item quantity="one">%d barang</item>
+        <item quantity="other">%d barang</item>
+    </plurals>
+
+    <string name="cd_add_item">Tambah Barang</string>
+    <string name="cd_receipt">Struk</string>
+    <string name="cd_delete_receipt_image">Hapus Gambar Struk</string>
+    <string name="cd_add_receipt">Tambah Struk</string>
+    <string name="cd_toggle_expand">Buka/Tutup</string>
 
     <!-- Language -->
 </resources>

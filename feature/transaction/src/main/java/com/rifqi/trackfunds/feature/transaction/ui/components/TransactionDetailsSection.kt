@@ -25,7 +25,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,9 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.feature.transaction.ui.addEdit.AddEditTransactionEvent
 import com.rifqi.trackfunds.feature.transaction.ui.addEdit.TransactionItemInput
 
@@ -56,7 +60,7 @@ fun TransactionDetailsSection(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "Items (Optional)",
+            text = stringResource(R.string.label_items_optional),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -65,7 +69,15 @@ fun TransactionDetailsSection(
             isExpanded = isItemsExpanded,
             header = {
                 ExpandableSectionHeader(
-                    title = if (items.isNotEmpty()) "${items.size} items" else "Tap to add",
+                    title = if (items.isNotEmpty()) {
+                        pluralStringResource(
+                            R.plurals.plural_number_of_items,
+                            items.size,
+                            items.size
+                        )
+                    } else {
+                        stringResource(R.string.placeholder_tap_to_add)
+                    },
                     isExpanded = isItemsExpanded,
                     onClick = { onEvent(AddEditTransactionEvent.ToggleLineItemsSection) }
                 )
@@ -75,7 +87,7 @@ fun TransactionDetailsSection(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Receipt Image (Optional)",
+            text = stringResource(R.string.label_receipt_image_optional),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -84,7 +96,11 @@ fun TransactionDetailsSection(
             isExpanded = isReceiptExpanded,
             header = {
                 ExpandableSectionHeader(
-                    title = if (receiptImageUri != null) "Image attached" else "Tap to add",
+                    title = if (receiptImageUri != null) {
+                        stringResource(R.string.status_image_attached)
+                    } else {
+                        stringResource(R.string.placeholder_tap_to_add)
+                    },
                     isExpanded = isReceiptExpanded,
                     onClick = { onEvent(AddEditTransactionEvent.ToggleReceiptSection) }
                 )
@@ -116,9 +132,9 @@ fun ExpandableSection(
             header()
             AnimatedVisibility(visible = isExpanded) {
                 Column {
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.padding(vertical = 8.dp),
-                        color = borderColor
+                        thickness = DividerDefaults.Thickness, color = borderColor
                     )
                     content()
                 }
@@ -134,7 +150,7 @@ private fun LineItemsContent(
 ) {
     if (lineItems.isEmpty()) {
         Text(
-            text = "No items added yet.",
+            text = stringResource(R.string.message_no_items_added),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -160,9 +176,9 @@ private fun LineItemsContent(
     }
 
     TextButton(onClick = { onEvent(AddEditTransactionEvent.AddNewLineItem) }) {
-        Icon(Icons.Default.Add, contentDescription = "Add Item")
+        Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cd_add_item))
         Spacer(Modifier.width(4.dp))
-        Text("Add New Item")
+        Text(stringResource(R.string.button_add_new_item))
     }
 }
 
@@ -179,12 +195,12 @@ private fun ReceiptContent(
         ) {
             AsyncImage(
                 model = receiptImageUri,
-                contentDescription = "Receipt",
+                contentDescription = stringResource(R.string.cd_receipt),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
             IconButton(
-                onClick = { },
+                onClick = { /* TODO: Implement delete image event */ },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
@@ -195,15 +211,19 @@ private fun ReceiptContent(
             ) {
                 Icon(
                     Icons.Default.Close,
-                    contentDescription = "Delete Receipt Image"
+                    contentDescription = stringResource(R.string.cd_delete_receipt_image)
                 )
             }
         }
     }
     TextButton(onClick = { onEvent(AddEditTransactionEvent.OnAddReceiptClicked) }) {
-        Icon(Icons.Default.AddAPhoto, contentDescription = "Add Receipt")
+        Icon(Icons.Default.AddAPhoto, contentDescription = stringResource(R.string.cd_add_receipt))
         Spacer(Modifier.width(4.dp))
-        Text(if (receiptImageUri == null) "Add Receipt Image" else "Change Image")
+        Text(
+            stringResource(
+                if (receiptImageUri == null) R.string.button_add_receipt_image else R.string.button_change_image
+            )
+        )
     }
 }
 
@@ -214,7 +234,10 @@ fun ExpandableSectionHeader(
     isExpanded: Boolean,
     onClick: () -> Unit
 ) {
-    val rotationAngle by animateFloatAsState(if (isExpanded) 180f else 0f, label = "")
+    val rotationAngle by animateFloatAsState(
+        if (isExpanded) 180f else 0f,
+        label = "rotationAnimation"
+    )
 
     Row(
         modifier = Modifier
@@ -228,7 +251,7 @@ fun ExpandableSectionHeader(
         }
         Icon(
             imageVector = Icons.Default.KeyboardArrowDown,
-            contentDescription = "Toggle",
+            contentDescription = stringResource(R.string.cd_toggle_expand),
             modifier = Modifier.rotate(rotationAngle)
         )
     }

@@ -1,5 +1,6 @@
 package com.rifqi.trackfunds.core.domain.category.model
 
+import android.content.Context
 import java.util.UUID
 
 enum class TransactionType {
@@ -24,4 +25,22 @@ data class Category(
             )
         }
     }
+}
+
+fun Category.getDisplayName(context: Context): String {
+    // Gunakan scope function 'let' untuk mengeksekusi blok kode hanya jika standardKey tidak null.
+    return this.standardKey?.let { key ->
+        val resourceId = context.resources.getIdentifier(
+            key,
+            "string",
+            context.packageName
+        )
+
+        // Jika resource ditemukan (ID bukan 0), gunakan. Jika tidak, gunakan key sebagai fallback.
+        if (resourceId != 0) {
+            context.getString(resourceId)
+        } else {
+            key // Fallback jika string resource untuk kunci ini tidak ada
+        }
+    } ?: this.name // Jika standardKey null, gunakan 'name' dari kategori.
 }
