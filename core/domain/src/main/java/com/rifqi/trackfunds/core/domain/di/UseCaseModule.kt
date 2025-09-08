@@ -28,20 +28,18 @@ import com.rifqi.trackfunds.core.domain.reports.usecase.GetExpenseReportUseCase
 import com.rifqi.trackfunds.core.domain.reports.usecase.GetExpenseReportUseCaseImpl
 import com.rifqi.trackfunds.core.domain.reports.usecase.GetIncomeReportUseCase
 import com.rifqi.trackfunds.core.domain.reports.usecase.GetIncomeReportUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetFilteredSavingsGoalsUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetFilteredSavingsGoalsUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalDetailsUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalDetailsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.settings.usecase.GetAppVersionUseCase
 import com.rifqi.trackfunds.core.domain.settings.usecase.GetAppVersionUseCaseImpl
-import com.rifqi.trackfunds.core.domain.settings.usecase.GetThemePreferenceUseCase
-import com.rifqi.trackfunds.core.domain.settings.usecase.GetThemePreferenceUseCaseImpl
-import com.rifqi.trackfunds.core.domain.settings.usecase.SetThemePreferenceUseCase
-import com.rifqi.trackfunds.core.domain.settings.usecase.SetThemePreferenceUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.ObserveActiveUserIdUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.ObserveActiveUserIdUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.ObserveAppThemeUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.ObserveAppThemeUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.ObserveLocaleUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.ObserveLocaleUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.SetAppThemeUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.SetAppThemeUseCaseImpl
+import com.rifqi.trackfunds.core.domain.settings.usecase.SetLocaleUseCase
+import com.rifqi.trackfunds.core.domain.settings.usecase.SetLocaleUseCaseImpl
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCaseImpl
 import com.rifqi.trackfunds.core.domain.transaction.usecase.GetTransactionDetailsUseCase
@@ -50,119 +48,115 @@ import com.rifqi.trackfunds.core.domain.user.usecase.GetUserUseCase
 import com.rifqi.trackfunds.core.domain.user.usecase.GetUserUseCaseImpl
 import dagger.Binds
 import dagger.Module
+import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class UseCaseModule {
 
-    // --- User Use Cases (GET) ---
+    // --- User (GET) ---
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetUserProfileUseCase(impl: GetUserUseCaseImpl): GetUserUseCase
 
-    // --- Category Use Cases (GET) ---
+    // --- Category (GET) ---
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetFilteredCategoriesUseCase(impl: GetFilteredCategoriesUseCaseImpl): GetFilteredCategoriesUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetCategoryUseCase(impl: GetCategoryUseCaseImpl): GetCategoryUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetCategoriesByIdsUseCase(impl: GetCategoriesByIdsUseCaseImpl): GetCategoriesByIdsUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetCategoryByStandardKeyUseCase(impl: GetCategoryByStandardKeyUseCaseImpl): GetCategoryByStandardKeyUseCase
 
-    // --- Account Use Cases (GET) ---
+    // --- Account (GET) ---
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetAccountsUseCase(impl: GetAccountsUseCaseImpl): GetAccountsUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindObserveAccountCountUseCase(impl: ObserveAccountCountUseCaseImpl): ObserveAccountCountUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetAccountsByIdsUseCase(impl: GetAccountsByIdsUseCaseImpl): GetAccountsByIdsUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetAccountByIdUseCase(impl: GetAccountByIdUseCaseImpl): GetAccountByIdUseCase
 
-    // --- Transaction Use Cases (GET) ---
+    // --- Transaction (GET) ---
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetFilteredTransactionsUseCase(impl: GetFilteredTransactionsUseCaseImpl): GetFilteredTransactionsUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetTransactionDetailsUseCase(impl: GetTransactionDetailsUseCaseImpl): GetTransactionDetailsUseCase
 
-    // --- Budget Use Cases (GET) ---
+    // --- Budget (GET) ---
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetBudgetsUseCase(impl: GetBudgetsUseCaseImpl): GetBudgetsUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetBudgetByIdUseCase(impl: GetBudgetByIdUseCaseImpl): GetBudgetByIdUseCase
 
     @Binds
-    @Singleton
+    @Reusable
     abstract fun bindGetTopBudgetsUseCase(impl: GetTopBudgetsUseCaseImpl): GetTopBudgetsUseCase
 
-    // --- Savings Use Cases (GET) ---
+
+
+
+    // --- App prefs (Theme & Locale) ---
     @Binds
-    @Singleton
-    abstract fun bindGetActiveSavingsGoalsUseCase(impl: GetActiveSavingsGoalsUseCaseImpl): GetActiveSavingsGoalsUseCase
+    @Reusable
+    abstract fun bindObserveAppThemeUseCase(impl: ObserveAppThemeUseCaseImpl): ObserveAppThemeUseCase
 
     @Binds
-    @Singleton
-    abstract fun bindGetFilteredSavingsGoalsUseCase(impl: GetFilteredSavingsGoalsUseCaseImpl): GetFilteredSavingsGoalsUseCase
+    @Reusable
+    abstract fun bindSetAppThemeUseCase(impl: SetAppThemeUseCaseImpl): SetAppThemeUseCase
 
     @Binds
-    @Singleton
-    abstract fun bindGetSavingsGoalDetailsUseCase(impl: GetSavingsGoalDetailsUseCaseImpl): GetSavingsGoalDetailsUseCase
+    @Reusable
+    abstract fun bindObserveLocaleUseCase(impl: ObserveLocaleUseCaseImpl): ObserveLocaleUseCase
 
     @Binds
-    @Singleton
-    abstract fun bindGetSavingsGoalByIdUseCase(impl: GetSavingsGoalByIdUseCaseImpl): GetSavingsGoalByIdUseCase
+    @Reusable
+    abstract fun bindSetLocaleUseCase(impl: SetLocaleUseCaseImpl): SetLocaleUseCase
 
     @Binds
-    abstract fun bindGetThemePreferenceUseCase(
-        impl: GetThemePreferenceUseCaseImpl
-    ): GetThemePreferenceUseCase
+    @Reusable
+    abstract fun bindObserveActiveUserIdUseCase(impl: ObserveActiveUserIdUseCaseImpl): ObserveActiveUserIdUseCase
 
     @Binds
-    abstract fun bindSetThemePreferenceUseCase(
-        impl: SetThemePreferenceUseCaseImpl
-    ): SetThemePreferenceUseCase
-
-    @Binds
+    @Reusable
     abstract fun bindGetAppVersionUseCase(
         impl: GetAppVersionUseCaseImpl
     ): GetAppVersionUseCase
 
+    // --- Reports (GET) ---
     @Binds
-    abstract fun bindGetCashFlowReportUseCase(
-        impl: GetCashFlowReportUseCaseImpl
-    ): GetCashFlowReportUseCase
+    @Reusable
+    abstract fun bindGetCashFlowReportUseCase(impl: GetCashFlowReportUseCaseImpl): GetCashFlowReportUseCase
 
     @Binds
-    abstract fun bindGetExpenseReportUseCase(
-        impl: GetExpenseReportUseCaseImpl
-    ): GetExpenseReportUseCase
+    @Reusable
+    abstract fun bindGetExpenseReportUseCase(impl: GetExpenseReportUseCaseImpl): GetExpenseReportUseCase
 
     @Binds
-    abstract fun bindGetIncomeReportUseCase(
-        impl: GetIncomeReportUseCaseImpl
-    ): GetIncomeReportUseCase
+    @Reusable
+    abstract fun bindGetIncomeReportUseCase(impl: GetIncomeReportUseCaseImpl): GetIncomeReportUseCase
 }

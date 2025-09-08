@@ -62,6 +62,7 @@ fun AuthScreen(
             when (sideEffect) {
                 is AuthSideEffect.NavigateToHome -> onNavigate()
                 AuthSideEffect.AuthSucceeded -> {
+
                 }
             }
 

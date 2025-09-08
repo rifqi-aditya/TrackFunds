@@ -16,6 +16,13 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryDao {
 
     /**
+     * Counts the total number of categories in the database.
+     * This includes both default and user-owned categories.
+     */
+    @Query("SELECT COUNT(*) FROM categories")
+    suspend fun count(): Int
+
+    /**
      * Fetches a filtered list of categories.
      * It returns BOTH default categories (userUid is NULL) AND categories
      * owned by the specific user.

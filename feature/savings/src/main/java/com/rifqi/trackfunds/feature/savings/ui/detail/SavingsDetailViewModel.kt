@@ -5,9 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionFilter
-import com.rifqi.trackfunds.core.domain.savings.usecase.DeleteSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCase
-import com.rifqi.trackfunds.core.domain.transaction.usecase.GetFilteredTransactionsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.SavingsRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,19 +12,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SavingsDetailViewModel @Inject constructor(
-    private val getSavingsGoalByIdUseCase: GetSavingsGoalByIdUseCase,
-    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
-    private val deleteSavingsGoalUseCase: DeleteSavingsGoalUseCase,
+//    private val getSavingsGoalByIdUseCase: GetSavingsGoalByIdUseCase,
+//    private val getFilteredTransactionsUseCase: GetFilteredTransactionsUseCase,
+//    private val deleteSavingsGoalUseCase: DeleteSavingsGoalUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -44,23 +37,23 @@ class SavingsDetailViewModel @Inject constructor(
             // Buat filter khusus untuk mengambil transaksi yang terhubung dengan goalId ini
             val transactionFilter = TransactionFilter(savingsGoalId = goalId)
 
-            combine(
-                getSavingsGoalByIdUseCase(goalId),
-                getFilteredTransactionsUseCase(transactionFilter)
-            ) { goal, transactions ->
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        goal = goal,
-                        history = transactions
-                    )
-                }
-            }
-                .onStart { _uiState.update { it.copy(isLoading = true) } }
-                .catch { e ->
-                    _uiState.update { it.copy(isLoading = false, error = e.message) }
-                }
-                .collect()
+//            combine(
+//                getSavingsGoalByIdUseCase(goalId),
+//                getFilteredTransactionsUseCase(transactionFilter)
+//            ) { goal, transactions ->
+//                _uiState.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        goal = goal,
+//                        history = transactions
+//                    )
+//                }
+//            }
+//                .onStart { _uiState.update { it.copy(isLoading = true) } }
+//                .catch { e ->
+//                    _uiState.update { it.copy(isLoading = false, error = e.message) }
+//                }
+//                .collect()
         }
     }
 
@@ -93,7 +86,7 @@ class SavingsDetailViewModel @Inject constructor(
     private suspend fun deleteGoal() {
         _uiState.update { it.copy(isLoading = true, showDeleteConfirmDialog = false) }
         try {
-            deleteSavingsGoalUseCase(goalId)
+//            deleteSavingsGoalUseCase(goalId)
             _navigationEvent.emit(null)
         } catch (e: Exception) {
             _uiState.update { it.copy(isLoading = false, error = e.message) }

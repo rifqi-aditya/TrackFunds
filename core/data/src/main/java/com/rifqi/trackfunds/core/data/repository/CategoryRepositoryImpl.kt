@@ -3,91 +3,106 @@ package com.rifqi.trackfunds.core.data.repository
 import com.rifqi.trackfunds.core.data.local.dao.CategoryDao
 import com.rifqi.trackfunds.core.data.mapper.toDomain
 import com.rifqi.trackfunds.core.data.mapper.toEntity
+import com.rifqi.trackfunds.core.domain.auth.exception.NotAuthenticatedException
+import com.rifqi.trackfunds.core.domain.auth.repository.UserSessionRepository
+import com.rifqi.trackfunds.core.domain.category.exception.CategoryNotFoundException
 import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
 import com.rifqi.trackfunds.core.domain.category.repository.CategoryRepository
-import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class CategoryRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val session: UserSessionRepository // ← ganti ke interface domain
 ) : CategoryRepository {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getFilteredCategories(filter: CategoryFilter): Flow<List<Category>> {
-        return userPreferencesRepository.userUid.flatMapLatest { userUid ->
-            if (userUid == null) return@flatMapLatest flowOf(emptyList())
-
-            categoryDao.getFilteredCategories(
-                userUid = userUid,
-                type = filter.type,
-                isUnbudgeted = filter.isUnbudgeted,
-                budgetPeriod = filter.budgetPeriod
-            ).map { entityList ->
-                entityList.map { it.toDomain() }
+        return session.userUidFlow().flatMapLatest { uid ->
+            if (uid.isNullOrBlank()) {
+                flowOf(emptyList())
+            } else {
+                categoryDao.getFilteredCategories(
+                    userUid = uid,
+                    type = filter.type,
+                    isUnbudgeted = filter.isUnbudgeted,
+                    budgetPeriod = filter.budgetPeriod
+                ).map { list -> list.map { it.toDomain() } }
             }
         }
+        // .distinctUntilChanged() // opsional jika ingin menahan emisi duplikat
     }
 
-    override suspend fun getCategoryById(categoryId: String): Result<Category> {
-        return try {
-            val userUid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
-
-            val category = categoryDao.getCategoryById(categoryId, userUid)?.toDomain()
-                ?: return Result.failure(Exception("Category not found."))
-
-            Result.success(category)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun getCategoryById(categoryId: String): Result<Category> = try {
+        val uid = session.requireActiveUserId()
+        val entity = categoryDao.getCategoryById(categoryId, uid)
+            ?: throw CategoryNotFoundException("Category with ID $categoryId not found.")
+        Result.success(entity.toDomain())
+    } catch (ce: CancellationException) {
+        throw ce
+    } catch (e: NotAuthenticatedException) {
+        Result.failure(e)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
-    override suspend fun getCategoriesByIds(ids: List<String>): List<Category> {
-        val userUid = userPreferencesRepository.userUid.first() ?: return emptyList()
-        return categoryDao.getCategoriesByIds(ids, userUid).map { it.toDomain() }
+    override suspend fun getCategoriesByIds(ids: List<String>): List<Category> = try {
+        val uid = session.requireActiveUserId()
+        categoryDao.getCategoriesByIds(ids, uid).map { it.toDomain() }
+    } catch (ce: CancellationException) {
+        throw ce
+    } catch (_: NotAuthenticatedException) {
+        emptyList() // desain: belum login → list kosong
     }
 
-    override suspend fun getCategoryByStandardKey(key: String): Category? {
-        val userUid = userPreferencesRepository.userUid.first() ?: return null
-        return categoryDao.getCategoryByStandardKey(key, userUid)?.toDomain()
+    override suspend fun getCategoryByStandardKey(key: String): Category? = try {
+        val uid = session.requireActiveUserId()
+        // Jika DAO-mu sudah mendukung fallback default (userUid = NULL), cukup 1 query ini.
+        // Kalau perlu fallback manual: coba cari user → jika null, coba default.
+        categoryDao.getCategoryByStandardKey(key, uid)?.toDomain()
+    } catch (ce: CancellationException) {
+        throw ce
+    } catch (_: NotAuthenticatedException) {
+        null
     }
 
-    override suspend fun insertCategory(category: Category): Result<Unit> {
-        return try {
-            val userUid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
-            categoryDao.insertCategory(category.toEntity(userUid))
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun insertCategory(category: Category): Result<Unit> = try {
+        val uid = session.requireActiveUserId()
+        categoryDao.insertCategory(category.toEntity(uid))
+        Result.success(Unit)
+    } catch (ce: CancellationException) {
+        throw ce
+    } catch (e: NotAuthenticatedException) {
+        Result.failure(e)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
     override suspend fun updateCategory(category: Category): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
+            val uid = session.requireActiveUserId()
 
-            // PENTING: Lakukan pengecekan di sini untuk melindungi kategori default
-            val existingCategory = categoryDao.getCategoryById(category.id, userUid)
-                ?: return Result.failure(Exception("Category not found."))
+            val existing = categoryDao.getCategoryById(category.id, uid)
+                ?: throw CategoryNotFoundException("Category not found or not owned.")
 
-            if (existingCategory.userUid == null) {
-                return Result.failure(Exception("Default categories cannot be modified."))
+            if (existing.userUid == null) {
+                return Result.failure(IllegalStateException("Default categories cannot be modified."))
             }
 
-            categoryDao.updateCategory(category.toEntity(userUid))
+            categoryDao.updateCategory(category.toEntity(uid))
             Result.success(Unit)
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: NotAuthenticatedException) {
+            Result.failure(e)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -95,18 +110,21 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCategory(categoryId: String): Result<Unit> {
         return try {
-            val userUid = userPreferencesRepository.userUid.first()
-                ?: return Result.failure(Exception("User not logged in."))
+            val uid = session.requireActiveUserId()
 
-            val categoryToDelete = categoryDao.getCategoryById(categoryId, userUid)
-                ?: return Result.failure(Exception("Category not found or you don't have permission to delete it."))
+            val entity = categoryDao.getCategoryById(categoryId, uid)
+                ?: throw CategoryNotFoundException("Category not found or not owned.")
 
-            if (categoryToDelete.userUid == null) {
-                return Result.failure(Exception("Default categories cannot be deleted."))
+            if (entity.userUid == null) {
+                return Result.failure(IllegalStateException("Default categories cannot be deleted."))
             }
 
-            categoryDao.deleteCategoryById(categoryId, userUid)
+            categoryDao.deleteCategoryById(categoryId, uid)
             Result.success(Unit)
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: NotAuthenticatedException) {
+            Result.failure(e)
         } catch (e: Exception) {
             Result.failure(e)
         }

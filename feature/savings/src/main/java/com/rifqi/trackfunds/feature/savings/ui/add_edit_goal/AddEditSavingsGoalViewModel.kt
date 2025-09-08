@@ -3,19 +3,14 @@ package com.rifqi.trackfunds.feature.savings.ui.add_edit_goal
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rifqi.trackfunds.core.domain.savings.usecase.CreateSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalByIdUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.UpdateSavingsGoalUseCase
 import com.rifqi.trackfunds.core.domain.savings.usecase.validator.ValidateIcon
 import com.rifqi.trackfunds.core.domain.savings.usecase.validator.ValidateSavingsGoalName
 import com.rifqi.trackfunds.core.domain.savings.usecase.validator.ValidateSavingsTargetAmount
-import com.rifqi.trackfunds.feature.savings.ui.model.toDomainModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,9 +20,9 @@ class AddEditSavingsGoalViewModel @Inject constructor(
     private val validateIcon: ValidateIcon,
     private val validateSavingsGoalName: ValidateSavingsGoalName,
     private val validateSavingsTargetAmount: ValidateSavingsTargetAmount,
-    private val getSavingsGoalByIdUseCase: GetSavingsGoalByIdUseCase,
-    private val createSavingsGoalUseCase: CreateSavingsGoalUseCase,
-    private val updateSavingsGoalUseCase: UpdateSavingsGoalUseCase,
+//    private val getSavingsGoalByIdUseCase: GetSavingsGoalByIdUseCase,
+//    private val createSavingsGoalUseCase: CreateSavingsGoalUseCase,
+//    private val updateSavingsGoalUseCase: UpdateSavingsGoalUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -54,23 +49,22 @@ class AddEditSavingsGoalViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            // Panggil use case untuk mendapatkan data goal
-            getSavingsGoalByIdUseCase(goalId).firstOrNull()?.let { goal ->
-                // Update UI State dengan data yang sudah ada
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isEditing = true,
-                        editingGoalId = goal.id, // Simpan ID untuk proses update
-                        pageTitle = "Edit Savings Goal",
-                        goalName = goal.name,
-                        targetAmount = goal.targetAmount.toPlainString(),
-                        targetDate = goal.targetDate,
-                        iconIdentifier = goal.iconIdentifier,
-                        originalSavedAmount = goal.savedAmount
-                    )
-                }
-            }
+//            getSavingsGoalByIdUseCase(goalId).firstOrNull()?.let { goal ->
+//                // Update UI State dengan data yang sudah ada
+//                _uiState.update {
+//                    it.copy(
+//                        isLoading = false,
+//                        isEditing = true,
+//                        editingGoalId = goal.id, // Simpan ID untuk proses update
+//                        pageTitle = "Edit Savings Goal",
+//                        goalName = goal.name,
+//                        targetAmount = goal.targetAmount.toPlainString(),
+//                        targetDate = goal.targetDate,
+//                        iconIdentifier = goal.iconIdentifier,
+//                        originalSavedAmount = goal.savedAmount
+//                    )
+//                }
+//            }
         }
     }
 
@@ -155,55 +149,52 @@ class AddEditSavingsGoalViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
-            try {
-                _uiState.update {
-                    it.copy(
-                        isLoading = true,
-                        goalNameError = null,
-                        targetAmountError = null,
-                        iconError = null
-                    )
-                }
-
-                val result = if (currentState.isEditing) {
-                    updateExistingGoal(currentState)
-                } else {
-                    createNewGoal(currentState)
-                }
-
-                result.onSuccess {
-                    _sideEffect.emit(AddEditGoalSideEffect.ShowSnackbar("Goal saved successfully!"))
-                    _sideEffect.emit(AddEditGoalSideEffect.NavigateBack)
-                }.onFailure { error ->
-                    _sideEffect.emit(AddEditGoalSideEffect.ShowSnackbar("Error: ${error.message}"))
-                }
-
-            } finally {
-                // Blok finally akan SELALU dieksekusi, memastikan isLoading kembali false
-                _uiState.update { it.copy(isLoading = false) }
-            }
-        }
+//        viewModelScope.launch {
+//            try {
+//                _uiState.update {
+//                    it.copy(
+//                        isLoading = true,
+//                        goalNameError = null,
+//                        targetAmountError = null,
+//                        iconError = null
+//                    )
+//                }
+//
+//                val result = if (currentState.isEditing) {
+//                    updateExistingGoal(currentState)
+//                } else {
+//                    createNewGoal(currentState)
+//                }
+//
+//                result.onSuccess {
+//                    _sideEffect.emit(AddEditGoalSideEffect.ShowSnackbar("Goal saved successfully!"))
+//                    _sideEffect.emit(AddEditGoalSideEffect.NavigateBack)
+//                }.onFailure { error ->
+//                    _sideEffect.emit(AddEditGoalSideEffect.ShowSnackbar("Error: ${error.message}"))
+//                }
+//
+//            } finally {
+//                // Blok finally akan SELALU dieksekusi, memastikan isLoading kembali false
+//                _uiState.update { it.copy(isLoading = false) }
+//            }
+//        }
     }
 
-    // Helper function untuk membuat goal baru
-    private suspend fun createNewGoal(state: AddEditSavingsGoalState): Result<Unit> {
-        val domainModelResult = state.toDomainModel()
-
-        return domainModelResult.fold(
-            onSuccess = { newGoal -> createSavingsGoalUseCase(newGoal) },
-            onFailure = { error -> Result.failure(error) }
-        )
-    }
-
-    // Helper function untuk mengupdate goal yang ada
-    private suspend fun updateExistingGoal(state: AddEditSavingsGoalState): Result<Unit> {
-        // Anda perlu mapper yang bisa menerima ID yang sudah ada
-        val domainModelResult = state.toDomainModel(id = state.editingGoalId!!)
-
-        return domainModelResult.fold(
-            onSuccess = { updatedGoal -> updateSavingsGoalUseCase(updatedGoal) },
-            onFailure = { error -> Result.failure(error) }
-        )
-    }
+//    private suspend fun createNewGoal(state: AddEditSavingsGoalState): Result<Unit> {
+//        val domainModelResult = state.toDomainModel()
+//
+//        return domainModelResult.fold(
+//            onSuccess = { newGoal -> createSavingsGoalUseCase(newGoal) },
+//            onFailure = { error -> Result.failure(error) }
+//        )
+//    }
+//
+//    private suspend fun updateExistingGoal(state: AddEditSavingsGoalState): Result<Unit> {
+//        val domainModelResult = state.toDomainModel(id = state.editingGoalId!!)
+//
+//        return domainModelResult.fold(
+//            onSuccess = { updatedGoal -> updateSavingsGoalUseCase(updatedGoal) },
+//            onFailure = { error -> Result.failure(error) }
+//        )
+//    }
 }

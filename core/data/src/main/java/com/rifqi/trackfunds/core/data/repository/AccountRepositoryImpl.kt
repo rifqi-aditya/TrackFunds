@@ -6,8 +6,8 @@ import com.rifqi.trackfunds.core.data.mapper.toEntity
 import com.rifqi.trackfunds.core.domain.account.exception.AccountNotFoundException
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.account.repository.AccountRepository
-import com.rifqi.trackfunds.core.domain.common.exception.AuthRequiredException
-import com.rifqi.trackfunds.core.domain.common.repository.UserSessionProvider
+import com.rifqi.trackfunds.core.domain.auth.exception.NotAuthenticatedException
+import com.rifqi.trackfunds.core.domain.auth.repository.UserSessionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -15,63 +15,87 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 class AccountRepositoryImpl @Inject constructor(
     private val accountDao: AccountDao,
-    private val sessionProvider: UserSessionProvider
+    private val session: UserSessionRepository // ← ganti ke interface domain
 ) : AccountRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAllAccounts(): Flow<List<Account>> {
-        return sessionProvider.getUidFlow().flatMapLatest { userUid ->
-            if (userUid == null) flowOf(emptyList())
-            else accountDao.getAccounts(userUid).map { entities -> entities.map { it.toDomain() } }
+        return session.userUidFlow().flatMapLatest { uid ->
+            if (uid.isNullOrBlank()) {
+                flowOf(emptyList()) // belum login → kosong (pilihan desain)
+            } else {
+                accountDao.getAccounts(uid)
+                    .map { entities -> entities.map { it.toDomain() } }
+            }
         }
+        // .distinctUntilChanged() // opsional, jika perlu menahan emisi duplikat
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeAccountCount(): Flow<Int> {
-        return sessionProvider.getUidFlow().flatMapLatest { userUid ->
-            if (userUid == null) flowOf(0)
-            else accountDao.observeAccountCount(userUid)
+        return session.userUidFlow().flatMapLatest { uid ->
+            if (uid.isNullOrBlank()) flowOf(0) else accountDao.observeAccountCount(uid)
         }
     }
 
     override suspend fun getAccountById(accountId: String): Result<Account> {
-        return runCatching {
-            val userUid = sessionProvider.getUid()
-
-            accountDao.getAccountById(accountId, userUid)?.toDomain()
+        return try {
+            val uid = session.requireActiveUserId()
+            val entity = accountDao.getAccountById(accountId, uid)
                 ?: throw AccountNotFoundException("Account with ID $accountId not found.")
+            Result.success(entity.toDomain())
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: NotAuthenticatedException) {
+            Result.failure(e)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
+    // Catatan: lebih konsisten jika juga mengembalikan Result<List<Account>>,
+    // tapi kalau kamu memang ingin "belum login → []", ini OK.
     override suspend fun getAccountsByIds(ids: List<String>): List<Account> {
         return try {
-            // 1. Ambil userUid secara internal
-            val userUid = sessionProvider.getUid()
-
-            // 2. Lanjutkan logika
-            accountDao.getAccountsByIds(ids, userUid).map { it.toDomain() }
-        } catch (e: AuthRequiredException) {
-            // 3. Jika user tidak login, kembalikan list kosong dengan aman
-            emptyList()
+            val uid = session.requireActiveUserId()
+            accountDao.getAccountsByIds(ids, uid).map { it.toDomain() }
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (_: NotAuthenticatedException) {
+            emptyList() // pilihan desain: tidak login → list kosong
         }
     }
 
     override suspend fun saveAccount(account: Account): Result<Unit> {
-        return runCatching {
-            val userUid = sessionProvider.getUid()
-            val accountEntity = account.toEntity(userUid)
-            accountDao.upsert(accountEntity)
+        return try {
+            val uid = session.requireActiveUserId()
+            accountDao.upsert(account.toEntity(uid))
+            Result.success(Unit)
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: NotAuthenticatedException) {
+            Result.failure(e)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
     override suspend fun deleteAccount(accountId: String): Result<Unit> {
-        return runCatching {
-            val userUid = sessionProvider.getUid()
-            accountDao.deleteAccountById(accountId, userUid)
+        return try {
+            val uid = session.requireActiveUserId()
+            accountDao.deleteAccountById(accountId, uid)
+            Result.success(Unit)
+        } catch (ce: CancellationException) {
+            throw ce
+        } catch (e: NotAuthenticatedException) {
+            Result.failure(e)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

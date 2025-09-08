@@ -5,7 +5,6 @@ import com.rifqi.trackfunds.core.data.local.dao.UserDao
 import com.rifqi.trackfunds.core.data.local.entity.UserEntity
 import com.rifqi.trackfunds.core.domain.auth.exception.AuthException
 import com.rifqi.trackfunds.core.domain.auth.repository.AuthRepository
-import com.rifqi.trackfunds.core.domain.common.repository.UserPreferencesRepository
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val userDao: UserDao,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val appPrefsRepositoryImpl: AppPrefsRepositoryImpl
 ) : AuthRepository {
 
     override suspend fun login(email: String, pass: String): Result<Unit> {
@@ -26,7 +25,7 @@ class AuthRepositoryImpl @Inject constructor(
                 throw AuthException("Invalid email or password.")
             }
 
-            userPreferencesRepository.saveUserUid(user.uid)
+            appPrefsRepositoryImpl.setActiveUserId(user.uid)
         }
     }
 
@@ -51,14 +50,14 @@ class AuthRepositoryImpl @Inject constructor(
 
             userDao.upsert(newUser)
 
-            userPreferencesRepository.saveUserUid(newUid)
+            appPrefsRepositoryImpl.setActiveUserId(newUser.uid)
             newUid
         }
     }
 
     override suspend fun logout(): Result<Unit> {
         return runCatching {
-            userPreferencesRepository.clearUserUid()
+            appPrefsRepositoryImpl.clearActiveUserId()
         }
     }
 }

@@ -28,7 +28,6 @@ fun SettingsItem(
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                // 2. Gunakan warna aksen untuk semua ikon
                 tint = MaterialTheme.colorScheme.primary
             )
         },

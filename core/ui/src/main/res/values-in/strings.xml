@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="debug_lang_marker">ID</string>
     <string name="this_week">Minggu ini</string>
     <string name="this_month">Bulan ini</string>
     <string name="last_month">Bulan lalu</string>
@@ -20,4 +21,35 @@
     <string name="see_all">Lihat semua</string>
     <string name="see_all_count">Lihat semua (%1$d)</string>
     <string name="show_less">Sembunyikan</string>
+
+    <string name="settings">Pengaturan</string>
+    <string name="language">Bahasa</string>
+    <string name="language_follow_system">Ikuti bahasa sistem</string>
+    <string name="english">Inggris</string>
+    <string name="indonesian">Bahasa Indonesia</string>
+
+
+    <!-- Sections -->
+    <string name="section_data_management">Manajemen Data</string>
+    <string name="section_preferences_security">Preferensi &amp; Keamanan</string>
+    <string name="section_other">Lainnya</string>
+
+    <!-- Items -->
+    <string name="manage_accounts">Kelola Akun</string>
+    <string name="manage_categories">Kelola Kategori</string>
+    <string name="theme">Tema</string>
+    <string name="help_center">Pusat Bantuan</string>
+    <string name="rate_this_app">Nilai Aplikasi Ini</string>
+    <string name="logout">Keluar</string>
+
+    <!-- Dialogs -->
+    <string name="logout_title">Keluar</string>
+    <string name="logout_message">Anda yakin ingin keluar?</string>
+
+    <!-- Theme names -->
+    <string name="theme_system">Ikuti bahasa/tema sistem</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_dark">Gelap</string>
+
+    <!-- Language -->
 </resources>

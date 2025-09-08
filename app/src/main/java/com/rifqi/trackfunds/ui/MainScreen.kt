@@ -70,15 +70,12 @@ fun MainScreen(
         }
     }
 
-
-    // Logic untuk menampilkan bottom bar (tidak berubah)
     val showBottomBar = navigationItemsLists.any { navItem ->
         currentDestination?.hierarchy?.any { dest ->
             dest.route == navItem.graphRoute::class.qualifiedName
         } == true
     }
 
-    // Panggil komponen stateless, teruskan state dan event handlers
     TrackFundsMainContent(
         navController = navController,
         snackbarHostState = snackbarHostState,
@@ -89,7 +86,6 @@ fun MainScreen(
         startDestination = startDestination
     )
 
-    // Tampilkan dialog berdasarkan state dari ViewModel
     if (uiState.isAddActionDialogVisible) {
         AddTransactionDialog(
             onDismissRequest = { viewModel.onEvent(MainEvent.AddActionDialogDismissed) },
@@ -133,9 +129,9 @@ fun TrackFundsMainContent(
         floatingActionButton = {
             if (showBottomBar) {
                 FloatingActionButton(
-                    onClick = onFabClick, // Panggil lambda saat diklik
+                    onClick = onFabClick,
                     shape = CircleShape,
-                    modifier = Modifier.offset(y = (+46).dp), // Offset yang disarankan
+                    modifier = Modifier.offset(y = (+46).dp),
                     containerColor = TrackFundsTheme.extendedColors.accent
                 ) {
                     DisplayIconFromResource(

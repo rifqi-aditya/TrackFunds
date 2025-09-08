@@ -12,7 +12,6 @@ import com.rifqi.trackfunds.core.domain.category.model.Category
 import com.rifqi.trackfunds.core.domain.category.model.CategoryFilter
 import com.rifqi.trackfunds.core.domain.category.usecase.GetCategoryByStandardKeyUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.GetFilteredCategoriesUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetActiveSavingsGoalsUseCase
 import com.rifqi.trackfunds.core.domain.scan.model.ScanResult
 import com.rifqi.trackfunds.core.domain.transaction.model.AddTransactionParams
 import com.rifqi.trackfunds.core.domain.transaction.model.TransactionItem
@@ -54,7 +53,7 @@ class AddEditTransactionViewModel @Inject constructor(
     private val filteredCategoriesUseCase: GetFilteredCategoriesUseCase,
     private val resultManager: NavigationResultManager,
     private val categoryByStandardKeyUseCase: GetCategoryByStandardKeyUseCase,
-    private val activeSavingsGoalsUseCase: GetActiveSavingsGoalsUseCase,
+//    private val activeSavingsGoalsUseCase: GetActiveSavingsGoalsUseCase,
     private val snackbarManager: SnackbarManager,
     private val validateTransactionUseCase: ValidateTransactionUseCase,
     savedStateHandle: SavedStateHandle,
@@ -101,12 +100,12 @@ class AddEditTransactionViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val allAccounts = accountsUseCase().first()
-            val allSavingsGoals = activeSavingsGoalsUseCase().first()
+//            val allSavingsGoals = activeSavingsGoalsUseCase().first()
 
             _uiState.update {
                 it.copy(
                     allAccounts = allAccounts,
-                    allSavingsGoals = allSavingsGoals,
+//                    allSavingsGoals = allSavingsGoals,
                     selectedAccount = if (!isEditMode) allAccounts.firstOrNull() else it.selectedAccount
                 )
             }

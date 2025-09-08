@@ -16,10 +16,10 @@ import com.rifqi.trackfunds.feature.auth.sideeffect.AuthSideEffect
 import com.rifqi.trackfunds.feature.auth.state.AuthMode
 import com.rifqi.trackfunds.feature.auth.state.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,12 +34,11 @@ class AuthViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
 
-
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _sideEffect = Channel<AuthSideEffect>()
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val _sideEffect = MutableSharedFlow<AuthSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     fun onEvent(event: AuthEvent) {
         when (event) {
@@ -96,7 +95,6 @@ class AuthViewModel @Inject constructor(
     private fun handleSubmit() {
         val currentState = _uiState.value
 
-        // Validasi kondisional Anda di sini sudah bagus
         val emailResult = validateEmail(currentState.email)
         val passwordResult = validatePassword(currentState.password)
         val fullNameResult =
@@ -133,7 +131,6 @@ class AuthViewModel @Inject constructor(
 
             val result: Result<*> = when (currentState.authMode) {
                 AuthMode.LOGIN -> {
-                    // Gunakan LoginParams
                     val params = LoginParams(currentState.email, currentState.password)
                     loginUseCase(params)
                 }
@@ -151,7 +148,7 @@ class AuthViewModel @Inject constructor(
             }
 
             result.onSuccess {
-                _sideEffect.send(AuthSideEffect.AuthSucceeded)
+                _sideEffect.emit(AuthSideEffect.NavigateToHome)
             }.onFailure { error ->
                 _uiState.update { it.copy(generalError = error.message) }
             }

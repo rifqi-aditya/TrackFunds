@@ -26,14 +26,6 @@ import com.rifqi.trackfunds.core.domain.category.usecase.DeleteCategoryUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.DeleteCategoryUseCaseImpl
 import com.rifqi.trackfunds.core.domain.category.usecase.UpdateCategoryUseCase
 import com.rifqi.trackfunds.core.domain.category.usecase.UpdateCategoryUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.AddFundsToSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.AddFundsToSavingsGoalUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.CreateSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.CreateSavingsGoalUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.DeleteSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.DeleteSavingsGoalUseCaseImpl
-import com.rifqi.trackfunds.core.domain.savings.usecase.UpdateSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.UpdateSavingsGoalUseCaseImpl
 import com.rifqi.trackfunds.core.domain.scan.usecase.ScanReceiptUseCase
 import com.rifqi.trackfunds.core.domain.scan.usecase.ScanReceiptUseCaseImpl
 import com.rifqi.trackfunds.core.domain.transaction.usecase.AddTransactionUseCase
@@ -132,21 +124,4 @@ abstract class ViewModelScopedUseCaseModule {
     @Binds
     @ViewModelScoped
     abstract fun bindScanReceiptUseCase(impl: ScanReceiptUseCaseImpl): ScanReceiptUseCase
-
-    // --- Savings Use Cases (Actions) ---
-    @Binds
-    @ViewModelScoped
-    abstract fun bindCreateSavingsGoalUseCase(impl: CreateSavingsGoalUseCaseImpl): CreateSavingsGoalUseCase
-
-    @Binds
-    @ViewModelScoped
-    abstract fun bindUpdateSavingsGoalUseCase(impl: UpdateSavingsGoalUseCaseImpl): UpdateSavingsGoalUseCase
-
-    @Binds
-    @ViewModelScoped
-    abstract fun bindAddFundsToSavingsGoalUseCase(impl: AddFundsToSavingsGoalUseCaseImpl): AddFundsToSavingsGoalUseCase
-
-    @Binds
-    @ViewModelScoped
-    abstract fun bindDeleteSavingsGoalUseCase(impl: DeleteSavingsGoalUseCaseImpl): DeleteSavingsGoalUseCase
 }

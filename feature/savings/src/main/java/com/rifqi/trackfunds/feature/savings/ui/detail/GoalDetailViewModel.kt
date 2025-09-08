@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.savings.model.GoalDetails
 import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
-import com.rifqi.trackfunds.core.domain.savings.usecase.DeleteSavingsGoalUseCase
-import com.rifqi.trackfunds.core.domain.savings.usecase.GetSavingsGoalDetailsUseCase
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.core.ui.utils.formatLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -25,8 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class GoalDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getSavingsGoalDetailsUseCase: GetSavingsGoalDetailsUseCase,
-    private val deleteSavingsGoalUseCase: DeleteSavingsGoalUseCase
+//    private val getSavingsGoalDetailsUseCase: GetSavingsGoalDetailsUseCase,
+//    private val deleteSavingsGoalUseCase: DeleteSavingsGoalUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GoalDetailUiState())
@@ -73,22 +69,22 @@ class GoalDetailViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
-            getSavingsGoalDetailsUseCase(goalId)
-                .onStart { _uiState.update { it.copy(isLoading = true) } }
-                .catch { error ->
-                    _uiState.update { it.copy(isLoading = false) }
-                    sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Error: ${error.message}"))
-                }
-                .collect { goalDetails ->
-                    if (goalDetails == null) {
-                        _uiState.update { it.copy(isLoading = false) }
-                        sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Goal not found."))
-                        return@collect
-                    }
-                    _uiState.update { mapToUiState(goalDetails) }
-                }
-        }
+//        viewModelScope.launch {
+//            getSavingsGoalDetailsUseCase(goalId)
+//                .onStart { _uiState.update { it.copy(isLoading = true) } }
+//                .catch { error ->
+//                    _uiState.update { it.copy(isLoading = false) }
+//                    sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Error: ${error.message}"))
+//                }
+//                .collect { goalDetails ->
+//                    if (goalDetails == null) {
+//                        _uiState.update { it.copy(isLoading = false) }
+//                        sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Goal not found."))
+//                        return@collect
+//                    }
+//                    _uiState.update { mapToUiState(goalDetails) }
+//                }
+//        }
     }
 
     private fun deleteGoal() {
@@ -96,15 +92,15 @@ class GoalDetailViewModel @Inject constructor(
             // Tutup dialog dan tunjukkan loading state kecil jika perlu
             _uiState.update { it.copy(showDeleteConfirmDialog = false, isLoading = true) }
 
-            val result = deleteSavingsGoalUseCase(goalId)
-
-            result.onSuccess {
-                sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Goal deleted successfully"))
-                sendSideEffect(GoalDetailSideEffect.NavigateBack)
-            }.onFailure { error ->
-                _uiState.update { it.copy(isLoading = false) }
-                sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Failed to delete: ${error.message}"))
-            }
+//            val result = deleteSavingsGoalUseCase(goalId)
+//
+//            result.onSuccess {
+//                sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Goal deleted successfully"))
+//                sendSideEffect(GoalDetailSideEffect.NavigateBack)
+//            }.onFailure { error ->
+//                _uiState.update { it.copy(isLoading = false) }
+//                sendSideEffect(GoalDetailSideEffect.ShowSnackbar("Failed to delete: ${error.message}"))
+//            }
         }
     }
 
