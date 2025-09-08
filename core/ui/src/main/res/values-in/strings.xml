@@ -51,5 +51,35 @@
     <string name="theme_light">Terang</string>
     <string name="theme_dark">Gelap</string>
 
+    <string name="home_greeting">Halo, %1$s</string>
+    <string name="home_total_income">Total Pemasukan</string>
+    <string name="home_total_expense">Total Pengeluaran</string>
+
+    <string name="home_greeting_morning">Selamat Pagi</string>
+    <string name="home_greeting_afternoon">Selamat Siang</string>
+    <string name="home_greeting_evening">Selamat Malam</string>
+
+    <string name="home_welcome_user">Hai, %1$s</string>
+
+    <string name="home_profile_picture_cd">Foto Profil</string>
+    <string name="home_default_profile_icon_cd">Ikon Profil Default</string>
+    <string name="home_notifications_cd">Notifikasi</string>
+
+    <string name="home_recent_transactions">Transaksi Terkini</string>
+    <string name="home_see_all">Lihat Semua</string>
+    <string name="home_tab_expense">Pengeluaran</string>
+    <string name="home_tab_income">Pemasukan</string>
+    <string name="home_no_transactions">Tidak ada transaksi tersedia.</string>
+
+    <string name="home_total_balance">Total Saldo</string>
+    <string name="home_total_balance_info_cd">Info tentang Total Saldo</string>
+    <string name="home_my_accounts">Akun Saya</string>
+    <string name="home_my_accounts_cd">Buka halaman Akun Saya</string>
+
+
+    <string name="home_monthly_budget_title">Anggaran Bulan Ini</string>
+    <string name="home_budget_used">Digunakan</string>
+    <string name="home_budget_remaining">Sisa</string>
+
     <!-- Language -->
 </resources>

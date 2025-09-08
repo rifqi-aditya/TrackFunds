@@ -53,4 +53,34 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
 
+    <string name="home_greeting">Hello, %1$s</string>
+    <string name="home_total_income">Total Income</string>
+    <string name="home_total_expense">Total Expense</string>
+
+    <string name="home_greeting_morning">Good Morning</string>
+    <string name="home_greeting_afternoon">Good Afternoon</string>
+    <string name="home_greeting_evening">Good Evening</string>
+
+    <string name="home_welcome_user">Hi, %1$s</string>
+
+    <string name="home_profile_picture_cd">Profile Picture</string>
+    <string name="home_default_profile_icon_cd">Default Profile Icon</string>
+    <string name="home_notifications_cd">Notifications</string>
+
+    <string name="home_recent_transactions">Recent Transactions</string>
+    <string name="home_see_all">See All</string>
+    <string name="home_tab_expense">Expense</string>
+    <string name="home_tab_income">Income</string>
+    <string name="home_no_transactions">No transactions available.</string>
+
+    <string name="home_total_balance">Total Balance</string>
+    <string name="home_total_balance_info_cd">Info about Total Balance</string>
+    <string name="home_my_accounts">My Accounts</string>
+    <string name="home_my_accounts_cd">Navigate to My Accounts</string>
+
+
+    <string name="home_monthly_budget_title">This Month\'s Budget</string>
+    <string name="home_budget_used">Used</string>
+    <string name="home_budget_remaining">Remaining</string>
+
 </resources>

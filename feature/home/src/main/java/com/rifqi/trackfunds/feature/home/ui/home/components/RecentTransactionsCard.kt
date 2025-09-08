@@ -3,7 +3,6 @@ package com.rifqi.trackfunds.feature.home.ui.home.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,14 +24,17 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.feature.home.ui.home.HomeEvent
 import com.rifqi.trackfunds.feature.home.ui.home.HomeUiState
@@ -46,7 +48,12 @@ fun RecentTransactionsCard(
     onViewAllClick: () -> Unit,
     onTransactionClick: (String) -> Unit
 ) {
-    val tabs = listOf("Expense", "Income")
+    val tabs = remember {
+        listOf(
+            R.string.home_tab_expense,
+            R.string.home_tab_income
+        )
+    }
     val pagerState = rememberPagerState(initialPage = uiState.selectedTabIndex) {
         tabs.size
     }
@@ -75,12 +82,12 @@ fun RecentTransactionsCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Recent Transactions",
+                    text = stringResource(R.string.home_recent_transactions),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    "See All",
+                    text = stringResource(R.string.home_see_all),
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.clickable { onViewAllClick() }
                 )
@@ -102,7 +109,7 @@ fun RecentTransactionsCard(
                 },
                 divider = {}
             ) {
-                tabs.forEachIndexed { index, title ->
+                tabs.forEachIndexed { index, titleResId ->
                     Tab(
                         selected = uiState.selectedTabIndex == index,
                         onClick = {
@@ -111,7 +118,7 @@ fun RecentTransactionsCard(
                                 pagerState.animateScrollToPage(index)
                             }
                         },
-                        text = { Text(text = title) },
+                        text = { Text(text = stringResource(titleResId)) },
                         selectedContentColor = TrackFundsTheme.extendedColors.accent,
                         unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -155,7 +162,7 @@ fun RecentTransactionsCard(
 
                 if (transactionsToShow.isEmpty()) {
                     Text(
-                        "No transactions available.",
+                        text = stringResource(R.string.home_no_transactions),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 16.dp)
@@ -193,26 +200,13 @@ private fun TransactionList(
     transactions: List<Transaction>,
     onItemClick: (String) -> Unit
 ) {
-    if (transactions.isEmpty()) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                "No transactions available.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(transactions, key = { it.id }) { transaction ->
+            TransactionItem(
+                transactions = transaction,
+                onClick = { onItemClick(transaction.id) },
+                modifier = Modifier.padding(vertical = 8.dp)
             )
-        }
-    } else {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(transactions, key = { it.id }) { transaction ->
-                TransactionItem(
-                    transactions = transaction,
-                    onClick = { onItemClick(transaction.id) },
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
         }
     }
 }

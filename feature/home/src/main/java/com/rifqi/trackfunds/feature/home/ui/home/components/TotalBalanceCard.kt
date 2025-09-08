@@ -24,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import java.math.BigDecimal
 
@@ -61,7 +63,7 @@ fun TotalBalanceCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp) // Jarak antara teks dan ikon
                 ) {
                     Text(
-                        text = "Total Balance",
+                        text = stringResource(R.string.home_total_balance),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -71,7 +73,7 @@ fun TotalBalanceCard(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Info,
-                            contentDescription = "Info about Total Balance",
+                            contentDescription = stringResource(R.string.home_total_balance_info_cd),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                     }
@@ -92,7 +94,7 @@ fun TotalBalanceCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "My Accounts",
+                    text = stringResource(R.string.home_my_accounts),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -106,7 +108,7 @@ fun TotalBalanceCard(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Navigate to Wallet",
+                        contentDescription = stringResource(R.string.home_my_accounts_cd),
                         tint = MaterialTheme.colorScheme.inverseOnSurface,
                         modifier = Modifier.size(16.dp)
                     )

@@ -77,7 +77,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            // Tentukan periode "Bulan Ini" dengan benar
             val today = LocalDate.now()
             val startDate = today.withDayOfMonth(1)
             val endDate = today.with(TemporalAdjusters.lastDayOfMonth())

@@ -16,9 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.GradientLinearProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -41,7 +43,6 @@ fun BudgetCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Baris Judul dan Tombol Detail
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -49,12 +50,12 @@ fun BudgetCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "This Month's Budget",
+                    text = stringResource(R.string.home_monthly_budget_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    "See All",
+                    text = stringResource(R.string.home_see_all),
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.clickable { onSeeAllClick() },
                 )
@@ -77,7 +78,7 @@ fun BudgetCard(
             ) {
                 Column {
                     Text(
-                        text = "Used",
+                        text = stringResource(R.string.home_budget_used),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -89,7 +90,7 @@ fun BudgetCard(
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "Remaining",
+                        text = stringResource(R.string.home_budget_remaining),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
 import com.rifqi.trackfunds.core.navigation.api.ProfileRoutes
 import com.rifqi.trackfunds.core.navigation.api.TransactionRoutes
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
 import com.rifqi.trackfunds.feature.home.ui.home.components.BudgetCard
@@ -155,14 +157,14 @@ fun HomeScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     SummaryCard(
-                        title = "Total Income",
+                        title = stringResource(id = R.string.home_total_income),
                         amount = formatCurrency(state.totalIncome),
                         icon = Icons.AutoMirrored.Filled.TrendingUp,
                         iconBackgroundColor = TrackFundsTheme.extendedColors.income,
                         modifier = Modifier.weight(1f)
                     )
                     SummaryCard(
-                        title = "Total Expense",
+                        title = stringResource(id = R.string.home_total_expense),
                         amount = formatCurrency(state.totalExpense),
                         icon = Icons.AutoMirrored.Filled.TrendingDown,
                         iconBackgroundColor = TrackFundsTheme.extendedColors.expense,
