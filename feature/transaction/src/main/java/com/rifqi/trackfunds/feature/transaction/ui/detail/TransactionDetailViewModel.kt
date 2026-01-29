@@ -126,7 +126,7 @@ private fun Transaction.toDetailsUiModel(): TransactionDetailsUiModel {
         categoryIconIdentifier = this.category?.iconIdentifier,
         formattedDate = this.date.format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy, HH:mm")),
         accountName = this.account.name,
-        transactionType = this.type.name.lowercase().replaceFirstChar { it.titlecase() },
+        transactionType = this.type,
         lineItems = this.items.map { it.toLineItemUiModel() },
         receiptImageUri = this.receiptImageUri
     )

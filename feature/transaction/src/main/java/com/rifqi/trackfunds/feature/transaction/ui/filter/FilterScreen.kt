@@ -42,6 +42,7 @@ import com.rifqi.trackfunds.core.domain.common.model.DateRangeOption
 import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.core.ui.utils.displayLabel
 import com.rifqi.trackfunds.core.ui.utils.formatLocalDate
 import com.rifqi.trackfunds.core.ui.utils.label
 import com.rifqi.trackfunds.feature.transaction.ui.filter.components.SectionCard
@@ -153,7 +154,7 @@ fun FilterScreenContent(
                         TransactionType.entries.forEach { type ->
                             val selected = type in state.selectedTypes
                             SelectableChip(
-                                text = type.name,
+                                text = type.displayLabel(),
                                 selected = selected,
                                 onClick = { onIntent(FilterIntent.TypeToggled(type)) }
                             )
@@ -297,12 +298,14 @@ fun FilterScreenContent(
 
             // Active summary (opsional)
             item {
+                // Build labels in composable context using remember
+                val typeLabels = state.selectedTypes.map { it.displayLabel() }
+                val dateOptionLabel = state.dateOption.label()
+
                 val summary = buildList {
                     if (state.selectedCategoryIds.isNotEmpty()) add("Category (${state.selectedCategoryIds.size})")
                     if (state.selectedAccountIds.isNotEmpty()) add("Account (${state.selectedAccountIds.size})")
-                    if (state.selectedTypes.isNotEmpty()) add(state.selectedTypes.joinToString("/") {
-                        it.name
-                    })
+                    if (typeLabels.isNotEmpty()) add(typeLabels.joinToString("/"))
 
                     if (state.dateOption == DateRangeOption.CUSTOM && state.customStart != null && state.customEnd != null) {
                         add(
@@ -317,7 +320,7 @@ fun FilterScreenContent(
                             }"
                         )
                     } else {
-                        add(state.dateOption.label())
+                        add(dateOptionLabel)
                     }
                 }
 

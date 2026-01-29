@@ -3,8 +3,6 @@ package com.rifqi.trackfunds.feature.budget.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rifqi.trackfunds.core.domain.budget.model.Budget
-import com.rifqi.trackfunds.core.domain.category.model.Category
-import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 import com.rifqi.trackfunds.core.domain.budget.usecase.GetBudgetsUseCase
 import com.rifqi.trackfunds.core.navigation.api.AppScreen
 import com.rifqi.trackfunds.core.navigation.api.BudgetRoutes
@@ -78,14 +76,7 @@ class BudgetViewModel @Inject constructor(
     private fun processBudgetResult(budgets: List<Budget>) {
         val totalBudgeted = budgets.sumOf { it.budgetAmount }
         val totalSpent = budgets.sumOf { it.spentAmount }
-        val categories = budgets.map {
-            Category(
-                it.categoryId,
-                it.categoryName,
-                it.categoryIconIdentifier.toString(),
-                TransactionType.EXPENSE
-            )
-        }.distinctBy { it.id }
+
 
         _uiState.update {
             it.copy(
@@ -93,7 +84,6 @@ class BudgetViewModel @Inject constructor(
                 budgets = budgets,
                 totalBudgeted = totalBudgeted,
                 totalSpent = totalSpent,
-                categoriesWithBudget = categories,
             )
         }
     }

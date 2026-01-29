@@ -134,6 +134,7 @@
 
     <string name="transaction_type_expense">Pengeluaran</string>
     <string name="transaction_type_income">Pemasukan</string>
+    <string name="transaction_type_savings">Tabungan</string>
 
     <string name="label_items_optional">Daftar Barang (Opsional)</string>
     <string name="placeholder_tap_to_add">Ketuk untuk menambah</string>
@@ -182,4 +183,21 @@
     <string name="preview_phase_button_confirm">Ya, Gunakan Foto Ini</string>
 
     <string name="processing_phase_message">Menganalisis struk Anda, harap tunggu…</string>
+
+
+    <string name="transaction_detail_title">Detail Transaksi</string>
+    <string name="label_type">Tipe</string>
+    <string name="label_account">Akun</string>
+    <string name="label_items">Daftar Barang</string>
+    <string name="label_receipt">Struk</string>
+    <string name="error_load_image">Gagal memuat gambar</string>
+
+    <string name="dialog_delete_title">Hapus Transaksi</string>
+    <string name="dialog_delete_message">Apakah Anda yakin ingin menghapus transaksi ini? Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="button_delete">Hapus</string>
+    <string name="button_cancel">Batal</string>
+
+    <string name="cd_edit_transaction">Ubah Transaksi</string>
+    <string name="cd_delete_transaction">Hapus Transaksi</string>
+    <string name="cd_receipt_image">Gambar Struk</string>
 </resources>

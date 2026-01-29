@@ -170,16 +170,21 @@ class TransactionListViewModel @Inject constructor(
                 // Jika custom, format tanggalnya
                 if (startDate != null && endDate != null) {
                     val formatter = DateTimeFormatter.ofPattern("d MMM")
-                    val label = "${startDate.format(formatter)} - ${endDate.format(formatter)}"
+                    "${startDate.format(formatter)} - ${endDate.format(formatter)}"
                 } else {
-                    filter.dateOption.name
+                    "" // Akan ditampilkan berdasarkan dateOption di UI
                 }
             }
-            // Untuk semua opsi lain, cukup gunakan nama dari enum
-            else -> filter.dateOption.name
+            // Untuk opsi lain, biarkan kosong - akan dikonversi ke label di UI layer
+            else -> ""
         }
 
-        chips.add(ActiveFilterChip("DATE_RANGE", dateLabel.toString(), FilterChipType.DATE_RANGE))
+        chips.add(ActiveFilterChip(
+            id = "DATE_RANGE",
+            label = dateLabel,
+            type = FilterChipType.DATE_RANGE,
+            dateOption = filter.dateOption
+        ))
 
 
         // Logika untuk akun dan kategori tidak perlu diubah, sudah bagus.
@@ -215,7 +220,8 @@ class TransactionListViewModel @Inject constructor(
 
             FilterChipType.DATE_RANGE -> currentFilter.copy(
                 startDate = null,
-                endDate = null
+                endDate = null,
+                dateOption = DateRangeOption.ALL_TIME
             )
         }
         _uiState.update { it.copy(activeFilter = newFilter) }

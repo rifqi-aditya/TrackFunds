@@ -32,51 +32,51 @@ class DatabaseSeeder @Inject constructor() {
     )
 
     private fun buildInitialCategories(): List<CategoryEntity> {
+        // 1. Tambahkan parameter 'englishName' ke data class
+        data class CategorySeedData(
+            val key: String,
+            val englishName: String,
+            val icon: String,
+            val type: TransactionType
+        )
+
         val expense = listOf(
-            CategorySeedData("category_food_and_drink", "food_and_drink", TransactionType.EXPENSE),
-            CategorySeedData("category_groceries", "groceries", TransactionType.EXPENSE),
-            CategorySeedData("category_transportation", "transportation", TransactionType.EXPENSE),
-            CategorySeedData("category_fuel", "fuel", TransactionType.EXPENSE),
-            CategorySeedData("category_shopping", "shopping", TransactionType.EXPENSE),
-            CategorySeedData("category_utilities", "utilities", TransactionType.EXPENSE),
-            CategorySeedData("category_housing", "housing", TransactionType.EXPENSE),
-            CategorySeedData("category_health", "health", TransactionType.EXPENSE),
-            CategorySeedData("category_insurance", "insurance", TransactionType.EXPENSE),
-            CategorySeedData("category_personal_care", "personal_care", TransactionType.EXPENSE),
-            CategorySeedData("category_entertainment", "entertainment", TransactionType.EXPENSE),
-            CategorySeedData("category_education", "education", TransactionType.EXPENSE),
-            CategorySeedData("category_travel", "travel", TransactionType.EXPENSE),
-            CategorySeedData("category_sports_fitness", "sports_fitness", TransactionType.EXPENSE),
-            CategorySeedData("category_pets", "pets", TransactionType.EXPENSE),
-            CategorySeedData(
-                "category_gifts_donations",
-                "gifts_donations",
-                TransactionType.EXPENSE
-            ),
-            CategorySeedData("category_fees_charges", "fees_charges", TransactionType.EXPENSE),
-            CategorySeedData("category_miscellaneous", "miscellaneous", TransactionType.EXPENSE),
+            CategorySeedData("category_food_and_drink", "Food & Drink", "food_and_drink", TransactionType.EXPENSE),
+            CategorySeedData("category_groceries", "Groceries", "groceries", TransactionType.EXPENSE),
+            CategorySeedData("category_transportation", "Transportation", "transportation", TransactionType.EXPENSE),
+            CategorySeedData("category_fuel", "Fuel", "fuel", TransactionType.EXPENSE),
+            CategorySeedData("category_shopping", "Shopping", "shopping", TransactionType.EXPENSE),
+            CategorySeedData("category_utilities", "Bills & Utilities", "utilities", TransactionType.EXPENSE),
+            CategorySeedData("category_housing", "Housing", "housing", TransactionType.EXPENSE),
+            CategorySeedData("category_health", "Health", "health", TransactionType.EXPENSE),
+            CategorySeedData("category_insurance", "Insurance", "insurance", TransactionType.EXPENSE),
+            CategorySeedData("category_personal_care", "Personal Care", "personal_care", TransactionType.EXPENSE),
+            CategorySeedData("category_entertainment", "Entertainment", "entertainment", TransactionType.EXPENSE),
+            CategorySeedData("category_education", "Education", "education", TransactionType.EXPENSE),
+            CategorySeedData("category_travel", "Holidays & Travel", "travel", TransactionType.EXPENSE),
+            CategorySeedData("category_sports_fitness", "Sports & Fitness", "sports_fitness", TransactionType.EXPENSE),
+            CategorySeedData("category_pets", "Pets", "pets", TransactionType.EXPENSE),
+            CategorySeedData("category_gifts_donations", "Gifts & Donations", "gifts_donations", TransactionType.EXPENSE),
+            CategorySeedData("category_fees_charges", "Fees & Charges", "fees_charges", TransactionType.EXPENSE),
+            CategorySeedData("category_miscellaneous", "Miscellaneous", "miscellaneous", TransactionType.EXPENSE),
         )
 
         val income = listOf(
-            CategorySeedData("category_salary", "salary", TransactionType.INCOME),
-            CategorySeedData("category_bonus", "bonus", TransactionType.INCOME),
-            CategorySeedData(
-                "category_investment_income",
-                "investment_income",
-                TransactionType.INCOME
-            ),
-            CategorySeedData("category_gifts_received", "gifts_received", TransactionType.INCOME),
-            CategorySeedData("category_freelance", "freelance", TransactionType.INCOME),
-            CategorySeedData("category_other_income", "other_income", TransactionType.INCOME),
+            CategorySeedData("category_salary", "Salary", "salary", TransactionType.INCOME),
+            CategorySeedData("category_bonus", "Bonus", "bonus", TransactionType.INCOME),
+            CategorySeedData("category_investment_income", "Investment Income", "investment_income", TransactionType.INCOME),
+            CategorySeedData("category_gifts_received", "Gifts Received", "gifts_received", TransactionType.INCOME),
+            CategorySeedData("category_freelance", "Freelance", "freelance", TransactionType.INCOME),
+            CategorySeedData("category_other_income", "Other Income", "other_income", TransactionType.INCOME),
         )
 
         return (expense + income).map { seedData ->
             CategoryEntity(
                 id = UUID.randomUUID().toString(),
-                name = seedData.key,
+                name = seedData.englishName, // <-- 2. Gunakan nama bahasa Inggris untuk kolom 'name'
                 iconIdentifier = seedData.icon,
                 type = seedData.type,
-                standardKey = seedData.key
+                standardKey = seedData.key      // <-- Kolom 'standardKey' tetap menggunakan kunci
             )
         }
     }

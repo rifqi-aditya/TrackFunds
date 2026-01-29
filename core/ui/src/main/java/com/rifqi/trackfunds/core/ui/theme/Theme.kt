@@ -124,7 +124,7 @@ private val LocalExtendedColors = staticCompositionLocalOf<ExtendedColors> {
 @Composable
 fun TrackFundsTheme(
     appTheme: AppTheme = AppTheme.SYSTEM,
-    dynamicColor: Boolean = true, // auto-disabled < Android 12
+    dynamicColor: Boolean = false, // Disabled for consistent colors across all devices
     content: @Composable () -> Unit
 ) {
     val systemDark = isSystemInDarkTheme()

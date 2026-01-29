@@ -26,8 +26,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +57,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.ui.R
 import com.rifqi.trackfunds.core.ui.components.AppTopAppBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -76,15 +80,9 @@ fun TransactionDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is TransactionDetailSideEffect.NavigateToEdit -> {
-                    onNavigateToEdit(effect.transactionId)
-                }
-
-                is TransactionDetailSideEffect.NavigateBackAfterDelete -> {
-                    onNavigateBack()
-                }
-
-                is TransactionDetailSideEffect.ShowSnackbar -> {
+                is TransactionDetailSideEffect.NavigateToEdit -> onNavigateToEdit(effect.transactionId)
+                is TransactionDetailSideEffect.NavigateBackAfterDelete -> onNavigateBack()
+                is TransactionDetailSideEffect.ShowSnackbar -> { /* Handle snackbar */
                 }
 
                 is TransactionDetailSideEffect.ViewReceipt -> fullscreenUri = effect.imageUriString
@@ -110,18 +108,17 @@ fun TransactionDetailScreen(
     if (uiState.showDeleteConfirmDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(TransactionDetailEvent.DismissDeleteDialog) },
-            title = { Text("Delete Transaction") },
-            text = { Text("Are you sure you want to delete this transaction? This action cannot be undone.") },
+            title = { Text(stringResource(R.string.dialog_delete_title)) },
+            text = { Text(stringResource(R.string.dialog_delete_message)) },
             confirmButton = {
                 Button(
                     onClick = { viewModel.onEvent(TransactionDetailEvent.ConfirmDeleteClicked) },
-                    // Beri warna error pada tombol konfirmasi hapus
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.button_delete)) }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(TransactionDetailEvent.DismissDeleteDialog) }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.button_cancel))
                 }
             }
         )
@@ -144,17 +141,19 @@ fun TransactionDetailContent(
     Scaffold(
         topBar = {
             AppTopAppBar(
-                title = "Transaction Details",
+                title = stringResource(R.string.transaction_detail_title),
                 onNavigateBack = onNavigateBack,
                 isFullScreen = true,
                 actions = {
-                    // Tombol aksi hanya muncul jika data sudah dimuat
                     if (uiState.details != null) {
                         IconButton(onClick = { onEvent(TransactionDetailEvent.EditClicked) }) {
-                            Icon(Icons.Rounded.Edit, "Edit Transaction")
+                            Icon(Icons.Rounded.Edit, stringResource(R.string.cd_edit_transaction))
                         }
                         IconButton(onClick = { onEvent(TransactionDetailEvent.DeleteClicked) }) {
-                            Icon(Icons.Rounded.Delete, "Delete Transaction")
+                            Icon(
+                                Icons.Rounded.Delete,
+                                stringResource(R.string.cd_delete_transaction)
+                            )
                         }
                     }
                 }
@@ -194,7 +193,11 @@ fun TransactionDetailContent(
                             modifier = Modifier.size(56.dp)
                         )
                         Spacer(Modifier.height(8.dp))
-                        Text(details.description, style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            details.description,
+                            style = MaterialTheme.typography.titleLarge,
+                            textAlign = TextAlign.Center
+                        )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = details.formattedAmount,
@@ -210,7 +213,6 @@ fun TransactionDetailContent(
                         )
                     }
 
-                    // Bagian Detail Tambahan
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
@@ -221,16 +223,23 @@ fun TransactionDetailContent(
                             modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            DetailRow(label = "Type", value = details.transactionType)
-                            DetailRow(label = "Account", value = details.accountName)
-                            // Anda bisa menambahkan detail lain di sini
+                            DetailRow(
+                                label = stringResource(R.string.label_type),
+                                value = details.transactionType.asString()
+                            )
+                            DetailRow(
+                                label = stringResource(R.string.label_account),
+                                value = details.accountName
+                            )
                         }
                     }
 
-                    // Bagian Rincian Item (Kondisional)
                     if (details.lineItems.isNotEmpty()) {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text("Items", style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                stringResource(R.string.label_items),
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(
@@ -245,10 +254,12 @@ fun TransactionDetailContent(
                                 ) {
                                     details.lineItems.forEachIndexed { index, item ->
                                         LineItemRow(item = item)
-
-                                        // Kunci #3: Tambahkan pemisah antar item, kecuali untuk yang terakhir
                                         if (index < details.lineItems.lastIndex) {
-                                            Divider(modifier = Modifier.padding(vertical = 8.dp))
+                                            HorizontalDivider(
+                                                modifier = Modifier.padding(vertical = 8.dp),
+                                                thickness = DividerDefaults.Thickness,
+                                                color = DividerDefaults.color
+                                            )
                                         }
                                     }
                                 }
@@ -262,7 +273,7 @@ fun TransactionDetailContent(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                "Receipt",
+                                stringResource(R.string.label_receipt),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -282,13 +293,13 @@ fun TransactionDetailContent(
                                         .data(details.receiptImageUri)
                                         .crossfade(true)
                                         .build(),
-                                    contentDescription = "Receipt Image",
+                                    contentDescription = stringResource(R.string.cd_receipt_image),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize(),
                                     loading = { CircularProgressIndicator() },
                                     error = {
                                         Text(
-                                            "Failed to load image",
+                                            stringResource(R.string.error_load_image),
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.error
                                         )
@@ -308,20 +319,19 @@ fun TransactionDetailContent(
 fun LineItemRow(item: TransactionItemUiModel) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically // Jaga agar semua teks sejajar
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // Kolom untuk nama dan detail, akan mengisi semua ruang yang tersedia
         Column(
             modifier = Modifier
-                .weight(1f) // <-- Kunci #1: Memberi bobot
-                .padding(end = 16.dp) // Beri jarak dari total harga
+                .weight(1f)
+                .padding(end = 16.dp)
         ) {
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold, // Beri penekanan pada nama
-                maxLines = 1, // <-- Kunci #2: Batasi hanya satu baris
-                overflow = TextOverflow.Ellipsis // <-- Tampilkan "..." jika terlalu panjang
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = item.quantityAndPrice,
@@ -329,12 +339,20 @@ fun LineItemRow(item: TransactionItemUiModel) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        // Teks untuk total harga
         Text(
             text = item.formattedTotal,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium
         )
+    }
+}
+
+@Composable
+fun TransactionType.asString(): String {
+    return when (this) {
+        TransactionType.EXPENSE -> stringResource(id = R.string.transaction_type_expense)
+        TransactionType.INCOME -> stringResource(id = R.string.transaction_type_income)
+        TransactionType.SAVINGS -> stringResource(id = R.string.transaction_type_savings)
     }
 }
 
@@ -353,7 +371,7 @@ fun TransactionDetailContentPreview() {
                     categoryIconIdentifier = "ic_food",
                     formattedDate = "Sabtu, 02 Agustus 2025, 17:05",
                     accountName = "GoPay",
-                    transactionType = "Expense",
+                    transactionType = TransactionType.EXPENSE,
                     lineItems = listOf(
                         TransactionItemUiModel("Kopi Susu", "(x2 @ Rp20.000)", "Rp40.000"),
                         TransactionItemUiModel("Roti Coklat", "(x1 @ Rp15.000)", "Rp15.000")

@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,8 +27,9 @@ import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameter
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.account.model.Account
 import com.rifqi.trackfunds.core.domain.category.model.Category
-import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.getDisplayName
+import com.rifqi.trackfunds.core.domain.transaction.model.Transaction
 import com.rifqi.trackfunds.core.ui.components.OverlappingIcon
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.formatCurrency
@@ -73,7 +75,7 @@ fun TransactionItem(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = transactions.category?.name ?: "-",
+                text = transactions.category?.getDisplayName(LocalContext.current) ?: "-",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

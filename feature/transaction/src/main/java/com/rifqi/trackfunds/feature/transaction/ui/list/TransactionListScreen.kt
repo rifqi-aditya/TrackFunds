@@ -50,6 +50,7 @@ import com.rifqi.trackfunds.core.ui.components.EmptyState
 import com.rifqi.trackfunds.core.ui.components.TransactionRow
 import com.rifqi.trackfunds.core.ui.preview.DummyData
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
+import com.rifqi.trackfunds.core.ui.utils.label
 import com.rifqi.trackfunds.feature.transaction.ui.components.SummaryCard
 import com.rifqi.trackfunds.feature.transaction.ui.model.ActiveFilterChip
 import com.rifqi.trackfunds.feature.transaction.ui.model.FilterChipType
@@ -124,7 +125,7 @@ fun TransactionScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CompactOutlinedTextField(
                     value = uiState.activeFilter.searchQuery,
@@ -135,39 +136,34 @@ fun TransactionScreenContent(
                     placeholder = {
                         Text(
                             "Search transactions...",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
                     },
                     leadingIcon = {
                         Icon(
                             Icons.Default.Search,
                             contentDescription = "Search",
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 )
 
-                OutlinedButton(
+                Surface(
                     onClick = { onEvent(TransactionListEvent.FilterButtonClicked) },
-                    shape = MaterialTheme.shapes.large,
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    ),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    ),
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    modifier = Modifier.size(40.dp)
                 ) {
-                    Icon(
-                        Icons.Default.FilterAlt,
-                        contentDescription = "Filter",
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        "Filter",
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.FilterAlt,
+                            contentDescription = "Filter",
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
 
@@ -180,7 +176,16 @@ fun TransactionScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(activeChips, key = { it.id + it.label }) { chip ->
+                    items(activeChips, key = { it.id + it.label + (it.dateOption?.name ?: "") }) { chip ->
+                        // Determine the display label
+                        val displayLabel = when {
+                            // For date range chips, use dateOption.label() if available
+                            chip.type == FilterChipType.DATE_RANGE && chip.dateOption != null -> {
+                                if (chip.label.isNotBlank()) chip.label else chip.dateOption.label()
+                            }
+                            else -> chip.label
+                        }
+                        
                         FilterChip(
                             selected = true,
                             onClick = { },
@@ -188,7 +193,7 @@ fun TransactionScreenContent(
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(chip.label)
+                                    Text(displayLabel)
                                     IconButton(
                                         onClick = {
                                             onEvent(
@@ -201,24 +206,23 @@ fun TransactionScreenContent(
                                     ) {
                                         Icon(
                                             Icons.Default.Close,
-                                            contentDescription = "Hapus filter ${chip.label}",
+                                            contentDescription = "Hapus filter $displayLabel",
                                             modifier = Modifier.size(14.dp)
                                         )
                                     }
                                 }
                             },
-                            shape = MaterialTheme.shapes.large,
+                            shape = MaterialTheme.shapes.medium,
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.background,
-                                selectedLabelColor = MaterialTheme.colorScheme.primary
+                                selectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                selectedLabelColor = MaterialTheme.colorScheme.onSurface
                             ),
                             border = FilterChipDefaults.filterChipBorder(
                                 selected = true,
                                 enabled = true,
-
-                                selectedBorderColor = MaterialTheme.colorScheme.primary,
-                                selectedBorderWidth = 1.5.dp,
-                                borderColor = MaterialTheme.colorScheme.outline,
+                                selectedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                selectedBorderWidth = 1.dp,
+                                borderColor = MaterialTheme.colorScheme.outlineVariant,
                                 borderWidth = 1.dp
                             )
                         )
@@ -279,13 +283,14 @@ fun DateHeader(date: LocalDate) {
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color.Transparent,
+        color = MaterialTheme.colorScheme.background,
     ) {
         Text(
-            text = formattedDate,
-            style = MaterialTheme.typography.labelMedium,
+            text = formattedDate.uppercase(),
+            style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
         )
     }
 }

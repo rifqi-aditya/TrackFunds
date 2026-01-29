@@ -1,6 +1,7 @@
 package com.rifqi.trackfunds.feature.transaction.ui.detail
 
 import androidx.compose.ui.graphics.Color
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
 
 // Model baru yang spesifik untuk UI, berisi data yang sudah siap tampil
 data class TransactionDetailsUiModel(
@@ -11,7 +12,7 @@ data class TransactionDetailsUiModel(
     val categoryIconIdentifier: String? = null,
     val formattedDate: String = "",
     val accountName: String = "",
-    val transactionType: String = "",
+    val transactionType: TransactionType = TransactionType.EXPENSE,
     val lineItems: List<TransactionItemUiModel> = emptyList(),
     val receiptImageUri: String? = null
 )

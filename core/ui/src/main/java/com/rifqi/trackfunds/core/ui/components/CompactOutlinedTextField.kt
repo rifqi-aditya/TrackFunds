@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -35,6 +36,8 @@ fun CompactOutlinedTextField(
     placeholder: @Composable () -> Unit = {},
     leadingIcon: @Composable () -> Unit = {}
 ) {
+    val cursorColor = MaterialTheme.colorScheme.primary
+    
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -45,15 +48,16 @@ fun CompactOutlinedTextField(
             )
             .height(40.dp),
         textStyle = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurface
         ),
+        cursorBrush = SolidColor(cursorColor),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.outlineVariant,
                         shape = MaterialTheme.shapes.large
                     )
                     .padding(horizontal = 12.dp),
@@ -63,7 +67,10 @@ fun CompactOutlinedTextField(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Box(modifier = Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart
+                ) {
                     if (value.isEmpty()) {
                         placeholder()
                     }

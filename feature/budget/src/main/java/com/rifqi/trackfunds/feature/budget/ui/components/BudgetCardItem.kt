@@ -24,10 +24,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rifqi.trackfunds.core.domain.budget.model.Budget
+import com.rifqi.trackfunds.core.domain.category.model.Category
+import com.rifqi.trackfunds.core.domain.category.model.TransactionType
+import com.rifqi.trackfunds.core.domain.category.model.getDisplayName
 import com.rifqi.trackfunds.core.ui.components.GradientLinearProgressBar
 import com.rifqi.trackfunds.core.ui.theme.TrackFundsTheme
 import com.rifqi.trackfunds.core.ui.utils.DisplayIconFromResource
@@ -41,6 +45,19 @@ fun BudgetCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // 1. Dapatkan context saat ini
+    val context = LocalContext.current
+
+    // 2. Buat objek Category sementara untuk mendapatkan nama yang diterjemahkan
+    val categoryForDisplay = Category(
+        id = item.categoryId,
+        name = item.categoryName,
+        iconIdentifier = item.categoryIconIdentifier.toString(),
+        type = TransactionType.EXPENSE,
+        standardKey = item.categoryName
+    )
+    val categoryDisplayName = categoryForDisplay.getDisplayName(context)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -52,12 +69,15 @@ fun BudgetCardItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 DisplayIconFromResource(
                     identifier = item.categoryIconIdentifier,
-                    contentDescription = item.categoryName,
+                    contentDescription = categoryDisplayName,
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(item.categoryName, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = categoryDisplayName,
+                        style = MaterialTheme.typography.titleMedium
+                    )
                     Text(
                         "Period • ${item.period}",
                         style = MaterialTheme.typography.bodySmall,

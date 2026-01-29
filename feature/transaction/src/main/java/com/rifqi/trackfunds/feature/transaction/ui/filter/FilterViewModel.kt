@@ -162,7 +162,8 @@ class FilterViewModel @Inject constructor(
             categoryIds = s.selectedCategoryIds.toList().ifEmpty { null },
             accountIds = s.selectedAccountIds.toList().ifEmpty { null },
             startDate = startDate,
-            endDate = endDate
+            endDate = endDate,
+            dateOption = s.dateOption
             // jika domain-mu perlu tipe transaksi, tambahkan properti di TransactionFilter domain
         )
 
